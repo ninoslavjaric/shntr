@@ -1,0 +1,42 @@
+version: "3.2"
+services:
+  php-shntr:
+    build:
+      context: './php/'
+      dockerfile: ${DOCKERFILE_NAME:-Dockerfile}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - backend-shntr
+    volumes:
+      - ./app:/var/www/html/
+#      - ./php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
+  apache-shntr:
+    build: './apache/'
+    depends_on:
+      - php-shntr
+      - db-shntr
+    networks:
+      - frontend-shntr
+      - backend-shntr
+    ports:
+      - "80:80"
+    volumes:
+      - ./app:/var/www/html/
+  db-shntr:
+    platform: linux/x86_64
+    image: mariadb:10.6.4-focal
+    networks:
+      - backend-shntr
+    volumes:
+      - ./data:/var/lib/mysql/
+    ports:
+      - 3307:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=shntrco_sngine
+      - MYSQL_DATABASE=shntrco_sngine
+      - MYSQL_PASSWORD=shntrco_sngine
+networks:
+  frontend-shntr:
+  backend-shntr:
