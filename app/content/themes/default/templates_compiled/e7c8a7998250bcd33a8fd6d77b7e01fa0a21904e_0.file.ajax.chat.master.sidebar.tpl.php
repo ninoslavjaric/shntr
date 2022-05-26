@@ -1,11 +1,11 @@
 <?php
-/* Smarty version 3.1.40, created on 2022-04-08 22:23:54
+/* Smarty version 3.1.40, created on 2022-05-26 23:01:25
   from '/var/www/html/content/themes/default/templates/ajax.chat.master.sidebar.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '3.1.40',
-  'unifunc' => 'content_6250b5fa0801b2_76803195',
+  'unifunc' => 'content_629006c515e462_65980596',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_6250b5fa0801b2_76803195 (Smarty_Internal_Template $_smarty_tpl) {
+function content_629006c515e462_65980596 (Smarty_Internal_Template $_smarty_tpl) {
 ?><ul>
     <?php
 $_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['sidebar_friends']->value, '_user');
