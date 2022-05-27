@@ -848,6 +848,13 @@ try {
 			]);
 			break;
 
+		case 'shntr_token':
+			/* update */
+			update_system_options([
+				'shntr_token_enabled' => secure($_POST['shntr_token_enabled']),
+			]);
+			break;
+
 		default:
 			_error(400);
 			break;

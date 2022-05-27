@@ -25,6 +25,15 @@
                     </a>
                 </li>
 
+                {if $system['shntr_token_enabled']}
+                <li>
+                    <a href="{$system['system_url']}/settings/shntr_token">
+                        {include file='__svg_icons.tpl' icon="credit_card" class="mr10" width="24px" height="24px"}
+                        {__("shntr token")}
+                    </a>
+                </li>
+                {/if}
+
                 {if $user->_is_admin}
                     <li>
                         <a href="{$system['system_url']}/admincp">
@@ -96,7 +105,7 @@
                     </a>
                 </li>
             {/if}
-            
+
             {if $user->_data['can_sell_products']}
                 <li {if $page == "index" && $view == "products"}class="active"{/if}>
                     <a href="{$system['system_url']}/products">
@@ -168,7 +177,7 @@
                                 {__("Boosted Posts")}
                             </a>
                         </li>
-                        
+
                         {if $system['pages_enabled']}
                             <li {if $page == "index" && $view == "boosted_pages"}class="active"{/if}>
                                 <a href="{$system['system_url']}/boosted/pages">
@@ -195,7 +204,7 @@
                     </a>
                 </li>
             {/if}
-            
+
             {if $system['pages_enabled']}
                 <li {if $page == "pages"}class="active"{/if}>
                     <a href="{$system['system_url']}/pages">

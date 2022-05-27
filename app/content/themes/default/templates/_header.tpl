@@ -3,7 +3,7 @@
 {else}
     <body data-hash-tok="{$session_hash['token']}" data-hash-pos="{$session_hash['position']}" data-chat-enabled="{$user->_data['user_chat_enabled']}" class="{if $system['theme_mode_night']}night-mode{/if} {if !$system['chat_enabled']}n_chat{/if}{if $system['activation_enabled'] && !$user->_data['user_activated']} n_activated{/if}{if !$system['system_live']} n_live{/if}" {if $page == 'profile' && $system['system_profile_background_enabled'] && $profile['user_profile_background']}style="background: url({$profile['user_profile_background']}) fixed !important; background-size: 100% auto;"{/if} {if $page == "share" && $url}onload="initialize_scraper()"{/if}>
 {/if}
-    
+
     <!-- main wrapper -->
     <div class="main-wrapper">
         {if $user->_logged_in && $system['activation_enabled'] && !$user->_data['user_activated']}
@@ -23,7 +23,7 @@
                                 <span class="text-link" data-toggle="modal" data-url="core/activation_email_resend.php">
                                     {__("Resend Verification Email")}
                                 </span>
-                                 - 
+                                 -
                                 <span class="text-link" data-toggle="modal" data-url="#activation-email-reset">
                                     {__("Change Email")}
                                 </span>
@@ -33,7 +33,7 @@
                                     <span class="text-link" data-toggle="modal" data-url="core/activation_phone_resend.php">
                                         {__("Resend SMS")}
                                     </span>
-                                     - 
+                                     -
                                 {/if}
                                 <span class="text-link" data-toggle="modal" data-url="#activation-phone-reset">
                                     {__("Change Phone Number")}
@@ -66,7 +66,7 @@
                     <div class="{if !$user->_logged_in}col-6{/if} col-md-4 col-lg-3 {if $user->_logged_in}d-none d-md-block{/if}">
                         <!-- logo-wrapper -->
                         <div class="logo-wrapper">
-                            
+
                             {if !$user->_logged_in && $system['newsfeed_public']}
                                 <!-- menu-icon -->
                                 <a href="#" data-toggle="offcanvas" class="menu-icon d-block d-md-none">
@@ -317,14 +317,14 @@
                                 <!-- navbar-wrapper -->
                             </div>
                         </div>
-                            
+
                     </div>
                 </div>
-                        
+
             </div>
         </div>
         <!-- main-header -->
-        
+
         <!-- ads -->
         {include file='_ads.tpl' _ads=$ads_master['header'] _master=true}
         <!-- ads -->

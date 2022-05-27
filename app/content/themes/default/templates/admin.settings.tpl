@@ -4705,6 +4705,11 @@
                         <i class="fa fa-university fa-fw mr5"></i><strong class="pr5">{__("Bank Transfers")}</strong>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#Token" data-toggle="tab">
+                        <i class="fa fa-dollar-sign fa-fw mr5"></i><strong class="pr5">{__("shntr tokens")}</strong>
+                    </a>
+                </li>
             </ul>
             <!-- panel nav -->
         </div>
@@ -5211,6 +5216,49 @@
                                 <span class="form-text">
                                     {__("This note will be displayed to the user while upload his bank transfer receipt")}
                                 </span>
+                            </div>
+                        </div>
+
+                        <!-- success -->
+                        <div class="alert alert-success mb0 x-hidden"></div>
+                        <!-- success -->
+
+                        <!-- error -->
+                        <div class="alert alert-danger mb0 x-hidden"></div>
+                        <!-- error -->
+                    </div>
+                    <div class="card-footer text-right">
+                        <button type="submit" class="btn btn-primary">{__("Save Changes")}</button>
+                    </div>
+                </form>
+            </div>
+            <!-- Bank -->
+
+            <!-- Bank -->
+            <div class="tab-pane" id="Token">
+                <form class="js_ajax-forms" data-url="admin/settings.php?edit=shntr_token">
+                    <div class="card-body">
+                        <div class="form-table-row">
+                            <div class="avatar">
+                                {include file='__svg_icons.tpl' icon="money-bag" width="40px" height="40px"}
+                            </div>
+                            <div>
+                                <div class="form-control-label h6">{__("shntr token enabled")}</div>
+                                <div class="form-text d-none d-sm-block">{__("Enable payments via shntr token")}</div>
+                            </div>
+                            <div class="text-right">
+                                <label class="switch" for="shntr_token_enabled">
+                                    <input type="checkbox" name="shntr_token_enabled" id="shntr_token_enabled" {if $system['shntr_token_enabled']}checked{/if}>
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group form-row">
+                            <div class="col-md-9">
+                                <div class="jumbotron">
+                                    <h4>In progress</h4>
+                                </div>
                             </div>
                         </div>
 

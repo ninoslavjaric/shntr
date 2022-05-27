@@ -2,7 +2,7 @@
 
 /**
  * settings
- * 
+ *
  * @package Sngine
  * @author Zamblek
  */
@@ -381,6 +381,41 @@ try {
 			$coinpayments_transactions = $user->get_coinpayments_transactions();
 			/* assign variables */
 			$smarty->assign('coinpayments_transactions', $coinpayments_transactions);
+			break;
+
+		case 'shntr_token':
+			// check if shntr_token_enabled
+			if (!$system['shntr_token_enabled']) {
+				_error(404);
+			}
+
+			// page header
+			page_header(__("Settings") . " &rsaquo; " . __("shntr token settings"));
+
+			// get shntr token transactions
+            // todo here call the run app
+
+			/* assign variables */
+			$smarty->assign('shntr_balance', 0.4);
+			$smarty->assign('shntr_transactions', [
+			    [
+			        'type' => 'incoming',
+                    'amount' => 10,
+                    'created_at' => '22-05-2022'
+                ],
+			    [
+                    'type' => 'outgoing',
+			        'feature' => 'Feature 1',
+                    'amount' => 5.4,
+                    'created_at' => '25-05-2022'
+                ],
+                [
+                    'type' => 'outgoing',
+                    'feature' => 'Feature 2',
+                    'amount' => 4.2,
+                    'created_at' => '25-05-2022'
+                ]
+            ]);
 			break;
 
 		case 'bank':

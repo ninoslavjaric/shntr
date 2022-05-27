@@ -202,6 +202,14 @@
                             </li>
                         {/if}
 
+                        {if $system['shntr_token_enabled']}
+                            <li {if $view == "shntr_token"}class="active"{/if}>
+                                <a href="{$system['system_url']}/settings/shntr_token">
+                                    <i class="fa fa-dollar-sign fa-fw mr10" style="color: #4caf50;"></i>{__("shntr token")}
+                                </a>
+                            </li>
+                        {/if}
+
                         {if $system['bank_transfers_enabled']}
                             <li {if $view == "bank"}class="active"{/if}>
                                 <a href="{$system['system_url']}/settings/bank">
@@ -239,7 +247,7 @@
                                 </a>
                             </li>
                         {/if}
-                        
+
                         {if $system['delete_accounts_enabled']}
                             <li {if $view == "delete"}class="active"{/if}>
                                 <a href="{$system['system_url']}/settings/delete">
@@ -394,7 +402,7 @@
                                 </div>
                             </div>
                             <!-- Secuirty Check -->
-                                
+
                             <!-- success -->
                             <div class="alert alert-success mb0 x-hidden"></div>
                             <!-- success -->
@@ -407,7 +415,7 @@
                             <button type="submit" class="btn btn-primary">{__("Save Changes")}</button>
                         </div>
                     </form>
-                
+
                 {elseif $view == "profile"}
                     {if $sub_view == ""}
                         <div class="card-header with-icon">
@@ -431,7 +439,7 @@
                                         </div>
                                     </div>
                                 {/if}
-                                
+
                                 <div class="row">
                                     <div class="form-group col-md-6">
                                         <label class="form-control-label">{__("First Name")}</label>
@@ -591,7 +599,7 @@
                                 {include file='__custom_fields.tpl' _custom_fields=$custom_fields['work'] _registration=false}
                                 {/if}
                                 <!-- custom fields -->
-                                
+
                                 <!-- success -->
                                 <div class="alert alert-success mb0 x-hidden"></div>
                                 <!-- success -->
@@ -631,7 +639,7 @@
                                 {include file='__custom_fields.tpl' _custom_fields=$custom_fields['location'] _registration=false}
                                 {/if}
                                 <!-- custom fields -->
-                                
+
                                 <!-- success -->
                                 <div class="alert alert-success mb0 x-hidden"></div>
                                 <!-- success -->
@@ -672,13 +680,13 @@
                                         <input type="text" class="form-control" name="edu_class" value="{$user->_data['user_edu_class']}">
                                     </div>
                                 </div>
-                                
+
                                 <!-- custom fields -->
                                 {if $custom_fields['education']}
                                 {include file='__custom_fields.tpl' _custom_fields=$custom_fields['education'] _registration=false}
                                 {/if}
                                 <!-- custom fields -->
-                                
+
                                 <!-- success -->
                                 <div class="alert alert-success mb0 x-hidden"></div>
                                 <!-- success -->
@@ -708,7 +716,7 @@
                                 {include file='__custom_fields.tpl' _custom_fields=$custom_fields['other'] _registration=false}
                                 {/if}
                                 <!-- custom fields -->
-                                
+
                                 <!-- success -->
                                 <div class="alert alert-success mb0 x-hidden"></div>
                                 <!-- success -->
@@ -753,7 +761,7 @@
                                             <input type="text" class="form-control" name="twitter" value="{$user->_data['user_social_twitter']}">
                                         </div>
                                     </div>
-                                
+
                                     <div class="form-group col-md-6">
                                         <label class="form-control-label">{__("YouTube Profile URL")}</label>
                                         <div class="input-group">
@@ -763,7 +771,7 @@
                                             <input type="text" class="form-control" name="youtube" value="{$user->_data['user_social_youtube']}">
                                         </div>
                                     </div>
-                                
+
                                     <div class="form-group col-md-6">
                                         <label class="form-control-label">{__("Instagram Profile URL")}</label>
                                         <div class="input-group">
@@ -804,7 +812,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <!-- success -->
                                 <div class="alert alert-success mb0 x-hidden"></div>
                                 <!-- success -->
@@ -878,7 +886,7 @@
                         </form>
 
                     {/if}
-                
+
                 {elseif $view == "security"}
 
                     {if $sub_view == "password"}
@@ -983,10 +991,10 @@
                                     </div>
                                     <div class="text">
                                         <strong>{__("Two-Factor Authentication")}</strong><br>
-                                        {__("Log in with a code from your")} 
-                                        {if $system['two_factor_type'] == "email"}{__("email")}{/if} 
-                                        {if $system['two_factor_type'] == "sms"}{__("phone")}{/if} 
-                                        {if $system['two_factor_type'] == "google"}{__("Google Authenticator App")}{/if} 
+                                        {__("Log in with a code from your")}
+                                        {if $system['two_factor_type'] == "email"}{__("email")}{/if}
+                                        {if $system['two_factor_type'] == "sms"}{__("phone")}{/if}
+                                        {if $system['two_factor_type'] == "google"}{__("Google Authenticator App")}{/if}
                                         {__("as well as a password")}
                                     </div>
                                 </div>
@@ -1071,7 +1079,7 @@
                         </form>
 
                     {/if}
-                
+
                 {elseif $view == "privacy"}
                     <div class="card-header with-icon">
                         <i class="fa fa-user-secret mr10" style="color: #ffb307"></i>{__("Privacy")}
@@ -1426,7 +1434,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="form-group col-md-6">
                                         <label class="form-control-label">{__("Who can see your")} {__("joined events")}</label>
                                         <div class="input-group">
@@ -1459,7 +1467,7 @@
                             <button type="submit" class="btn btn-primary">{__("Save Changes")}</button>
                         </div>
                     </form>
-                
+
                 {elseif $view == "notifications"}
                     <div class="card-header with-icon">
                         <i class="fa fa-bell fa-fw mr10" style="color: #673ab7;"></i>{__("Notifications")}
@@ -1562,7 +1570,7 @@
                                 </div>
                             {/if}
                             <!-- Email Notifications -->
-                            
+
                             <!-- success -->
                             <div class="alert alert-success mb0 x-hidden"></div>
                             <!-- success -->
@@ -1575,7 +1583,7 @@
                             <button type="submit" class="btn btn-primary">{__("Save Changes")}</button>
                         </div>
                     </form>
-                
+
                 {elseif $view == "linked"}
                     <div class="card-header with-icon">
                         <i class="fa fa-share-alt mr10" style="color: #009da0;"></i>{__("Linked Accounts")}
@@ -1706,7 +1714,7 @@
                             </div>
                         {/if}
                     </div>
-                
+
                 {elseif $view == "membership"}
                     <div class="card-header with-icon">
                         <i class="fa fa-id-card mr10" style="color: #009688;"></i>{__("Membership")}
@@ -1734,7 +1742,7 @@
                                         </label>
                                         <div class="col-md-9">
                                             <p class="form-control-plaintext">
-                                                {$user->_data['package_name']} ({print_money($user->_data['price'])} 
+                                                {$user->_data['package_name']} ({print_money($user->_data['price'])}
                                                 {if $user->_data['period'] == "life"}{__("Life Time")}{else}{__("per")} {if $user->_data['period_num'] != '1'}{$user->_data['period_num']}{/if} {__($user->_data['period']|ucfirst)}{/if})
                                             </p>
                                         </div>
@@ -1771,7 +1779,7 @@
                                             <p class="form-control-plaintext">
                                                 {$user->_data['user_boosted_posts']}/{$user->_data['boost_posts']} (<a href="{$system['system_url']}/boosted/posts">{__("Manage")}</a>)
                                             </p>
-                                            
+
                                             <div class="progress mb5">
                                                 <div class="progress-bar progress-bar-info progress-bar-striped" role="progressbar" aria-valuenow="{if $user->_data['boost_posts'] == 0}0{else}{($user->_data['user_boosted_posts']/$user->_data['boost_posts'])*100}{/if}" aria-valuemin="0" aria-valuemax="100" style="width: {if $user->_data['boost_posts'] == 0}0{else}{($user->_data['user_boosted_posts']/$user->_data['boost_posts'])*100}{/if}%"></div>
                                             </div>
@@ -1785,7 +1793,7 @@
                                             <p class="form-control-plaintext">
                                                 {$user->_data['user_boosted_pages']}/{$user->_data['boost_pages']} (<a href="{$system['system_url']}/boosted/pages">{__("Manage")}</a>)
                                             </p>
-                                            
+
                                             <div class="progress mb5">
                                                 <div class="progress-bar progress-bar-warning progress-bar-striped" role="progressbar" aria-valuenow="{if $user->_data['boost_pages'] == 0}0{else}{($user->_data['user_boosted_pages']/$user->_data['boost_pages'])*100}{/if}" aria-valuemin="0" aria-valuemax="100" style="width: {if $user->_data['boost_pages'] == 0}0{else}{($user->_data['user_boosted_pages']/$user->_data['boost_pages'])*100}{/if}%"></div>
                                             </div>
@@ -1914,7 +1922,7 @@
                             {include file='_no_data.tpl'}
                         {/if}
                     </div>
-                
+
                 {elseif $view == "affiliates"}
                     <div class="card-header with-icon">
                         <i class="fa fa-exchange-alt mr10" style="color: #e91e63;"></i>{__("Affiliates")}
@@ -1927,7 +1935,7 @@
                                 </div>
                                 <div class="text">
                                     <strong>{__("Affiliates System")}</strong><br>
-                                    {__("Earn up to")} 
+                                    {__("Earn up to")}
                                     {if $system['affiliate_type'] == "registration"}
                                         {print_money($system['affiliates_per_user']|number_format:2)} {__("For each user you will refer")}.<br>
                                         {__("You will be paid when")} {__("new user registered")}
@@ -2170,7 +2178,7 @@
                             </div>
                         {/if}
                     </div>
-                
+
                 {elseif $view == "points"}
                     <div class="card-header with-icon">
                         <i class="fa fa-piggy-bank mr10" style="color: #3f51b5;"></i>{__("Points")}
@@ -2734,7 +2742,81 @@
                             {/if}
                         </div>
                     </div>
-                
+
+                {elseif $view == "shntr_token"}
+                    <div class="card-header with-icon">
+                        <i class="fa fa-dollar-sign mr10" style="color: green;"></i>{__("shntr token")}
+                    </div>
+                    <div class="card-body">
+                        <div class="row justify-content-center">
+                            <!-- money balance -->
+                            <div class="col-sm-6">
+                                <div class="section-title mb20">
+                                    <i class="fas fa-dollar-sign mr10"></i>{__("Balance")}
+                                </div>
+                                <div class="stat-panel bg-gradient-primary">
+                                    <div class="stat-cell">
+                                        <i class="fa fas fa-dollar-sign bg-icon"></i>
+                                        <div class="h3 mtb10">
+                                            {print_money($shntr_balance|number_format:2)}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- money balance -->
+                        </div>
+                        <div class="heading-small mb20">
+                            {__("Transactions History")}
+                        </div>
+
+                        <div class="pl-md-4">
+                            {if $shntr_transactions}
+                                <div class="table-responsive mt20">
+                                    <table class="table table-striped table-bordered table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th>{__("ID")}</th>
+                                            <th>{__("Type")}</th>
+                                            <th>{__("Feature")}</th>
+                                            <th>{__("Amount")}</th>
+                                            <th>{__("Created")}</th>
+                                            <th>{__("Note")}</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {foreach $shntr_transactions as $transaction}
+                                            <tr>
+                                                <td>{$transaction@iteration}</td>
+                                                <td>{$transaction['type']}</td>
+                                                <td>
+                                                    {if !empty($transaction['feature'])}
+                                                        {$transaction['feature']}
+                                                    {else}
+                                                        ---
+                                                    {/if}
+                                                </td>
+                                                <td>{print_money($transaction['amount'])}</td>
+                                                <td>
+                                                    <span class="js_moment" data-time="{$transaction['created_at']}">{$transaction['created_at']}</span>
+                                                </td>
+                                                <td>
+                                                    {if !empty($transaction['note'])}
+                                                        {$transaction['note']}
+                                                    {else}
+                                                        ---
+                                                    {/if}
+                                                </td>
+                                            </tr>
+                                        {/foreach}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {else}
+                                {include file='_no_transactions.tpl'}
+                            {/if}
+                        </div>
+                    </div>
+
                 {elseif $view == "verification"}
                     <div class="card-header with-icon">
                         <i class="fa fa-check-circle mr10" style="color: #2196f3;"></i>{__("Verification")}
@@ -2774,7 +2856,7 @@
                                                     <i class="fa fa-camera fa-2x js_x-uploader" data-handle="x-image"></i>
                                                     <input type="hidden" class="js_x-image-input" name="photo" value="">
                                                 </div>
-                                                
+
                                             </div>
                                             <div class="col-sm-6">
                                                 <div class="section-title mb20">
@@ -2884,7 +2966,7 @@
                             {include file='_no_data.tpl'}
                         {/if}
                     </div>
-                
+
                 {elseif $view == "blocking"}
                     <div class="card-header with-icon">
                         <i class="fa fa-minus-circle mr10" style="color: #f44336;"></i>{__("Manage Blocking")}
@@ -3024,7 +3106,7 @@
                             <button type="submit" class="btn btn-danger"><i class="fa fa-bolt mr10"></i>{__("Create File")}</button>
                         </div>
                     </form>
-                
+
                 {elseif $view == "delete"}
                     <div class="card-header with-icon">
                         <i class="fa fa-trash mr10" style="color: #f44336;"></i>{__("Delete Account")}
@@ -3045,13 +3127,13 @@
                             </button>
                         </div>
                     </div>
-                
+
                 {/if}
-                
+
             </div>
         </div>
         <!-- right panel -->
-        
+
     </div>
 </div>
 <!-- page content -->
