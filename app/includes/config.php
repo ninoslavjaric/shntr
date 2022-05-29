@@ -9,4 +9,5 @@
     define("DEBUGGING", false);
     define("DEFAULT_LOCALE", 'en_us');
     define("LICENCE_KEY", '');
+    define("shntr_TOKEN_SERVICE", "http://coin-svc:3000");
     ?>

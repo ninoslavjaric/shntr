@@ -393,28 +393,37 @@ try {
 			page_header(__("Settings") . " &rsaquo; " . __("shntr token settings"));
 
 			// get shntr token transactions
-            // todo here call the run app
+            $opts = [
+                "http" => [
+                    "method" => "GET",
+                    "header" => "x-key: {$user->_data['user_token_private_key']}\r\n"
+                ]
+            ];
+            $context = stream_context_create($opts);
+            $response = file_get_contents(shntr_TOKEN_SERVICE . '/balance', false, $context);
+            $response = json_decode($response, true);
+
 
 			/* assign variables */
-			$smarty->assign('shntr_balance', 0.4);
+			$smarty->assign('shntr_balance', $response['amount']);
 			$smarty->assign('shntr_transactions', [
-			    [
-			        'type' => 'incoming',
-                    'amount' => 10,
-                    'created_at' => '22-05-2022'
-                ],
-			    [
-                    'type' => 'outgoing',
-			        'feature' => 'Feature 1',
-                    'amount' => 5.4,
-                    'created_at' => '25-05-2022'
-                ],
-                [
-                    'type' => 'outgoing',
-                    'feature' => 'Feature 2',
-                    'amount' => 4.2,
-                    'created_at' => '25-05-2022'
-                ]
+//			    [
+//			        'type' => 'incoming',
+//                    'amount' => 10,
+//                    'created_at' => '22-05-2022'
+//                ],
+//			    [
+//                    'type' => 'outgoing',
+//			        'feature' => 'Feature 1',
+//                    'amount' => 5.4,
+//                    'created_at' => '25-05-2022'
+//                ],
+//                [
+//                    'type' => 'outgoing',
+//                    'feature' => 'Feature 2',
+//                    'amount' => 4.2,
+//                    'created_at' => '25-05-2022'
+//                ]
             ]);
 			break;
 
