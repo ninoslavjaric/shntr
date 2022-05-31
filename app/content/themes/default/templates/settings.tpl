@@ -2765,6 +2765,22 @@
                             </div>
                             <!-- money balance -->
                         </div>
+                        <div class="row justify-content-center">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="form-control-label">{__("Public key")}</label>
+                                    <input disabled type="text" class="form-control" value="{$shntr_public_key}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="form-control-label">{__("Address")}</label>
+                                    <input disabled type="text" class="form-control" value="{$shntr_address}">
+                                </div>
+                            </div>
+                        </div>
                         <div class="heading-small mb20">
                             {__("Transactions History")}
                         </div>

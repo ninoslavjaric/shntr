@@ -406,6 +406,8 @@ try {
 
 			/* assign variables */
 			$smarty->assign('shntr_balance', $response['amount']);
+			$smarty->assign('shntr_public_key', $user->_data['user_token_public_key']);
+			$smarty->assign('shntr_address', $user->_data['user_token_address']);
 			$smarty->assign('shntr_transactions', [
 //			    [
 //			        'type' => 'incoming',
