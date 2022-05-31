@@ -43,6 +43,8 @@ services:
     - 3001:3000
     networks:
       - backend-shntr
+    volumes:
+      - ~/.aws:/root/.aws
 networks:
   frontend-shntr:
   backend-shntr:
