@@ -38,11 +38,7 @@ services:
       - MYSQL_DATABASE=shntrco_sngine
       - MYSQL_PASSWORD=shntrco_sngine
   coin-svc:
-    image: node:16-alpine
-    volumes:
-      - ./coin-svc/dist:/usr/app
-      - ./coin-svc/node_modules:/usr/app/node_modules
-    command: 'node /usr/app/main.js'
+    build: './coin-svc'
     ports:
     - 3001:3000
     networks:
