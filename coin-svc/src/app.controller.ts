@@ -1,0 +1,61 @@
+import { Controller, Get, Header, Request, Req } from '@nestjs/common';
+import { AppService } from './app.service';
+import * as numble from '@runonbitcoin/nimble';
+import * as Run from 'run-sdk';
+
+@Controller()
+export class AppController {
+  constructor(private readonly appService: AppService) {}
+
+  @Get()
+  async getHello(): Promise<string> {
+    const djes = await this.appService.getPurse();
+    console.log(djes);
+    return this.appService.getHello();
+  }
+
+  @Get('/generate-wallet')
+  @Header('content-type', 'application/json')
+  generateWallet(): string {
+    const key = numble.PrivateKey.fromRandom();
+
+    return JSON.stringify({
+      private: key.toString(),
+      public: key.toPublicKey().toString(),
+      address: key.toAddress().toString(),
+    });
+  }
+
+  @Get('/balance')
+  @Header('content-type', 'application/json')
+  async getBalance(@Req() request: Request): Promise<string> {
+    try {
+      if (!request.headers['x-key']) {
+        return JSON.stringify({ message: 'no key', amount: 0 });
+      }
+      const classLocation =
+        'd2be93e9866d070bc0247c66faeb6d13506a593926ccaab079657a63f8fd655f_o2';
+      const privateKey = request.headers['x-key'];
+      const runner = new Run({ owner: privateKey });
+
+      runner.trust('*');
+      const SHNA = await runner.load(classLocation);
+      // await SHNA.sync();
+
+      await runner.inventory.sync();
+
+      const tokens = runner.inventory.jigs.find((jig) => jig instanceof SHNA);
+
+      if (!tokens) {
+        return JSON.stringify({ msg: 'no tokens', amount: 0 });
+      }
+
+      return JSON.stringify({ amount: tokens.amount });
+    } catch (e) {
+      return JSON.stringify({
+        message: e.message,
+        amount: 0,
+      });
+    }
+  }
+}

@@ -1,3 +1,7 @@
 .idea/
 data/
 app/content/themes/default/templates_compiled/
+.ssh/
+coin-svc/node_modules
+coin-svc/.runcache
+coin-svc/purse.json
