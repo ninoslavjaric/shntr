@@ -9,8 +9,6 @@ export class AppController {
 
   @Get()
   async getHello(): Promise<string> {
-    const purseCreds = await this.appService.getPurse();
-    console.log(purseCreds);
     return this.appService.getHello();
   }
 

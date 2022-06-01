@@ -14,9 +14,9 @@ type CredentialsOrNull = Credentials | null;
 
 @Injectable()
 export class AppService {
-  private readonly superRunner: Run;
+  private superRunner: Run;
   constructor() {
-    this.superRunner = new Run({ network: 'mock' });
+    this.initSuperRunner();
     // (async () => {
     //   SHNT.symbol = 'SHNT'
     //   SHNT.metadata = {emoji: '💵'}
@@ -64,5 +64,13 @@ export class AppService {
     }
 
     return null;
+  }
+
+  private async initSuperRunner(): Promise<void> {
+    const purse = await this.getPurse();
+    this.superRunner = new Run({
+      owner: purse.private,
+      purse: purse.private,
+    });
   }
 }
