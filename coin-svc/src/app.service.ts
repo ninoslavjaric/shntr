@@ -10,6 +10,8 @@ interface Credentials {
   address: string;
 }
 
+type CredentialsOrNull = Credentials | null;
+
 @Injectable()
 export class AppService {
   private readonly superRunner: Run;
@@ -23,6 +25,24 @@ export class AppService {
     //   await this.superRunner.sync()
     // })()
   }
+  private getPurseCreds(): Promise<CredentialsOrNull> {
+    return new Promise((resolve) => {
+      const client = new SecretsManager({
+        region: 'us-east-1',
+      });
+      client.getSecretValue(
+        { SecretId: 'purse' },
+        (err, data: SecretsManager.Types.GetSecretValueResponse) => {
+          if (err) {
+            console.log(err);
+            return resolve(null);
+          }
+
+          return resolve(JSON.parse(data.SecretString));
+        },
+      );
+    });
+  }
   getHello(): string {
     return 'Hello World!';
   }
@@ -30,16 +50,19 @@ export class AppService {
     return this.superRunner;
   }
 
-  async getPurse(): Promise<Credentials> {
-    const client = new SecretsManager({
-      region: 'us-east-1',
-    });
+  async getPurse(): Promise<CredentialsOrNull> {
+    const credentials = await this.getPurseCreds();
 
-    const djes = await client.getSecretValue({ SecretId: 'purse' });
+    if (credentials) {
+      return credentials;
+    }
 
     const path = __dirname + '/../purse.json';
+
     if (fs.existsSync(path)) {
       return JSON.parse(fs.readFileSync(path).toString());
     }
+
+    return null;
   }
 }

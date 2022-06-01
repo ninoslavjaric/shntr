@@ -9,8 +9,8 @@ export class AppController {
 
   @Get()
   async getHello(): Promise<string> {
-    const djes = await this.appService.getPurse();
-    console.log(djes);
+    const purseCreds = await this.appService.getPurse();
+    console.log(purseCreds);
     return this.appService.getHello();
   }
 

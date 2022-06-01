@@ -5,3 +5,4 @@ app/content/themes/default/templates_compiled/
 coin-svc/node_modules
 coin-svc/.runcache
 coin-svc/purse.json
+/coin-svc/dist
