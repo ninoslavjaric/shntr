@@ -16,7 +16,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="col-sm-6">
                     <div class="stat-panel bg-gradient-teal">
                         <div class="stat-cell">
@@ -122,6 +122,17 @@
                             <i class="fa fa-globe bg-icon"></i>
                             <span class="text-xxlg">{$insights['notifications']}</span><br>
                             <span class="text-lg">{__("Notifications")}</span><br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-sm-12">
+                    <div class="stat-panel bg-gradient-cyan">
+                        <div class="stat-cell">
+                            <i class="fa fa-bitcoin bg-icon"></i>
+                            <span class="text-xxlg">{$insights['purse']['satoshis']}</span>
+                            <span class="text-lg">{__("Purse balance in satoshies")}</span>
                         </div>
                     </div>
                 </div>

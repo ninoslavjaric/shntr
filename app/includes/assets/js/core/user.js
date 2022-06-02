@@ -1,6 +1,6 @@
 /**
  * user js
- * 
+ *
  * @package Sngine
  * @author Zamblek
  */
@@ -68,7 +68,7 @@ function initialize_modal() {
             locale: $('html').attr('lang').split("_", 1).toString() || 'en'
         });
     }
-    // run uploader 
+    // run uploader
     initialize_uploader();
 }
 
@@ -1496,20 +1496,29 @@ $(function () {
             });
     });
     /* friend & unfriend */
-    $('body').on('click', '.js_friend-add, .js_friend-cancel, .js_friend-remove', function () {
+    $('body').on('click', '.js_friend-add, .js_friend-cancel, .js_friend-remove, .js_friend-fund', function () {
         var _this = $(this);
         var id = _this.data('uid');
+        var _do = 'friend-remove';
+        var value = null;
+
         if (_this.hasClass('js_friend-add')) {
-            var _do = 'friend-add';
+            _do = 'friend-add';
         } else if (_this.hasClass('js_friend-cancel')) {
-            var _do = 'friend-cancel';
-        } else {
-            var _do = 'friend-remove';
+            _do = 'friend-cancel';
+        } else if (_this.hasClass('js_friend-fund') ) {
+            _do = 'friend-fund';
+            value = prompt("How many tokens to send?", "0");
+
+            if (isNaN(value) || Number(value) <= 0) {
+                alert(`${value} is not valid`)
+                return
+            }
         }
         /* button loading */
         button_status(_this, "loading");
         /* post the request */
-        $.post(api['users/connect'], { 'do': _do, 'id': id }, function (response) {
+        $.post(api['users/connect'], { 'do': _do, 'uid': 0, 'id': id, 'value': value }, function (response) {
             if (response.callback) {
                 /* button reset */
                 button_status(_this, "reset");
@@ -1519,10 +1528,13 @@ $(function () {
                 button_status(_this, "reset");
                 if (_do == 'friend-add') {
                     _this.after('<button type="button" class="btn btn-sm btn-warning js_friend-cancel" data-uid="' + id + '"><i class="fa fa-clock mr5"></i>' + __['Sent'] + '</button>');
+                    _this.remove();
+                } else if (_do == 'friend-fund') {
+                    alert(response.message);
                 } else {
                     _this.after('<button type"button" class="btn btn-sm btn-success js_friend-add" data-uid="' + id + '"><i class="fa fa-user-plus mr5"></i>' + __['Add Friend'] + '</button>');
+                    _this.remove();
                 }
-                _this.remove();
             }
         }, "json")
             .fail(function () {

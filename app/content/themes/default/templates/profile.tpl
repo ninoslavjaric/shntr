@@ -21,12 +21,12 @@
                         <!-- full-cover -->
                         <img class="js_position-cover-full x-hidden" src="{$profile['user_cover_full']}">
                         <!-- full-cover -->
-                        
+
                         <!-- cropped-cover -->
                         <img class="js_position-cover-cropped {if $user->_logged_in && $profile['user_cover_lightbox']}js_lightbox{/if}" data-init-position="{$profile['user_cover_position']}" data-id="{$profile['user_cover_id']}" data-image="{$profile['user_cover_full']}" data-context="album" src="{$profile['user_cover']}" alt="{$profile['name']}">
                         <!-- cropped-cover -->
                     {/if}
-                    
+
                     {if $profile['user_id'] == $user->_data['user_id']}
                         <!-- buttons -->
                         <div class="profile-cover-buttons">
@@ -48,7 +48,7 @@
                             </div>
                         </div>
                         <!-- buttons -->
-                        
+
                         <!-- loaders -->
                         <div class="profile-cover-change-loader">
                             <div class="progress x-progress">
@@ -66,7 +66,7 @@
                 <!-- profile-avatar -->
                 <div class="profile-avatar-wrapper">
                     <img {if $profile['user_picture_id']} {if $user->_logged_in && $profile['user_picture_lightbox']}class="js_lightbox"{/if} data-id="{$profile['user_picture_id']}" data-context="album" data-image="{$profile['user_picture_full']}" {elseif !$profile['user_picture_default']} class="js_lightbox-nodata" data-image="{$profile['user_picture']}" {/if}  src="{$profile['user_picture']}" alt="{$profile['name']}">
-                    
+
                     {if $profile['user_id'] == $user->_data['user_id']}
                         <!-- buttons -->
                         <div class="profile-avatar-change">
@@ -108,6 +108,9 @@
                         {if $user->_data['user_id'] != $profile['user_id']}
                             <!-- add friend -->
                             {if $profile['we_friends']}
+                                <button type="button" class="btn btn-sm btn-primary js_friend-fund" data-uid="{$profile['user_id']}">
+                                    <i class="fa fa-credit-card mr5"></i>{__("Fund friend")}
+                                </button>
                                 <button type="button" class="btn btn-sm btn-success btn-delete js_friend-remove" data-uid="{$profile['user_id']}">
                                     <i class="fa fa-check mr5"></i>{__("Friends")}
                                 </button>
@@ -221,7 +224,7 @@
                         {if $system['pages_enabled']}
                             <li>
                                 <a href="{$system['system_url']}/{$profile['user_name']}/likes" {if $view == "likes"}class="active"{/if}>
-                                    <i class="fa fa-flag fa-fw mr5"></i>{__("Likes")} 
+                                    <i class="fa fa-flag fa-fw mr5"></i>{__("Likes")}
                                 </a>
                             </li>
                         {/if}
@@ -256,7 +259,7 @@
                             </div>
                             <div class="card-body">
                                 <div>
-                                    {__("To see what")} {$profile['name']} {__("shares with friends")}, 
+                                    {__("To see what")} {$profile['name']} {__("shares with friends")},
                                     <span class="text-primary">
                                         {__("send a friend request")}
                                     </span>
@@ -424,7 +427,7 @@
                                         </div>
                                     {/if}
                                 {/if}
-                                
+
                                 <ul class="about-list">
                                     {if $profile['user_subscribed']}
                                         <li class="package" {if $profile['package_color']} style="background: {$profile['package_color']}" {/if}>
@@ -438,9 +441,9 @@
                                                 <li>
                                                     <div class="about-list-item">
                                                         <i class="fa fa-briefcase fa-fw fa-lg"></i>
-                                                        {$profile['user_work_title']} 
+                                                        {$profile['user_work_title']}
                                                         {if $profile['user_work_place']}
-                                                            {__("at")} 
+                                                            {__("at")}
                                                             {if $profile['user_work_url']}
                                                                 <a target="_blank" href="{$profile['user_work_url']}">{$profile['user_work_place']}</a>
                                                             {else}
@@ -464,7 +467,7 @@
                                                 </li>
                                             {/if}
                                         {/if}
-                                        
+
                                         {if $profile['user_hometown']}
                                             {if $profile['user_id'] == $user->_data['user_id'] || $profile['user_privacy_location'] == "public" || ($profile['user_privacy_location'] == "friends" && $profile['we_friends'])}
                                                 <li>
@@ -483,7 +486,7 @@
                                                 <li>
                                                     <div class="about-list-item">
                                                         <i class="fa fa-graduation-cap fa-fw fa-lg"></i>
-                                                        {__("Studied")} {$profile['user_edu_major']} 
+                                                        {__("Studied")} {$profile['user_edu_major']}
                                                         {__("at")}  <span class="text-info">{$profile['user_edu_school']}</span>
                                                         {if $profile['user_edu_class']}
                                                             <div class="details">
@@ -522,7 +525,7 @@
                                             {/if}
                                         {/if}
                                     {/if}
-                                    
+
                                     {if $profile['user_birthdate'] != null}
                                         {if $profile['user_id'] == $user->_data['user_id'] || $profile['user_privacy_birthdate'] == "public" || ($profile['user_privacy_birthdate'] == "friends" && $profile['we_friends'])}
                                             <li>
@@ -533,7 +536,7 @@
                                                     {else}
                                                         {$profile['user_birthdate']|date_format:"%m/%d/%Y"}
                                                     {/if}
-                                                    
+
                                                 </div>
                                             </li>
                                         {/if}
@@ -549,11 +552,11 @@
                                             </li>
                                         {/if}
                                     {/if}
-                                    
+
                                     <li>
                                         <div class="about-list-item">
                                             <i class="fa fa-rss fa-fw fa-lg"></i>
-                                            {__("Followed by")} 
+                                            {__("Followed by")}
                                             <a href="{$system['system_url']}/{$profile['user_name']}/followers">{$profile['followers_count']} {__("people")}</a>
                                         </div>
                                     </li>
@@ -760,7 +763,7 @@
                         <!-- social links -->
                     </div>
                     <!-- left panel -->
-                    
+
                     <!-- right panel -->
                     <div class="order-2 col-lg-3 order-lg-3">
                         <!-- gifts -->
@@ -797,7 +800,7 @@
                                 <div class="card-header bg-transparent">
                                     <i class="fa fa-users mr5"></i>
                                     <strong><a href="{$system['system_url']}/{$profile['user_name']}/friends">{__("Friends")}</a></strong>
-                                    <span class="badge badge-pill badge-info ml5">{$profile['friends_count']}</span> 
+                                    <span class="badge badge-pill badge-info ml5">{$profile['friends_count']}</span>
                                     {if $profile['mutual_friends_count'] && $profile['mutual_friends_count'] > 0}
                                         <small>
                                             (<span class="text-underline" data-toggle="modal" data-url="users/mutual_friends.php?uid={$profile['user_id']}">{$profile['mutual_friends_count']} {__("mutual friends")}</span>)
@@ -906,7 +909,7 @@
                         <!-- events -->
                     </div>
                     <!-- right panel -->
-                    
+
                     <!-- center panel -->
                     <div class="order-3 col-lg-6 order-lg-2">
                         <!-- publisher -->
@@ -931,7 +934,7 @@
                         <!-- posts -->
                     </div>
                     <!-- center panel -->
-                
+
                 {elseif $view == "friends"}
                     <!-- friends -->
                     <div class="col-12">
@@ -984,7 +987,7 @@
                         </div>
                     </div>
                     <!-- friends -->
-                
+
                 {elseif $view == "followers"}
                     <!-- followers -->
                     <div class="col-12">
@@ -1038,7 +1041,7 @@
                         </div>
                     </div>
                     <!-- followers -->
-                
+
                 {elseif $view == "followings"}
                     <!-- followings -->
                     <div class="col-12">
@@ -1095,7 +1098,7 @@
                         </div>
                     </div>
                     <!-- followings -->
-                
+
                 {elseif $view == "photos"}
                     <!-- photos -->
                     <div class="col-12">
@@ -1140,7 +1143,7 @@
                         </div>
                     </div>
                     <!-- photos -->
-                
+
                 {elseif $view == "albums"}
                     <!-- albums -->
                     <div class="col-12">
@@ -1187,7 +1190,7 @@
                         </div>
                     </div>
                     <!-- albums -->
-                
+
                 {elseif $view == "album"}
                     <!-- albums -->
                     <div class="col-12">
@@ -1258,7 +1261,7 @@
                         </div>
                     </div>
                     <!-- videos -->
-                
+
                 {elseif $view == "likes"}
                     <!-- likes -->
                     <div class="col-12">
@@ -1295,7 +1298,7 @@
                         </div>
                     </div>
                     <!-- likes -->
-                
+
                 {elseif $view == "groups"}
                     <!-- groups -->
                     <div class="col-12">
@@ -1332,7 +1335,7 @@
                         </div>
                     </div>
                     <!-- groups -->
-                
+
                 {elseif $view == "events"}
                     <!-- events -->
                     <div class="col-12">
@@ -1369,7 +1372,7 @@
                         </div>
                     </div>
                     <!-- events -->
-                
+
                 {/if}
                 <!-- view content -->
             </div>

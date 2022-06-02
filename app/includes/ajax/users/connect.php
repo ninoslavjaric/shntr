@@ -2,7 +2,7 @@
 
 /**
  * ajax -> users -> connect
- * 
+ *
  * @package Sngine
  * @author Zamblek
  */
@@ -22,7 +22,7 @@ if ($user->_data['user_demo']) {
 }
 
 // valid inputs
-if (!in_array($_POST['do'], array('block', 'unblock', 'friend-accept', 'friend-decline', 'friend-add', 'friend-cancel', 'friend-remove', 'follow', 'unfollow', 'poke', 'page-like', 'page-unlike', 'page-boost', 'page-unboost', 'page-invite', 'page-admin-addation', 'page-admin-remove', 'page-member-remove', 'group-join', 'group-leave', 'group-invite', 'group-accept', 'group-decline', 'group-admin-addation', 'group-admin-remove', 'group-member-remove', 'event-go', 'event-ungo', 'event-interest', 'event-uninterest', 'event-invite', 'delete-app'))) {
+if (!in_array($_POST['do'], array('block', 'unblock', 'friend-accept', 'friend-decline', 'friend-add', 'friend-cancel', 'friend-remove', 'friend-fund', 'follow', 'unfollow', 'poke', 'page-like', 'page-unlike', 'page-boost', 'page-unboost', 'page-invite', 'page-admin-addation', 'page-admin-remove', 'page-member-remove', 'group-join', 'group-leave', 'group-invite', 'group-accept', 'group-decline', 'group-admin-addation', 'group-admin-remove', 'group-member-remove', 'event-go', 'event-ungo', 'event-interest', 'event-uninterest', 'event-invite', 'delete-app'))) {
 	_error(400);
 }
 /* check id */
@@ -38,10 +38,10 @@ try {
 
 	// connect user
 	$_POST['uid'] = ($_POST['uid'] == '0') ? null : $_POST['uid'];
-	$user->connect($_POST['do'], $_POST['id'], $_POST['uid']);
+	$response = $user->connect($_POST['do'], $_POST['id'], $_POST['uid'], $_POST['value']);
 
 	// return & exit
-	return_json();
+	return_json($response);
 } catch (Exception $e) {
 	modal("ERROR", __("Error"), $e->getMessage());
 }

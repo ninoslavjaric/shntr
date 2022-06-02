@@ -2,7 +2,7 @@
 
 /**
  * admin
- * 
+ *
  * @package Sngine
  * @author Zamblek
  */
@@ -74,7 +74,12 @@ try {
 			$get_notifications = $db->query("SELECT COUNT(*) as count FROM notifications") or _error("SQL_ERROR");
 			$insights['notifications'] = $get_notifications->fetch_assoc()['count'];
 
-			// get chart data
+            // get shntr token purse balance
+            $response = file_get_contents(shntr_TOKEN_SERVICE . '/purse');
+            $insights['purse'] = json_decode($response, true);
+
+
+            // get chart data
 			for ($i = 1; $i <= 12; $i++) {
 				/* get users */
 				$get_monthly_users = $db->query("SELECT COUNT(*) as count FROM users WHERE YEAR(user_registered) = YEAR(CURRENT_DATE()) AND MONTH(user_registered) = $i");

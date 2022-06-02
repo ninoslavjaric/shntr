@@ -2583,3 +2583,20 @@ function print_money($amount)
         return $system['system_currency_symbol'] . $amount;
     }
 }
+
+function http_call(string $url, string $method = 'GET', array $data = [], array $headers = [])
+{
+    $opts = [
+        "http" => [
+            'timeout' => 5,
+            "method" => $method,
+            "header" => implode(PHP_EOL, $headers) . PHP_EOL,
+            "content" => json_encode($data),
+        ]
+    ];
+    $context = stream_context_create($opts);
+
+    $response = file_get_contents($url, false, $context);
+
+    return json_decode($response, true);
+}

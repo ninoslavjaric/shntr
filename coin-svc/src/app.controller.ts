@@ -1,7 +1,9 @@
-import { Controller, Get, Header, Request, Req } from '@nestjs/common';
+import { Controller, Get, Post, Header, Request, Req } from '@nestjs/common';
 import { AppService } from './app.service';
 import * as numble from '@runonbitcoin/nimble';
 import * as Run from 'run-sdk';
+
+type SendTokensRequest = Request | { body: string };
 
 @Controller()
 export class AppController {
@@ -55,5 +57,38 @@ export class AppController {
         amount: 0,
       });
     }
+  }
+
+  @Post('/pay')
+  @Header('content-type', 'application/json')
+  async sendTokens(@Req() request: Request): Promise<string> {
+    try {
+      if (!request.headers['x-key']) {
+        return JSON.stringify({ message: 'no key' });
+      }
+      const message = await this.appService.sendFunds(
+        request.headers['x-key'],
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        request.body,
+      );
+
+      return JSON.stringify({
+        message: message,
+      });
+    } catch (e) {
+      console.warn(e);
+      return JSON.stringify({
+        message: e.message,
+      });
+    }
+  }
+
+  @Get('/purse')
+  @Header('content-type', 'application/json')
+  async getPurseData(): Promise<string> {
+    return JSON.stringify({
+      satoshis: await this.appService.getSuperRunner().purse.balance(),
+    });
   }
 }

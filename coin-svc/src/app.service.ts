@@ -12,9 +12,28 @@ interface Credentials {
 
 type CredentialsOrNull = Credentials | null;
 
+interface FundSendParams {
+  recipientAddress: string;
+  amount: number;
+}
+
+interface TokenFunds {
+  location: string;
+  origin: string;
+  nonce: number;
+  owner: string;
+  satoshis: number;
+  sender: null | string;
+  amount: number;
+  send: (address: string, amount: number) => TokenFunds;
+  sync: () => Promise<void>;
+}
+
 @Injectable()
 export class AppService {
   private superRunner: Run;
+  private readonly tokenAddress: string =
+    'd2be93e9866d070bc0247c66faeb6d13506a593926ccaab079657a63f8fd655f_o2';
   constructor() {
     this.initSuperRunner();
     // (async () => {
@@ -72,5 +91,39 @@ export class AppService {
       owner: purse.private,
       purse: purse.private,
     });
+    this.superRunner.activate();
+  }
+
+  async sendFunds(
+    senderPrivateKey: string,
+    params: FundSendParams,
+  ): Promise<string> {
+    const purse = await this.getPurse();
+    const sender = new Run({
+      owner: senderPrivateKey,
+      purse: purse.private,
+    });
+    sender.activate();
+    sender.trust(
+      'd2be93e9866d070bc0247c66faeb6d13506a593926ccaab079657a63f8fd655f',
+    );
+    await sender.inventory.sync();
+    const TokenClass = await sender.load(this.tokenAddress);
+    const funds: TokenFunds = sender.inventory.jigs.find(
+      (jig) => jig instanceof TokenClass,
+    );
+
+    if (!funds || funds.amount < params.amount) {
+      return 'not enough funds';
+    }
+
+    const sentFunds: TokenFunds = funds.send(
+      params.recipientAddress,
+      params.amount,
+    );
+    await sentFunds.sync();
+    await funds.sync();
+
+    return `${sentFunds.amount} tokens sent successfully`;
   }
 }

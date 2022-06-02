@@ -1273,9 +1273,12 @@ class User
      * @param integer $uid
      * @return void
      */
-    public function connect($do, $id, $uid = null)
+    public function connect($do, $id, $uid = null, $value = null)
     {
         global $db, $system;
+
+        $response = [];
+
         switch ($do) {
             case 'delete-app':
                 /* delete user app */
@@ -1388,6 +1391,28 @@ class User
                 if ($check->fetch_assoc()['count'] == 0) return;
                 /* delete this friend */
                 $db->query(sprintf('DELETE FROM friends WHERE (user_one_id = %1$s AND user_two_id = %2$s AND status = 1) OR (user_one_id = %2$s AND user_two_id = %1$s AND status = 1)', secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                break;
+
+            case 'friend-fund':
+                $query = $db->query(sprintf('select user_token_address as address from users where user_id = %1$s limit 1', secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $recipientAddress = $query->fetch_row()[0];
+
+                // get shntr token transactions
+                $response = http_call(
+                    shntr_TOKEN_SERVICE . '/pay',
+                    'POST',
+                    [
+                        'recipientAddress' => $recipientAddress,
+                        'amount' => floatval($value),
+                    ],
+                    [
+                        "x-key: {$this->_data['user_token_private_key']}",
+                        "content-type: application/json",
+                    ],
+                );
+
+                error_log('shntr transaction: ' . print_r($response, true));
+
                 break;
 
             case 'follow':
@@ -1922,6 +1947,8 @@ class User
                 $this->post_notification(array('to_user_id' => $uid, 'action' => 'event_invitation', 'node_type' => $event['event_title'], 'node_url' => $event['event_id']));
                 break;
         }
+
+        return $response;
     }
 
 
