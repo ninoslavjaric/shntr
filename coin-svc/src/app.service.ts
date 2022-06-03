@@ -66,6 +66,7 @@ export class AppService {
     return 'Hello World!';
   }
   getSuperRunner(): Run {
+    this.superRunner.sync();
     return this.superRunner;
   }
 
