@@ -25,8 +25,9 @@ interface TokenFunds {
   satoshis: number;
   sender: null | string;
   amount: number;
-  send: (address: string, amount: number) => TokenFunds;
+  send: (address: string, amount?: number) => TokenFunds;
   sync: () => Promise<void>;
+  combine: (...TokenFunds) => TokenFunds;
 }
 
 @Injectable()
@@ -110,6 +111,18 @@ export class AppService {
     );
     await sender.inventory.sync();
     const TokenClass = await sender.load(this.tokenAddress);
+    const fundList: TokenFunds[] = sender.inventory.jigs.filter(
+      (jig) => jig instanceof TokenClass,
+    );
+
+    if (fundList.length > 1) {
+      const combinedFunds = fundList[0].combine(...fundList.slice(1));
+      const sentCombinedFunds = combinedFunds.send(sender.owner.pubkey);
+      await sentCombinedFunds.sync();
+      await sender.sync();
+      await sender.inventory.sync();
+    }
+
     const funds: TokenFunds = sender.inventory.jigs.find(
       (jig) => jig instanceof TokenClass,
     );

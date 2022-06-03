@@ -2758,7 +2758,7 @@
                                     <div class="stat-cell">
 {*                                        <i class="fa fas fa-dollar-sign bg-icon"></i>*}
                                         <div class="h3 mtb10">
-                                            SATS {$shntr_balance|number_format:2}
+                                            shntr tokens {$shntr_balance|number_format:2}
                                         </div>
                                     </div>
                                 </div>

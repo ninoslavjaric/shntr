@@ -44,13 +44,17 @@ export class AppController {
 
       await runner.inventory.sync();
 
-      const tokens = runner.inventory.jigs.find((jig) => jig instanceof SHNA);
+      const tokens = runner.inventory.jigs.filter((jig) => jig instanceof SHNA);
 
-      if (!tokens) {
+      if (tokens.length == 0) {
         return JSON.stringify({ msg: 'no tokens', amount: 0 });
       }
 
-      return JSON.stringify({ amount: tokens.amount });
+      return JSON.stringify({
+        amount: tokens
+          .map((i) => i.amount)
+          .reduce((partialSum, a) => partialSum + a, 0),
+      });
     } catch (e) {
       return JSON.stringify({
         message: e.message,
