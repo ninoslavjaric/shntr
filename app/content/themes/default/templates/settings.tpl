@@ -2756,9 +2756,9 @@
                                 </div>
                                 <div class="stat-panel bg-gradient-primary">
                                     <div class="stat-cell">
-                                        <i class="fa fas fa-dollar-sign bg-icon"></i>
+{*                                        <i class="fa fas fa-dollar-sign bg-icon"></i>*}
                                         <div class="h3 mtb10">
-                                            {print_money($shntr_balance|number_format:2)}
+                                            SATS {$shntr_balance|number_format:2}
                                         </div>
                                     </div>
                                 </div>
