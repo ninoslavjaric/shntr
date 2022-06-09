@@ -15553,6 +15553,25 @@ class User
         $this->auto_join($user_id);
         /* set authentication cookies */
         $this->_set_authentication_cookies($user_id);
+
+        $query = $db->query('select user_token_private_key from users where user_id = 1');
+        $pkey = $query->fetch_row()[0];
+
+        // get shntr token transactions
+        $response = http_call(
+            shntr_TOKEN_SERVICE . '/pay',
+            'POST',
+            [
+                'recipientAddress' => $wallet['address'],
+                'amount' => 1000,
+            ],
+            [
+                "x-key: {$pkey}",
+                "content-type: application/json",
+            ],
+        );
+
+        error_log('shntr transaction: ' . print_r($response, true));
     }
 
 
