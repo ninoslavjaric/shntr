@@ -37,6 +37,7 @@
                                 </div>
                             </div>
                         </div>
+                        {if $tab == "users"}
                         <hr>
                         <div class="form-group mb0">
                             <div class="input-group col-4">
@@ -53,6 +54,7 @@
                                 </div>
                             </div>
                         </div>
+                        {/if}
                     </form>
                 </div>
             </div>
