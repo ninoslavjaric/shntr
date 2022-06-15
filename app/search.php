@@ -2,7 +2,7 @@
 
 /**
  * search
- * 
+ *
  * @package Sngine
  * @author Zamblek
  */
@@ -22,11 +22,18 @@ if (!in_array($_GET['tab'], ["posts", "articles", "users", "pages", "groups", "e
 }
 
 try {
+    $current_cities = $user->get_available_current_cities();
+
+    $smarty->assign('current_cities', $current_cities);
+
+    $options = array_diff_key($_GET, array_flip(['query', 'tab', 'hashtag']));
+    $smarty->assign('query_string', '?' . http_build_query($options));
+    $smarty->assign('query_options', $options);
 
 	// search
-	if (isset($_GET['query'])) {
+	if (isset($_GET['query']) || !empty($options)) {
 		/* get results */
-		$results = $user->search($_GET['query'], $_GET['tab']);
+		$results = $user->search($_GET['query'], $_GET['tab'], 0, $options);
 		/* assign variables */
 		$smarty->assign('query', htmlentities($_GET['query'], ENT_QUOTES, 'utf-8'));
 		$smarty->assign('hashtag', (isset($_GET['hashtag']) && $_GET['hashtag'] == '1') ? true : false);

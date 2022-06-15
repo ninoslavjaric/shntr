@@ -28,12 +28,28 @@
             <!-- search form -->
             <div class="card">
                 <div class="card-body">
-                    <form class="js_search-form">
+                    <form class="js_search-form" data-tab="{$tab}">
                         <div class="form-group mb0">
                             <div class="input-group">
-                                <input type="text" class="form-control" name="query" placeholder='{__("Search")}'>
+                                <input type="text" class="form-control" name="query" placeholder='{__("Search")}' value="{$query}">
                                 <div class="input-group-append">
                                     <button type="submit" name="submit" class="btn btn-danger plr30"><i class="fas fa-search mr10"></i>{__("Search")}</button>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="form-group mb0">
+                            <div class="input-group col-4">
+                                <select name="current_city" id="current_city" class="form-control">
+                                    <option value="">---</option>
+                                    {foreach $current_cities as $city}
+                                        <option value="{$city}" {if $city==$query_options.current_city}selected{/if}>
+                                            {$city}
+                                        </option>
+                                    {/foreach}
+                                </select>
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn btn-danger plr30"><i class="fas fa-city mr10"></i>{__("Current city")}</button>
                                 </div>
                             </div>
                         </div>
@@ -48,46 +64,46 @@
                     <!-- panel nav -->
                     <ul class="nav nav-pills nav-fill nav-search mb10">
                         <li class="nav-item">
-                            <a class="nav-link rounded-pill {if $tab == "" || $tab == "posts"}active{/if}" href="{$system['system_url']}/search/{if $hashtag}hashtag/{/if}{$query}/posts">
+                            <a class="nav-link rounded-pill {if $tab == "" || $tab == "posts"}active{/if}" href="{$system['system_url']}/search/{if $hashtag}hashtag/{/if}{$query}/posts{$query_string}">
                                 <i class="fa fa-newspaper mr5"></i><strong>{__("Posts")}</strong>
                             </a>
                         </li>
                         {if $system['blogs_enabled']}
                             <li class="nav-item">
-                                <a class="nav-link rounded-pill {if $tab == "articles"}active{/if}" href="{$system['system_url']}/search/{if $hashtag}hashtag/{/if}{$query}/articles">
+                                <a class="nav-link rounded-pill {if $tab == "articles"}active{/if}" href="{$system['system_url']}/search/{if $hashtag}hashtag/{/if}{$query}/articles{$query_string}">
                                     <i class="fab fa-blogger-b mr5"></i><strong>{__("Articles")}</strong>
                                 </a>
                             </li>
                         {/if}
                         <li class="nav-item">
-                            <a class="nav-link rounded-pill {if $tab == "users"}active{/if}" href="{$system['system_url']}/search/{$query}/users">
+                            <a class="nav-link rounded-pill {if $tab == "users"}active{/if}" href="{$system['system_url']}/search/{$query}/users{$query_string}">
                                 <i class="fa fa-user mr5"></i><strong>{__("Users")}</strong>
                             </a>
                         </li>
                         {if $system['pages_enabled']}
                             <li class="nav-item">
-                                <a class="nav-link rounded-pill {if $tab == "pages"}active{/if}" href="{$system['system_url']}/search/{$query}/pages">
+                                <a class="nav-link rounded-pill {if $tab == "pages"}active{/if}" href="{$system['system_url']}/search/{$query}/pages{$query_string}">
                                     <i class="fa fa-flag mr5"></i><strong>{__("Pages")}</strong>
                                 </a>
                             </li>
                         {/if}
                         {if $system['groups_enabled']}
                             <li class="nav-item">
-                                <a class="nav-link rounded-pill {if $tab == "groups"}active{/if}" href="{$system['system_url']}/search/{$query}/groups">
+                                <a class="nav-link rounded-pill {if $tab == "groups"}active{/if}" href="{$system['system_url']}/search/{$query}/groups{$query_string}">
                                     <i class="fa fa-users mr5"></i><strong>{__("Groups")}</strong>
                                 </a>
                             </li>
                         {/if}
                         {if $system['events_enabled']}
                             <li class="nav-item">
-                                <a class="nav-link rounded-pill {if $tab == "events"}active{/if}" href="{$system['system_url']}/search/{$query}/events">
+                                <a class="nav-link rounded-pill {if $tab == "events"}active{/if}" href="{$system['system_url']}/search/{$query}/events{$query_string}">
                                     <i class="fa fa-calendar mr5"></i><strong>{__("Events")}</strong>
                                 </a>
                             </li>
                         {/if}
                     </ul>
                     <!-- panel nav -->
-                    
+
                     <div class="tab-content">
 
                         <div class="tab-pane active">
@@ -159,7 +175,7 @@
             </div>
         </div>
         <!-- content panel -->
-        
+
     </div>
 </div>
 <!-- page content -->

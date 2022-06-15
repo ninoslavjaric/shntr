@@ -1,6 +1,6 @@
 /**
  * core js
- * 
+ *
  * @package Sngine
  * @author Zamblek
  */
@@ -742,19 +742,47 @@ $(function () {
         e.preventDefault;
         var query = this.query.value;
         var handle = $(this).data('handle');
-        if (!is_empty(query)) {
-            if (handle !== undefined) {
-                window.location = site_path + '/' + handle + '/search/' + query
-            } else {
-                var hashtags = query.match(/#(\w+)/ig);
-                if (hashtags !== null && hashtags.length > 0) {
-                    var query = hashtags[0].replace("#", "");
-                    window.location = site_path + '/search/hashtag/' + query
-                } else {
-                    window.location = site_path + '/search/' + query
-                }
-            }
+        var tab = $(this).data('tab');
+
+        var location = site_path;
+
+        if (handle !== undefined) {
+            location += '/' + handle;
         }
+
+        location += '/search';
+
+        const params = Array.from(this.querySelectorAll('[name]:not([type=submit])'))
+          .filter(elem => elem.name === 'query' || Boolean(elem.value));
+
+        location += params.length > 1 ? '.php' : '/';
+
+        if (!is_empty(query) && params.length === 1) {
+            var hashtags = query.match(/#(\w+)/ig);
+
+
+            if (hashtags !== null && hashtags.length > 0) {
+                query = hashtags[0].replace("#", "");
+                location += '/hashtag/'
+            }
+
+            location += query
+
+            if (tab) {
+                location += '/' + tab;
+            }
+
+            window.location = location;
+        }
+
+        if (params.length > 1) {
+            const paramsJson = Object.fromEntries(new FormData(this).entries());
+
+            location += '?' + new URLSearchParams({ ...paramsJson, tab }).toString();
+
+            window.location = location;
+        }
+
         return false;
     });
 
