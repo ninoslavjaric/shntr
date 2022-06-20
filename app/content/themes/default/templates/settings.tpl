@@ -626,12 +626,14 @@
                             <div class="card-body">
                                 <div class="form-group">
                                     <label class="form-control-label">{__("Current City")}</label>
-                                    <input type="text" class="form-control js_geocomplete" name="city" value="{$user->_data['user_current_city']}">
+                                    <input type="text" class="form-control js_geocomplete autocomplete-geo" data-type="places" name="city" value="{$user->_data['user_current_city']}">
+                                    <input type="hidden" name="current_place">
                                 </div>
 
                                 <div class="form-group">
                                     <label class="form-control-label">{__("Hometown")}</label>
-                                    <input type="text" class="form-control js_geocomplete" name="hometown" value="{$user->_data['user_hometown']}">
+                                    <input type="text" class="form-control js_geocomplete autocomplete-geo" data-type="places" name="hometown" value="{$user->_data['user_hometown']}">
+                                    <input type="hidden" name="hometown_place">
                                 </div>
 
                                 <!-- custom fields -->

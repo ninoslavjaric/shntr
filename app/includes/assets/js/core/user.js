@@ -2177,4 +2177,17 @@ $(function () {
         });
     });
 
+    $('.autocomplete-geo').autocomplete({
+        delay: 750,
+        source: function(req, res) {
+            const _this = $(this.element);
+            $.get(`/includes/ajax/geo/suggest.php?type=${_this.data('type')}&query=${req.term}`, function (data) {
+                return res(data.map(item => ({value: item.city_id, label: item.value})))
+            })
+        },
+        select: function(evt, ui) {
+            evt.preventDefault();
+            $(evt.target).val(ui.item.label).next().val(ui.item.value);
+        }
+    });
 });
