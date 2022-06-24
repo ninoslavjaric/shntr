@@ -1460,11 +1460,14 @@ div.mce-fullscreen {
   right: 0;
   cursor: default;
   z-index: 9999;
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 .ui-widget-content {
   background: #fff;
   color: #444;
-  z-index: 99999;
+  z-index: 999999;
   padding: 10px;
   border-radius: 0 0 3px 3px;
   box-shadow: 0 3px 4px rgba(0, 0, 0, 0.15);

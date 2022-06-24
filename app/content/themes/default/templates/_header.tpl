@@ -145,7 +145,7 @@
                                                             </a>
                                                         {/if}
                                                         {if $user->_data['can_sell_products']}
-                                                            <div class="dropdown-item pointer" data-toggle="modal" data-url="posts/product.php?do=create">
+                                                            <div class="dropdown-item pointer" data-toggle="modal" data-url="posts/product.php?do=create" data-callback="geocompletionSetup">
                                                                 <i class="fas fa-cart-plus fa-fw mr10" style="color: #2b53a4;"></i>{__("Create Product")}
                                                             </div>
                                                         {/if}
@@ -165,12 +165,12 @@
                                                             </div>
                                                         {/if}
                                                         {if $user->_data['can_create_groups']}
-                                                            <div class="dropdown-item pointer" data-toggle="modal" data-url="pages_groups_events/add.php?type=group">
+                                                            <div class="dropdown-item pointer" data-toggle="modal" data-url="pages_groups_events/add.php?type=group"data-callback="geocompletionSetup">
                                                                 <i class="fas fa-users fa-fw mr10" style="color: #2b53a4;"></i>{__("Create Group")}
                                                             </div>
                                                         {/if}
                                                         {if $user->_data['can_create_events']}
-                                                            <div class="dropdown-item pointer" data-toggle="modal" data-url="pages_groups_events/add.php?type=event">
+                                                            <div class="dropdown-item pointer" data-toggle="modal" data-url="pages_groups_events/add.php?type=event" data-callback="geocompletionSetup">
                                                                 <i class="fas fa-calendar-plus fa-fw mr10" style="color: #f79f58;"></i>{__("Create Event")}
                                                             </div>
                                                         {/if}

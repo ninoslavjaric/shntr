@@ -25,6 +25,10 @@
             </span>
         </div>
         <div class="form-group">
+            <label class="form-control-label" for="location">{__("Location")}</label>
+            <input type="text" class="form-control js_geocomplete" data-type="places" name="location" id="location">
+        </div>
+        <div class="form-group">
             <label class="form-control-label" for="category">{__("Category")}</label>
             <select class="form-control" name="category" id="category">
                 <option>{__("Select Category")}</option>

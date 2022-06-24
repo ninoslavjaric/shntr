@@ -21,7 +21,7 @@
                         <!-- full-cover -->
                         <img class="js_position-cover-full x-hidden" src="{$group['group_cover_full']}">
                         <!-- full-cover -->
-                        
+
                         <!-- cropped-cover -->
                         <img class="js_position-cover-cropped js_lightbox" data-init-position="{$group['group_cover_position']}" data-id="{$group['group_cover_id']}" data-image="{$group['group_cover_full']}" data-context="album" src="{$group['group_cover']}" alt="{$group['group_title']}">
                         <!-- cropped-cover -->
@@ -65,7 +65,7 @@
                 <!-- profile-avatar -->
                 <div class="profile-avatar-wrapper">
                     <img {if $group['group_picture_id']} class="js_lightbox" data-id="{$group['group_picture_id']}" data-context="album" data-image="{$group['group_picture_full']}" {elseif !$group['group_picture_default']} class="js_lightbox-nodata" data-image="{$group['group_picture']}" {/if}  src="{$group['group_picture']}" alt="{$group['group_title']}">
-                    
+
                     {if $group['i_admin']}
                         <!-- buttons -->
                         <div class="profile-avatar-change">
@@ -117,7 +117,7 @@
                             <i class="fa fa-user-plus mr5"></i>{__("Join")}
                         </button>
                     {/if}
-                    
+
                     {if !$group['i_admin']}
                         {if $user->_logged_in}
                             <!-- report -->
@@ -247,6 +247,27 @@
                                         </div>
                                     </li>
                                     <!-- category -->
+                                    {if $group['group_location']}
+                                        <!-- group location -->
+                                        <li>
+                                            <div class="about-list-item">
+                                                <i class="fa fa-map-marker fa-fw fa-lg"></i>
+                                                {$group['group_location']}
+                                            </div>
+                                        </li>
+                                        {if $system['geolocation_enabled']}
+                                            <div style="margin-left: -20px; margin-right: -20px;">
+                                                <iframe
+                                                        width="100%"
+                                                        height="400px"
+                                                        src='https://api.mapbox.com/styles/v1/mapbox/streets-v11.html?title=false&zoomwheel=false&access_token={$system['geolocation_key']}#11/{$group['latitude']}/{$group['longitude']}'
+                                                        title="{$group['group_location']}"
+                                                        style="border:none;"
+                                                ></iframe>
+                                            </div>
+                                        {/if}
+                                        <!-- group location -->
+                                    {/if}
                                 </ul>
                             </div>
                         </div>
@@ -389,7 +410,7 @@
                         {/if}
                     </div>
                     <!-- left panel -->
-                
+
                 {elseif $view == "photos"}
                     <!-- photos -->
                     <div class="col-12">
@@ -434,7 +455,7 @@
                         </div>
                     </div>
                     <!-- photos -->
-                
+
                 {elseif $view == "albums"}
                     <!-- albums -->
                     <div class="col-12">
@@ -481,7 +502,7 @@
                         </div>
                     </div>
                     <!-- albums -->
-                
+
                 {elseif $view == "album"}
                     <!-- albums -->
                     <div class="col-12">
@@ -552,7 +573,7 @@
                         </div>
                     </div>
                     <!-- videos -->
-                
+
                 {elseif $view == "members"}
                     <!-- members -->
                     <div class="col-12">
@@ -607,7 +628,7 @@
                         </div>
                     </div>
                     <!-- members -->
-                
+
                 {elseif $view == "invites"}
                     <!-- invites -->
                     <div class="col-12">
@@ -660,7 +681,7 @@
                         </div>
                     </div>
                     <!-- invites -->
-                
+
                 {elseif $view == "settings"}
                     <div class="col-lg-3">
                         <div class="card">
@@ -698,6 +719,10 @@
                                         <div class="form-group">
                                             <label class="form-control-label" for="title">{__("Name Your Group")}</label>
                                             <input type="text" class="form-control" name="title" id="title" placeholder='{__("Name of your group")}' value="{$group['group_title']}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-control-label" for="location">{__("Location")}</label>
+                                            <input type="text" class="form-control js_geocomplete" data-type="places" data-id="{$group['group_location_id']}" name="location" id="location" value="{$group['group_location']}">
                                         </div>
                                         <div class="form-group">
                                             <label class="form-control-label" for="username">{__("Group Username")}</label>
@@ -895,7 +920,7 @@
                         </div>
                         <!-- edit -->
                     </div>
-                
+
                 {/if}
                 <!-- view content -->
             </div>

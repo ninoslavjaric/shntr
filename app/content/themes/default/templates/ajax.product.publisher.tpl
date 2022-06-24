@@ -37,7 +37,7 @@
         </div>
         <div class="form-group">
             <label class="form-control-label">{__("Location")}</label>
-            <input name="location" type="text" class="form-control js_geocomplete">
+            <input type="text" class="form-control js_geocomplete" data-type="places" name="location">
         </div>
         <div class="form-group">
             <label class="form-control-label">{__("Description")}</label>

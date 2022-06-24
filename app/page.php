@@ -2,7 +2,7 @@
 
 /**
  * page
- * 
+ *
  * @package Sngine
  * @author Zamblek
  */
@@ -23,7 +23,23 @@ if (is_empty($_GET['username']) || !valid_username($_GET['username'])) {
 try {
 
 	// [1] get main page info
-	$get_page = $db->query(sprintf("SELECT pages.*, picture_photo.source as page_picture_full, cover_photo.source as page_cover_full, pages_categories.category_name as page_category_name FROM pages LEFT JOIN posts_photos as picture_photo ON pages.page_picture_id = picture_photo.photo_id LEFT JOIN posts_photos as cover_photo ON pages.page_cover_id = cover_photo.photo_id LEFT JOIN pages_categories ON pages.page_category = pages_categories.category_id WHERE pages.page_name = %s", secure($_GET['username']))) or _error("SQL_ERROR_THROWEN");
+	$get_page = $db->query(
+	    sprintf(
+	        "SELECT 
+                   pages.*, 
+                   picture_photo.source as page_picture_full, 
+                   cover_photo.source as page_cover_full, 
+                   pages_categories.category_name as page_category_name,
+                   places.latitude, 
+                   places.longitude 
+            FROM pages 
+                LEFT JOIN posts_photos as picture_photo ON pages.page_picture_id = picture_photo.photo_id 
+                LEFT JOIN posts_photos as cover_photo ON pages.page_cover_id = cover_photo.photo_id 
+                LEFT JOIN pages_categories ON pages.page_category = pages_categories.category_id 
+                LEFT JOIN places ON places.id = pages.page_location_id
+            WHERE pages.page_name = %s", secure($_GET['username'])
+        )
+    ) or _error("SQL_ERROR_THROWEN");
 	if ($get_page->num_rows == 0) {
 		_error(404);
 	}

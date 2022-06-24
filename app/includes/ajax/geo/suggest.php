@@ -5,7 +5,7 @@
 require('../../../bootstrap.php');
 
 // check AJAX Request
-//is_ajax();
+is_ajax();
 /**
  * @var $db mysqli
  */

@@ -34,7 +34,7 @@
 			<!-- add new product -->
 			{if $user->_data['can_sell_products']}
 				<div class="mb10">
-					<button type="button" class="btn btn-sm btn-success btn-block rounded-pill" data-toggle="modal" data-url="posts/product.php?do=create">
+					<button type="button" class="btn btn-sm btn-success btn-block rounded-pill" data-toggle="modal" data-url="posts/product.php?do=create" data-callback="geocompletionSetup">
 		                <i class="fa fa-cart-plus mr10"></i>{__("Add New Product")}
 		            </button>
 				</div>
@@ -132,7 +132,7 @@
 										<a href="{$system['system_url']}/posts/{$post['post_id']}" class="title">{$post['product']['name']}</a>
 									</div>
 									<div class="product-meta">
-										<i class="fa fa-tag fa-fw mr5" style="color: #1f9cff;"></i>{__("Type")}: 
+										<i class="fa fa-tag fa-fw mr5" style="color: #1f9cff;"></i>{__("Type")}:
 										{if $post['product']['status'] == "new"}{__("New")}{else}{__("Used")}{/if}
 									</div>
 									<div class="product-meta">
@@ -144,7 +144,7 @@
 					{/foreach}
 				</div>
             {/if}
-			
+
 			{if $rows}
 				<div class="articles-widget-header clearfix">
 					<!-- sort -->
@@ -200,7 +200,7 @@
 					{/if}
                     <div class="articles-widget-title">{__("Products")}</div>
                 </div>
-				
+
 				<div class="row">
 					{foreach $rows as $post}
 						<div class="col-md-6 col-lg-4">
@@ -232,7 +232,7 @@
 										<a href="{$system['system_url']}/posts/{$post['post_id']}" class="title">{$post['product']['name']}</a>
 									</div>
 									<div class="product-meta">
-										<i class="fa fa-tag fa-fw mr5" style="color: #1f9cff;"></i>{__("Type")}: 
+										<i class="fa fa-tag fa-fw mr5" style="color: #1f9cff;"></i>{__("Type")}:
 										{if $post['product']['status'] == "new"}{__("New")}{else}{__("Used")}{/if}
 									</div>
 									<div class="product-meta">

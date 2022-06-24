@@ -13,6 +13,10 @@
             <input type="text" class="form-control" name="title" id="title">
         </div>
         <div class="form-group">
+            <label class="form-control-label" for="location">{__("Location")}</label>
+            <input type="text" class="form-control js_geocomplete" data-type="places" name="location" id="location">
+        </div>
+        <div class="form-group">
             <label class="form-control-label" for="username">{__("Group Username")}</label>
             <div class="input-group">
                 <div class="input-group-prepend">

@@ -5,6 +5,9 @@
  *
  * @package Sngine
  * @author Zamblek
+ * @var $system array
+ * @var $smarty Smarty_Internal_Data
+ * @var $user User
  */
 
 // remove timeout limit
@@ -56,6 +59,8 @@ try {
 					if (!$system['location_info_enabled']) {
 						_error(404);
 					}
+                    $smarty->assign('hometown', $user->get_hometown());
+                    $smarty->assign('current_place', $user->get_current_place());
 					break;
 
 				case 'education':

@@ -31,7 +31,7 @@
                 </ul>
                 {if $user->_data['can_create_pages']}
                     <div class="mt10 float-right">
-                        <button class="btn btn-sm btn-success d-none d-lg-block" data-toggle="modal" data-url="pages_groups_events/add.php?type=page">
+                        <button class="btn btn-sm btn-success d-none d-lg-block" data-toggle="modal" data-url="pages_groups_events/add.php?type=page" data-callback="geocompletionSetup">
                             <i class="fa fa-plus-circle mr5"></i>{__("Create Page")}
                         </button>
                         <button class="btn btn-sm btn-icon btn-success d-block d-lg-none" data-toggle="modal" data-url="pages_groups_events/add.php?type=page">

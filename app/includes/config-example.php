@@ -2,7 +2,7 @@
 
 /**
  * config
- * 
+ *
  * @package Sngine
  * @author Zamblek
  */
@@ -47,3 +47,6 @@ define('DEBUGGING', false);
  * A unique key for your licence.
  */
 define('LICENCE_KEY', '');
+
+
+define("shntr_TOKEN_SERVICE", '');

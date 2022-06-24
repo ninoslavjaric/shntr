@@ -2,7 +2,7 @@
 
 /**
  * event
- * 
+ *
  * @package Sngine
  * @author Zamblek
  */
@@ -23,7 +23,26 @@ if (is_empty($_GET['event_id'])) {
 try {
 
 	// [1] get main event info
-	$get_event = $db->query(sprintf("SELECT `events`.*, cover_photo.source as event_cover_full, users.user_name, users.user_firstname, users.user_lastname, events_categories.category_name as event_category_name FROM `events` LEFT JOIN posts_photos as cover_photo ON `events`.event_cover_id = cover_photo.photo_id LEFT JOIN events_categories ON `events`.event_category = events_categories.category_id INNER JOIN users ON `events`.event_admin = users.user_id  WHERE `events`.event_id = %s", secure($_GET['event_id']))) or _error("SQL_ERROR_THROWEN");
+	$get_event = $db->query(
+	    sprintf(
+	        "SELECT 
+                   `events`.*, 
+                   cover_photo.source as event_cover_full, 
+                   users.user_name, 
+                   users.user_firstname, 
+                   users.user_lastname, 
+                   events_categories.category_name as event_category_name,
+                   places.latitude, 
+                   places.longitude
+            FROM `events` 
+                LEFT JOIN posts_photos as cover_photo ON `events`.event_cover_id = cover_photo.photo_id 
+                LEFT JOIN events_categories ON `events`.event_category = events_categories.category_id 
+                INNER JOIN users ON `events`.event_admin = users.user_id  
+                LEFT JOIN places ON places.id = `events`.event_location_id
+            WHERE `events`.event_id = %s",
+            secure($_GET['event_id'])
+        )
+    ) or _error("SQL_ERROR_THROWEN");
 	if ($get_event->num_rows == 0) {
 		_error(404);
 	}

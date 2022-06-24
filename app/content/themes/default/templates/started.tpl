@@ -49,7 +49,7 @@
                             <h3 class="mb5">{__("Welcome")} <span class="text-primary">{$user->_data['name']}</span></h3>
                             <p class="mb20">{__("Let's start with your photo")}</p>
                         </div>
-                        
+
                         <!-- profile-avatar -->
                         <div class="position-relative" style="height: 170px;">
                             <div class="profile-avatar-wrapper static">
@@ -106,11 +106,11 @@
                                     <div class="row">
                                         <div class="form-group col-md-6">
                                             <label class="form-control-label" for="city">{__("Current City")}</label>
-                                            <input type="text" class="form-control js_geocomplete" name="city" id="city" value="{$user->_data['user_current_city']}">
+                                            <input type="text" class="form-control js_geocomplete" data-type="places" name="city" id="city" value="{$user->_data['user_current_city']}">
                                         </div>
                                         <div class="form-group col-md-6">
                                             <label class="form-control-label" for="hometown">{__("Hometown")}</label>
-                                            <input type="text" class="form-control js_geocomplete" name="hometown" id="hometown" value="{$user->_data['user_hometown']}">
+                                            <input type="text" class="form-control js_geocomplete" data-type="places" name="hometown" id="hometown" value="{$user->_data['user_hometown']}">
                                         </div>
                                     </div>
                                 {/if}
@@ -139,7 +139,7 @@
                                     </div>
                                 </div>
                             {/if}
-                            
+
                             {if $system['education_info_enabled']}
                                 <div class="divider"></div>
 
@@ -163,7 +163,7 @@
                                     </div>
                                 </div>
                             {/if}
-                                
+
                             <!-- success -->
                             <div class="alert alert-success x-hidden"></div>
                             <!-- success -->
@@ -188,7 +188,7 @@
                             <h3 class="mb5">{__("Add Friends")}</h3>
                             <p class="mb20">{__("Get latest activities from our popular users")}</p>
                         </div>
-                        
+
                         <!-- new people -->
                         {if $new_people}
                             <ul class="row">

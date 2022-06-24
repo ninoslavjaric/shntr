@@ -33,7 +33,7 @@
         <!-- publisher scraper -->
         <div class="publisher-scraper"></div>
         <!-- publisher scraper -->
-        
+
         <!-- post attachments -->
         <div class="publisher-attachments attachments clearfix x-hidden"></div>
         <!-- post attachments -->
@@ -309,7 +309,7 @@
                 {/if}
                 {if $user->_data['can_sell_products'] && $_handle != "page" && $_handle != "group" && $_handle != "event"}
                     <li class="col-md-6">
-                        <div class="publisher-tools-tab link js_publisher-tab" data-tab="product" data-toggle="modal" data-url="posts/product.php?do=create">
+                        <div class="publisher-tools-tab link js_publisher-tab" data-tab="product" data-toggle="modal" data-url="posts/product.php?do=create" data-callback="geocompletionSetup">
                             {include file='__svg_icons.tpl' icon="products" class="mr5" width="24px" height="24px"}
                             {__("Sell Something")}
                         </div>

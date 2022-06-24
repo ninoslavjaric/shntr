@@ -416,6 +416,8 @@ $(function () {
         var url = $(this).data('url');
         var options = $(this).data('options');
         var size = $(this).data('size') || "default";
+        var callback = $(this).data('callback');
+
         if (url.indexOf('#') == 0) {
             /* open already loaded modal with #id */
             modal(url, options, size);
@@ -433,6 +435,11 @@ $(function () {
             })
                 .fail(function () {
                     modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                })
+                .always(function() {
+                    if (callback && window[callback]) {
+                        window[callback]();
+                    }
                 });
         }
     });

@@ -120,7 +120,7 @@
                                 </div>
                             </a>
                         {elseif $_post['post_type'] == "product"}
-                            <div class="dropdown-item pointer" data-toggle="modal" data-url="posts/product.php?do=edit&post_id={$_post['post_id']}">
+                            <div class="dropdown-item pointer" data-toggle="modal" data-url="posts/product.php?do=edit&post_id={$_post['post_id']}" data-callback="geocompletionSetup">
                                 <div class="action no-desc">
                                     <i class="fa fa-pencil-alt fa-fw"></i> {__("Edit Product")}
                                 </div>
@@ -248,13 +248,13 @@
                 <i data-toggle="tooltip" data-placement="top" title='{__($_post['package_name'])} {__('Member')}' class="fa fa-bolt fa-fw pro-badge"></i>
             {/if}
         {/if}
-            
+
         <!-- post author -->
 
         <!-- post-title -->
         <span class="post-title">
             {if !$_shared && $_post['post_type'] == "shared"}
-                {__("shared")} 
+                {__("shared")}
                 {if $_post['origin']['is_anonymous']}
                     {__("Anonymous post")}
                 {else}
@@ -262,7 +262,7 @@
                         <a href="{$_post['origin']['post_author_url']}">
                             {$_post['origin']['post_author_name']}
                         </a>{__("'s")}
-                    </span> 
+                    </span>
                     <a href="{$system['system_url']}/posts/{$_post['origin']['post_id']}">
                         {if $_post['origin']['post_type'] == 'link'}
                             {__("link")}
@@ -390,7 +390,7 @@
             </span>
         {/if}
         <!-- post feeling -->
-        
+
         <!-- post time & location & privacy -->
         <div class="post-time">
             <a href="{$system['system_url']}/posts/{$_post['post_id']}" class="js_moment" data-time="{$_post['time']}">{$_post['time']}</a>
@@ -401,7 +401,7 @@
              - <span class="text-link js_translator">{__("Translate")}</span>
             {/if}
             {if $system['newsfeed_source'] == "default"}
-                - 
+                -
                 {if !$_post['is_anonymous'] && !$_shared && $_post['manage_post'] && $_post['user_type'] == 'user' && !$_post['in_group'] && !$_post['in_event'] && $_post['post_type'] != "article" && $_post['post_type'] != "product" && $_post['post_type'] != "funding"}
                     <!-- privacy -->
                     {if $_post['privacy'] == "me"}
@@ -525,7 +525,7 @@
                         </div>
                     </div>
                 {/if}
-                    
+
             {elseif $_post['media']['source_provider'] == "Vimeo" || $_post['media']['source_provider'] == "SoundCloud"}
                 <div class="post-media">
                     <div class="embed-responsive embed-responsive-16by9">

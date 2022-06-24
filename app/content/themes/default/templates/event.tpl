@@ -21,12 +21,12 @@
                         <!-- full-cover -->
                         <img class="js_position-cover-full x-hidden" src="{$event['event_cover_full']}">
                         <!-- full-cover -->
-                        
+
                         <!-- cropped-cover -->
                         <img class="js_position-cover-cropped js_lightbox" data-init-position="{$event['event_cover_position']}" data-id="{$event['event_cover_id']}" data-image="{$event['event_cover_full']}" data-context="album" src="{$event['event_cover']}" alt="{$event['event_title']}">
                         <!-- cropped-cover -->
                     {/if}
-                    
+
                     {if $event['i_admin']}
                         <!-- buttons -->
                         <div class="profile-cover-buttons">
@@ -251,7 +251,13 @@
                                         </li>
                                         {if $system['geolocation_enabled']}
                                             <div style="margin-left: -20px; margin-right: -20px;">
-                                                <iframe width="100%" frameborder="0" style="border:0;" src="https://www.google.com/maps/embed/v1/place?key={$system['geolocation_key']}&amp;q={$event['event_location']}&amp;language=en"></iframe>
+                                                <iframe
+                                                        width="100%"
+                                                        height="400px"
+                                                        src='https://api.mapbox.com/styles/v1/mapbox/streets-v11.html?title=false&zoomwheel=false&access_token={$system['geolocation_key']}#11/{$event['latitude']}/{$event['longitude']}'
+                                                        title="{$event['event_location']}"
+                                                        style="border:none;"
+                                                ></iframe>
                                             </div>
                                         {/if}
                                         <!-- event location -->
@@ -403,7 +409,7 @@
                         {/if}
                     </div>
                     <!-- left panel -->
-                
+
                 {elseif $view == "photos"}
                     <!-- photos -->
                     <div class="col-12">
@@ -448,7 +454,7 @@
                         </div>
                     </div>
                     <!-- photos -->
-                
+
                 {elseif $view == "albums"}
                     <!-- albums -->
                     <div class="col-12">
@@ -495,7 +501,7 @@
                         </div>
                     </div>
                     <!-- albums -->
-                
+
                 {elseif $view == "album"}
                     <!-- albums -->
                     <div class="col-12">
@@ -566,7 +572,7 @@
                         </div>
                     </div>
                     <!-- videos -->
-                
+
                 {elseif $view == "going" || $view == "interested" || $view == "invited" || $view == "invites"}
                     <!-- members -->
                     <div class="col-12">
@@ -637,7 +643,7 @@
                         </div>
                     </div>
                     <!-- members -->
-                
+
                 {elseif $view == "settings"}
                     <div class="col-lg-3">
                         <div class="card">
@@ -668,7 +674,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label class="form-control-label" for="location">{__("Location")}</label>
-                                            <input type="text" class="form-control" name="location" id="location" value="{$event['event_location']}">
+                                            <input type="text" class="form-control js_geocomplete" data-type="places" data-id="{$event['page_location_id']}" name="location" id="location" value="{$event['event_location']}">
                                         </div>
                                         <div class="form-group">
                                             <label class="form-control-label">{__("Start Date")}</label>
@@ -780,7 +786,7 @@
                         </div>
                         <!-- edit -->
                     </div>
-                
+
                 {elseif $view == "about"}
                     <!-- info -->
                     <div class="col-12">
@@ -791,7 +797,7 @@
                         </div>
                     </div>
                     <!-- info -->
-                
+
                 {/if}
                 <!-- view content -->
             </div>

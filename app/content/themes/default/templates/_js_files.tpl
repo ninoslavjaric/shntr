@@ -76,7 +76,7 @@
     var __ = [];
     __['Ask something'] = "{__('Ask something')}";
     __['Add Friend'] = "{__('Add Friend')}";
-    __['Friends'] = "{__('Friends')}"; 
+    __['Friends'] = "{__('Friends')}";
     __['Sent'] = "{__('Sent')}";
     __['Following'] = "{__('Following')}";
     __['Follow'] = "{__('Follow')}";
@@ -288,8 +288,9 @@
 
     <!-- Google Geocomplete -->
     {if $system['geolocation_enabled']}
-        <script src="{$system['system_url']}/includes/assets/js/plugins/jquery.geocomplete/jquery.geocomplete.min.js"></script>
-        <script src="https://maps.googleapis.com/maps/api/js?libraries=places&key={$system['geolocation_key']}"></script>
+        <script src="{$system['system_url']}/includes/assets/js/plugins/jquery.geocomplete/custom.js"></script>
+{*        <script src="{$system['system_url']}/includes/assets/js/plugins/jquery.geocomplete/jquery.geocomplete.min.js"></script>*}
+{*        <script src="https://maps.googleapis.com/maps/api/js?libraries=places&key={$system['geolocation_key']}"></script>*}
     {/if}
     <!-- Google Geocomplete -->
 
@@ -568,7 +569,7 @@
                     {/foreach}
                 ]
             });
-            
+
         });
         </script>
     {/if}

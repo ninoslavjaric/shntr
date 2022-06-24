@@ -60,7 +60,7 @@
     {elseif $_filter == "product"}
     	{if $user->_data['can_sell_products']}
 	        <div class="float-right">
-	            <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-url="posts/product.php?do=create">
+	            <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-url="posts/product.php?do=create" data-callback="geocompletionSetup">
 	                <i class="fa fa-plus-circle mr5"></i>{__("Add New Product")}
 	            </button>
 	    	</div>

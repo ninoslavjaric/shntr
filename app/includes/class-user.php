@@ -5026,7 +5026,26 @@ class User
             case 'product':
                 /* insert product details */
                 /* Note: no need to return any data as publisher will redirect to post link */
-                $db->query(sprintf("INSERT INTO posts_products (post_id, name, price, category_id, status, location) VALUES (%s, %s, %s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($args['product']->name), secure($args['product']->price), secure($args['product']->category, 'int'), secure($args['product']->status), secure($args['product']->location))) or _error("SQL_ERROR_THROWEN");
+                $db->query(
+                    sprintf(
+                        "INSERT INTO posts_products (
+                                post_id,
+                                name,
+                                price,
+                                category_id,
+                                status,
+                                location,
+                                location_id
+                            ) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                            secure($post['post_id'], 'int'),
+                            secure($args['product']->name),
+                            secure($args['product']->price),
+                            secure($args['product']->category, 'int'),
+                            secure($args['product']->status),
+                            secure($args['product']->location),
+                            secure($args['product']->location_id, 'int')
+                        )
+                ) or _error("SQL_ERROR_THROWEN");
                 /* insert product photos */
                 if (count($args['photos']) > 0) {
                     foreach ($args['photos'] as $photo) {
@@ -5665,7 +5684,12 @@ class User
 
             case 'product':
                 /* get product */
-                $get_product = $db->query(sprintf("SELECT * FROM posts_products WHERE post_id = %s", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_product = $db->query(
+                    sprintf(
+                        "SELECT * FROM posts_products WHERE post_id = %s",
+                        secure($post['post_id'], 'int')
+                    )
+                ) or _error("SQL_ERROR_THROWEN");
                 /* check if product has been deleted */
                 if ($get_product->num_rows == 0) {
                     return false;
@@ -6078,7 +6102,36 @@ class User
         global $db, $system;
 
         /* get post */
-        $get_post = $db->query(sprintf("SELECT posts.*, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_picture_id, users.user_cover, users.user_cover_id, users.user_verified, users.user_subscribed, users.user_pinned_post, users.user_banned, packages.name as package_name, pages.*, `groups`.*, `events`.* FROM posts LEFT JOIN users ON posts.user_id = users.user_id AND posts.user_type = 'user' LEFT JOIN packages ON users.user_subscribed = '1' AND users.user_package = packages.package_id LEFT JOIN pages ON posts.user_id = pages.page_id AND posts.user_type = 'page' LEFT JOIN `groups` ON posts.in_group = '1' AND posts.group_id = `groups`.group_id LEFT JOIN `events` ON posts.in_event = '1' AND posts.event_id = `events`.event_id WHERE NOT (users.user_name <=> NULL AND pages.page_name <=> NULL) AND posts.post_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_post = $db->query(
+            sprintf(
+                "SELECT 
+                   posts.*, 
+                   users.user_name,
+                   users.user_firstname,
+                   users.user_lastname,
+                   users.user_gender,
+                   users.user_picture,
+                   users.user_picture_id,
+                   users.user_cover,
+                   users.user_cover_id,
+                   users.user_verified,
+                   users.user_subscribed,
+                   users.user_pinned_post,
+                   users.user_banned,
+                   packages.name as package_name,
+                   pages.*,
+                   `groups`.*,
+                   `events`.* 
+            FROM posts 
+                LEFT JOIN users ON posts.user_id = users.user_id AND posts.user_type = 'user' 
+                LEFT JOIN packages ON users.user_subscribed = '1' AND users.user_package = packages.package_id 
+                LEFT JOIN pages ON posts.user_id = pages.page_id AND posts.user_type = 'page' 
+                LEFT JOIN `groups` ON posts.in_group = '1' AND posts.group_id = `groups`.group_id 
+                LEFT JOIN `events` ON posts.in_event = '1' AND posts.event_id = `events`.event_id 
+            WHERE NOT (users.user_name <=> NULL AND pages.page_name <=> NULL) AND posts.post_id = %s",
+       secure($id, 'int')
+            )
+        ) or _error("SQL_ERROR_THROWEN");
         if ($get_post->num_rows == 0) {
             return false;
         }
@@ -9294,6 +9347,10 @@ class User
         if (!$this->_data['can_create_pages']) {
             throw new Exception(__("You don't have the permission to do this"));
         }
+        // validate location
+        if (is_empty($args['location']) || is_empty($args['location_id'])) {
+            throw new Exception(__("You must enter a name for your event"));
+        }
         /* validate title */
         if (is_empty($args['title'])) {
             throw new Exception(__("You must enter a title for your page"));
@@ -9325,7 +9382,28 @@ class User
         /* set custom fields */
         $custom_fields = $this->set_custom_fields($args, "page");
         /* insert new page */
-        $db->query(sprintf("INSERT INTO pages (page_admin, page_category, page_name, page_title, page_description, page_date) VALUES (%s, %s, %s, %s, %s, %s)", secure($this->_data['user_id'], 'int'), secure($args['category'], 'int'), secure($args['username']), secure($args['title']), secure($args['description']), secure($date))) or _error("SQL_ERROR_THROWEN");
+        $db->query(
+            sprintf(
+                "INSERT INTO pages (
+                       page_admin, 
+                       page_category, 
+                       page_name, 
+                       page_title, 
+                       page_description, 
+                       page_location, 
+                       page_location_id, 
+                       page_date
+               ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+                secure($this->_data['user_id'], 'int'),
+                secure($args['category'], 'int'),
+                secure($args['username']),
+                secure($args['title']),
+                secure($args['description']),
+                secure($args['location']),
+                secure($args['location_id'], 'int'),
+                secure($date)
+            )
+        ) or _error("SQL_ERROR_THROWEN");
         /* get page_id */
         $page_id = $db->insert_id;
         /* insert custom fields values */
@@ -9744,6 +9822,10 @@ class User
         if (!$this->_data['can_create_groups']) {
             throw new Exception(__("You don't have the permission to do this"));
         }
+        // validate location
+        if (is_empty($args['location']) || is_empty($args['location_id'])) {
+            throw new Exception(__("You must enter a name for your event"));
+        }
         /* validate title */
         if (is_empty($args['title'])) {
             throw new Exception(__("You must enter a name for your group"));
@@ -9779,7 +9861,30 @@ class User
         /* set custom fields */
         $custom_fields = $this->set_custom_fields($args, "group");
         /* insert new group */
-        $db->query(sprintf("INSERT INTO `groups` (group_privacy, group_admin, group_name, group_category, group_title, group_description, group_date) VALUES (%s, %s, %s, %s, %s, %s, %s)", secure($args['privacy']), secure($this->_data['user_id'], 'int'), secure($args['username']), secure($args['category']), secure($args['title']), secure($args['description']), secure($date))) or _error("SQL_ERROR_THROWEN");
+        $db->query(
+            sprintf(
+                "INSERT INTO `groups` (
+                    group_privacy,
+                    group_admin,
+                    group_name,
+                    group_category,
+                    group_title,
+                    group_description,
+                    group_date,
+                    group_location,
+                    group_location_id
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                secure($args['privacy']),
+                secure($this->_data['user_id'], 'int'),
+                secure($args['username']),
+                secure($args['category']),
+                secure($args['title']),
+                secure($args['description']),
+                secure($date),
+                secure($args['location']),
+                secure($args['location_id'], 'int')
+            )
+        ) or _error("SQL_ERROR_THROWEN");
         /* get group_id */
         $group_id = $db->insert_id;
         /* insert custom fields values */
@@ -9870,7 +9975,31 @@ class User
         /* update the group */
         $args['group_publish_enabled'] = (isset($args['group_publish_enabled'])) ? '1' : '0';
         $args['group_publish_approval_enabled'] = (isset($args['group_publish_approval_enabled'])) ? '1' : '0';
-        $db->query(sprintf("UPDATE `groups` SET group_privacy = %s, group_category = %s, group_name = %s, group_title = %s, group_description = %s, group_publish_enabled = %s, group_publish_approval_enabled = %s WHERE group_id = %s", secure($args['privacy']), secure($args['category']), secure($args['username']), secure($args['title']), secure($args['description']), secure($args['group_publish_enabled']), secure($args['group_publish_approval_enabled']), secure($group_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(
+            sprintf(
+                "UPDATE `groups` SET 
+                    group_privacy = %s,
+                    group_category = %s,
+                    group_name = %s,
+                    group_title = %s,
+                    group_description = %s,
+                    group_publish_enabled = %s,
+                    group_publish_approval_enabled = %s ,
+                    group_location = %s ,
+                    group_location_id = %s 
+                WHERE group_id = %s",
+                secure($args['privacy']),
+                secure($args['category']),
+                secure($args['username']),
+                secure($args['title']),
+                secure($args['description']),
+                secure($args['group_publish_enabled']),
+                secure($args['group_publish_approval_enabled']),
+                secure($args['location']),
+                secure($args['location_id'], 'int'),
+                secure($group_id, 'int')
+            )
+        ) or _error("SQL_ERROR_THROWEN");
         /* check if group privacy changed to public */
         if ($args['privacy'] == "public") {
             /* approve any pending join requests */
@@ -10234,6 +10363,10 @@ class User
         if (!$this->_data['can_create_events']) {
             throw new Exception(__("You don't have the permission to do this"));
         }
+        // validate location
+        if (is_empty($args['location']) || is_empty($args['location_id'])) {
+            throw new Exception(__("You must enter a name for your event"));
+        }
         /* validate title */
         if (is_empty($args['title'])) {
             throw new Exception(__("You must enter a name for your event"));
@@ -10266,7 +10399,32 @@ class User
         /* set custom fields */
         $custom_fields = $this->set_custom_fields($args, "event");
         /* insert new event */
-        $db->query(sprintf("INSERT INTO `events` (event_privacy, event_admin, event_category, event_title, event_location, event_description, event_start_date, event_end_date, event_date) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)", secure($args['privacy']), secure($this->_data['user_id'], 'int'), secure($args['category'], 'int'), secure($args['title']), secure($args['location']), secure($args['description']), secure($args['start_date'], 'datetime'), secure($args['end_date'], 'datetime'), secure($date))) or _error("SQL_ERROR_THROWEN");
+        $db->query(
+            sprintf(
+                "INSERT INTO `events` (
+                      event_privacy, 
+                      event_admin, 
+                      event_category, 
+                      event_title, 
+                      event_location,
+                      event_location_id,
+                      event_description,
+                      event_start_date,
+                      event_end_date,
+                      event_date
+                  ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                secure($args['privacy']),
+                secure($this->_data['user_id'], 'int'),
+                secure($args['category'], 'int'),
+                secure($args['title']),
+                secure($args['location']),
+                secure($args['location_id'], 'int'),
+                secure($args['description']),
+                secure($args['start_date'], 'datetime'),
+                secure($args['end_date'], 'datetime'),
+                secure($date)
+            )
+        ) or _error("SQL_ERROR_THROWEN");
         /* get event_id */
         $event_id = $db->insert_id;
         /* insert custom fields values */
@@ -15124,7 +15282,14 @@ class User
                 /* set custom fields */
                 $this->set_custom_fields($args, "user", "settings", $this->_data['user_id']);
                 /* update user */
-                $db->query(sprintf("UPDATE users SET user_current_city = %s, user_hometown = %s WHERE user_id = %s", secure($args['city']), secure($args['hometown']), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(
+                    sprintf(
+                        "UPDATE users SET user_current_place_id = %s, user_hometown_place_id = %s WHERE user_id = %s",
+                        secure($args['city_id'], 'int'),
+                        secure($args['hometown_id'], 'int'),
+                        secure($this->_data['user_id'], 'int')
+                    )
+                ) or _error("SQL_ERROR_THROWEN");
                 break;
 
             case 'education':
@@ -15360,7 +15525,36 @@ class User
                     $args['work_url'] = 'null';
                 }
                 /* update user */
-                $db->query(sprintf("UPDATE users SET user_country = %s, user_work_title = %s, user_work_place = %s, user_work_url = %s, user_current_city = %s, user_hometown = %s, user_edu_major = %s, user_edu_school = %s, user_edu_class = %s WHERE user_id = %s", secure($args['country'], 'int'), secure($args['work_title']), secure($args['work_place']), secure($args['work_url']), secure($args['city']), secure($args['hometown']), secure($args['edu_major']), secure($args['edu_school']), secure($args['edu_class']), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(
+                    sprintf(
+                        "UPDATE users 
+                        SET 
+                            user_country = %s, 
+                            user_work_title = %s, 
+                            user_work_place = %s, 
+                            user_work_url = %s, 
+                            user_current_city = %s, 
+                            user_hometown = %s, 
+                            user_edu_major = %s, 
+                            user_edu_school = %s, 
+                            user_edu_class = %s,
+                            user_current_place_id = %s, 
+                            user_hometown_place_id = %s
+                        WHERE user_id = %s",
+                        secure($args['country'], 'int'),
+                        secure($args['work_title']),
+                        secure($args['work_place']),
+                        secure($args['work_url']),
+                        secure($args['city']),
+                        secure($args['hometown']),
+                        secure($args['edu_major']),
+                        secure($args['edu_school']),
+                        secure($args['edu_class']),
+                        secure($args['city_id'], 'int'),
+                        secure($args['hometown_id'], 'int'),
+                        secure($this->_data['user_id'], 'int')
+                    )
+                ) or _error("SQL_ERROR_THROWEN");
                 break;
         }
     }
@@ -16461,6 +16655,38 @@ class User
             return true;
         }
         return false;
+    }
+
+    private function get_place($id)
+    {
+        global $db;
+
+        if (!$id) {
+            return [];
+        }
+
+        $sql = "select
+                    co.id as country_id, 
+                    st.id as state_id, 
+                    ct.id as city_id, 
+                    concat(co.name, if(isnull(st.name), '', concat(' > ', st.name)), ' > ', ct.name) as value
+                from places as ct
+                         left join states as st on st.id = ct.state_id
+                         inner join countries as co on co.id = ct.country_id
+                where ct.id = {$id}
+                order by co.name, st.alternative_name, ct.asciiname";
+
+        return $db->query($sql)->fetch_assoc();
+    }
+
+    public function get_hometown()
+    {
+        return $this->get_place($this->_data['user_hometown_place_id']);
+    }
+
+    public function get_current_place()
+    {
+        return $this->get_place($this->_data['user_current_place_id']);
     }
 }
 

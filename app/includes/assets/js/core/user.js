@@ -51,9 +51,9 @@ function initialize_modal() {
         }
     });
     // run geocomplete plugin
-    if (geolocation_enabled) {
-        $(".js_geocomplete").geocomplete();
-    }
+    // if (geolocation_enabled) {
+    //     $(".js_geocomplete").geocomplete();
+    // }
     // run bootstrap selectpicker plugin
     if ($(".selectpicker").length > 0) {
         $('.selectpicker').selectpicker({
@@ -402,9 +402,9 @@ $(function () {
 
 
     // init geocomplete plugin
-    if (geolocation_enabled) {
-        $(".js_geocomplete").geocomplete();
-    }
+    // if (geolocation_enabled) {
+    //     $(".js_geocomplete").geocomplete();
+    // }
 
 
     // init datetimepicker plugin
@@ -2175,19 +2175,5 @@ $(function () {
                     modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
                 });
         });
-    });
-
-    $('.autocomplete-geo').autocomplete({
-        delay: 750,
-        source: function(req, res) {
-            const _this = $(this.element);
-            $.get(`/includes/ajax/geo/suggest.php?type=${_this.data('type')}&query=${req.term}`, function (data) {
-                return res(data.map(item => ({value: item.city_id, label: item.value})))
-            })
-        },
-        select: function(evt, ui) {
-            evt.preventDefault();
-            $(evt.target).val(ui.item.label).next().val(ui.item.value);
-        }
     });
 });

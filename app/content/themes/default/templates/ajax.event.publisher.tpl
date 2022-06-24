@@ -14,7 +14,7 @@
         </div>
         <div class="form-group">
             <label class="form-control-label" for="location">{__("Location")}</label>
-            <input type="text" class="form-control js_geocomplete" name="location" id="location">
+            <input type="text" class="form-control js_geocomplete" data-type="places" name="location" id="location">
         </div>
         <div class="form-group">
             <label class="form-control-label">{__("Start Date")}</label>

@@ -37,10 +37,10 @@
                 </ul>
                 {if $user->_data['can_create_events']}
                     <div class="mt10 float-right">
-                        <button class="btn btn-sm btn-success d-none d-lg-block" data-toggle="modal" data-url="pages_groups_events/add.php?type=event">
+                        <button class="btn btn-sm btn-success d-none d-lg-block" data-toggle="modal" data-url="pages_groups_events/add.php?type=event" data-callback="geocompletionSetup">
                             <i class="fa fa-plus-circle mr5"></i>{__("Create Event")}
                         </button>
-                        <button class="btn btn-sm btn-icon btn-success d-block d-lg-none" data-toggle="modal" data-url="pages_groups_events/add.php?type=event">
+                        <button class="btn btn-sm btn-icon btn-success d-block d-lg-none" data-toggle="modal" data-url="pages_groups_events/add.php?type=event" data-callback="geocompletionSetup">
                             <i class="fa fa-plus-circle"></i>
                         </button>
                     </div>

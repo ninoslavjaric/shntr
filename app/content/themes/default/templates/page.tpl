@@ -21,7 +21,7 @@
                         <!-- full-cover -->
                         <img class="js_position-cover-full x-hidden" src="{$spage['page_cover_full']}">
                         <!-- full-cover -->
-                        
+
                         <!-- cropped-cover -->
                         <img class="js_position-cover-cropped js_lightbox" data-init-position="{$spage['page_cover_position']}" data-id="{$spage['page_cover_id']}" data-image="{$spage['page_cover_full']}" data-context="album" src="{$spage['page_cover']}" alt="{$spage['page_title']}">
                         <!-- cropped-cover -->
@@ -48,7 +48,7 @@
                             </div>
                         </div>
                         <!-- buttons -->
-                        
+
                         <!-- loaders -->
                         <div class="profile-cover-change-loader">
                             <div class="progress x-progress">
@@ -66,7 +66,7 @@
                 <!-- profile-avatar -->
                 <div class="profile-avatar-wrapper">
                     <img {if !$spage['page_picture_default']} class="js_lightbox" data-id="{$spage['page_picture_id']}" data-image="{$spage['page_picture_full']}" data-context="album" {/if} src="{$spage['page_picture']}" alt="{$spage['page_title']}">
-                    
+
                     {if $spage['i_admin']}
                         <!-- buttons -->
                         <div class="profile-avatar-change">
@@ -118,7 +118,7 @@
                         <a target="_blank" href="{$spage['page_action_url']}" class="btn btn-sm btn-{$spage['page_action_color']}">{$spage['page_action_text']}</a>
                     {/if}
                     <!-- custom button -->
-                    
+
                     {if $spage['i_admin']}
                         {if $system['packages_enabled']}
                             <!-- boost -->
@@ -215,7 +215,7 @@
             <div class="row">
                 <!-- view content -->
                 {if $view == ""}
-                    
+
                     <!-- left panel -->
                     <div class="order-1 col-lg-3 order-lg-1">
                         <!-- panel [about] -->
@@ -279,7 +279,13 @@
                                         </li>
                                         {if $system['geolocation_enabled']}
                                             <div style="margin-left: -20px; margin-right: -20px;">
-                                                <iframe width="100%" frameborder="0" style="border:0;" src="https://www.google.com/maps/embed/v1/place?key={$system['geolocation_key']}&amp;q={$spage['page_location']}&amp;language=en"></iframe>
+                                                <iframe
+                                                        width="100%"
+                                                        height="400px"
+                                                        src='https://api.mapbox.com/styles/v1/mapbox/streets-v11.html?title=false&zoomwheel=false&access_token={$system['geolocation_key']}#11/{$spage['latitude']}/{$spage['longitude']}'
+                                                        title="{$event['event_location']}"
+                                                        style="border:none;"
+                                                ></iframe>
                                             </div>
                                         {/if}
                                     {/if}
@@ -417,13 +423,13 @@
                             {include file='_pinned_post.tpl' post=$pinned_post}
                         {/if}
                         <!-- pinned post -->
-                        
+
                         <!-- posts -->
                         {include file='_posts.tpl' _get="posts_page" _id=$spage['page_id']}
                         <!-- posts -->
                     </div>
                     <!-- center panel -->
-                
+
                 {elseif $view == "photos"}
                     <!-- photos -->
                     <div class="col-12">
@@ -468,7 +474,7 @@
                         </div>
                     </div>
                     <!-- photos -->
-                
+
                 {elseif $view == "albums"}
                     <!-- albums -->
                     <div class="col-12">
@@ -515,7 +521,7 @@
                         </div>
                     </div>
                     <!-- albums -->
-                
+
                 {elseif $view == "album"}
                     <!-- albums -->
                     <div class="col-12">
@@ -586,7 +592,7 @@
                         </div>
                     </div>
                     <!-- videos -->
-                
+
                 {elseif $view == "invites"}
                     <!-- invites -->
                     <div class="col-12">
@@ -623,7 +629,7 @@
                         </div>
                     </div>
                     <!-- invites -->
-                
+
                 {elseif $view == "settings"}
                     <div class="col-lg-3">
                         <div class="card">
@@ -695,7 +701,7 @@
                                                 {/foreach}
                                             </select>
                                         </div>
-                                        
+
                                         <!-- error -->
                                         <div class="alert alert-danger mb0 x-hidden"></div>
                                         <!-- error -->
@@ -704,7 +710,7 @@
                                         <button type="submit" class="btn btn-primary">{__("Save Changes")}</button>
                                     </div>
                                 </form>
-                            
+
                             {elseif $sub_view == "info"}
                                 <div class="card-header with-icon with-nav">
                                     <!-- panel title -->
@@ -760,7 +766,7 @@
                                                     </div>
                                                     <div class="form-group col-md-6">
                                                         <label class="form-control-label" for="location">{__("Location")}</label>
-                                                        <input type="text" class="form-control js_geocomplete" name="location" id="location" value="{$spage['page_location']}">
+                                                        <input type="text" class="form-control js_geocomplete" name="location" id="location" data-type="places" data-id="{$spage['page_location_id']}" value="{$spage['page_location']}">
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
@@ -876,7 +882,7 @@
                                                             <input type="text" class="form-control" name="twitter" value="{$spage['page_social_twitter']}">
                                                         </div>
                                                     </div>
-                                                
+
                                                     <div class="form-group col-md-6">
                                                         <label class="form-control-label">{__("YouTube Profile URL")}</label>
                                                         <div class="input-group">
@@ -886,7 +892,7 @@
                                                             <input type="text" class="form-control" name="youtube" value="{$spage['page_social_youtube']}">
                                                         </div>
                                                     </div>
-                                                
+
                                                     <div class="form-group col-md-6">
                                                         <label class="form-control-label">{__("Instagram Profile URL")}</label>
                                                         <div class="input-group">
@@ -906,7 +912,7 @@
                                                             <input type="text" class="form-control" name="linkedin" value="{$spage['page_social_linkedin']}">
                                                         </div>
                                                     </div>
-                                                
+
                                                     <div class="form-group col-md-6">
                                                         <label class="form-control-label">{__("Vkontakte Profile URL")}</label>
                                                         <div class="input-group">
@@ -930,7 +936,7 @@
                                     <!-- social tab -->
                                 </div>
                                 <!-- tab-content -->
-                            
+
                             {elseif $sub_view == "admins"}
                                 <div class="card-header with-icon">
                                     <i class="fa fa-users mr10"></i>{__("Members")}
@@ -994,7 +1000,7 @@
                                     </div>
                                     <!-- members -->
                                 </div>
-                            
+
                             {elseif $sub_view == "verification"}
                                 <div class="card-header with-icon">
                                     <i class="fa fa-check-circle mr10"></i>{__("Verification")}
@@ -1058,7 +1064,7 @@
                                                     </span>
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="form-group form-row">
                                                 <label class="col-md-3 form-control-label">
                                                     {__("Additional Information")}
@@ -1070,7 +1076,7 @@
                                                     </span>
                                                 </div>
                                             </div>
-                                            
+
                                             <!-- success -->
                                             <div class="alert alert-success mb0 x-hidden"></div>
                                             <!-- success -->
@@ -1106,7 +1112,7 @@
                                         </div>
                                     </div>
                                 {/if}
-                            
+
                             {elseif $sub_view == "delete"}
                                 <div class="card-header with-icon">
                                     <i class="fa fa-trash mr10"></i>{__("Delete Page")}
@@ -1127,18 +1133,18 @@
                                         </button>
                                     </div>
                                 </div>
-                            
+
                             {/if}
                         </div>
                     </div>
-                
+
                 {/if}
                 <!-- view content -->
             </div>
             <!-- profile-content -->
         </div>
         <!-- content panel -->
-    
+
     </div>
 </div>
 <!-- page content -->

@@ -2,7 +2,7 @@
 
 /**
  * ajax -> users -> settings
- * 
+ *
  * @package Sngine
  * @author Zamblek
  */
@@ -60,7 +60,7 @@ try {
 
 		case 'location':
 			// valid inputs
-			if (!isset($_POST['city']) || !isset($_POST['hometown'])) {
+			if (!isset($_POST['city_id']) || !isset($_POST['hometown_id'])) {
 				_error(400);
 			}
 
