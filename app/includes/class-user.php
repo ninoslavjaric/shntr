@@ -9505,7 +9505,25 @@ class User
                 /* set custom fields */
                 $this->set_custom_fields($args, "page", "settings", $page_id);
                 /* update page */
-                $db->query(sprintf("UPDATE pages SET page_company = %s, page_phone = %s, page_website = %s, page_location = %s, page_description = %s WHERE page_id = %s", secure($args['company']), secure($args['phone']), secure($args['website']), secure($args['location']), secure($args['description']), secure($page_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(
+                    sprintf(
+                        "UPDATE pages SET 
+                            page_company = %s,
+                            page_phone = %s,
+                            page_website = %s,
+                            page_location = %s,
+                            page_location_id = %s,
+                            page_description = %s 
+                        WHERE page_id = %s",
+                        secure($args['company']),
+                        secure($args['phone']),
+                        secure($args['website']),
+                        secure($args['location']),
+                        secure($args['location_id'], 'int'),
+                        secure($args['description']),
+                        secure($page_id, 'int')
+                    )
+                ) or _error("SQL_ERROR_THROWEN");
                 break;
 
             case 'action':
