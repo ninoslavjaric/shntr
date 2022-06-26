@@ -1,6 +1,10 @@
 version: "3.2"
 services:
   php-shntr:
+    environment:
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID:-nokey}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY:-nosecret}"
+      AWS_DEFAULT_REGION: "${AWS_DEFAULT_REGION:-noregion}"
     build:
       context: './php/'
       dockerfile: ${DOCKERFILE_NAME:-Dockerfile}

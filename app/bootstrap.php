@@ -111,8 +111,9 @@ if ($system['uploads_cdn_url']) {
     $system['system_uploads'] = $system['uploads_cdn_url'];
 } else {
     if ($system['s3_enabled']) {
-        $endpoint = "https://s3." . $system['s3_region'] . ".amazonaws.com/" . $system['s3_bucket'];
-        $system['system_uploads'] = $endpoint . "/uploads";
+//        $endpoint = "https://s3." . $system['s3_region'] . ".amazonaws.com/" . $system['s3_bucket'];
+        $endpoint = "https://{$system['s3_bucket']}";
+        $system['system_uploads'] = "{$endpoint}/uploads";
     } elseif ($system['digitalocean_enabled']) {
         $endpoint = "https://" . $system['digitalocean_space_name'] . "." . $system['digitalocean_space_region'] . ".digitaloceanspaces.com";
         $system['system_uploads'] = $endpoint . "/uploads";

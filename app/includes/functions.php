@@ -1313,10 +1313,10 @@ function aws_s3_test($s3_bucket, $s3_region, $s3_key, $s3_secret)
     try {
         $s3Client = Aws\S3\S3Client::factory(array(
             'version'    => 'latest',
-            'region'      => $s3_region,
+            'region'      => getenv('AWS_DEFAULT_REGION'),//$s3_region,
             'credentials' => array(
-                'key'    => $s3_key,
-                'secret' => $s3_secret,
+                'key'    => getenv('AWS_ACCESS_KEY_ID'), //$s3_key,
+                'secret' => getenv('AWS_SECRET_ACCESS_KEY'), //$s3_secret,
             )
         ));
         $buckets = $s3Client->listBuckets();
@@ -1350,10 +1350,10 @@ function aws_s3_upload($file_source, $file_name, $content_type = "")
     require_once(ABSPATH . 'includes/libs/AWS/aws-autoloader.php');
     $s3Client = Aws\S3\S3Client::factory(array(
         'version'     => 'latest',
-        'region'      => $system['s3_region'],
+        'region'      => getenv('AWS_DEFAULT_REGION'),//$system['s3_region'],
         'credentials' => array(
-            'key'     => $system['s3_key'],
-            'secret'  => $system['s3_secret'],
+            'key'     => getenv('AWS_ACCESS_KEY_ID'), //$system['s3_key'],
+            'secret'  => getenv('AWS_SECRET_ACCESS_KEY'), //$system['s3_secret'],
         )
     ));
     $Key = 'uploads/' . $file_name;
@@ -1363,7 +1363,7 @@ function aws_s3_upload($file_source, $file_name, $content_type = "")
         'Body'   => fopen($file_source, 'r+'),
         'ContentDisposition' => 'inline',
         'ContentType' => $content_type,
-        'ACL'    => 'public-read',
+        'ACL'    => 'bucket-owner-full-control', //'public-read',
     ]);
     /* remove local file */
     gc_collect_cycles();
@@ -1578,11 +1578,11 @@ function delete_uploads_file($file_name)
         /* Amazon S3 */
         require_once(ABSPATH . 'includes/libs/AWS/aws-autoloader.php');
         $s3Client = Aws\S3\S3Client::factory(array(
-            'version'    => 'latest',
-            'region'      => $system['s3_region'],
+            'version'     => 'latest',
+            'region'      => getenv('AWS_DEFAULT_REGION'),//$system['s3_region'],
             'credentials' => array(
-                'key'    => $system['s3_key'],
-                'secret' => $system['s3_secret'],
+                'key'     => getenv('AWS_ACCESS_KEY_ID'), //$system['s3_key'],
+                'secret'  => getenv('AWS_SECRET_ACCESS_KEY'), //$system['s3_secret'],
             )
         ));
         $Key = 'uploads/' . $file_name;

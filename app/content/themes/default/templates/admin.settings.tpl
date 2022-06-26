@@ -3357,7 +3357,7 @@
                     </div>
                 </div>
 
-                <div class="form-group form-row">
+                <div class="form-group form-row" hidden>
                     <label class="col-md-3 form-control-label">
                         {"S3"} {__("Bucket Region")}
                     </label>
@@ -3385,7 +3385,7 @@
                     </div>
                 </div>
 
-                <div class="form-group form-row">
+                <div class="form-group form-row" hidden>
                     <label class="col-md-3 form-control-label">
                         {"S3"} {__("Access Key ID")}
                     </label>
@@ -3401,7 +3401,7 @@
                     </div>
                 </div>
 
-                <div class="form-group form-row">
+                <div class="form-group form-row" hidden>
                     <label class="col-md-3 form-control-label">
                         {"S3"} {__("Access Key Secret")}
                     </label>
