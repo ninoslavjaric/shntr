@@ -164,6 +164,36 @@
                                 </div>
                             {/if}
 
+                            {if $system['interests_enabled']}
+                                <div class="divider"></div>
+
+                                <div class="heading-small mb20">
+                                    {__("Interests")}
+                                </div>
+                                <div class="pl-md-4" style="max-height: 500px; overflow-y: scroll; overflow-x:auto">
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th>Title</th>
+                                            <th>Check</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {foreach $user->get_interests() as $interest}
+                                            <tr>
+                                                <td>
+                                                    {$interest['title']}
+                                                </td>
+                                                <td>
+                                                    <input type="checkbox" value="{$interest['id']}" name="interests[]" {if $interest['interested']}checked{/if}>
+                                                </td>
+                                            </tr>
+                                        {/foreach}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {/if}
+
                             <!-- success -->
                             <div class="alert alert-success x-hidden"></div>
                             <!-- success -->

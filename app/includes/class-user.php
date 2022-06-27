@@ -15156,6 +15156,50 @@ class User
         $db->query(sprintf("INSERT INTO users_invitations (user_id, email_phone, invitation_date) VALUES (%s, %s, %s)", secure($this->_data['user_id'], 'int'), secure($phone), secure($date))) or _error("SQL_ERROR_THROWEN");
     }
 
+    public function get_interests()
+    {
+        global $db;
+
+        return $db->query(
+            sprintf(
+                'select 
+                   i.id, 
+                   coalesce(concat(ip.title, \' > \', i.title), i.title) as title, 
+                   i.id in (select interest_id from interests_users where user_id = %s) as interested
+                from interests as i
+                         left join interests as ip on i.parent_id = ip.id
+                         left join interests_users iu on i.id = iu.interest_id
+                order by coalesce(i.parent_id, i.id), i.id',
+                secure($this->_data['user_id'], 'int')
+            )
+        )->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function update_interests(array $interests): void
+    {
+        global $db;
+
+        $values = array_map(function($id) {
+            return sprintf('(%s, %s)', secure($id, 'int'), secure($this->_data['user_id'], 'int'));
+        }, $interests);
+
+        $sqlPipeline = [
+            sprintf('delete from interests_users where user_id = %s', secure($this->_data['user_id'], 'int')),
+            'insert into interests_users values ' . implode(',', $values),
+        ];
+
+        $db->begin_transaction();
+
+        try {
+            foreach ($sqlPipeline as $sql) {
+                $db->query($sql);
+            }
+            $db->commit();
+        } catch (Exception $e) {
+            $db->rollback();
+            throw $e;
+        }
+    }
 
 
     /* ------------------------------- */
@@ -15356,32 +15400,12 @@ class User
                 break;
 
             case 'interests':
-                /* validate facebook */
+                /* validate interests */
                 if (empty($args['interests']) || !valid_array_of_positive_ints($args['interests'])) {
                     throw new Exception(__("Please enter a valid array of interests"));
                 }
 
-                $values = array_map(function($id) {
-                    return sprintf('(%s, %s)', secure($id, 'int'), secure($this->_data['user_id'], 'int'));
-                }, $args['interests']);
-
-                $sqlPipeline = [
-                    sprintf('delete from interests_users where user_id = %s', secure($this->_data['user_id'], 'int')),
-                    'insert into interests_users values ' . implode(',', $values),
-                ];
-
-                $db->begin_transaction();
-
-                try {
-                    foreach ($sqlPipeline as $sql) {
-                        $db->query($sql);
-                    }
-                    $db->commit();
-                } catch (Exception $e) {
-                    $db->rollback();
-                    throw $e;
-                }
-
+                $this->update_interests($args['interests']);
                 break;
 
             case 'design':
@@ -15602,6 +15626,13 @@ class User
                         secure($this->_data['user_id'], 'int')
                     )
                 ) or _error("SQL_ERROR_THROWEN");
+
+                if (empty($args['interests']) || !valid_array_of_positive_ints($args['interests'])) {
+                    throw new Exception(__("Please enter a valid array of interests"));
+                }
+
+                $this->update_interests($args['interests']);
+
                 break;
         }
     }

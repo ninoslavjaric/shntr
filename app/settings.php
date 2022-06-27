@@ -86,16 +86,7 @@ try {
 						_error(404);
 					}
 
-					$interests = $db->query(
-					    'select 
-                           i.id, 
-                           coalesce(concat(ip.title, \' > \', i.title), i.title) as title, 
-                           !isnull(iu.user_id) as interested
-                        from interests as i
-                                 left join interests as ip on i.parent_id = ip.id
-                                 left join interests_users iu on i.id = iu.interest_id
-                        order by coalesce(i.parent_id, i.id), i.id'
-                    )->fetch_all(MYSQLI_ASSOC);
+					$interests = $user->get_interests();
                     $smarty->assign('interests', $interests);
 
 					break;
