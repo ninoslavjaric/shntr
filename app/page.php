@@ -178,6 +178,15 @@ try {
 					$smarty->assign('case', $case);
 					break;
 
+				case 'interests':
+					if (!$system['interests_enabled']) {
+						_error(404);
+					}
+                    $interests = $user->get_page_interests($spage['page_id']);
+					/* assign variables */
+					$smarty->assign('interests', $interests);
+					break;
+
 				case 'admins':
 					/* get admins */
 					$spage['page_admins_count'] = count($user->get_page_admins_ids($spage['page_id']));

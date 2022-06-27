@@ -2,7 +2,7 @@
 
 /**
  * ajax -> pages_groups_events -> create|edit
- * 
+ *
  * @package Sngine
  * @author Zamblek
  */
@@ -47,7 +47,7 @@ try {
 				if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 					_error(400);
 				}
-				if (!in_array($_GET['edit'], array('settings', 'info', 'action', 'social'))) {
+				if (!in_array($_GET['edit'], array('settings', 'info', 'action', 'social', 'interests'))) {
 					_error(400);
 				}
 
@@ -97,8 +97,25 @@ try {
 					_error(400);
 				}
 
-				// event edit
-				$user->edit_event($_GET['id'], $_POST);
+				switch ($_GET['edit']) {
+                    case 'interests':
+                        /* check if interests enabled */
+                        if (!$system['interests_enabled']) {
+                            _error(404);
+                        }
+
+                        /* validate interests */
+                        if (empty($_POST['interests']) || !valid_array_of_positive_ints($_POST['interests'])) {
+                            throw new Exception(__("Please enter a valid array of interests"));
+                        }
+
+                        $user->edit_event_interests($_POST['interests'], $_GET['id']);
+                        break;
+
+                    default:
+                        // event edit
+                        $user->edit_event($_GET['id'], $_POST);
+                }
 
 				// return
 				$return['path'] = $system['system_url'] . '/events/' . $_GET['id'];

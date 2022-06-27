@@ -189,6 +189,12 @@ try {
 					/* assign variables */
 					$smarty->assign('categories', $categories);
 					break;
+				case 'interests':
+
+					$interests = $user->get_event_interests($event['event_id']);
+					/* assign variables */
+					$smarty->assign('interests', $interests);
+					break;
 
 				case 'delete':
 					break;

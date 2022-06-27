@@ -9567,6 +9567,21 @@ class User
                 /* update page */
                 $db->query(sprintf("UPDATE pages SET page_social_facebook = %s, page_social_twitter = %s, page_social_youtube = %s, page_social_instagram = %s, page_social_linkedin = %s, page_social_vkontakte = %s WHERE page_id = %s", secure($args['facebook']), secure($args['twitter']), secure($args['youtube']), secure($args['instagram']), secure($args['linkedin']), secure($args['vkontakte']), secure($page_id, 'int'))) or _error("SQL_ERROR_THROWEN");
                 break;
+
+            case 'interests':
+                /* check if interests enabled */
+                if (!$system['interests_enabled']) {
+                    _error(404);
+                }
+
+                /* validate interests */
+                if (empty($args['interests']) || !valid_array_of_positive_ints($args['interests'])) {
+                    throw new Exception(__("Please enter a valid array of interests"));
+                }
+
+                $this->update_page_interests($args['interests'], $page_id);
+
+                break;
         }
         return $page['page_name'];
     }
@@ -10471,6 +10486,25 @@ class User
      * @param string $description
      * @return void
      */
+    public function edit_event_interests(array $interests, int $event_id): void
+    {
+        global $db;
+
+        $sqlPipeline = $this->transform_update_interests_query_pipeline($event_id, $interests, 'event');
+
+        $db->begin_transaction();
+
+        try {
+            foreach ($sqlPipeline as $sql) {
+                $db->query($sql);
+            }
+            $db->commit();
+        } catch (Exception $e) {
+            $db->rollback();
+            throw $e;
+        }
+    }
+
     public function edit_event($event_id, $args)
     {
         global $db, $system;
@@ -15156,37 +15190,95 @@ class User
         $db->query(sprintf("INSERT INTO users_invitations (user_id, email_phone, invitation_date) VALUES (%s, %s, %s)", secure($this->_data['user_id'], 'int'), secure($phone), secure($date))) or _error("SQL_ERROR_THROWEN");
     }
 
+    private function transform_interests_query(int $id, string $type): string
+    {
+        return sprintf(
+            'select 
+                   i.id, 
+                   coalesce(concat(ip.title, \' > \', i.title), i.title) as title, 
+                   i.id in (select interest_id from interests_%1$ss where %1$s_id = %2$s) as interested
+                from interests as i
+                         left join interests as ip on i.parent_id = ip.id
+                         left join interests_%1$ss as iu on i.id = iu.interest_id
+                order by coalesce(i.parent_id, i.id), i.id',
+            secure($type, 'string', false),
+            secure($id, 'int')
+        );
+    }
+
     public function get_interests()
     {
         global $db;
 
         return $db->query(
-            sprintf(
-                'select 
-                   i.id, 
-                   coalesce(concat(ip.title, \' > \', i.title), i.title) as title, 
-                   i.id in (select interest_id from interests_users where user_id = %s) as interested
-                from interests as i
-                         left join interests as ip on i.parent_id = ip.id
-                         left join interests_users iu on i.id = iu.interest_id
-                order by coalesce(i.parent_id, i.id), i.id',
-                secure($this->_data['user_id'], 'int')
-            )
+            $this->transform_interests_query($this->_data['user_id'], 'user')
         )->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function get_page_interests(int $page_id): array
+    {
+        global $db;
+
+        return $db->query(
+            $this->transform_interests_query($page_id, 'page')
+        )->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function get_event_interests(int $event_id): array
+    {
+        global $db;
+
+        return $db->query(
+            $this->transform_interests_query($event_id, 'event')
+        )->fetch_all(MYSQLI_ASSOC);
+    }
+
+    private function transform_update_interests_query_pipeline(int $entity_id, array $interest_ids, string $type): array
+    {
+
+        $values = array_map(function($id) use ($entity_id) {
+            return sprintf('(%s, %s)', secure($id, 'int'), secure($entity_id, 'int'));
+        }, $interest_ids);
+
+        return [
+            sprintf(
+                'delete from interests_%1$ss where %1$s_id = %2$s',
+                secure($type, 'string', false),
+                secure($entity_id, 'int')
+            ),
+            sprintf(
+                'insert into interests_%ss values %s',
+                secure($type, 'string', false),
+                implode(',', $values)
+            ),
+        ];
     }
 
     public function update_interests(array $interests): void
     {
         global $db;
 
-        $values = array_map(function($id) {
-            return sprintf('(%s, %s)', secure($id, 'int'), secure($this->_data['user_id'], 'int'));
-        }, $interests);
+        $sqlPipeline = $this->transform_update_interests_query_pipeline($this->_data['user_id'], $interests, 'user');
 
-        $sqlPipeline = [
-            sprintf('delete from interests_users where user_id = %s', secure($this->_data['user_id'], 'int')),
-            'insert into interests_users values ' . implode(',', $values),
-        ];
+        $db->begin_transaction();
+
+        try {
+            foreach ($sqlPipeline as $sql) {
+                $db->query($sql);
+            }
+            $db->commit();
+        } catch (Exception $e) {
+            $db->rollback();
+            throw $e;
+        }
+    }
+
+
+    private function update_page_interests(array $interests, int $page_id)
+    {
+        global $db;
+
+        $sqlPipeline = $this->transform_update_interests_query_pipeline($page_id, $interests, 'page');
 
         $db->begin_transaction();
 
@@ -15400,6 +15492,10 @@ class User
                 break;
 
             case 'interests':
+                /* check if interests enabled */
+                if (!$system['interests_enabled']) {
+                    _error(404);
+                }
                 /* validate interests */
                 if (empty($args['interests']) || !valid_array_of_positive_ints($args['interests'])) {
                     throw new Exception(__("Please enter a valid array of interests"));

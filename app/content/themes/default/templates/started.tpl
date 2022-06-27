@@ -174,8 +174,8 @@
                                     <table class="table">
                                         <thead>
                                         <tr>
-                                            <th>Title</th>
-                                            <th>Check</th>
+                                            <th>{__("Title")}</th>
+                                            <th>{__("Check")}</th>
                                         </tr>
                                         </thead>
                                         <tbody>

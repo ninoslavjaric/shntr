@@ -652,6 +652,9 @@
                                     <li {if $sub_view == ""}class="active"{/if}>
                                         <a href="{$system['system_url']}/events/{$event['event_id']}/settings"><i class="fa fa-cog fa-fw mr5"></i>{__("Event Settings")}</a>
                                     </li>
+                                    <li {if $sub_view == "interests"}class="active"{/if}>
+                                        <a href="{$system['system_url']}/events/{$event['event_id']}/settings/interests"><i class="fa fa-heart fa-fw mr5"></i>{__("Event Interests")}</a>
+                                    </li>
                                     <li {if $sub_view == "delete"}class="active"{/if}>
                                         <a href="{$system['system_url']}/events/{$event['event_id']}/settings/delete"><i class="fa fa-trash fa-fw mr5"></i>{__("Delete Event")}</a>
                                     </li>
@@ -757,6 +760,37 @@
                                         <!-- error -->
                                         <div class="alert alert-danger mb0 x-hidden"></div>
                                         <!-- error -->
+                                    </div>
+                                    <div class="card-footer text-right">
+                                        <button type="submit" class="btn btn-primary">{__("Save Changes")}</button>
+                                    </div>
+                                </form>
+                            {elseif $sub_view == "interests"}
+                                <div class="card-header with-icon">
+                                    <i class="fa fa-cog mr10"></i>{__("Event Interests")}
+                                </div>
+                                <form class="js_ajax-forms" data-url="pages_groups_events/create.php?type=event&do=edit&edit=interests&id={$event['event_id']}">
+                                    <div class="card-body" style="max-height: 500px; overflow-y: scroll; overflow-x:auto">
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th>{__("Title")}</th>
+                                                <th>{__("Check")}</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {foreach $interests as $interest}
+                                                <tr>
+                                                    <td>
+                                                        {$interest['title']}
+                                                    </td>
+                                                    <td>
+                                                        <input type="checkbox" value="{$interest['id']}" name="interests[]" {if $interest['interested']}checked{/if}>
+                                                    </td>
+                                                </tr>
+                                            {/foreach}
+                                            </tbody>
+                                        </table>
                                     </div>
                                     <div class="card-footer text-right">
                                         <button type="submit" class="btn btn-primary">{__("Save Changes")}</button>
