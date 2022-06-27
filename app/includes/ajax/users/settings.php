@@ -105,6 +105,19 @@ try {
 			return_json(array('success' => true, 'message' => __("Your profile info has been updated")));
 			break;
 
+		case 'interests':
+			// valid inputs
+			if (!isset($_POST['interests'])) {
+				_error(400);
+			}
+
+			// change settings
+			$user->settings($_GET['edit'], $_POST);
+
+			// return
+			return_json(array('success' => true, 'message' => __("Your profile info has been updated")));
+			break;
+
 		case 'design':
 			// valid inputs
 			if (!isset($_POST['user_profile_background'])) {

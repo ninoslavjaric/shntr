@@ -62,6 +62,13 @@
                                             </a>
                                         </li>
                                     {/if}
+                                    {if $system['interests_enabled']}
+                                        <li {if $view == "profile" && $sub_view == "interests_enabled"}class="active"{/if}>
+                                            <a href="{$system['system_url']}/settings/profile/interests">
+                                                {__("Interests")}
+                                            </a>
+                                        </li>
+                                    {/if}
                                     {if $system['system_profile_background_enabled']}
                                         <li {if $view == "profile" && $sub_view == "design"}class="active"{/if}>
                                             <a href="{$system['system_url']}/settings/profile/design">
@@ -810,6 +817,50 @@
                                             </div>
                                             <input type="text" class="form-control" name="vkontakte" value="{$user->_data['user_social_vkontakte']}">
                                         </div>
+                                    </div>
+                                </div>
+
+                                <!-- success -->
+                                <div class="alert alert-success mb0 x-hidden"></div>
+                                <!-- success -->
+
+                                <!-- error -->
+                                <div class="alert alert-danger mb0 x-hidden"></div>
+                                <!-- error -->
+                            </div>
+                            <div class="card-footer text-right">
+                                <button type="submit" class="btn btn-primary">{__("Save Changes")}</button>
+                            </div>
+                        </form>
+
+                    {elseif $sub_view == "interests"}
+                        <div class="card-header with-icon">
+                            <h1>Interests</h1>
+                        </div>
+                        <form class="js_ajax-forms" data-url="users/settings.php?edit=interests">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-lg-12" style="max-height: 500px; overflow-y: scroll; overflow-x:auto">
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th>Title</th>
+                                                <th>Check</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {foreach $interests as $interest}
+                                            <tr>
+                                                <td>
+                                                    {$interest['title']}
+                                                </td>
+                                                <td>
+                                                    <input type="checkbox" value="{$interest['id']}" name="interests[]" {if $interest['interested']}checked{/if}>
+                                                </td>
+                                            </tr>
+                                            {/foreach}
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
 

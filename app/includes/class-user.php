@@ -15355,6 +15355,35 @@ class User
                 $db->query(sprintf("UPDATE users SET user_social_facebook = %s, user_social_twitter = %s, user_social_youtube = %s, user_social_instagram = %s, user_social_twitch = %s, user_social_linkedin = %s, user_social_vkontakte = %s WHERE user_id = %s", secure($args['facebook']), secure($args['twitter']), secure($args['youtube']), secure($args['instagram']), secure($args['twitch']), secure($args['linkedin']), secure($args['vkontakte']), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
                 break;
 
+            case 'interests':
+                /* validate facebook */
+                if (empty($args['interests']) || !valid_array_of_positive_ints($args['interests'])) {
+                    throw new Exception(__("Please enter a valid array of interests"));
+                }
+
+                $values = array_map(function($id) {
+                    return sprintf('(%s, %s)', secure($id, 'int'), secure($this->_data['user_id'], 'int'));
+                }, $args['interests']);
+
+                $sqlPipeline = [
+                    sprintf('delete from interests_users where user_id = %s', secure($this->_data['user_id'], 'int')),
+                    'insert into interests_users values ' . implode(',', $values),
+                ];
+
+                $db->begin_transaction();
+
+                try {
+                    foreach ($sqlPipeline as $sql) {
+                        $db->query($sql);
+                    }
+                    $db->commit();
+                } catch (Exception $e) {
+                    $db->rollback();
+                    throw $e;
+                }
+
+                break;
+
             case 'design':
                 /* check if profile background enabled */
                 if (!$system['system_profile_background_enabled']) {

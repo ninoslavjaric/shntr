@@ -353,6 +353,24 @@ function valid_url($url)
 
 
 /**
+ * valid_array_of_ints
+ *
+ * @param string $url
+ * @return boolean
+ */
+function valid_array_of_positive_ints(array $ints)
+{
+    foreach ($ints as $int) {
+        if (intval($int) <= 0) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
+/**
  * valid_username
  *
  * @param string $username

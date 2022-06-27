@@ -2338,6 +2338,22 @@
 
                         <div class="form-table-row">
                             <div class="avatar">
+                                {include file='__svg_icons.tpl' icon="interests" width="40px" height="40px"}
+                            </div>
+                            <div>
+                                <div class="form-control-label h6">{__("Interests")}</div>
+                                <div class="form-text d-none d-sm-block">{__("Turn the Interests On/Off")}</div>
+                            </div>
+                            <div class="text-right">
+                                <label class="switch" for="interests_enabled">
+                                    <input type="checkbox" name="interests_enabled" id="interests_enabled" {if $system['interests_enabled']}checked{/if}>
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-table-row">
+                            <div class="avatar">
                                 {include file='__svg_icons.tpl' icon="design" width="40px" height="40px"}
                             </div>
                             <div>

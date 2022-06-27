@@ -284,6 +284,7 @@ try {
 			$_POST['education_info_enabled'] = (isset($_POST['education_info_enabled'])) ? '1' : '0';
 			$_POST['social_info_enabled'] = (isset($_POST['social_info_enabled'])) ? '1' : '0';
 			$_POST['system_profile_background_enabled'] = (isset($_POST['system_profile_background_enabled'])) ? '1' : '0';
+			$_POST['interests_enabled'] = (isset($_POST['interests_enabled'])) ? '1' : '0';
 			/* update */
 			update_system_options([
 				'relationship_info_enabled' => secure($_POST['relationship_info_enabled']),
@@ -294,6 +295,7 @@ try {
 				'education_info_enabled' => secure($_POST['education_info_enabled']),
 				'social_info_enabled' => secure($_POST['social_info_enabled']),
 				'system_profile_background_enabled' => secure($_POST['system_profile_background_enabled']),
+				'interests_enabled' => secure($_POST['interests_enabled']),
 			]);
 			break;
 
