@@ -2,7 +2,7 @@
 
 /**
  * ajax -> posts -> article
- * 
+ *
  * @package Sngine
  * @author Zamblek
  */
@@ -32,6 +32,10 @@ try {
 			// create article
 			$post_id = $user->post_article($_POST['title'], $_POST['text'], $_POST['cover'], $_POST['category'], $_POST['tags']);
 
+            if ($system['interests_enabled']) {
+                $user->edit_post_interests($_POST['interests'], $post_id);
+            }
+
 			// return
 			$return['path'] = $system['system_url'] . '/blogs/' . $post_id . '/' . get_url_text($_POST['title']);
 			break;
@@ -44,6 +48,10 @@ try {
 
 			// edit article
 			$user->edit_article($_GET['id'], $_POST['title'], $_POST['text'], $_POST['cover'], $_POST['category'], $_POST['tags']);
+
+            if ($system['interests_enabled']) {
+                $user->edit_post_interests($_POST['interests'], $_GET['id']);
+            }
 
 			// return
 			$return['path'] = $system['system_url'] . '/blogs/' . $_GET['id'] . '/' . get_url_text($_POST['title']);

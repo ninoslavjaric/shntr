@@ -10896,6 +10896,25 @@ class User
         $db->query(sprintf("UPDATE posts_articles SET cover = %s, title = %s, text = %s, category_id = %s, tags = %s WHERE post_id = %s", secure($cover), secure($title), secure($clean_text), secure($category_id, 'int'), secure($tags), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
     }
 
+    public function edit_post_interests(array $interests, int $post_id): void
+    {
+        global $db;
+
+        $sqlPipeline = $this->transform_update_interests_query_pipeline($post_id, $interests, 'post');
+
+        $db->begin_transaction();
+
+        try {
+            foreach ($sqlPipeline as $sql) {
+                $db->query($sql);
+            }
+            $db->commit();
+        } catch (Exception $e) {
+            $db->rollback();
+            throw $e;
+        }
+    }
+
 
     /**
      * update_article_views
@@ -15221,6 +15240,15 @@ class User
 
         return $db->query(
             $this->transform_interests_query($page_id, 'page')
+        )->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function get_post_interests(int $post_id): array
+    {
+        global $db;
+
+        return $db->query(
+            $this->transform_interests_query($post_id, 'post')
         )->fetch_all(MYSQLI_ASSOC);
     }
 

@@ -2,7 +2,7 @@
 
 /**
  * blogs
- * 
+ *
  * @package Sngine
  * @author Zamblek
  */
@@ -127,6 +127,7 @@ try {
 			}
 			/* assign variables */
 			$smarty->assign('article', $article);
+			$smarty->assign('interests', $user->get_post_interests($_GET['post_id']));
 
 			// get blogs categories
 			$blogs_categories = $user->get_categories("blogs_categories");
@@ -145,6 +146,7 @@ try {
 
 			// page header
 			page_header(__("Write New Article"), __($system['system_description_blogs']));
+            $smarty->assign('interests', $user->get_post_interests(0));
 
 			// get blogs categories
 			$blogs_categories = $user->get_categories("blogs_categories");

@@ -52,7 +52,7 @@
                 </div>
             </div>
             <!-- content panel -->
-        
+
         {elseif $view == "category"}
 
             <!-- side panel -->
@@ -96,7 +96,7 @@
                             </div>
                         {/if}
                         <!-- add new article -->
-                        
+
                         {include file='_ads.tpl'}
                         {include file='_widget.tpl'}
 
@@ -132,7 +132,7 @@
                         <div class="articles-widget-header">
                             <div class="articles-widget-title">{__("Read More")}</div>
                         </div>
-                        
+
                         {foreach $latest_articles as $article}
                         {include file='__feeds_article.tpl' _small=true}
                         {/foreach}
@@ -142,7 +142,7 @@
                 </div>
             </div>
             <!-- content panel -->
-        
+
         {elseif $view == "article"}
 
             <!-- side panel -->
@@ -180,7 +180,7 @@
                                 <!-- article title -->
                                 <h3>{$article['article']['title']}</h3>
                                 <!-- article title -->
-                                
+
                                 <!-- article meta -->
                                 <div class="row">
                                     <div class="col-md-6 mb20">
@@ -247,7 +247,7 @@
                                     </a>
                                 </div>
                                 <!-- social share -->
-                                
+
                                 <!-- article cover -->
                                 {if $article['article']['cover']}
                                     <div class="mb20">
@@ -378,7 +378,7 @@
                             </div>
                         {/if}
                         <!-- add new article -->
-                        
+
                         {include file='_ads.tpl'}
                         {include file='_widget.tpl'}
 
@@ -401,7 +401,7 @@
                         <div class="articles-widget-header">
                             <div class="articles-widget-title">{__("Read More")}</div>
                         </div>
-                        
+
                         {foreach $latest_articles as $article}
                         {include file='__feeds_article.tpl' _small=true}
                         {/foreach}
@@ -411,7 +411,7 @@
                 </div>
             </div>
             <!-- content panel -->
-        
+
         {elseif $view == "edit"}
 
             <!-- side panel -->
@@ -432,7 +432,7 @@
                             </a>
                         </div>
                     </div>
-                    <div class="js_ajax-forms-html " data-url="posts/article.php?do=edit&id={$article['post_id']}">
+                    <div class="js_ajax-forms-html" data-url="posts/article.php?do=edit&id={$article['post_id']}">
                         <div class="card-body">
                             <div class="form-group form-row">
                                 <label class="col-md-2 form-control-label">
@@ -510,6 +510,34 @@
                                 </div>
                             </div>
 
+                            <div class="form-group form-row">
+                                <label class="col-md-2 form-control-label">
+                                    {__("Interests")}
+                                </label>
+                                <div class="col-md-10" style="max-height: 500px; overflow-y: scroll; overflow-x:auto">
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th>{__("Title")}</th>
+                                            <th>{__("Check")}</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {foreach $interests as $interest}
+                                            <tr>
+                                                <td>
+                                                    {$interest['title']}
+                                                </td>
+                                                <td>
+                                                    <input type="checkbox" value="{$interest['id']}" name="interests[]" {if $interest['interested']}checked{/if}>
+                                                </td>
+                                            </tr>
+                                        {/foreach}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
                             <!-- error -->
                             <div class="alert alert-danger mb0 x-hidden"></div>
                             <!-- error -->
@@ -525,9 +553,9 @@
                 <!-- content -->
             </div>
             <!-- content panel -->
-        
+
         {elseif $view == "new"}
-            
+
             <!-- side panel -->
             <div class="col-md-4 col-lg-3 offcanvas-sidebar js_sticky-sidebar">
                 {include file='_sidebar.tpl'}
@@ -604,6 +632,34 @@
                                 </div>
                             </div>
 
+                            <div class="form-group form-row">
+                                <label class="col-md-2 form-control-label">
+                                    {__("Interests")}
+                                </label>
+                                <div class="col-md-10" style="max-height: 500px; overflow-y: scroll; overflow-x:auto">
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th>{__("Title")}</th>
+                                            <th>{__("Check")}</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {foreach $interests as $interest}
+                                            <tr>
+                                                <td>
+                                                    {$interest['title']}
+                                                </td>
+                                                <td>
+                                                    <input type="checkbox" value="{$interest['id']}" name="interests[]" {if $interest['interested']}checked{/if}>
+                                                </td>
+                                            </tr>
+                                        {/foreach}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
                             <!-- error -->
                             <div class="alert alert-danger mb0 x-hidden"></div>
                             <!-- error -->
@@ -616,7 +672,7 @@
                 <!-- content -->
             </div>
             <!-- content panel -->
-        
+
         {/if}
     </div>
 </div>
