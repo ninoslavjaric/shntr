@@ -51,9 +51,10 @@ export class AppController {
       }
 
       return JSON.stringify({
-        amount: tokens
-          .map((i) => i.amount)
-          .reduce((partialSum, a) => partialSum + a, 0),
+        amount:
+          tokens
+            .map((i) => i.amount)
+            .reduce((partialSum, a) => partialSum + a, 0) / SHNA.decimals,
       });
     } catch (e) {
       return JSON.stringify({
