@@ -54,7 +54,8 @@ export class AppController {
         amount:
           tokens
             .map((i) => i.amount)
-            .reduce((partialSum, a) => partialSum + a, 0) / SHNA.decimals,
+            .reduce((partialSum, a) => partialSum + a, 0) /
+          Math.pow(10, SHNA.decimals),
       });
     } catch (e) {
       return JSON.stringify({
