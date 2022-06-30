@@ -57,7 +57,7 @@ class shntrToken
     {
         global $db;
         $columns = array_slice(
-            ['amount', 'sender_id', 'recipient_id', 'basis_name', 'basis_entry_id', 'note'], 0, func_num_args()
+            ['amount', 'sender_id', 'recipient_id', 'basis_name', 'basis_entity_id', 'note'], 0, func_num_args()
         );
 
         $db->query(self::transformInsertQuery(array_combine($columns, func_get_args())));

@@ -63,6 +63,6 @@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-light" data-dismiss="modal">{__("Cancel")}</button>
-        <button type="submit" class="btn btn-primary">{__("Create")}</button>
+        <button type="submit" class="btn btn-primary">{__("Create")}<span class="badge">for {$price} tokens</span></button>
     </div>
 </form>

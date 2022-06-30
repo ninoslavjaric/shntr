@@ -2,7 +2,7 @@
 
 /**
  * ajax -> pages_groups_events -> add
- * 
+ *
  * @package Sngine
  * @author Zamblek
  */
@@ -28,6 +28,7 @@ try {
 
 	switch ($_REQUEST['type']) {
 		case 'page':
+            $smarty->assign('price', 100);
 			// get custom fields
 			$smarty->assign('custom_fields', $user->get_custom_fields(array("for" => "page")));
 
@@ -40,6 +41,7 @@ try {
 			break;
 
 		case 'group':
+            $smarty->assign('price', 100);
 			// get custom fields
 			$smarty->assign('custom_fields', $user->get_custom_fields(array("for" => "group")));
 
@@ -52,6 +54,7 @@ try {
 			break;
 
 		case 'event':
+		    $smarty->assign('price', 100);
 			// get custom fields
 			$smarty->assign('custom_fields', $user->get_custom_fields(array("for" => "event")));
 

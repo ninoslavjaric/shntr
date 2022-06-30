@@ -2,7 +2,7 @@
 
 /**
  * ajax -> posts -> product
- * 
+ *
  * @package Sngine
  * @author Zamblek
  */
@@ -38,6 +38,7 @@ try {
 
 	switch ($_REQUEST['do']) {
 		case 'create':
+            $smarty->assign('price', 100);
 			// assign variables
 			$smarty->assign('market_categories', $user->get_categories("market_categories"));
 			$smarty->assign('custom_fields', $user->get_custom_fields(array("for" => "product")));
@@ -57,6 +58,12 @@ try {
 			if (!is_object($_POST['product'])) {
 				_error(400);
 			}
+
+            $balance = shntrToken::getBalance();
+            if ($balance['amount'] < 100) {
+                modal("ERROR", __("Funds"), __("You're out of tokens"));
+            }
+
 			/* check product name */
 			if (is_empty($_POST['product']->name)) {
 				return_json(array('error' => true, 'message' => __("Please add your product name")));

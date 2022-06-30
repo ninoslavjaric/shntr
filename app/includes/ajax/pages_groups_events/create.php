@@ -35,6 +35,10 @@ try {
 	switch ($_GET['type']) {
 		case 'page':
 			if ($_GET['do'] == "create") {
+                $balance = shntrToken::getBalance();
+                if ($balance['amount'] < 100) {
+                    modal("ERROR", __("Funds"), __("You're out of tokens"));
+                }
 
 				// page create
 				$user->create_page($_POST);
@@ -61,6 +65,10 @@ try {
 
 		case 'group':
 			if ($_GET['do'] == "create") {
+                $balance = shntrToken::getBalance();
+                if ($balance['amount'] < 100) {
+                    modal("ERROR", __("Funds"), __("You're out of tokens"));
+                }
 
 				// group create
 				$user->create_group($_POST);
@@ -84,6 +92,10 @@ try {
 
 		case 'event':
 			if ($_GET['do'] == "create") {
+			    $balance = shntrToken::getBalance();
+                if ($balance['amount'] < 100) {
+                    modal("ERROR", __("Funds"), __("You're out of tokens"));
+                }
 
 				// event create
 				$event_id = $user->create_event($_POST);

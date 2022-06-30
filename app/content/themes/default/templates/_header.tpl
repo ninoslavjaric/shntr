@@ -160,7 +160,7 @@
                                                             </a>
                                                         {/if}
                                                         {if $user->_data['can_create_pages']}
-                                                            <div class="dropdown-item pointer" data-toggle="modal" data-url="pages_groups_events/add.php?type=page">
+                                                            <div class="dropdown-item pointer" data-toggle="modal" data-url="pages_groups_events/add.php?type=page" data-callback="geocompletionSetup">
                                                                 <i class="fas fa-flag fa-fw mr10" style="color: #2196f3;"></i>{__("Create Page")}
                                                             </div>
                                                         {/if}

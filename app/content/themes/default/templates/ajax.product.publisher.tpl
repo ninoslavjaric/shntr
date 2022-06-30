@@ -63,6 +63,6 @@
         <!-- error -->
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-primary js_publisher-btn js_publisher-product">{__("Publish")}</button>
+        <button type="button" class="btn btn-primary js_publisher-btn js_publisher-product">{__("Publish")}<span class="badge">for {$price} tokens</span></button>
     </div>
 </form>

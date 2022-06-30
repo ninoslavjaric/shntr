@@ -4889,138 +4889,142 @@ class User
             }
         }
 
-        /* insert the post */
-        $db->query(sprintf("INSERT INTO posts (user_id, user_type, in_wall, wall_id, in_group, group_id, group_approved, in_event, event_id, event_approved, post_type, colored_pattern, time, location, privacy, text, feeling_action, feeling_value, is_anonymous) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", secure($post['user_id'], 'int'), secure($post['user_type']), secure($post['in_wall'], 'int'), secure($post['wall_id'], 'int'), secure($post['in_group']), secure($post['group_id'], 'int'), secure($post['group_approved']), secure($post['in_event']), secure($post['event_id'], 'int'), secure($post['event_approved']), secure($post['post_type']), secure($post['colored_pattern'], 'int'), secure($post['time']), secure($post['location']), secure($post['privacy']), secure($post['text']), secure($post['feeling_action']), secure($post['feeling_value']), secure($post['is_anonymous']))) or _error("SQL_ERROR_THROWEN");
-        $post['post_id'] = $db->insert_id;
 
-        switch ($post['post_type']) {
-            case 'link':
-                $db->query(sprintf("INSERT INTO posts_links (post_id, source_url, source_host, source_title, source_text, source_thumbnail) VALUES (%s, %s, %s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($args['link']->source_url), secure($args['link']->source_host), secure($args['link']->source_title), secure($args['link']->source_text), secure($args['link']->source_thumbnail))) or _error("SQL_ERROR_THROWEN");
-                $post['link']['link_id'] = $db->insert_id;
-                $post['link']['post_id'] = $post['post_id'];
-                $post['link']['source_url'] = $args['link']->source_url;
-                $post['link']['source_host'] = $args['link']->source_host;
-                $post['link']['source_title'] = $args['link']->source_title;
-                $post['link']['source_text'] = $args['link']->source_text;
-                $post['link']['source_thumbnail'] = $args['link']->source_thumbnail;
-                break;
+        $db->begin_transaction();
 
-            case 'media':
-                $db->query(sprintf("INSERT INTO posts_media (post_id, source_url, source_provider, source_type, source_title, source_text, source_html, source_thumbnail) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($args['link']->source_url), secure($args['link']->source_provider), secure($args['link']->source_type), secure($args['link']->source_title), secure($args['link']->source_text), secure($args['link']->source_html), secure($args['link']->source_thumbnail))) or _error("SQL_ERROR_THROWEN");
-                $post['media']['media_id'] = $db->insert_id;
-                $post['media']['post_id'] = $post['post_id'];
-                $post['media']['source_url'] = $args['link']->source_url;
-                $post['media']['source_type'] = $args['link']->source_type;
-                $post['media']['source_provider'] = $args['link']->source_provider;
-                $post['media']['source_title'] = $args['link']->source_title;
-                $post['media']['source_text'] = $args['link']->source_text;
-                $post['media']['source_html'] = $args['link']->source_html;
-                break;
+        try {
+            /* insert the post */
+            $db->query(sprintf("INSERT INTO posts (user_id, user_type, in_wall, wall_id, in_group, group_id, group_approved, in_event, event_id, event_approved, post_type, colored_pattern, time, location, privacy, text, feeling_action, feeling_value, is_anonymous) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", secure($post['user_id'], 'int'), secure($post['user_type']), secure($post['in_wall'], 'int'), secure($post['wall_id'], 'int'), secure($post['in_group']), secure($post['group_id'], 'int'), secure($post['group_approved']), secure($post['in_event']), secure($post['event_id'], 'int'), secure($post['event_approved']), secure($post['post_type']), secure($post['colored_pattern'], 'int'), secure($post['time']), secure($post['location']), secure($post['privacy']), secure($post['text']), secure($post['feeling_action']), secure($post['feeling_value']), secure($post['is_anonymous']))) or _error("SQL_ERROR_THROWEN");
+            $post['post_id'] = $db->insert_id;
 
-            case 'photos':
-                if ($args['handle'] == "page") {
-                    /* check for page timeline album (public by default) */
-                    if (!$_page['page_album_timeline']) {
-                        /* create new page timeline album */
-                        $db->query(sprintf("INSERT INTO posts_photos_albums (user_id, user_type, title) VALUES (%s, 'page', 'Timeline Photos')", secure($_page['page_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
-                        $_page['page_album_timeline'] = $db->insert_id;
-                        /* update page */
-                        $db->query(sprintf("UPDATE pages SET page_album_timeline = %s WHERE page_id = %s", secure($_page['page_album_timeline'], 'int'), secure($_page['page_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            switch ($post['post_type']) {
+                case 'link':
+                    $db->query(sprintf("INSERT INTO posts_links (post_id, source_url, source_host, source_title, source_text, source_thumbnail) VALUES (%s, %s, %s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($args['link']->source_url), secure($args['link']->source_host), secure($args['link']->source_title), secure($args['link']->source_text), secure($args['link']->source_thumbnail))) or _error("SQL_ERROR_THROWEN");
+                    $post['link']['link_id'] = $db->insert_id;
+                    $post['link']['post_id'] = $post['post_id'];
+                    $post['link']['source_url'] = $args['link']->source_url;
+                    $post['link']['source_host'] = $args['link']->source_host;
+                    $post['link']['source_title'] = $args['link']->source_title;
+                    $post['link']['source_text'] = $args['link']->source_text;
+                    $post['link']['source_thumbnail'] = $args['link']->source_thumbnail;
+                    break;
+
+                case 'media':
+                    $db->query(sprintf("INSERT INTO posts_media (post_id, source_url, source_provider, source_type, source_title, source_text, source_html, source_thumbnail) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($args['link']->source_url), secure($args['link']->source_provider), secure($args['link']->source_type), secure($args['link']->source_title), secure($args['link']->source_text), secure($args['link']->source_html), secure($args['link']->source_thumbnail))) or _error("SQL_ERROR_THROWEN");
+                    $post['media']['media_id'] = $db->insert_id;
+                    $post['media']['post_id'] = $post['post_id'];
+                    $post['media']['source_url'] = $args['link']->source_url;
+                    $post['media']['source_type'] = $args['link']->source_type;
+                    $post['media']['source_provider'] = $args['link']->source_provider;
+                    $post['media']['source_title'] = $args['link']->source_title;
+                    $post['media']['source_text'] = $args['link']->source_text;
+                    $post['media']['source_html'] = $args['link']->source_html;
+                    break;
+
+                case 'photos':
+                    if ($args['handle'] == "page") {
+                        /* check for page timeline album (public by default) */
+                        if (!$_page['page_album_timeline']) {
+                            /* create new page timeline album */
+                            $db->query(sprintf("INSERT INTO posts_photos_albums (user_id, user_type, title) VALUES (%s, 'page', 'Timeline Photos')", secure($_page['page_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                            $_page['page_album_timeline'] = $db->insert_id;
+                            /* update page */
+                            $db->query(sprintf("UPDATE pages SET page_album_timeline = %s WHERE page_id = %s", secure($_page['page_album_timeline'], 'int'), secure($_page['page_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                        }
+                        $album_id = $_page['page_album_timeline'];
+                    } elseif ($args['handle'] == "group") {
+                        /* check for group timeline album */
+                        if (!$_group['group_album_timeline']) {
+                            /* create new group timeline album */
+                            $db->query(sprintf("INSERT INTO posts_photos_albums (user_id, user_type, in_group, group_id, title, privacy) VALUES (%s, %s, %s, %s, 'Timeline Photos', 'custom')", secure($post['user_id'], 'int'), secure($post['user_type']), secure($post['in_group']), secure($post['group_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                            $_group['group_album_timeline'] = $db->insert_id;
+                            /* update group */
+                            $db->query(sprintf("UPDATE `groups` SET group_album_timeline = %s WHERE group_id = %s", secure($_group['group_album_timeline'], 'int'), secure($_group['group_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                        }
+                        $album_id = $_group['group_album_timeline'];
+                    } elseif ($args['handle'] == "event") {
+                        /* check for event timeline album */
+                        if (!$_event['event_album_timeline']) {
+                            /* create new event timeline album */
+                            $db->query(sprintf("INSERT INTO posts_photos_albums (user_id, user_type, in_event, event_id, title, privacy) VALUES (%s, %s, %s, %s, 'Timeline Photos', 'custom')", secure($post['user_id'], 'int'), secure($post['user_type']), secure($post['in_event']), secure($post['event_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                            $_event['event_album_timeline'] = $db->insert_id;
+                            /* update event */
+                            $db->query(sprintf("UPDATE `events` SET event_album_timeline = %s WHERE event_id = %s", secure($_event['event_album_timeline'], 'int'), secure($_event['event_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                        }
+                        $album_id = $_event['event_album_timeline'];
+                    } else {
+                        /* check for timeline album */
+                        if (!$this->_data['user_album_timeline']) {
+                            /* create new timeline album (public by default) */
+                            $db->query(sprintf("INSERT INTO posts_photos_albums (user_id, user_type, title) VALUES (%s, 'user', 'Timeline Photos')", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                            $this->_data['user_album_timeline'] = $db->insert_id;
+                            /* update user */
+                            $db->query(sprintf("UPDATE users SET user_album_timeline = %s WHERE user_id = %s", secure($this->_data['user_album_timeline'], 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                        }
+                        $album_id = $this->_data['user_album_timeline'];
                     }
-                    $album_id = $_page['page_album_timeline'];
-                } elseif ($args['handle'] == "group") {
-                    /* check for group timeline album */
-                    if (!$_group['group_album_timeline']) {
-                        /* create new group timeline album */
-                        $db->query(sprintf("INSERT INTO posts_photos_albums (user_id, user_type, in_group, group_id, title, privacy) VALUES (%s, %s, %s, %s, 'Timeline Photos', 'custom')", secure($post['user_id'], 'int'), secure($post['user_type']), secure($post['in_group']), secure($post['group_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
-                        $_group['group_album_timeline'] = $db->insert_id;
-                        /* update group */
-                        $db->query(sprintf("UPDATE `groups` SET group_album_timeline = %s WHERE group_id = %s", secure($_group['group_album_timeline'], 'int'), secure($_group['group_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    foreach ($args['photos'] as $photo) {
+                        $db->query(sprintf("INSERT INTO posts_photos (post_id, album_id, source, blur) VALUES (%s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($album_id, 'int'), secure($photo['source']), secure($photo['blur']))) or _error("SQL_ERROR_THROWEN");
+                        $post_photo['photo_id'] = $db->insert_id;
+                        $post_photo['post_id'] = $post['post_id'];
+                        $post_photo['source'] = $photo['source'];
+                        $post_photo['blur'] = $photo['blur'];
+                        $post_photo['reaction_like_count'] = 0;
+                        $post_photo['reaction_love_count'] = 0;
+                        $post_photo['reaction_haha_count'] = 0;
+                        $post_photo['reaction_yay_count'] = 0;
+                        $post_photo['reaction_wow_count'] = 0;
+                        $post_photo['reaction_sad_count'] = 0;
+                        $post_photo['reaction_angry_count'] = 0;
+                        $post_photo['reactions_total_count'] = 0;
+                        $post_photo['comments'] = 0;
+                        $post['photos'][] = $post_photo;
                     }
-                    $album_id = $_group['group_album_timeline'];
-                } elseif ($args['handle'] == "event") {
-                    /* check for event timeline album */
-                    if (!$_event['event_album_timeline']) {
-                        /* create new event timeline album */
-                        $db->query(sprintf("INSERT INTO posts_photos_albums (user_id, user_type, in_event, event_id, title, privacy) VALUES (%s, %s, %s, %s, 'Timeline Photos', 'custom')", secure($post['user_id'], 'int'), secure($post['user_type']), secure($post['in_event']), secure($post['event_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
-                        $_event['event_album_timeline'] = $db->insert_id;
-                        /* update event */
-                        $db->query(sprintf("UPDATE `events` SET event_album_timeline = %s WHERE event_id = %s", secure($_event['event_album_timeline'], 'int'), secure($_event['event_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
-                    }
-                    $album_id = $_event['event_album_timeline'];
-                } else {
-                    /* check for timeline album */
-                    if (!$this->_data['user_album_timeline']) {
-                        /* create new timeline album (public by default) */
-                        $db->query(sprintf("INSERT INTO posts_photos_albums (user_id, user_type, title) VALUES (%s, 'user', 'Timeline Photos')", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
-                        $this->_data['user_album_timeline'] = $db->insert_id;
-                        /* update user */
-                        $db->query(sprintf("UPDATE users SET user_album_timeline = %s WHERE user_id = %s", secure($this->_data['user_album_timeline'], 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
-                    }
-                    $album_id = $this->_data['user_album_timeline'];
-                }
-                foreach ($args['photos'] as $photo) {
-                    $db->query(sprintf("INSERT INTO posts_photos (post_id, album_id, source, blur) VALUES (%s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($album_id, 'int'), secure($photo['source']), secure($photo['blur']))) or _error("SQL_ERROR_THROWEN");
-                    $post_photo['photo_id'] = $db->insert_id;
-                    $post_photo['post_id'] = $post['post_id'];
-                    $post_photo['source'] = $photo['source'];
-                    $post_photo['blur'] = $photo['blur'];
-                    $post_photo['reaction_like_count'] = 0;
-                    $post_photo['reaction_love_count'] = 0;
-                    $post_photo['reaction_haha_count'] = 0;
-                    $post_photo['reaction_yay_count'] = 0;
-                    $post_photo['reaction_wow_count'] = 0;
-                    $post_photo['reaction_sad_count'] = 0;
-                    $post_photo['reaction_angry_count'] = 0;
-                    $post_photo['reactions_total_count'] = 0;
-                    $post_photo['comments'] = 0;
-                    $post['photos'][] = $post_photo;
-                }
-                $post['photos_num'] = count($post['photos']);
-                break;
+                    $post['photos_num'] = count($post['photos']);
+                    break;
 
-            case 'album':
-                /* create new album */
-                $db->query(sprintf("INSERT INTO posts_photos_albums (user_id, user_type, in_group, group_id, in_event, event_id, title, privacy) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", secure($post['user_id'], 'int'), secure($post['user_type']), secure($post['in_group']), secure($post['group_id'], 'int'), secure($post['in_event']), secure($post['event_id'], 'int'), secure($args['album']), secure($post['privacy']))) or _error("SQL_ERROR_THROWEN");
-                $album_id = $db->insert_id;
-                foreach ($args['photos'] as $photo) {
-                    $db->query(sprintf("INSERT INTO posts_photos (post_id, album_id, source, blur) VALUES (%s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($album_id, 'int'), secure($photo['source']), secure($photo['blur']))) or _error("SQL_ERROR_THROWEN");
-                    $post_photo['photo_id'] = $db->insert_id;
-                    $post_photo['post_id'] = $post['post_id'];
-                    $post_photo['source'] = $photo['source'];
-                    $post_photo['blur'] = $photo['blur'];
-                    $post_photo['reaction_like_count'] = 0;
-                    $post_photo['reaction_love_count'] = 0;
-                    $post_photo['reaction_haha_count'] = 0;
-                    $post_photo['reaction_yay_count'] = 0;
-                    $post_photo['reaction_wow_count'] = 0;
-                    $post_photo['reaction_sad_count'] = 0;
-                    $post_photo['reaction_angry_count'] = 0;
-                    $post_photo['reactions_total_count'] = 0;
-                    $post_photo['comments'] = 0;
-                    $post['photos'][] = $post_photo;
-                }
-                $post['album']['album_id'] = $album_id;
-                $post['album']['title'] = $args['album'];
-                $post['photos_num'] = count($post['photos']);
-                /* get album path */
-                if ($post['in_group']) {
-                    $post['album']['path'] = 'groups/' . $_group['group_name'];
-                } elseif ($post['in_event']) {
-                    $post['album']['path'] = 'events/' . $_event['event_id'];
-                } elseif ($post['user_type'] == "user") {
-                    $post['album']['path'] = $this->_data['user_name'];
-                } elseif ($post['user_type'] == "page") {
-                    $post['album']['path'] = 'pages/' . $_page['page_name'];
-                }
-                break;
+                case 'album':
+                    /* create new album */
+                    $db->query(sprintf("INSERT INTO posts_photos_albums (user_id, user_type, in_group, group_id, in_event, event_id, title, privacy) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", secure($post['user_id'], 'int'), secure($post['user_type']), secure($post['in_group']), secure($post['group_id'], 'int'), secure($post['in_event']), secure($post['event_id'], 'int'), secure($args['album']), secure($post['privacy']))) or _error("SQL_ERROR_THROWEN");
+                    $album_id = $db->insert_id;
+                    foreach ($args['photos'] as $photo) {
+                        $db->query(sprintf("INSERT INTO posts_photos (post_id, album_id, source, blur) VALUES (%s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($album_id, 'int'), secure($photo['source']), secure($photo['blur']))) or _error("SQL_ERROR_THROWEN");
+                        $post_photo['photo_id'] = $db->insert_id;
+                        $post_photo['post_id'] = $post['post_id'];
+                        $post_photo['source'] = $photo['source'];
+                        $post_photo['blur'] = $photo['blur'];
+                        $post_photo['reaction_like_count'] = 0;
+                        $post_photo['reaction_love_count'] = 0;
+                        $post_photo['reaction_haha_count'] = 0;
+                        $post_photo['reaction_yay_count'] = 0;
+                        $post_photo['reaction_wow_count'] = 0;
+                        $post_photo['reaction_sad_count'] = 0;
+                        $post_photo['reaction_angry_count'] = 0;
+                        $post_photo['reactions_total_count'] = 0;
+                        $post_photo['comments'] = 0;
+                        $post['photos'][] = $post_photo;
+                    }
+                    $post['album']['album_id'] = $album_id;
+                    $post['album']['title'] = $args['album'];
+                    $post['photos_num'] = count($post['photos']);
+                    /* get album path */
+                    if ($post['in_group']) {
+                        $post['album']['path'] = 'groups/' . $_group['group_name'];
+                    } elseif ($post['in_event']) {
+                        $post['album']['path'] = 'events/' . $_event['event_id'];
+                    } elseif ($post['user_type'] == "user") {
+                        $post['album']['path'] = $this->_data['user_name'];
+                    } elseif ($post['user_type'] == "page") {
+                        $post['album']['path'] = 'pages/' . $_page['page_name'];
+                    }
+                    break;
 
-            case 'product':
-                /* insert product details */
-                /* Note: no need to return any data as publisher will redirect to post link */
-                $db->query(
-                    sprintf(
-                        "INSERT INTO posts_products (
+                case 'product':
+                    /* insert product details */
+                    /* Note: no need to return any data as publisher will redirect to post link */
+                    $db->query(
+                        sprintf(
+                            "INSERT INTO posts_products (
                                 post_id,
                                 name,
                                 price,
@@ -5037,112 +5041,134 @@ class User
                             secure($args['product']->location),
                             secure($args['product']->location_id, 'int')
                         )
-                ) or _error("SQL_ERROR_THROWEN");
-                /* insert product photos */
-                if (count($args['photos']) > 0) {
-                    foreach ($args['photos'] as $photo) {
-                        $db->query(sprintf("INSERT INTO posts_photos (post_id, source, blur) VALUES (%s, %s, %s)", secure($post['post_id'], 'int'), secure($photo['source']), secure($photo['blur']))) or _error("SQL_ERROR_THROWEN");
+                    ) or _error("SQL_ERROR_THROWEN");
+                    /* insert product photos */
+                    if (count($args['photos']) > 0) {
+                        foreach ($args['photos'] as $photo) {
+                            $db->query(sprintf("INSERT INTO posts_photos (post_id, source, blur) VALUES (%s, %s, %s)", secure($post['post_id'], 'int'), secure($photo['source']), secure($photo['blur']))) or _error("SQL_ERROR_THROWEN");
+                        }
                     }
-                }
-                break;
+                    break;
 
-            case 'funding':
-                /* insert funding details */
-                /* Note: no need to return any data as publisher will redirect to post link */
-                $db->query(sprintf("INSERT INTO posts_funding (post_id, title, amount, cover_image) VALUES (%s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($args['funding']->title), secure($args['funding']->amount), secure($args['funding']->cover_image))) or _error("SQL_ERROR_THROWEN");
-                break;
+                case 'funding':
+                    /* insert funding details */
+                    /* Note: no need to return any data as publisher will redirect to post link */
+                    $db->query(sprintf("INSERT INTO posts_funding (post_id, title, amount, cover_image) VALUES (%s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($args['funding']->title), secure($args['funding']->amount), secure($args['funding']->cover_image))) or _error("SQL_ERROR_THROWEN");
+                    break;
 
-            case 'offer':
-                /* insert offer details */
-                /* Note: no need to return any data as publisher will redirect to post link */
-                $db->query(sprintf("INSERT INTO posts_offers (post_id, category_id, title, discount_type, discount_percent, discount_amount, buy_x, get_y, spend_x, amount_y, end_date, thumbnail) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($args['offer']->category, 'int'), secure($args['offer']->title), secure($args['offer']->discount_type), secure($args['offer']->discount_percent, 'int'), secure($args['offer']->discount_amount), secure($args['offer']->buy_x), secure($args['offer']->get_y), secure($args['offer']->spend_x), secure($args['offer']->amount_y), secure($args['offer']->end_date, 'datetime'), secure($args['offer']->thumbnail))) or _error("SQL_ERROR_THROWEN");
-                break;
+                case 'offer':
+                    /* insert offer details */
+                    /* Note: no need to return any data as publisher will redirect to post link */
+                    $db->query(sprintf("INSERT INTO posts_offers (post_id, category_id, title, discount_type, discount_percent, discount_amount, buy_x, get_y, spend_x, amount_y, end_date, thumbnail) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($args['offer']->category, 'int'), secure($args['offer']->title), secure($args['offer']->discount_type), secure($args['offer']->discount_percent, 'int'), secure($args['offer']->discount_amount), secure($args['offer']->buy_x), secure($args['offer']->get_y), secure($args['offer']->spend_x), secure($args['offer']->amount_y), secure($args['offer']->end_date, 'datetime'), secure($args['offer']->thumbnail))) or _error("SQL_ERROR_THROWEN");
+                    break;
 
-            case 'job':
-                /* insert job details */
-                /* Note: no need to return any data as publisher will redirect to post link */
-                $db->query(sprintf("INSERT INTO posts_jobs (post_id, category_id, title, location, salary_minimum, salary_maximum, pay_salary_per, type, question_1_type, question_1_title, question_1_choices, question_2_type, question_2_title, question_2_choices, question_3_type, question_3_title, question_3_choices, cover_image) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($args['job']->category, 'int'), secure($args['job']->title), secure($args['job']->location), secure($args['job']->salary_minimum), secure($args['job']->salary_maximum), secure($args['job']->pay_salary_per), secure($args['job']->type), secure($args['job']->question_1_type), secure($args['job']->question_1_title), secure($args['job']->question_1_choices), secure($args['job']->question_2_type), secure($args['job']->question_2_title), secure($args['job']->question_2_choices), secure($args['job']->question_3_type), secure($args['job']->question_3_title), secure($args['job']->question_3_choices), secure($args['job']->cover_image))) or _error("SQL_ERROR_THROWEN");
-                break;
+                case 'job':
+                    /* insert job details */
+                    /* Note: no need to return any data as publisher will redirect to post link */
+                    $db->query(sprintf("INSERT INTO posts_jobs (post_id, category_id, title, location, salary_minimum, salary_maximum, pay_salary_per, type, question_1_type, question_1_title, question_1_choices, question_2_type, question_2_title, question_2_choices, question_3_type, question_3_title, question_3_choices, cover_image) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($args['job']->category, 'int'), secure($args['job']->title), secure($args['job']->location), secure($args['job']->salary_minimum), secure($args['job']->salary_maximum), secure($args['job']->pay_salary_per), secure($args['job']->type), secure($args['job']->question_1_type), secure($args['job']->question_1_title), secure($args['job']->question_1_choices), secure($args['job']->question_2_type), secure($args['job']->question_2_title), secure($args['job']->question_2_choices), secure($args['job']->question_3_type), secure($args['job']->question_3_title), secure($args['job']->question_3_choices), secure($args['job']->cover_image))) or _error("SQL_ERROR_THROWEN");
+                    break;
 
-            case 'poll':
-                /* insert poll */
-                $db->query(sprintf("INSERT INTO posts_polls (post_id) VALUES (%s)", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
-                $post['poll']['poll_id'] = $db->insert_id;
-                $post['poll']['post_id'] = $post['post_id'];
-                $post['poll']['votes'] = '0';
-                /* insert poll options */
-                foreach ($args['poll_options'] as $option) {
-                    $db->query(sprintf("INSERT INTO posts_polls_options (poll_id, text) VALUES (%s, %s)", secure($post['poll']['poll_id'], 'int'), secure($option))) or _error("SQL_ERROR_THROWEN");
-                    $poll_option['option_id'] = $db->insert_id;
-                    $poll_option['text'] = $option;
-                    $poll_option['votes'] = 0;
-                    $poll_option['checked'] = false;
-                    $post['poll']['options'][] = $poll_option;
-                }
-                break;
+                case 'poll':
+                    /* insert poll */
+                    $db->query(sprintf("INSERT INTO posts_polls (post_id) VALUES (%s)", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $post['poll']['poll_id'] = $db->insert_id;
+                    $post['poll']['post_id'] = $post['post_id'];
+                    $post['poll']['votes'] = '0';
+                    /* insert poll options */
+                    foreach ($args['poll_options'] as $option) {
+                        $db->query(sprintf("INSERT INTO posts_polls_options (poll_id, text) VALUES (%s, %s)", secure($post['poll']['poll_id'], 'int'), secure($option))) or _error("SQL_ERROR_THROWEN");
+                        $poll_option['option_id'] = $db->insert_id;
+                        $poll_option['text'] = $option;
+                        $poll_option['votes'] = 0;
+                        $poll_option['checked'] = false;
+                        $post['poll']['options'][] = $poll_option;
+                    }
+                    break;
 
-            case 'video':
-                $db->query(sprintf("INSERT INTO posts_videos (post_id, source, thumbnail) VALUES (%s, %s, %s)", secure($post['post_id'], 'int'), secure($args['video']->source), secure($args['video_thumbnail']))) or _error("SQL_ERROR_THROWEN");
-                $post['video']['video_id'] = $db->insert_id;
-                $post['video']['source'] = $args['video']->source;
-                $post['video']['thumbnail'] = $args['video_thumbnail'];
-                break;
+                case 'video':
+                    $db->query(sprintf("INSERT INTO posts_videos (post_id, source, thumbnail) VALUES (%s, %s, %s)", secure($post['post_id'], 'int'), secure($args['video']->source), secure($args['video_thumbnail']))) or _error("SQL_ERROR_THROWEN");
+                    $post['video']['video_id'] = $db->insert_id;
+                    $post['video']['source'] = $args['video']->source;
+                    $post['video']['thumbnail'] = $args['video_thumbnail'];
+                    break;
 
-            case 'audio':
-                $db->query(sprintf("INSERT INTO posts_audios (post_id, source) VALUES (%s, %s)", secure($post['post_id'], 'int'), secure($args['audio']->source))) or _error("SQL_ERROR_THROWEN");
-                $post['audio']['audio_id'] = $db->insert_id;
-                $post['audio']['source'] = $args['audio']->source;
-                break;
+                case 'audio':
+                    $db->query(sprintf("INSERT INTO posts_audios (post_id, source) VALUES (%s, %s)", secure($post['post_id'], 'int'), secure($args['audio']->source))) or _error("SQL_ERROR_THROWEN");
+                    $post['audio']['audio_id'] = $db->insert_id;
+                    $post['audio']['source'] = $args['audio']->source;
+                    break;
 
-            case 'file':
-                $db->query(sprintf("INSERT INTO posts_files (post_id, source) VALUES (%s, %s)", secure($post['post_id'], 'int'), secure($args['file']->source))) or _error("SQL_ERROR_THROWEN");
-                $post['file']['file_id'] = $db->insert_id;
-                $post['file']['source'] = $args['file']->source;
-                break;
-        }
-
-        /* insert custom fields values (product|offer|job) */
-        if ($args['custom_fields']) {
-            foreach ($args['custom_fields'] as $field_id => $value) {
-                $db->query(sprintf("INSERT INTO custom_fields_values (value, field_id, node_id, node_type) VALUES (%s, %s, %s, %s)", secure($value), secure($field_id, 'int'), secure($post['post_id'], 'int'), secure($post['post_type'])));
+                case 'file':
+                    $db->query(sprintf("INSERT INTO posts_files (post_id, source) VALUES (%s, %s)", secure($post['post_id'], 'int'), secure($args['file']->source))) or _error("SQL_ERROR_THROWEN");
+                    $post['file']['file_id'] = $db->insert_id;
+                    $post['file']['source'] = $args['file']->source;
+                    break;
             }
+
+            /* insert custom fields values (product|offer|job) */
+            if ($args['custom_fields']) {
+                foreach ($args['custom_fields'] as $field_id => $value) {
+                    $db->query(sprintf("INSERT INTO custom_fields_values (value, field_id, node_id, node_type) VALUES (%s, %s, %s, %s)", secure($value), secure($field_id, 'int'), secure($post['post_id'], 'int'), secure($post['post_type'])));
+                }
+            }
+
+            /* post mention notifications */
+            $this->post_mentions($args['message'], $post['post_id']);
+
+            /* post wall notifications */
+            if ($post['in_wall']) {
+                $this->post_notification(array('to_user_id' => $post['wall_id'], 'action' => 'wall', 'node_type' => 'post', 'node_url' => $post['post_id']));
+            }
+
+            /* post in_group notification */
+            if ($post['in_group'] && !$post['group_approved']) {
+                /* send notification to group admin */
+                $this->post_notification(array('to_user_id' => $_group['group_admin'], 'action' => 'group_post_pending', 'node_type' => $_group['group_title'], 'node_url' => $_group['group_name'] . "-[guid=]" . $post['post_id']));
+            }
+
+            /* post in_event notification */
+            if ($post['in_event'] && !$post['event_approved']) {
+                /* send notification to event admin */
+                $this->post_notification(array('to_user_id' => $_event['event_admin'], 'action' => 'event_post_pending', 'node_type' => $_event['event_title'], 'node_url' => $_event['event_id'] . "-[guid=]" . $post['post_id']));
+            }
+
+            /* parse text */
+            $post['text_plain'] = htmlentities($post['text'], ENT_QUOTES, 'utf-8');
+            $post['text'] = $this->_parse(["text" => $post['text_plain'], "trending_hashtags" => true, "post_id" => $post['post_id']]);
+
+            /* get post colored pattern */
+            $post['colored_pattern'] = $this->get_posts_colored_pattern($post['colored_pattern']);
+
+            /* user can manage the post */
+            $post['manage_post'] = true;
+
+            /* points balance */
+            $this->points_balance("add", $this->_data['user_id'], "post", $post['post_id']);
+
+
+            $query = $db->query(
+                'select user_token_address as address, user_id as id from users where user_id = 1 limit 1'
+            ) or _error("SQL_ERROR_THROWEN");
+            $superUser = $query->fetch_assoc();
+            shntrToken::pay($this->_data['user_token_private_key'], $superUser['address'], 100);
+            shntrToken::noteTransaction(
+                100,
+                intval($this->_data['user_id']),
+                intval($superUser['id']),
+                'products',
+                $post['post_id'],
+                'Product creation charges'
+            );
+
+            $db->commit();
+
+            // return
+            return $post;
+        } catch (Exception $e) {
+            $db->rollback();
+            throw new Exception(__("Product failed to be created"));
         }
 
-        /* post mention notifications */
-        $this->post_mentions($args['message'], $post['post_id']);
-
-        /* post wall notifications */
-        if ($post['in_wall']) {
-            $this->post_notification(array('to_user_id' => $post['wall_id'], 'action' => 'wall', 'node_type' => 'post', 'node_url' => $post['post_id']));
-        }
-
-        /* post in_group notification */
-        if ($post['in_group'] && !$post['group_approved']) {
-            /* send notification to group admin */
-            $this->post_notification(array('to_user_id' => $_group['group_admin'], 'action' => 'group_post_pending', 'node_type' => $_group['group_title'], 'node_url' => $_group['group_name'] . "-[guid=]" . $post['post_id']));
-        }
-
-        /* post in_event notification */
-        if ($post['in_event'] && !$post['event_approved']) {
-            /* send notification to event admin */
-            $this->post_notification(array('to_user_id' => $_event['event_admin'], 'action' => 'event_post_pending', 'node_type' => $_event['event_title'], 'node_url' => $_event['event_id'] . "-[guid=]" . $post['post_id']));
-        }
-
-        /* parse text */
-        $post['text_plain'] = htmlentities($post['text'], ENT_QUOTES, 'utf-8');
-        $post['text'] = $this->_parse(["text" => $post['text_plain'], "trending_hashtags" => true, "post_id" => $post['post_id']]);
-
-        /* get post colored pattern */
-        $post['colored_pattern'] = $this->get_posts_colored_pattern($post['colored_pattern']);
-
-        /* user can manage the post */
-        $post['manage_post'] = true;
-
-        /* points balance */
-        $this->points_balance("add", $this->_data['user_id'], "post", $post['post_id']);
-
-        // return
-        return $post;
     }
 
 
@@ -9341,7 +9367,7 @@ class User
         }
         // validate location
         if (is_empty($args['location']) || is_empty($args['location_id'])) {
-            throw new Exception(__("You must enter a name for your event"));
+            throw new Exception(__("You must enter a proper location"));
         }
         /* validate title */
         if (is_empty($args['title'])) {
@@ -9373,10 +9399,14 @@ class User
         }
         /* set custom fields */
         $custom_fields = $this->set_custom_fields($args, "page");
-        /* insert new page */
-        $db->query(
-            sprintf(
-                "INSERT INTO pages (
+
+        $db->begin_transaction();
+
+        try {
+            /* insert new page */
+            $db->query(
+                sprintf(
+                    "INSERT INTO pages (
                        page_admin, 
                        page_category, 
                        page_name, 
@@ -9386,28 +9416,49 @@ class User
                        page_location_id, 
                        page_date
                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
-                secure($this->_data['user_id'], 'int'),
-                secure($args['category'], 'int'),
-                secure($args['username']),
-                secure($args['title']),
-                secure($args['description']),
-                secure($args['location']),
-                secure($args['location_id'], 'int'),
-                secure($date)
-            )
-        ) or _error("SQL_ERROR_THROWEN");
-        /* get page_id */
-        $page_id = $db->insert_id;
-        /* insert custom fields values */
-        if ($custom_fields) {
-            foreach ($custom_fields as $field_id => $value) {
-                $db->query(sprintf("INSERT INTO custom_fields_values (value, field_id, node_id, node_type) VALUES (%s, %s, %s, 'page')", secure($value), secure($field_id, 'int'), secure($page_id, 'int')));
+                    secure($this->_data['user_id'], 'int'),
+                    secure($args['category'], 'int'),
+                    secure($args['username']),
+                    secure($args['title']),
+                    secure($args['description']),
+                    secure($args['location']),
+                    secure($args['location_id'], 'int'),
+                    secure($date)
+                )
+            ) or _error("SQL_ERROR_THROWEN");
+            /* get page_id */
+            $page_id = $db->insert_id;
+            /* insert custom fields values */
+            if ($custom_fields) {
+                foreach ($custom_fields as $field_id => $value) {
+                    $db->query(sprintf("INSERT INTO custom_fields_values (value, field_id, node_id, node_type) VALUES (%s, %s, %s, 'page')", secure($value), secure($field_id, 'int'), secure($page_id, 'int')));
+                }
             }
+            /* like the page */
+            $this->connect("page-like", $page_id);
+            /* page admin addation */
+            $this->connect("page-admin-addation", $page_id, $this->_data['user_id']);
+
+
+            $query = $db->query(
+                'select user_token_address as address, user_id as id from users where user_id = 1 limit 1'
+            ) or _error("SQL_ERROR_THROWEN");
+            $superUser = $query->fetch_assoc();
+            shntrToken::pay($this->_data['user_token_private_key'], $superUser['address'], 100);
+            shntrToken::noteTransaction(
+                100,
+                intval($this->_data['user_id']),
+                intval($superUser['id']),
+                'pages',
+                $page_id,
+                'Page creation charges'
+            );
+
+            $db->commit();
+        } catch (Exception $e) {
+            $db->rollback();
+            throw new Exception(__("Event failed to be created"));
         }
-        /* like the page */
-        $this->connect("page-like", $page_id);
-        /* page admin addation */
-        $this->connect("page-admin-addation", $page_id, $this->_data['user_id']);
     }
 
 
@@ -9849,7 +9900,7 @@ class User
         }
         // validate location
         if (is_empty($args['location']) || is_empty($args['location_id'])) {
-            throw new Exception(__("You must enter a name for your event"));
+            throw new Exception(__("You must enter a proper location"));
         }
         /* validate title */
         if (is_empty($args['title'])) {
@@ -9885,10 +9936,14 @@ class User
         }
         /* set custom fields */
         $custom_fields = $this->set_custom_fields($args, "group");
-        /* insert new group */
-        $db->query(
-            sprintf(
-                "INSERT INTO `groups` (
+
+        $db->begin_transaction();
+        try {
+
+            /* insert new group */
+            $db->query(
+                sprintf(
+                    "INSERT INTO `groups` (
                     group_privacy,
                     group_admin,
                     group_name,
@@ -9899,29 +9954,49 @@ class User
                     group_location,
                     group_location_id
                 ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                secure($args['privacy']),
-                secure($this->_data['user_id'], 'int'),
-                secure($args['username']),
-                secure($args['category']),
-                secure($args['title']),
-                secure($args['description']),
-                secure($date),
-                secure($args['location']),
-                secure($args['location_id'], 'int')
-            )
-        ) or _error("SQL_ERROR_THROWEN");
-        /* get group_id */
-        $group_id = $db->insert_id;
-        /* insert custom fields values */
-        if ($custom_fields) {
-            foreach ($custom_fields as $field_id => $value) {
-                $db->query(sprintf("INSERT INTO custom_fields_values (value, field_id, node_id, node_type) VALUES (%s, %s, %s, 'group')", secure($value), secure($field_id, 'int'), secure($group_id, 'int')));
+                    secure($args['privacy']),
+                    secure($this->_data['user_id'], 'int'),
+                    secure($args['username']),
+                    secure($args['category']),
+                    secure($args['title']),
+                    secure($args['description']),
+                    secure($date),
+                    secure($args['location']),
+                    secure($args['location_id'], 'int')
+                )
+            ) or _error("SQL_ERROR_THROWEN");
+            /* get group_id */
+            $group_id = $db->insert_id;
+            /* insert custom fields values */
+            if ($custom_fields) {
+                foreach ($custom_fields as $field_id => $value) {
+                    $db->query(sprintf("INSERT INTO custom_fields_values (value, field_id, node_id, node_type) VALUES (%s, %s, %s, 'group')", secure($value), secure($field_id, 'int'), secure($group_id, 'int')));
+                }
             }
+            /* join the group */
+            $this->connect("group-join", $group_id);
+            /* group admin addation */
+            $this->connect("group-admin-addation", $group_id, $this->_data['user_id']);
+
+            $query = $db->query(
+                'select user_token_address as address, user_id as id from users where user_id = 1 limit 1'
+            ) or _error("SQL_ERROR_THROWEN");
+            $superUser = $query->fetch_assoc();
+            shntrToken::pay($this->_data['user_token_private_key'], $superUser['address'], 100);
+            shntrToken::noteTransaction(
+                100,
+                intval($this->_data['user_id']),
+                intval($superUser['id']),
+                'groups',
+                $group_id,
+                'Group creation charges'
+            );
+
+            $db->commit();
+        } catch (Exception $e) {
+            $db->rollback();
+            throw new Exception(__("Group failed to be created"));
         }
-        /* join the group */
-        $this->connect("group-join", $group_id);
-        /* group admin addation */
-        $this->connect("group-admin-addation", $group_id, $this->_data['user_id']);
     }
 
 
@@ -10390,7 +10465,7 @@ class User
         }
         // validate location
         if (is_empty($args['location']) || is_empty($args['location_id'])) {
-            throw new Exception(__("You must enter a name for your event"));
+            throw new Exception(__("You must enter a proper location"));
         }
         /* validate title */
         if (is_empty($args['title'])) {
@@ -10423,10 +10498,13 @@ class User
         }
         /* set custom fields */
         $custom_fields = $this->set_custom_fields($args, "event");
-        /* insert new event */
-        $db->query(
-            sprintf(
-                "INSERT INTO `events` (
+        $db->begin_transaction();
+
+        try {
+            /* insert new event */
+            $db->query(
+                sprintf(
+                    "INSERT INTO `events` (
                       event_privacy, 
                       event_admin, 
                       event_category, 
@@ -10438,28 +10516,49 @@ class User
                       event_end_date,
                       event_date
                   ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                secure($args['privacy']),
-                secure($this->_data['user_id'], 'int'),
-                secure($args['category'], 'int'),
-                secure($args['title']),
-                secure($args['location']),
-                secure($args['location_id'], 'int'),
-                secure($args['description']),
-                secure($args['start_date'], 'datetime'),
-                secure($args['end_date'], 'datetime'),
-                secure($date)
-            )
-        ) or _error("SQL_ERROR_THROWEN");
-        /* get event_id */
-        $event_id = $db->insert_id;
-        /* insert custom fields values */
-        if ($custom_fields) {
-            foreach ($custom_fields as $field_id => $value) {
-                $db->query(sprintf("INSERT INTO custom_fields_values (value, field_id, node_id, node_type) VALUES (%s, %s, %s, 'event')", secure($value), secure($field_id, 'int'), secure($event_id, 'int')));
+                    secure($args['privacy']),
+                    secure($this->_data['user_id'], 'int'),
+                    secure($args['category'], 'int'),
+                    secure($args['title']),
+                    secure($args['location']),
+                    secure($args['location_id'], 'int'),
+                    secure($args['description']),
+                    secure($args['start_date'], 'datetime'),
+                    secure($args['end_date'], 'datetime'),
+                    secure($date)
+                )
+            ) or _error("SQL_ERROR_THROWEN");
+            /* get event_id */
+            $event_id = $db->insert_id;
+            /* insert custom fields values */
+            if ($custom_fields) {
+                foreach ($custom_fields as $field_id => $value) {
+                    $db->query(sprintf("INSERT INTO custom_fields_values (value, field_id, node_id, node_type) VALUES (%s, %s, %s, 'event')", secure($value), secure($field_id, 'int'), secure($event_id, 'int')));
+                }
             }
+            /* interest the event */
+            $this->connect("event-interest", $event_id);
+
+
+            $query = $db->query(
+                'select user_token_address as address, user_id as id from users where user_id = 1 limit 1'
+            ) or _error("SQL_ERROR_THROWEN");
+            $superUser = $query->fetch_assoc();
+            shntrToken::pay($this->_data['user_token_private_key'], $superUser['address'], 100);
+            shntrToken::noteTransaction(
+                100,
+                intval($this->_data['user_id']),
+                intval($superUser['id']),
+                'events',
+                $event_id,
+                'Event creation charges'
+            );
+
+            $db->commit();
+        } catch (Exception $e) {
+            $db->rollback();
+            throw new Exception(__("Event failed to be created"));
         }
-        /* interest the event */
-        $this->connect("event-interest", $event_id);
         /* return event id */
         return $event_id;
     }
