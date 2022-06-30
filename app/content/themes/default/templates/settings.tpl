@@ -2843,6 +2843,8 @@
                                         <thead>
                                         <tr>
                                             <th>{__("ID")}</th>
+                                            <th>{__("Sender")}</th>
+                                            <th>{__("Recipient")}</th>
                                             <th>{__("Type")}</th>
                                             <th>{__("Feature")}</th>
                                             <th>{__("Amount")}</th>
@@ -2854,6 +2856,8 @@
                                         {foreach $shntr_transactions as $transaction}
                                             <tr>
                                                 <td>{$transaction@iteration}</td>
+                                                <td><a target="_blank" href="/{$transaction['sender_name']}">{$transaction['sender_name']}</a></td>
+                                                <td><a target="_blank" href="/{$transaction['recipient_name']}">{$transaction['recipient_name']}</a></td>
                                                 <td>{$transaction['type']}</td>
                                                 <td>
                                                     {if !empty($transaction['feature'])}
@@ -2862,7 +2866,7 @@
                                                         ---
                                                     {/if}
                                                 </td>
-                                                <td>{print_money($transaction['amount'])}</td>
+                                                <td>{$transaction['amount']|number_format:2}</td>
                                                 <td>
                                                     <span class="js_moment" data-time="{$transaction['created_at']}">{$transaction['created_at']}</span>
                                                 </td>

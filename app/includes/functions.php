@@ -2606,7 +2606,7 @@ function http_call(string $url, string $method = 'GET', array $data = [], array 
 {
     $opts = [
         "http" => [
-            'timeout' => 5,
+            'timeout' => 30,
             "method" => $method,
             "header" => implode(PHP_EOL, $headers) . PHP_EOL,
             "content" => json_encode($data),

@@ -7,7 +7,7 @@
 
         <!-- left panel -->
         <div class="col-md-4 col-lg-3 offcanvas-sidebar">
-            
+
             <!-- System -->
             <div class="card mb5">
                 <div class="card-header block-title">
@@ -145,6 +145,14 @@
                                 </a>
                             </li>
                             <!-- Currencies -->
+
+                            <!-- shntr-token -->
+                            <li {if $view == "shntr-token"}class="active"{/if}>
+                                <a href="{$system['system_url']}/{$control_panel['url']}/shntr-token">
+                                    <i class="fa fa-dollar fa-fw mr10" style="color: #3F51B5"></i>{__("shntr token")}
+                                </a>
+                            </li>
+                            <!-- shntr-token -->
 
                             <!-- Genders -->
                             <li {if $view == "genders"}class="active"{/if}>
@@ -433,7 +441,7 @@
                     </div>
                     <div class="card-body with-nav">
                         <ul class="side-nav">
-                            
+
                             <!-- Ads -->
                             <li {if $view == "ads"}class="active"{/if}>
                                 <a href="#ads" data-toggle="collapse" {if $view == "ads"}aria-expanded="true"{/if}>
@@ -604,7 +612,7 @@
                     </div>
                     <div class="card-body with-nav">
                         <ul class="side-nav">
-                            
+
                             <!-- CoinPayments -->
                             <li {if $view == "coinpayments"}class="active"{/if}>
                                 <a href="{$system['system_url']}/{$control_panel['url']}/coinpayments">
@@ -663,7 +671,7 @@
                                 </div>
                             </li>
                             <!-- Developers -->
-                            
+
                         </ul>
                     </div>
                 </div>
@@ -785,7 +793,7 @@
                                 </a>
                             </li>
                             <!-- Custom Fields -->
-                            
+
                             <!-- Static Pages -->
                             <li {if $view == "static"}class="active"{/if}>
                                 <a href="{$system['system_url']}/{$control_panel['url']}/static">
@@ -903,7 +911,7 @@
                                 </div>
                             </li>
                             <!-- Build -->
-                            
+
                         </ul>
                     </div>
                 </div>
@@ -912,13 +920,13 @@
 
         </div>
         <!-- left panel -->
-        
+
         <!-- right panel -->
         <div class="col-md-8 col-lg-9 offcanvas-mainbar">
             {include file="admin.$view.tpl"}
         </div>
         <!-- right panel -->
-        
+
     </div>
 </div>
 <!-- page content -->

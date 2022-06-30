@@ -1514,11 +1514,13 @@ $(function () {
                 alert(`${value} is not valid`)
                 return
             }
+            window.onbeforeunload = () => true;
         }
         /* button loading */
         button_status(_this, "loading");
         /* post the request */
         $.post(api['users/connect'], { 'do': _do, 'uid': 0, 'id': id, 'value': value }, function (response) {
+            window.onbeforeunload = null;
             if (response.callback) {
                 /* button reset */
                 button_status(_this, "reset");

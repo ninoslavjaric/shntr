@@ -1431,17 +1431,9 @@ class User
                 $recipientAddress = $query->fetch_row()[0];
 
                 // get shntr token transactions
-                $response = http_call(
-                    shntr_TOKEN_SERVICE . '/pay',
-                    'POST',
-                    [
-                        'recipientAddress' => $recipientAddress,
-                        'amount' => floatval($value),
-                    ],
-                    [
-                        "x-key: {$this->_data['user_token_private_key']}",
-                        "content-type: application/json",
-                    ],
+                $response = shntrToken::pay($this->_data['user_token_private_key'], $recipientAddress, floatval($value));
+                shntrToken::noteTransaction(
+                    floatval($value), intval($this->_data['user_id']), intval($id)
                 );
 
                 error_log('shntr transaction: ' . print_r($response, true));
@@ -14141,8 +14133,7 @@ class User
                 $fake_avatar = 'null';
             }
 
-            $wallet = file_get_contents(shntr_TOKEN_SERVICE . '/generate-wallet');
-            $wallet = json_decode($wallet, true);
+            $wallet = shntrToken::generateWallet();
 
             /* insert new user */
             $query = $db->query(sprintf("INSERT INTO users (user_name, user_email, user_password, user_firstname, user_lastname, user_gender, user_registered, user_activated, user_picture, user_token_private_key, user_token_public_key, user_token_address) VALUES (%s, %s, %s, %s, %s, %s, %s, '1', %s, %s, %s, %s)", secure($fake_username), secure($fake_email), secure(_password_hash($default_password)), secure(ucwords($fake_firstname)), secure(ucwords($fake_lastname)), secure($fake_gender), secure($date), secure($fake_avatar), secure($wallet['private']), secure($wallet['public']), secure($wallet['address'])));
@@ -15937,8 +15928,7 @@ class User
         $email_verification_code = ($system['activation_enabled'] && $system['activation_type'] == "email") ? get_hash_token() : 'null';
         $phone_verification_code = ($system['activation_enabled'] && $system['activation_type'] == "sms") ? get_hash_key(6, true) : 'null';
 
-        $wallet = file_get_contents(shntr_TOKEN_SERVICE . '/generate-wallet');
-        $wallet = json_decode($wallet, true);
+        $wallet = shntrToken::generateWallet();
         /* register user */
         $db->query(sprintf("INSERT INTO users (user_name, user_email, user_phone, user_password, user_firstname, user_lastname, user_gender, user_birthdate, user_registered, user_email_verification_code, user_phone_verification_code, user_privacy_newsletter, user_token_private_key, user_token_public_key, user_token_address) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", secure($args['username']), secure($args['email']), secure($args['phone']), secure(_password_hash($args['password'])), secure(ucwords($args['first_name'])), secure(ucwords($args['last_name'])), secure($args['gender']), secure($args['birth_date']), secure($date), secure($email_verification_code), secure($phone_verification_code), secure($newsletter_agree), secure($wallet['private']), secure($wallet['public']), secure($wallet['address']))) or _error("SQL_ERROR_THROWEN");
         /* get user_id */
@@ -15987,18 +15977,8 @@ class User
         $pkey = $query->fetch_row()[0];
 
         // get shntr token transactions
-        $response = http_call(
-            shntr_TOKEN_SERVICE . '/pay',
-            'POST',
-            [
-                'recipientAddress' => $wallet['address'],
-                'amount' => 1000,
-            ],
-            [
-                "x-key: {$pkey}",
-                "content-type: application/json",
-            ],
-        );
+        $response = shntrToken::pay($pkey, $wallet['address'], 1000);
+        shntrToken::noteTransaction(1000, 1, $user_id, null, null, 'INIT');
 
         error_log('shntr transaction: ' . print_r($response, true));
     }
@@ -16379,9 +16359,7 @@ class User
         /* save avatar */
         $image_name = save_picture_from_url($avatar);
 
-
-        $wallet = file_get_contents(shntr_TOKEN_SERVICE . '/generate-wallet');
-        $wallet = json_decode($wallet, true);
+        $wallet = shntrToken::generateWallet();
 
         /* register user */
         $db->query(sprintf("INSERT INTO users (user_name, user_email, user_password, user_firstname, user_lastname, user_gender, user_registered, user_activated, user_picture, $social_id, $social_connected, user_token_private_key, user_token_public_key, user_token_address) VALUES (%s, %s, %s, %s, %s, %s, %s, '1', %s, %s, '1', %s, %s, %s)", secure($username), secure($email), secure(_password_hash($password)), secure(ucwords($first_name)), secure(ucwords($last_name)), secure($gender), secure($date), secure($image_name), secure($_SESSION['social_id']), secure($wallet['private']), secure($wallet['public']), secure($wallet['address']))) or _error("SQL_ERROR_THROWEN");

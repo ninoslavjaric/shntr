@@ -424,6 +424,18 @@ try {
 			}
 			break;
 
+		case 'shntr-token':
+			// check admin|moderator permission
+			if ($user->_is_moderator) {
+				_error(__('System Message'), __("You don't have the right permission to access this"));
+			}
+
+			$history = shntrToken::getEntireHistory();
+
+			$smarty->assign('rows', $history);
+
+			break;
+
 		case 'genders':
 			// check admin|moderator permission
 			if ($user->_is_moderator) {
@@ -3299,7 +3311,7 @@ try {
 			_error(404);
 	}
 	/* assign variables */
-	$smarty->assign('view', $_GET['view']);
+	$smarty->assign('view', str_replace('-', '_', $_GET['view']));
 	$smarty->assign('sub_view', $_GET['sub_view']);
 	$smarty->assign('control_panel', $control_panel);
 
