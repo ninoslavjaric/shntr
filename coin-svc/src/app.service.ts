@@ -127,6 +127,8 @@ export class AppService {
       (jig) => jig instanceof TokenClass,
     );
 
+    params.amount *= Math.pow(10, TokenClass.decimals);
+
     if (!funds || funds.amount < params.amount) {
       return 'not enough funds';
     }
@@ -138,6 +140,8 @@ export class AppService {
     await sentFunds.sync();
     await funds.sync();
 
-    return `${sentFunds.amount} tokens sent successfully`;
+    return `${
+      sentFunds.amount / Math.pow(10, TokenClass.decimals)
+    } tokens sent successfully`;
   }
 }
