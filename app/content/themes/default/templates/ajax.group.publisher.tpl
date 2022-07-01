@@ -56,6 +56,29 @@
         {if $custom_fields}
         {include file='__custom_fields.tpl' _custom_fields=$custom_fields _registration=true}
         {/if}
+        <div class="form-group" style="max-height: 300px; overflow-y: scroll; overflow-x:auto">
+            <label class="form-control-label" for="description">{__("Interests")}</label>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>{__("Title")}</th>
+                    <th>{__("Check")}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $interests as $interest}
+                    <tr>
+                        <td>
+                            {$interest['title']}
+                        </td>
+                        <td>
+                            <input type="checkbox" value="{$interest['id']}" name="interests[]" {if $interest['interested']}checked{/if}>
+                        </td>
+                    </tr>
+                {/foreach}
+                </tbody>
+            </table>
+        </div>
         <!-- custom fields -->
         <!-- error -->
         <div class="alert alert-danger mb0 mt10 x-hidden"></div>

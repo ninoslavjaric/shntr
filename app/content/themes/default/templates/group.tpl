@@ -698,6 +698,13 @@
                                     <li {if $sub_view == "members"}class="active"{/if}>
                                         <a href="{$system['system_url']}/groups/{$group['group_name']}/settings/members"><i class="fa fa-users fa-fw mr5"></i>{__("Members")}</a>
                                     </li>
+                                    {if $system['interests_enabled']}
+                                        <li {if $sub_view == "interests"}class="active"{/if}>
+                                            <a href="{$system['system_url']}/groups/{$group['group_name']}/settings/interests">
+                                                <i class="fa fa-heart fa-fw mr10"></i>{__("Interests")}
+                                            </a>
+                                        </li>
+                                    {/if}
                                     {if $user->_data['user_id'] == $group['group_admin']}
                                         <li {if $sub_view == "delete"}class="active"{/if}>
                                             <a href="{$system['system_url']}/groups/{$group['group_name']}/settings/delete"><i class="fa fa-trash fa-fw mr5"></i>{__("Delete Group")}</a>
@@ -896,6 +903,40 @@
                                     </div>
                                     <!-- members -->
                                 </div>
+                            {elseif $sub_view == "interests"}
+                                <div class="card-header with-icon">
+                                    <i class="fa fa-heart mr10"></i>
+                                    {__("Interests")}
+                                </div>
+                                <form class="js_ajax-forms" data-url="pages_groups_events/create.php?type=group&do=edit&edit=interests&id={$group['group_id']}">
+                                    <div class="card-body" style="max-height: 500px; overflow-y: scroll; overflow-x:auto">
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th>{__("Title")}</th>
+                                                <th>{__("Check")}</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {foreach $interests as $interest}
+                                                <tr>
+                                                    <td>
+                                                        {$interest['title']}
+                                                    </td>
+                                                    <td>
+                                                        <input type="checkbox" value="{$interest['id']}" name="interests[]" {if $interest['interested']}checked{/if}>
+                                                    </td>
+                                                </tr>
+                                            {/foreach}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="card-footer text-right">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fa fa-check-circle mr10"></i>{__("Update interests")}
+                                        </button>
+                                    </div>
+                                </form>
                             {elseif $sub_view == "delete"}
                                 <div class="card-header with-icon">
                                     <i class="fa fa-trash mr10"></i>{__("Delete Group")}

@@ -9459,6 +9459,17 @@ class User
             $db->rollback();
             throw new Exception(__("Event failed to be created"));
         }
+
+        if (!$system['interests_enabled']) {
+            _error(404);
+        }
+
+        /* validate interests */
+        if (empty($args['interests']) || !valid_array_of_positive_ints($args['interests'])) {
+            throw new Exception(__("Please enter a valid array of interests"));
+        }
+
+        $this->edit_page_interests($args['interests'], $page_id);
     }
 
 
@@ -9622,7 +9633,7 @@ class User
                     throw new Exception(__("Please enter a valid array of interests"));
                 }
 
-                $this->update_page_interests($args['interests'], $page_id);
+                $this->edit_page_interests($args['interests'], $page_id);
 
                 break;
         }
@@ -9885,7 +9896,7 @@ class User
      * create_group
      *
      * @param array $args
-     * @return void
+     * @return int
      */
     public function create_group($args = [])
     {
@@ -9993,6 +10004,8 @@ class User
             );
 
             $db->commit();
+
+            return $group_id;
         } catch (Exception $e) {
             $db->rollback();
             throw new Exception(__("Group failed to be created"));
@@ -10112,6 +10125,25 @@ class User
         if (!$args['group_publish_approval_enabled']) {
             /* approve any pending posts */
             $db->query(sprintf("UPDATE posts SET group_approved = '1' WHERE in_group = '1' AND group_id = %s", secure($group_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        }
+    }
+
+    public function edit_group_interests(array $interests, mixed $group_id)
+    {
+        global $db;
+
+        $sqlPipeline = $this->transform_update_interests_query_pipeline($group_id, $interests, 'group');
+
+        $db->begin_transaction();
+
+        try {
+            foreach ($sqlPipeline as $sql) {
+                $db->query($sql);
+            }
+            $db->commit();
+        } catch (Exception $e) {
+            $db->rollback();
+            throw $e;
         }
     }
 
@@ -15309,6 +15341,7 @@ class User
                 from interests as i
                          left join interests as ip on i.parent_id = ip.id
                          left join interests_%1$ss as iu on i.id = iu.interest_id
+                group by i.id
                 order by coalesce(i.parent_id, i.id), i.id',
             secure($type, 'string', false),
             secure($id, 'int')
@@ -15348,6 +15381,15 @@ class User
 
         return $db->query(
             $this->transform_interests_query($event_id, 'event')
+        )->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function get_group_interests(int $group_id)
+    {
+        global $db;
+
+        return $db->query(
+            $this->transform_interests_query($group_id, 'group')
         )->fetch_all(MYSQLI_ASSOC);
     }
 
@@ -15392,7 +15434,7 @@ class User
     }
 
 
-    private function update_page_interests(array $interests, int $page_id)
+    private function edit_page_interests(array $interests, int $page_id)
     {
         global $db;
 

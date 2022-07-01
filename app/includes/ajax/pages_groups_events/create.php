@@ -71,7 +71,9 @@ try {
                 }
 
 				// group create
-				$user->create_group($_POST);
+				$group_id = $user->create_group($_POST);
+
+                $user->edit_group_interests($_POST['interests'], $group_id);
 
 				// return
 				$return['path'] = $system['system_url'] . '/groups/' . $_POST['username'];
@@ -82,11 +84,32 @@ try {
 					_error(400);
 				}
 
-				// group edit
-				$user->edit_group($_GET['id'], $_POST);
 
-				// return
-				$return['path'] = $system['system_url'] . '/groups/' . $_POST['username'];
+                switch ($_GET['edit']) {
+                    case 'interests':
+                        /* check if interests enabled */
+                        if (!$system['interests_enabled']) {
+                            _error(404);
+                        }
+
+                        /* validate interests */
+                        if (empty($_POST['interests']) || !valid_array_of_positive_ints($_POST['interests'])) {
+                            throw new Exception(__("Please enter a valid array of interests"));
+                        }
+
+                        $user->edit_group_interests($_POST['interests'], $_GET['id']);
+
+                        // return
+                        $return['path'] = $_SERVER['HTTP_REFERER'];
+                        break;
+                    default:
+                        // group edit
+                        $user->edit_group($_GET['id'], $_POST);
+
+                        // return
+                        $return['path'] = $system['system_url'] . '/groups/' . $_POST['username'];
+                }
+
 			}
 			break;
 
@@ -99,6 +122,8 @@ try {
 
 				// event create
 				$event_id = $user->create_event($_POST);
+
+                $user->edit_event_interests($_POST['interests'], $event_id);
 
 				// return
 				$return['path'] = $system['system_url'] . '/events/' . $event_id;

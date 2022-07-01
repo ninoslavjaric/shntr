@@ -201,6 +201,16 @@ try {
 					}
 					break;
 
+                case 'interests':
+                    if (!$system['interests_enabled']) {
+                        _error(404);
+                    }
+
+                    $interests = $user->get_group_interests($group['group_id']);
+                    /* assign variables */
+                    $smarty->assign('interests', $interests);
+                    break;
+
 				case 'delete':
 					/* check if the viewer not the super admin */
 					if ($user->_data['user_id'] != $group['group_admin']) {

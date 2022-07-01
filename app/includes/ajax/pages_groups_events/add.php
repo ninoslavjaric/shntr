@@ -28,6 +28,7 @@ try {
 
 	switch ($_REQUEST['type']) {
 		case 'page':
+            $smarty->assign('interests', $user->get_page_interests(0));
             $smarty->assign('price', 100);
 			// get custom fields
 			$smarty->assign('custom_fields', $user->get_custom_fields(array("for" => "page")));
@@ -41,6 +42,7 @@ try {
 			break;
 
 		case 'group':
+            $smarty->assign('interests', $user->get_group_interests(0));
             $smarty->assign('price', 100);
 			// get custom fields
 			$smarty->assign('custom_fields', $user->get_custom_fields(array("for" => "group")));
@@ -54,6 +56,7 @@ try {
 			break;
 
 		case 'event':
+		    $smarty->assign('interests', $user->get_event_interests(0));
 		    $smarty->assign('price', 100);
 			// get custom fields
 			$smarty->assign('custom_fields', $user->get_custom_fields(array("for" => "event")));
