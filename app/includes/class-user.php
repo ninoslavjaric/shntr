@@ -10422,13 +10422,35 @@ class User
         $events = [];
         $offset *= $results;
         if ($suggested) {
-            /* get suggested events */
-            $where_statement = "";
-            /* make a list from joined events */
-            $where_statement .= sprintf("AND event_id NOT IN (%s) ", $this->spread_ids($this->get_events_ids()));
-            $sort_statement = ($random) ? " ORDER BY RAND() " : " ORDER BY event_id DESC ";
-            $limit_statement = ($get_all) ? "" : sprintf("LIMIT %s, %s", secure($offset, 'int', false), secure($results, 'int', false));
-            $get_events = $db->query("SELECT * FROM `events` WHERE event_privacy != 'secret' " . $where_statement . $sort_statement . $limit_statement) or _error("SQL_ERROR_THROWEN");
+            if (($user_current_place_id = $this->_data['user_current_place_id'])) {
+                $place = $db->query("select latitude, longitude from places where id = {$user_current_place_id}")->fetch_assoc();
+
+                $get_events = $db->query(
+                    "select e.*,
+                           1000 / coalesce((6371 * acos(
+                                           cos(radians(p.latitude))
+                                           * cos(radians({$place['latitude']}))
+                                           * cos(radians({$place['longitude']}) - radians(p.longitude))
+                                       + sin(radians(p.latitude))
+                                               * sin(radians({$place['latitude']}))
+                               )), 99999) + count(ie.interest_id and iu.interest_id) as coeficient
+                    from events e
+                             left join places p on p.id = e.event_location_id
+                             left join interests_events ie on ie.event_id = e.event_id
+                             left join interests_users iu on ie.interest_id = iu.interest_id and iu.user_id = {$this->_data['user_id']}
+                    where e.event_privacy <> 'secret'
+                    group by e.event_id
+                    order by coeficient desc"
+                );
+            } else {
+                /* get suggested events */
+                $where_statement = "";
+                /* make a list from joined events */
+                $where_statement .= sprintf("AND event_id NOT IN (%s) ", $this->spread_ids($this->get_events_ids()));
+                $sort_statement = ($random) ? " ORDER BY RAND() " : " ORDER BY event_id DESC ";
+                $limit_statement = ($get_all) ? "" : sprintf("LIMIT %s, %s", secure($offset, 'int', false), secure($results, 'int', false));
+                $get_events = $db->query("SELECT * FROM `events` WHERE event_privacy != 'secret' " . $where_statement . $sort_statement . $limit_statement) or _error("SQL_ERROR_THROWEN");
+            }
         } elseif ($managed) {
             /* get the "taget" all events who admin */
             $get_events = $db->query(sprintf("SELECT * FROM `events` WHERE event_admin = %s ORDER BY event_id DESC", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
