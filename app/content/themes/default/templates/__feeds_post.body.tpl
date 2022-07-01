@@ -899,7 +899,7 @@
                 </div>
                 <div class="description">
                     {if $_post['product']['price'] > 0}
-                        {print_money($_post['product']['price'])} ({$system['system_currency']})
+                        {$_post['product']['price']} ({$system['system_currency']})
                     {else}
                         {__("Free")}
                     {/if}
@@ -941,6 +941,21 @@
                 <button type="button" class="btn btn-info btn-block js_chat-start" data-uid="{$_post['author_id']}" data-name="{$_post['post_author_name']}">
                     <i class="fa fa-comments mr5"></i>{__("Contact Seller")}
                 </button>
+            </div>
+        {/if}
+        <!-- custom fileds -->
+        {if $_post['product']['buying_candidate_id'] == $user->_data['user_id'] && !$_post['product']['sold'] }
+            <div class="mt10 clearfix">
+                <button type="button" class="btn btn-warning btn-block js_buy-product">
+                    <i class="fa fa-comments mr5"></i>{__("Buy")}
+                </button>
+            </div>
+        {/if}
+
+        {if $_post['product']['sold']}
+            <hr>
+            <div>
+                <h5>Sold to <a href="{$system['system_url']}/{$_post['product']['buyer_user']}">{$_post['product']['buyer_user']}</a></h5>
             </div>
         {/if}
     </div>

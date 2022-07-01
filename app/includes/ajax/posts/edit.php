@@ -2,7 +2,7 @@
 
 /**
  * ajax -> posts -> edit
- * 
+ *
  * @package Sngine
  * @author Zamblek
  */
@@ -68,6 +68,44 @@ try {
 			// return
 			$return['post'] = $smarty->fetch("__feeds_post.text.tpl");
 			break;
+
+		case 'buy-product':
+            if (!isset($_POST['id']) || !is_numeric($_POST['id'])) {
+                _error(400);
+            }
+
+            $post = $user->get_post($_POST['id']);
+
+            if ($post['product']['buying_candidate_id'] != $user->_data['user_id']) {
+                _error(403);
+            }
+
+            $owner = $user->get_user($post['user_id']);
+
+            $db->begin_transaction();
+            try {
+                $resp = shntrToken::pay(
+                    $user->_data['user_token_private_key'],
+                    $owner['user_token_address'],
+                    floatval($post['product']['price'])
+                );
+                if (!str_contains($resp['message'], 'success')) {
+                    throw new Exception($resp['message']);
+                }
+
+                shntrToken::noteTransaction(
+                    floatval($post['product']['price']), intval($user->_data['user_id']), $owner['user_id'], 'post_products', $post['product']['product_id'], 'Buying product'
+                );
+
+                $db->commit();
+            } catch (Exception $e) {
+                $db->rollback();
+
+                _error(403);
+            }
+
+            $return['callback'] = 'window.location = "' . $system['system_url'] . '/posts/' . $_POST['id'] . '";';
+		    break;
 
 		case 'product':
 			// valid inputs

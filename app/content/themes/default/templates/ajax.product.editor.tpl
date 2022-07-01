@@ -47,6 +47,15 @@
         {if $custom_fields['basic']}
         {include file='__custom_fields.tpl' _custom_fields=$custom_fields['basic'] _registration=false}
         {/if}
+        <div class="form-group">
+            <label for="" class="form-control-label">{__('Potential buyers')}</label>
+            <select name="buying_candidate_id" id="">
+                <option value="0">---</option>
+                {foreach $potential_buyers as $potential_buyer}
+                    <option value="{$potential_buyer['user_id']}" {if $potential_buyer['user_id'] == $post['product']['buying_candidate_id']}selected{/if}>{$potential_buyer['user_name']}</option>
+                {/foreach}
+            </select>
+        </div>
         <!-- custom fields -->
         <!-- error -->
         <div class="alert alert-danger mb0 x-hidden"></div>

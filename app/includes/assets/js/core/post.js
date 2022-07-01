@@ -1,6 +1,6 @@
 /**
  * post js
- * 
+ *
  * @package Sngine
  * @author Zamblek
  */
@@ -1409,6 +1409,26 @@ $(function () {
         var post = $(this).parents('.post');
         post.find('.post-edit').remove();
         post.find('.post-replace').show();
+    });
+    $('body').on('click', '.js_buy-product', function(e) {
+        var _this = $(this);
+        button_status(_this, "loading");
+        var post = _this.parents('.post');
+        var id = post.data('id');
+        $.post(api['posts/edit'], { 'handle': 'buy-product', 'id': id }, function (response) {
+            /* button reset */
+            button_status(_this, "reset");
+            /* check if there is a callback */
+            if (response.callback) {
+                eval(response.callback);
+            } else {
+                post.find('.post-edit').remove();
+                post.find('.post-replace').replaceWith(response.post).show();
+            }
+        }, 'json')
+          .fail(function (error) {
+              modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+          });
     });
     $('body').on('click', '.js_update-post', function () {
         var _this = $(this);

@@ -136,7 +136,10 @@ try {
 			$smarty->assign('market_categories', $user->get_categories("market_categories"));
 			$smarty->assign('custom_fields', $user->get_custom_fields(array("for" => "product", "get" => "settings", "node_id" => $_GET['post_id'])));
 
-			// return
+            $potentialBuyers = $db->query("select user_id, user_name from users where user_id <> {$user->_data['user_id']}")->fetch_all(MYSQLI_ASSOC);
+//            var_dump($post['buying_candidate_id'], $potentialBuyers);die;
+            $smarty->assign('potential_buyers', $potentialBuyers);
+            // return
 			$return['template'] = $smarty->fetch("ajax.product.editor.tpl");
 			$return['callback'] = "$('#modal').modal('show'); $('.modal-content:last').html(response.template); initialize_modal();";
 			break;

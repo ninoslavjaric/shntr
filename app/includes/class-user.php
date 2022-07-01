@@ -5704,7 +5704,7 @@ class User
                 /* get product */
                 $get_product = $db->query(
                     sprintf(
-                        "SELECT * FROM posts_products WHERE post_id = %s",
+                        "SELECT posts_products.*, users.user_name as buyer_user FROM posts_products LEFT JOIN users on user_id = buying_candidate_id WHERE post_id = %s",
                         secure($post['post_id'], 'int')
                     )
                 ) or _error("SQL_ERROR_THROWEN");
@@ -6754,7 +6754,7 @@ class User
         /* update post */
         $db->query(sprintf("UPDATE posts SET text = %s WHERE post_id = %s", secure($message), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
         /* update product */
-        $db->query(sprintf("UPDATE posts_products SET name = %s, price = %s, category_id = %s, status = %s, location = %s WHERE post_id = %s", secure($args['name']), secure($args['price']), secure($args['category'], 'int'), secure($args['status']), secure($args['location']), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE posts_products SET name = %s, price = %s, category_id = %s, status = %s, location = %s, buying_candidate_id = %s WHERE post_id = %s", secure($args['name']), secure($args['price']), secure($args['category'], 'int'), secure($args['status']), secure($args['location']), secure($args['buying_candidate_id'], 'int'), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
     }
 
 
