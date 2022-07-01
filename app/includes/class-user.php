@@ -9852,13 +9852,46 @@ class User
         $groups = [];
         $offset *= $results;
         if ($suggested) {
-            /* get suggested groups */
-            $where_statement = "";
-            /* make a list from joined groups (approved|pending) */
-            $where_statement .= sprintf("AND group_id NOT IN (%s) ", $this->spread_ids($this->get_groups_ids()));
-            $sort_statement = ($random) ? " ORDER BY RAND() " : " ORDER BY group_id DESC ";
-            $limit_statement = ($get_all) ? "" : sprintf("LIMIT %s, %s", secure($offset, 'int', false), secure($results, 'int', false));
-            $get_groups = $db->query("SELECT * FROM `groups` WHERE group_privacy != 'secret' " . $where_statement . $sort_statement . $limit_statement) or _error("SQL_ERROR_THROWEN");
+
+            if (($user_current_place_id = $this->_data['user_current_place_id'])) {
+                $place = $db->query("select latitude, longitude from places where id = {$user_current_place_id}")->fetch_assoc();
+
+                $get_groups = $db->query(
+                "select g.*,
+                           1000 / coalesce((6371 * acos(
+                                           cos(radians(p.latitude))
+                                           * cos(radians({$place['latitude']}))
+                                           * cos(radians({$place['longitude']}) - radians(p.longitude))
+                                       + sin(radians(p.latitude))
+                                               * sin(radians({$place['latitude']}))
+                               )), 99999) + count(ie.interest_id and iu.interest_id) as coeficient
+                    from `groups` g
+                             left join places p on p.id = g.group_location_id
+                             left join interests_groups ie on ie.group_id = g.group_id
+                             left join interests_users iu on ie.interest_id = iu.interest_id and iu.user_id = {$this->_data['user_id']}
+                    where g.group_privacy <> 'secret'
+                    group by g.group_id
+                    order by coeficient desc" .
+                    (
+                        ($get_all)
+                        ? ''
+                        : sprintf(
+                            " LIMIT %s, %s",
+                            secure($offset, 'int', false),
+                            secure($results, 'int', false)
+                        )
+                    )
+                );
+            } else {
+                /* get suggested groups */
+                $where_statement = "";
+                /* make a list from joined groups (approved|pending) */
+                $where_statement .= sprintf("AND group_id NOT IN (%s) ", $this->spread_ids($this->get_groups_ids()));
+                $sort_statement = ($random) ? " ORDER BY RAND() " : " ORDER BY group_id DESC ";
+                $limit_statement = ($get_all) ? "" : sprintf("LIMIT %s, %s", secure($offset, 'int', false), secure($results, 'int', false));
+                $get_groups = $db->query("SELECT * FROM `groups` WHERE group_privacy != 'secret' " . $where_statement . $sort_statement . $limit_statement) or _error("SQL_ERROR_THROWEN");
+            }
+
         } elseif ($managed) {
             /* get the "taget" all groups who admin */
             $get_groups = $db->query(sprintf("SELECT `groups`.* FROM groups_admins INNER JOIN `groups` ON groups_admins.group_id = `groups`.group_id WHERE groups_admins.user_id = %s ORDER BY group_id DESC", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
@@ -10440,7 +10473,16 @@ class User
                              left join interests_users iu on ie.interest_id = iu.interest_id and iu.user_id = {$this->_data['user_id']}
                     where e.event_privacy <> 'secret'
                     group by e.event_id
-                    order by coeficient desc"
+                    order by coeficient desc" .
+                    (
+                    ($get_all)
+                        ? ''
+                        : sprintf(
+                            " LIMIT %s, %s",
+                            secure($offset, 'int', false),
+                            secure($results, 'int', false)
+                        )
+                    )
                 );
             } else {
                 /* get suggested events */
