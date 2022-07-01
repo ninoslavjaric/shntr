@@ -97,6 +97,8 @@ try {
                     floatval($post['product']['price']), intval($user->_data['user_id']), $owner['user_id'], 'post_products', $post['product']['product_id'], 'Buying product'
                 );
 
+                $db->query("UPDATE posts_products SET sold = 1 WHERE product_id = " . intval($post['product']['product_id']));
+
                 $db->commit();
             } catch (Exception $e) {
                 $db->rollback();
