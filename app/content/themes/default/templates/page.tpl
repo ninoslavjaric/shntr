@@ -101,6 +101,9 @@
 
                 <!-- profile-buttons -->
                 <div class="profile-buttons-wrapper">
+                    <button type="button" class="btn btn-sm btn-success btn-primary js_page-fund" data-id="{$spage['page_id']}">
+                        <i class="fa fa-check mr5"></i>{__("Fund")}
+                    </button>
                     <!-- like -->
                     {if $spage['i_like']}
                         <button type="button" class="btn btn-sm btn-primary js_unlike-page" data-id="{$spage['page_id']}">

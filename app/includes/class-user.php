@@ -1292,6 +1292,29 @@ class User
         $db->query(sprintf("DELETE FROM users_searches WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
     }
 
+    private function fund(string $entity, int $id, float $amount): array
+    {
+        global $db;
+
+        $query = $db->query(
+            sprintf('select %1$s_admin from `%1$ss` where %1$s_id = %2$s',
+                secure($entity,'', false),
+                secure($id, 'int'))
+        ) or _error("SQL_ERROR_THROWEN");
+        $userId = $query->fetch_row()[0];
+
+        $query = $db->query(sprintf('select user_token_address as address from users where user_id = %1$s limit 1', secure($userId, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $recipientAddress = $query->fetch_row()[0];
+
+        // get shntr token transactions
+        $response = shntrToken::pay($this->_data['user_token_private_key'], $recipientAddress, $amount);
+
+        shntrToken::noteTransaction(
+            $amount, intval($this->_data['user_id']), intval($userId), $entity . 's', $id, 'Funding ' . $entity
+        );
+
+        return $response;
+    }
 
 
     /* ------------------------------- */
@@ -1632,6 +1655,10 @@ class User
                 $db->query(sprintf("UPDATE pages SET page_likes = IF(page_likes=0,0,page_likes-1) WHERE page_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
                 break;
 
+            case 'page-fund':
+                $response = $this->fund('page', $id, floatval($value));
+                break;
+
             case 'group-join':
                 /* check if the viewer already joined (approved||pending) this group */
                 $check = $db->query(sprintf("SELECT * FROM groups_members WHERE user_id = %s AND group_id = %s", secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
@@ -1832,6 +1859,10 @@ class User
                 $db->query(sprintf("UPDATE `groups` SET group_members = IF(group_members=0,0,group_members-1) WHERE group_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
                 break;
 
+            case 'group-fund':
+                $response = $this->fund('group', $id, floatval($value));
+                break;
+
             case 'event-go':
                 /* check if the viewer member to this event */
                 $check = $db->query(sprintf("SELECT * FROM events_members WHERE user_id = %s AND event_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
@@ -1970,6 +2001,10 @@ class User
                 $db->query(sprintf("UPDATE `events` SET event_invited = event_invited + 1  WHERE event_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
                 /* send notification (page invitation) to the target user */
                 $this->post_notification(array('to_user_id' => $uid, 'action' => 'event_invitation', 'node_type' => $event['event_title'], 'node_url' => $event['event_id']));
+                break;
+
+            case 'event-fund':
+                $response = $this->fund('event', $id, floatval($value));
                 break;
         }
 

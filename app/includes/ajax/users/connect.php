@@ -22,8 +22,45 @@ if ($user->_data['user_demo']) {
 }
 
 // valid inputs
-if (!in_array($_POST['do'], array('block', 'unblock', 'friend-accept', 'friend-decline', 'friend-add', 'friend-cancel', 'friend-remove', 'friend-fund', 'follow', 'unfollow', 'poke', 'page-like', 'page-unlike', 'page-boost', 'page-unboost', 'page-invite', 'page-admin-addation', 'page-admin-remove', 'page-member-remove', 'group-join', 'group-leave', 'group-invite', 'group-accept', 'group-decline', 'group-admin-addation', 'group-admin-remove', 'group-member-remove', 'event-go', 'event-ungo', 'event-interest', 'event-uninterest', 'event-invite', 'delete-app'))) {
-	_error(400);
+if (!in_array($_POST['do'], [
+    'block',
+    'unblock',
+    'friend-accept',
+    'friend-decline',
+    'friend-add',
+    'friend-cancel',
+    'friend-remove',
+    'friend-fund',
+    'follow',
+    'unfollow',
+    'poke',
+    'page-like',
+    'page-unlike',
+    'page-boost',
+    'page-unboost',
+    'page-invite',
+    'page-admin-addation',
+    'page-admin-remove',
+    'page-member-remove',
+    'page-fund',
+    'group-join',
+    'group-leave',
+    'group-invite',
+    'group-accept',
+    'group-decline',
+    'group-admin-addation',
+    'group-admin-remove',
+    'group-member-remove',
+    'group-fund',
+    'event-go',
+    'event-ungo',
+    'event-interest',
+    'event-uninterest',
+    'event-invite',
+    'event-fund',
+    'delete-app',
+])) {
+    _error(400);
 }
 /* check id */
 if (!isset($_POST['id']) || !is_numeric($_POST['id'])) {

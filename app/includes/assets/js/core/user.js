@@ -1750,6 +1750,29 @@ $(function () {
             });
     });
     /* group join & leave */
+    $('body').on('click', '.js_group-fund, .js_event-fund, .js_page-fund', function () {
+        const value = prompt("How many tokens to send?", "0");
+
+        if (isNaN(value) || Number(value) <= 0) {
+            alert(`${value} is not valid`)
+            return;
+        }
+        const _this = $(this)
+        window.onbeforeunload = () => true;
+        button_status(_this, "loading");
+        const id = _this.data('id');
+        const _do = _this.attr('class').match(/js_(\w+-fund)/)[1];
+        $.post(api['users/connect'], { 'do': _do, 'uid': 0, 'id': id, 'value': value }, function (response) {
+            button_status(_this, "reset");
+            window.onbeforeunload = null;
+            alert(response.message);
+        }).fail(function () {
+            button_status(_this, "reset");
+            window.onbeforeunload = null;
+            alert('Funding failed');
+        });
+    });
+
     $('body').on('click', '.js_join-group, .js_leave-group', function () {
         var _this = $(this);
         var id = _this.data('id');
