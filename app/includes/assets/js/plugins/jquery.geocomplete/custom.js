@@ -24,7 +24,7 @@ window.geocompletionSetup = () => {
         return res(cache[req.term]);
       }
 
-      $.get(`/includes/ajax/geo/suggest.php?type=${_this.data('type')}&query=${req.term}`, function (data) {
+      $.get(`/includes/ajax/geo/suggest.php?type=${_this.data('type') || 'places'}&query=${req.term}`, function (data) {
         cache[req.term] = data.map(item => ({value: item.city_id, label: item.value}));
         sessionStorage.setItem(lsKey, JSON.stringify(cache));
         return res(cache[req.term])

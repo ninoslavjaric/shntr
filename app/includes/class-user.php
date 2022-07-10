@@ -1137,7 +1137,7 @@ class User
      * @param string $status
      * @return array
      */
-    public function search_users($distance, $keyword, $gender, $relationship, $status)
+    public function search_users($distance, $keyword, $gender, $relationship, $status, $homePlaceId, $currentPlaceId)
     {
         global $db, $system;
         $results = [];
@@ -1182,6 +1182,15 @@ class User
                 $where .= sprintf(" AND user_last_seen < SUBTIME(NOW(), SEC_TO_TIME(%s))", secure($system['offline_time'], 'int', false));
             }
         }
+
+        if (intval($homePlaceId) > 0) {
+            $where .= " AND users.user_hometown_place_id = '$homePlaceId'";
+        }
+
+        if (intval($currentPlaceId) > 0) {
+            $where .= " AND users.user_current_place_id = '$currentPlaceId'";
+        }
+
         /* custom fields */
         $join_query = "";
         $distinct_query = "";

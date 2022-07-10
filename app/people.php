@@ -2,9 +2,11 @@
 
 /**
  * friend_requests
- * 
+ *
  * @package Sngine
  * @author Zamblek
+ * @var User $user
+ * @var Smarty_Internal_Data $smarty
  */
 
 // fetch bootloader
@@ -35,7 +37,15 @@ try {
 			}
 
 			// search users
-			$people = $user->search_users($_POST['distance_value'], $_POST['query'], $_POST['gender'], $_POST['relationship'], $_POST['status']);
+			$people = $user->search_users(
+			    $_POST['distance_value'],
+                $_POST['query'],
+                $_POST['gender'],
+                $_POST['relationship'],
+                $_POST['status'],
+                $_POST['hometown_place_id'],
+                $_POST['current_place_id']
+            );
 			$smarty->assign('people', $people);
 			break;
 

@@ -64,6 +64,18 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="form-group">
+                                        <label class="form-control-label">{__('Hometown')}</label>
+                                        <div>
+                                            <input type="text" class="form-control js_geocomplete" name="hometown_place">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-control-label">{__('Current place')}</label>
+                                        <div>
+                                            <input type="text" class="form-control js_geocomplete" name="current_place">
+                                        </div>
+                                    </div>
                                 {/if}
                                 <!-- keyword -->
                                 <div class="form-group">
@@ -129,7 +141,7 @@
                 <!-- right panel -->
                 <div class="col-lg-8 order-lg-1">
                     <div class="card">
-                        
+
                         {if $view == ""}
                             <div class="card-header bg-transparent">
                                 <strong>{__("People You May Know")}</strong>
@@ -156,7 +168,7 @@
                                     </p>
                                 {/if}
                             </div>
-                        
+
                         {elseif $view == "find"}
                             <div class="card-header bg-transparent">
                                 <strong>{__("Search Results")}</strong>
@@ -174,7 +186,7 @@
                                     </p>
                                 {/if}
                             </div>
-                        
+
                         {elseif $view == "friend_requests"}
                             <div class="card-header bg-transparent">
                                 <strong>{__("Respond to Your Friend Request")}</strong>
@@ -201,7 +213,7 @@
                                 {/if}
                                 <!-- see-more -->
                             </div>
-                        
+
                         {elseif $view == "sent_requests"}
                             <div class="card-header bg-transparent">
                                 <strong>{__("Friend Requests Sent")}</strong>
@@ -228,7 +240,7 @@
                                 {/if}
                                 <!-- see-more -->
                             </div>
-                        
+
                         {/if}
 
                     </div>
