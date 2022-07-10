@@ -1,10 +1,10 @@
 {if !$standalone}<li>{/if}
     <!-- post -->
-    <div class="post 
-                {if $_get == "posts_profile" && $user->_data['user_id'] == $post['author_id'] && ($post['is_hidden'] || $post['is_anonymous'])}is_hidden{/if} 
-                {if $boosted}boosted{/if} 
+    <div class="post
+                {if $_get == "posts_profile" && $user->_data['user_id'] == $post['author_id'] && ($post['is_hidden'] || $post['is_anonymous'])}is_hidden{/if}
+                {if $boosted}boosted{/if}
                 {if ($post['in_group'] && !$post['group_approved']) OR ($post['in_event'] && !$post['event_approved'])}pending{/if}
-            " 
+            "
             data-id="{$post['post_id']}">
 
         {if ($post['in_group'] && !$post['group_approved']) OR ($post['in_event'] && !$post['event_approved'])}

@@ -2,7 +2,7 @@
 
 /**
  * ajax -> posts -> post
- * 
+ *
  * @package Sngine
  * @author Zamblek
  */

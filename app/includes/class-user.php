@@ -5741,7 +5741,14 @@ class User
                 /* get product */
                 $get_product = $db->query(
                     sprintf(
-                        "SELECT posts_products.*, users.user_name as buyer_user FROM posts_products LEFT JOIN users on user_id = buying_candidate_id WHERE post_id = %s",
+                        "SELECT 
+                               posts_products.*, 
+                               users.user_name as buyer_user, 
+                               mc.category_name 
+                        FROM posts_products 
+                            LEFT JOIN users on user_id = buying_candidate_id 
+                            INNER JOIN market_categories mc USING(category_id) 
+                        WHERE post_id = %s",
                         secure($post['post_id'], 'int')
                     )
                 ) or _error("SQL_ERROR_THROWEN");

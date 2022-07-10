@@ -343,7 +343,7 @@
                 {__("added new article")}
 
             {elseif $_post['post_type'] == "product"}
-                {__("added new product for sale")}
+                added new {$_post['product']['category_name']|strtolower} item for {if $_post['product']['rent']}rent{else}sale{/if}
 
             {elseif $_post['post_type'] == "funding"}
                 {__("raised new funding request")}
