@@ -137,7 +137,11 @@ try {
 			}
 			/* assign variables */
 			$smarty->assign('post', $post);
-			$smarty->assign('market_categories', $user->get_categories("market_categories"));
+            if (isset($_GET['category_id'])) {
+                $smarty->assign('market_category', $user->get_category("market_categories", $_GET['category_id']));
+            } else {
+                $smarty->assign('market_categories', $user->get_categories("market_categories"));
+            }
 			$smarty->assign('custom_fields', $user->get_custom_fields(array("for" => "product", "get" => "settings", "node_id" => $_GET['post_id'])));
 
             $potentialBuyers = $db->query("select user_id, user_name from users where user_id <> {$user->_data['user_id']}")->fetch_all(MYSQLI_ASSOC);

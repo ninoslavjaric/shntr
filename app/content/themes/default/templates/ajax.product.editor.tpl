@@ -1,6 +1,11 @@
 <div class="modal-header">
     <h6 class="modal-title">
-        <i class="fa fa-shopping-cart mr10" style="color: #2b53a4;"></i>{__("Edit Product")}
+        <i class="fa fa-shopping-cart mr10" style="color: #2b53a4;"></i>
+        {if $market_category}
+            Edit {$market_category['category_name']|strtolower} item
+        {else}
+            {__("Edit Product")}
+        {/if}
     </h6>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
@@ -10,7 +15,13 @@
     <div class="modal-body">
         <div class="row">
             <div class="form-group col-md-8">
-                <label class="form-control-label">{__("Product Name")}</label>
+                <label class="form-control-label">
+                    {if $market_category}
+                        {$market_category['category_name']} item name
+                    {else}
+                        {__("Product Name")}
+                    {/if}
+                </label>
                 <input name="name" type="text" class="form-control" value="{$post['product']['name']}">
             </div>
             <div class="form-group col-md-4">
@@ -21,11 +32,16 @@
         <div class="row">
             <div class="form-group col-md-6">
                 <label class="form-control-label">{__("Category")}</label>
+                {if $market_category}
+                    <input type="hidden" name="category" value="{$market_category['category_id']}">
+                    <input class="form-control" type="text" value="{$market_category['category_name']}" disabled>
+                {else}
                 <select name="category" class="form-control">
                     {foreach $market_categories as $category}
                         {include file='__categories.recursive_options.tpl' data_category=$post['product']['category_id']}
                     {/foreach}
                 </select>
+                {/if}
             </div>
             <div class="form-group col-md-2">
                 <label class="form-control-label">{__("Offer")}</label>

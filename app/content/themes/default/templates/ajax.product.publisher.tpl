@@ -1,9 +1,8 @@
 <div class="modal-header">
     <h6 class="modal-title">
         <i class="fa fa-shopping-cart mr10" style="color: #2b53a4;"></i>
-
         {if $market_category}
-            Sell new {$market_category['category_name']|strtolower}
+            New {$market_category['category_name']|strtolower} item
         {else}
             {__("Sell New Product")}
         {/if}
@@ -18,7 +17,7 @@
             <div class="form-group col-md-8">
                 <label class="form-control-label">
                     {if $market_category}
-                        {$market_category['category_name']} name
+                        {$market_category['category_name']} item name
                     {else}
                         {__("Product Name")}
                     {/if}

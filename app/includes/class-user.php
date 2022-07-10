@@ -5744,7 +5744,8 @@ class User
                         "SELECT 
                                posts_products.*, 
                                users.user_name as buyer_user, 
-                               mc.category_name 
+                               mc.category_name,
+                               mc.category_dominant
                         FROM posts_products 
                             LEFT JOIN users on user_id = buying_candidate_id 
                             INNER JOIN market_categories mc USING(category_id) 

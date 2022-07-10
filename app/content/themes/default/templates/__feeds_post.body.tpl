@@ -120,7 +120,7 @@
                                 </div>
                             </a>
                         {elseif $_post['post_type'] == "product"}
-                            <div class="dropdown-item pointer" data-toggle="modal" data-url="posts/product.php?do=edit&post_id={$_post['post_id']}" data-callback="geocompletionSetup">
+                            <div class="dropdown-item pointer" data-toggle="modal" data-url="posts/product.php?do=edit&post_id={$_post['post_id']}{if $_post['product']['category_dominant']}&category_id={$_post['product']['category_id']}{/if}" data-callback="geocompletionSetup">
                                 <div class="action no-desc">
                                     <i class="fa fa-pencil-alt fa-fw"></i> {__("Edit Product")}
                                 </div>
