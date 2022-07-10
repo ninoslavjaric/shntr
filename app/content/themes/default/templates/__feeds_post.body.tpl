@@ -883,7 +883,20 @@
         <div class="post-product-wrapper mt10">
             <div class="post-product-details">
                 <div class="title">
-                    <i class="fa fa-tag fa-fw mr5" style="color: #1f9cff;"></i>{__("Type")}
+                    {__("Offer")}
+                </div>
+                <div class="description">
+                    For
+                    {if $_post['product']['rent'] }
+                        {__("rent")}
+                    {else}
+                        {__("sale")}
+                    {/if}
+                </div>
+            </div>
+            <div class="post-product-details">
+                <div class="title">
+                    <i class="fa fa-tag fa-fw mr5" style="color: #1f9cff;"></i>{__("Condition")}
                 </div>
                 <div class="description">
                     {if $_post['product']['status'] == "new"}
@@ -939,7 +952,7 @@
         {if $_post['product']['available'] && $_post['author_id'] != $user->_data['user_id'] }
             <div class="mt10 clearfix">
                 <button type="button" class="btn btn-info btn-block js_chat-start" data-uid="{$_post['author_id']}" data-name="{$_post['post_author_name']}">
-                    <i class="fa fa-comments mr5"></i>{__("Contact Seller")}
+                    <i class="fa fa-comments mr5"></i>{__("Buy")}
                 </button>
             </div>
         {/if}

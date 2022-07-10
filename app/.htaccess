@@ -1,4 +1,4 @@
-## Disable MultiViews 
+## Disable MultiViews
 Options -MultiViews
 
 ## Security Control ##
@@ -232,6 +232,9 @@ RewriteRule ^market/category/([^/]+)/?$ market.php?view=category&category_id=$1 
 RewriteRule ^market/category/([^/]+)/([^/]+)/?$ market.php?view=category&category_id=$1&category_url=$2 [L,QSA]
 RewriteRule ^market/category/([^/]+)/([^/]+)/([^/]+)/?$ market.php?view=category&category_id=$1&category_url=$2&page=$3 [L,QSA]
 RewriteRule ^market/([^/]+)/?$ market.php?page=$1 [L,QSA]
+
+# Real estate
+RewriteRule ^real-estate/?$ market.php?view=category&category_slug=real-estate
 
 # Funding
 RewriteRule ^funding_requests/?$ index.php?view=funding_requests [L,QSA]

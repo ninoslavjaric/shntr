@@ -5066,15 +5066,17 @@ class User
                                 category_id,
                                 status,
                                 location,
-                                location_id
-                            ) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                                location_id,
+                                rent
+                            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
                             secure($post['post_id'], 'int'),
                             secure($args['product']->name),
                             secure($args['product']->price),
                             secure($args['product']->category, 'int'),
                             secure($args['product']->status),
                             secure($args['product']->location),
-                            secure($args['product']->location_id, 'int')
+                            secure($args['product']->location_id, 'int'),
+                            secure($args['product']->rent, 'int')
                         )
                     ) or _error("SQL_ERROR_THROWEN");
                     /* insert product photos */
@@ -6789,7 +6791,18 @@ class User
         /* update post */
         $db->query(sprintf("UPDATE posts SET text = %s WHERE post_id = %s", secure($message), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
         /* update product */
-        $db->query(sprintf("UPDATE posts_products SET name = %s, price = %s, category_id = %s, status = %s, location = %s, buying_candidate_id = %s WHERE post_id = %s", secure($args['name']), secure($args['price']), secure($args['category'], 'int'), secure($args['status']), secure($args['location']), secure($args['buying_candidate_id'], 'int'), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(
+            sprintf(
+                "UPDATE posts_products SET name = %s, price = %s, category_id = %s, status = %s, location = %s, buying_candidate_id = %s, rent = %s WHERE post_id = %s",
+                secure($args['name']),
+                secure($args['price']),
+                secure($args['category'], 'int'),
+                secure($args['status']),
+                secure($args['location']),
+                secure($args['buying_candidate_id'], 'int'),
+                secure($args['rent'], 'int'),
+                secure($post_id, 'int'))
+        ) or _error("SQL_ERROR_THROWEN");
     }
 
 
@@ -9209,7 +9222,7 @@ class User
         $tree = [];
         if (!$reverse) {
             // top-down tree (default)
-            $get_categories = $db->query(sprintf("SELECT * FROM %s WHERE category_parent_id = %s ORDER BY category_order ASC", $table_name, secure($category_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_categories = $db->query(sprintf("SELECT * FROM %s WHERE category_parent_id = %s and category_hidden = 0 ORDER BY category_order ASC", $table_name, secure($category_id, 'int'))) or _error("SQL_ERROR_THROWEN");
             if ($get_categories->num_rows > 0) {
                 while ($category = $get_categories->fetch_assoc()) {
                     $category['category_url'] = get_url_text($category['category_name']);
@@ -9269,6 +9282,40 @@ class User
         return $tree;
     }
 
+    public function get_category_by_name(string $table_name, string $name, bool $get_parent = false)
+    {
+        global $db;
+
+        if (!($category = $this->get_category_by($table_name, 'category_name', $name))) {
+            return false;
+        }
+
+        $category['category_url'] = get_url_text($category['category_name']);
+        /* get parent category */
+        if ($get_parent && $category['category_parent_id']) {
+            $category['parent'] = $this->get_category($table_name, $category['category_parent_id']);
+        }
+        /* check sub_categories */
+        $check_sub_categories = $db->query(sprintf("SELECT COUNT(*) as count FROM %s WHERE category_parent_id = %s", $table_name, secure($category['category_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $category['sub_categories'] = ($check_sub_categories->fetch_assoc()['count'] > 0) ? true : false;
+        return $category;
+    }
+
+    private function get_category_by(string $table_name, string $column_name, string|int $value)
+    {
+        global $db;
+
+        $get_category = $db->query(
+            sprintf("SELECT * FROM %s WHERE %s = %s", $table_name, $column_name, secure($value))
+        ) or _error("SQL_ERROR_THROWEN");
+
+        if ($get_category->num_rows == 0) {
+            return false;
+        }
+
+        return $get_category->fetch_assoc();
+    }
+
 
     /**
      * get_category
@@ -9281,11 +9328,11 @@ class User
     public function get_category($table_name, $category_id, $get_parent = false)
     {
         global $db;
-        $get_category = $db->query(sprintf("SELECT * FROM %s WHERE category_id = %s", $table_name, secure($category_id, 'int'))) or _error("SQL_ERROR_THROWEN");
-        if ($get_category->num_rows == 0) {
+
+        if (!($category = $this->get_category_by($table_name, 'category_id', $category_id))) {
             return false;
         }
-        $category = $get_category->fetch_assoc();
+
         $category['category_url'] = get_url_text($category['category_name']);
         /* get parent category */
         if ($get_parent && $category['category_parent_id']) {

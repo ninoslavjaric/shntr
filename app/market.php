@@ -2,7 +2,7 @@
 
 /**
  * market
- * 
+ *
  * @package Sngine
  * @author Zamblek
  */
@@ -79,7 +79,12 @@ try {
 
 		case 'category':
 			// check category
-			$current_category = $user->get_category("market_categories", $_GET['category_id'], true);
+			$current_category = isset($_GET['category_slug'])
+                ? $current_category = $user->get_category_by_name(
+                    'market_categories', get_text_url($_GET['category_slug']), true
+                )
+                : $user->get_category("market_categories", $_GET['category_id'], true);
+
 			if (!$current_category) {
 				_error(404);
 			}
@@ -94,6 +99,10 @@ try {
 
 			// page header
 			page_header($system['system_title'] . ' - ' . __("Marketplace") . ' - ' . __($current_category['category_name']), __($current_category['category_description']));
+
+			if (isset($_GET['category_slug'])) {
+			    break;
+            }
 
 			// get market categories (only sub-categories)
 			if (!$current_category['sub_categories'] && !$current_category['parent']) {

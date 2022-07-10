@@ -2449,6 +2449,12 @@ function decode_urls($text)
     return $text;
 }
 
+function get_text_url($string)
+{
+    $string = str_replace(['-', '_'], [' ', ' '], $string);
+
+    return ucfirst($string);
+}
 
 /**
  * get_url_text
@@ -2596,9 +2602,9 @@ function print_money($amount)
 {
     global $system;
     if ($system['system_currency_dir'] == "right") {
-        return $amount . $system['system_currency_symbol'];
+        return "{$amount} {$system['system_currency_symbol']}";
     } else {
-        return $system['system_currency_symbol'] . $amount;
+        return "{$system['system_currency_symbol']} {$amount}";
     }
 }
 

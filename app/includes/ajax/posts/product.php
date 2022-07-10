@@ -40,7 +40,11 @@ try {
 		case 'create':
             $smarty->assign('price', 100);
 			// assign variables
-			$smarty->assign('market_categories', $user->get_categories("market_categories"));
+            if (isset($_GET['category_id'])) {
+                    $smarty->assign('market_category', $user->get_category("market_categories", $_GET['category_id']));
+            } else {
+                $smarty->assign('market_categories', $user->get_categories("market_categories"));
+            }
 			$smarty->assign('custom_fields', $user->get_custom_fields(array("for" => "product")));
 
 			// return

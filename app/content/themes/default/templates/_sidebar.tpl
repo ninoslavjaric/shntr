@@ -248,6 +248,12 @@
                         {__("Marketplace")}
                     </a>
                 </li>
+                <li>
+                    <a href="{$system['system_url']}/real-estate">
+                        {include file='__svg_icons.tpl' icon="house" class="mr10" width="24px" height="24px"}
+                        {__("Real estate")}
+                    </a>
+                </li>
             {/if}
 
             {if $system['funding_enabled']}

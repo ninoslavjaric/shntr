@@ -19,13 +19,24 @@
             </div>
         </div>
         <div class="row">
-            <div class="form-group col-md-8">
+            <div class="form-group col-md-6">
                 <label class="form-control-label">{__("Category")}</label>
                 <select name="category" class="form-control">
                     {foreach $market_categories as $category}
                         {include file='__categories.recursive_options.tpl' data_category=$post['product']['category_id']}
                     {/foreach}
                 </select>
+            </div>
+            <div class="form-group col-md-2">
+                <label class="form-control-label">{__("Offer")}</label>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="rent" id="rent1" value="0" {if !$post['product']['rent']}checked{/if}>
+                    <label class="form-check-label" for="rent1">{__('Sell')}</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="rent" id="rent2" value="1" {if $post['product']['rent']}checked{/if}>
+                    <label class="form-check-label" for="rent2">{__('Rent')}</label>
+                </div>
             </div>
             <div class="form-group col-md-4">
                 <label class="form-control-label">{__("Status")}</label>

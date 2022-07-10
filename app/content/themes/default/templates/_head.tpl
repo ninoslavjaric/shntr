@@ -48,7 +48,7 @@
     {/if}
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" crossorigin="anonymous">
     <!-- Fonts [Poppins|Roboto|Font-Awesome] -->
-    
+
     <!-- CSS -->
     {if $system['language']['dir'] == "LTR"}
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
@@ -71,4 +71,20 @@
     {/if}
     <!-- Header Custom JavaScript -->
 
+    <style>
+        .sold img {
+            filter: grayscale(100%);
+        }
+        .sold>*:first-child:before {
+            content: '';
+            background-image: url(/content/themes/default/images/svg/sold.svg);
+            background-size: 85%;
+            background-repeat: no-repeat;
+            background-position: center;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+    </style>
 </head>

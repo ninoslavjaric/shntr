@@ -18,6 +18,10 @@
 
         {include file='../images/svg/alipay.svg'}
 
+    {elseif $icon == "house"}
+
+        {include file='../images/svg/house.svg'}
+
     {elseif $icon == "bank"}
 
         {include file='../images/svg/bank.svg'}

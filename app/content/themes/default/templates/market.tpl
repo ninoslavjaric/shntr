@@ -7,13 +7,25 @@
     <div class="circle-2"></div>
     <div class="circle-3"></div>
     <div class="container">
-        <h2>{__("Marketplace")}</h2>
-        <p class="text-xlg">{__($system['system_description_marketplace'])}</p>
+        <h2>
+			{if $current_category}
+				{$current_category['category_name']}
+			{else}
+				{__("Marketplace")}
+			{/if}
+		</h2>
+        <p class="text-xlg">
+			{if $current_category}
+				Discover {$current_category['category_name']|strtolower}
+			{else}
+				{__($system['system_description_marketplace'])}
+			{/if}
+		</p>
         <div class="row mt20">
             <div class="col-sm-9 col-lg-6 mx-sm-auto">
                 <form class="js_search-form" data-handle="market">
                     <div class="input-group">
-                        <input type="text" class="form-control" name="query" placeholder='{__("Search for products")}'>
+                        <input type="text" class="form-control" name="query" placeholder='{if $current_category}Search for {$current_category['category_name']|strtolower}{else}{__("Search for products")}{/if}'>
                         <div class="input-group-append">
                             <button type="submit" class="btn btn-danger">{__("Search")}</button>
                         </div>
@@ -29,60 +41,62 @@
 <div class="container mt20 offcanvas">
 	<div class="row">
 
+		{if !$current_category['category_dominant']}
 		<!-- left panel -->
 		<div class="col-md-4 col-lg-3 offcanvas-sidebar">
 			<!-- add new product -->
 			{if $user->_data['can_sell_products']}
 				<div class="mb10">
 					<button type="button" class="btn btn-sm btn-success btn-block rounded-pill" data-toggle="modal" data-url="posts/product.php?do=create" data-callback="geocompletionSetup">
-		                <i class="fa fa-cart-plus mr10"></i>{__("Add New Product")}
-		            </button>
+						<i class="fa fa-cart-plus mr10"></i>{__("Add New Product")}
+					</button>
 				</div>
 			{/if}
             <!-- add new product -->
 
             <!-- categories -->
-			<div class="card">
-				<div class="card-body with-nav">
-					<ul class="side-nav">
-						{if $view != "category"}
-							<li class="active">
-								<a href="{$system['system_url']}/market">
-	                                {__("All")}
-	                            </a>
-							</li>
-						{else}
-							<li>
-								{if $current_category['parent']}
-									<a href="{$system['system_url']}/market/category/{$current_category['parent']['category_id']}/{$current_category['parent']['category_url']}">
-		                                <i class="fas fa-arrow-alt-circle-left mr5"></i>{__($current_category['parent']['category_name'])}
-		                            </a>
-								{else}
+				<div class="card">
+					<div class="card-body with-nav">
+						<ul class="side-nav">
+							{if $view != "category"}
+								<li class="active">
 									<a href="{$system['system_url']}/market">
-		                                {if $current_category['sub_categories']}<i class="fas fa-arrow-alt-circle-left mr5"></i>{/if}{__("All")}
-		                            </a>
-								{/if}
-							</li>
-						{/if}
-						{foreach $categories as $category}
-							<li {if $view == "category" && $current_category['category_id'] == $category['category_id']}class="active"{/if}>
-								<a href="{$system['system_url']}/market/category/{$category['category_id']}/{$category['category_url']}">
-	                                {__($category['category_name'])}
-	                                {if $category['sub_categories']}
-	                                	<span class="float-right"><i class="fas fa-angle-right"></i></span>
-	                                {/if}
-	                            </a>
-							</li>
-						{/foreach}
-					</ul>
+										{__("All")}
+									</a>
+								</li>
+							{else}
+								<li>
+									{if $current_category['parent']}
+										<a href="{$system['system_url']}/market/category/{$current_category['parent']['category_id']}/{$current_category['parent']['category_url']}">
+											<i class="fas fa-arrow-alt-circle-left mr5"></i>{__($current_category['parent']['category_name'])}
+										</a>
+									{else}
+										<a href="{$system['system_url']}/market">
+											{if $current_category['sub_categories']}<i class="fas fa-arrow-alt-circle-left mr5"></i>{/if}{__("All")}
+										</a>
+									{/if}
+								</li>
+							{/if}
+							{foreach $categories as $category}
+								<li {if $view == "category" && $current_category['category_id'] == $category['category_id']}class="active"{/if}>
+									<a href="{$system['system_url']}/market/category/{$category['category_id']}/{$category['category_url']}">
+										{__($category['category_name'])}
+										{if $category['sub_categories']}
+											<span class="float-right"><i class="fas fa-angle-right"></i></span>
+										{/if}
+									</a>
+								</li>
+							{/foreach}
+						</ul>
+					</div>
 				</div>
-			</div>
 			<!-- categories -->
+			{/if}
 		</div>
 		<!-- left panel -->
 
 		<!-- right panel -->
-		<div class="col-md-8 col-lg-9 offcanvas-mainbar">
+		<div class="col-md-{if $current_category['category_dominant']}12{else}8{/if} col-lg-{if $current_category['category_dominant']}12{else}9{/if} offcanvas-mainbar">
 
 			{include file='_ads.tpl'}
 
@@ -96,7 +110,13 @@
 
             {if $view == "" && $promoted_products}
 				<div class="articles-widget-header">
-                    <div class="articles-widget-title">{__("Promoted Products")}</div>
+                    <div class="articles-widget-title">
+						{if $current_category}
+							Promoted {$current_category['category_name']}
+						{else}
+							{__("Promoted Products")}
+						{/if}
+					</div>
                 </div>
 				<div class="row mb20">
 					{foreach $promoted_products as $post}
@@ -122,7 +142,7 @@
 										<a class="btn btn-sm btn-outline-secondary rounded-pill" href="{$system['system_url']}/posts/{$post['post_id']}">
 											{__("More")}
 										</a>
-										{if $post['author_id'] != $user->_data['user_id'] }
+										{if $post['author_id'] != $user->_data['user_id'] || $post['product']['sold'] }
 									        <button type="button" class="btn btn-sm btn-info rounded-pill js_chat-start" data-uid="{$post['author_id']}" data-name="{$post['post_author_name']}"><i class="fa fa-comments mr5"></i>{__("Buy")}</button>
 									    {/if}
 									</div>
@@ -130,6 +150,9 @@
 								<div class="product-info">
 									<div class="product-meta title">
 										<a href="{$system['system_url']}/posts/{$post['post_id']}" class="title">{$post['product']['name']}</a>
+									</div>
+									<div class="product-meta">
+										{if $post['product']['rent'] }{__("For rent")}{else}{__("For sale")}{/if}
 									</div>
 									<div class="product-meta">
 										<i class="fa fa-tag fa-fw mr5" style="color: #1f9cff;"></i>{__("Type")}:
@@ -147,6 +170,14 @@
 
 			{if $rows}
 				<div class="articles-widget-header clearfix">
+
+					{if $current_category['category_dominant']}
+						<div class="float-right">
+							<button type="button" class="btn btn-sm btn-success btn-block" data-toggle="modal" data-url="posts/product.php?do=create&category_id={$current_category['category_id']}" data-callback="geocompletionSetup">
+								<i class="fa fa-cart-plus mr10"></i>Add new {$current_category['category_name']|strtolower}
+							</button>
+						</div>
+					{/if}
 					<!-- sort -->
 					<div class="float-right">
 						<div class="dropdown">
@@ -198,13 +229,19 @@
 						</div>
 						<!-- location filter -->
 					{/if}
-                    <div class="articles-widget-title">{__("Products")}</div>
+                    <div class="articles-widget-title">
+						{if $current_category}
+							{$current_category['category_name']}
+						{else}
+							{__("Products")}
+						{/if}
+					</div>
                 </div>
 
 				<div class="row">
 					{foreach $rows as $post}
 						<div class="col-md-6 col-lg-4">
-							<div class="card product">
+							<div class="card product {if $post['product']['sold']}sold{/if}">
 								<div class="product-image">
 									<div class="product-price">
 										{if $post['product']['price'] > 0}
@@ -230,6 +267,9 @@
 								<div class="product-info">
 									<div class="product-meta title">
 										<a href="{$system['system_url']}/posts/{$post['post_id']}" class="title">{$post['product']['name']}</a>
+									</div>
+									<div class="product-meta">
+										<span class="badge">{if $post['product']['rent'] }{__("For rent")}{else}{__("For sale")}{/if}</span>
 									</div>
 									<div class="product-meta">
 										<i class="fa fa-tag fa-fw mr5" style="color: #1f9cff;"></i>{__("Type")}:
