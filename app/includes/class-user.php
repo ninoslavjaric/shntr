@@ -5514,6 +5514,9 @@ class User
                             /* get only public posts [except: wall posts (both) & hidden posts &  & anonymous posts] */
                             /* note: we didn't except group posts & event posts as they are not public already */
                             $where_query .= "WHERE (posts.user_id = $id AND posts.user_type = 'user' AND posts.in_wall = '0' AND posts.privacy = 'public' AND posts.is_hidden = '0' AND posts.is_anonymous = '0')";
+                            if (in_array($id, $this->_data['friends_of_friends_ids'])) {
+                                $where_query .= "OR (posts.user_id = $id AND posts.user_type = 'user' AND posts.in_wall = '0' AND posts.privacy = 'friends-of-friends' AND posts.is_hidden = '0' AND posts.is_anonymous = '0')";
+                            }
                         }
                     }
                 } else {
@@ -6411,7 +6414,7 @@ class User
             if ($privacy == 'friends-of-friends' && in_array($author_id, $this->_data['friends_of_friends_ids'])) {
                 return true;
             }
-            
+
             if (defined('PRIVACY_ERRORS')) {
                 throw new PrivacyException();
             }
