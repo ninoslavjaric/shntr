@@ -63,6 +63,7 @@ class User
                 $this->_data['user_picture_full'] = ($this->_data['user_picture_full']) ? $system['system_uploads'] . '/' . $this->_data['user_picture_full'] : $this->_data['user_picture_full'];
                 /* get all friends ids */
                 $this->_data['friends_ids'] = $this->get_friends_ids();
+                $this->_data['friends_of_friends_ids'] = $this->get_friends_of_friends();
                 /* get all followings ids */
                 $this->_data['followings_ids'] = $this->get_followings_ids();
                 /* get all friend requests ids */
@@ -329,6 +330,38 @@ class User
         $get_friends = $db->query(sprintf('SELECT users.user_id FROM friends INNER JOIN users ON (friends.user_one_id = users.user_id AND friends.user_one_id != %1$s) OR (friends.user_two_id = users.user_id AND friends.user_two_id != %1$s) WHERE friends.status = 1 AND (friends.user_one_id = %1$s OR friends.user_two_id = %1$s)', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
         if ($get_friends->num_rows > 0) {
             while ($friend = $get_friends->fetch_assoc()) {
+                $friends[] = $friend['user_id'];
+            }
+        }
+        return $friends;
+    }
+
+    private function get_friends_of_friends()
+    {
+        global $db;
+
+        $user_id = $this->_data['user_id'];
+
+        $db->query('drop temporary table if exists my_friends');
+        $db->query(sprintf(
+            'create temporary table my_friends
+            select user_one_id friends from friends where user_two_id = %1$s
+            union
+            select user_two_id friends from friends where user_one_id = %1$s',
+            secure($user_id, 'int')
+        )) or _error("SQL_ERROR_THROWEN");
+
+        $query = $db->query(sprintf(
+            'select user_one_id user_id from friends where user_two_id in (select friends from my_friends) and user_one_id <> %1$s
+            union
+            select user_two_id user_id from friends where user_one_id in (select friends from my_friends) and user_two_id <> %1$s',
+            secure($user_id, 'int')
+        )) or _error("SQL_ERROR_THROWEN");
+
+        $friends = [];
+
+        if ($query->num_rows > 0) {
+            while ($friend = $query->fetch_assoc()) {
                 $friends[] = $friend['user_id'];
             }
         }
@@ -5407,9 +5440,13 @@ class User
                                 $where_query .= "(posts.user_id = $me AND posts.user_type = 'user')";
                                 /* [2] get posts from friends still followed */
                                 /* viewer friends posts -> authors */
-                                $where_query .= sprintf(" OR (posts.user_id IN (%s) AND posts.user_type = 'user' AND posts.privacy = 'friends' AND posts.in_group = '0' AND posts.in_event = '0')", $this->spread_ids($this->get_friends_followings_ids()));
+                                $where_query .= sprintf(" OR (posts.user_id IN (%s) AND posts.user_type = 'user' AND posts.privacy in ('friends', 'friends-of-friends') AND posts.in_group = '0' AND posts.in_event = '0')", $this->spread_ids($this->get_friends_followings_ids()));
+                                // viewer friends of friends -> authors
+                                $where_query .= sprintf(" OR (posts.user_id IN (%s) AND posts.user_type = 'user' AND posts.privacy = 'friends-of-friends' AND posts.in_group = '0' AND posts.in_event = '0')", $this->spread_ids($this->_data['friends_of_friends_ids']));
                                 /* viewer friends posts -> their wall posts */
-                                $where_query .= sprintf(" OR (posts.in_wall = '1' AND posts.wall_id IN (%s) AND posts.user_type = 'user' AND posts.privacy = 'friends')", $this->spread_ids($this->get_friends_followings_ids()));
+                                $where_query .= sprintf(" OR (posts.in_wall = '1' AND posts.wall_id IN (%s) AND posts.user_type = 'user' AND posts.privacy in ('friends', 'friends-of-friends'))", $this->spread_ids($this->get_friends_followings_ids()));
+                                // viewer friends of friends posts -> their wall posts
+                                $where_query .= sprintf(" OR (posts.in_wall = '1' AND posts.wall_id IN (%s) AND posts.user_type = 'user' AND posts.privacy = 'friends-of-friends')", $this->spread_ids($this->_data['friends_of_friends_ids']));
                                 /* [3] get posts from followings */
                                 /* viewer followings posts -> authors */
                                 $where_query .= sprintf(" OR (posts.user_id IN (%s) AND posts.user_type = 'user' AND posts.privacy = 'public' AND posts.in_group = '0' AND posts.in_event = '0')", $this->spread_ids($this->_data['followings_ids']));
@@ -5594,6 +5631,7 @@ class User
         if ($filter != "all") {
             $where_query .= " AND (posts.post_type = '$filter')";
         }
+
         /* get posts */
         if ($last_post_id != null && $get != 'popular' && $get != 'saved' && $get != 'memories') { /* excluded as not ordered by post_id */
             $get_posts = $db->query(sprintf("SELECT * FROM (SELECT posts.post_id FROM posts " . $where_query . ") posts WHERE posts.post_id > %s ORDER BY posts.post_id DESC", secure($last_post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
@@ -6369,6 +6407,11 @@ class User
             if ($privacy == 'friends' && $this->friendship_approved($author_id)) {
                 return true;
             }
+
+            if ($privacy == 'friends-of-friends' && in_array($author_id, $this->_data['friends_of_friends_ids'])) {
+                return true;
+            }
+            
             if (defined('PRIVACY_ERRORS')) {
                 throw new PrivacyException();
             }

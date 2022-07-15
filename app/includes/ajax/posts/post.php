@@ -146,7 +146,7 @@ try {
 		/* check newsfeed_source */
 		$_POST['privacy'] = ($system['newsfeed_source'] == "all_posts") ? "public" : $_POST['privacy'];
 		/* if privacy set and not valid */
-		if (!isset($_POST['privacy']) || !in_array($_POST['privacy'], array('me', 'friends', 'public'))) {
+		if (!isset($_POST['privacy']) || !in_array($_POST['privacy'], array('me', 'friends', 'friends-of-friends', 'public'))) {
 			_error(400);
 		}
 		$inputs['privacy'] = $_POST['privacy'];

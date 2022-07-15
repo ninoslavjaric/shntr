@@ -390,6 +390,9 @@
                             <div class="dropdown-item pointer" data-title='{__("Shared with: Friends")}' data-value="friends">
                                 <i class="fa fa-users mr5"></i>{__("Friends")}
                             </div>
+                            <div class="dropdown-item pointer" data-title='{__("Shared with: Friends of Friends")}' data-value="friends-of-friends">
+                                <i class="fa fa-users mr5"></i>{__("Friends of Friends")}
+                            </div>
                             {if $_handle == 'me'}
                                 <div class="dropdown-item pointer" data-title='{__("Shared with: Only Me")}' data-value="me">
                                     <i class="fa fa-lock mr5"></i>{__("Only Me")}
