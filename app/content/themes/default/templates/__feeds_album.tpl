@@ -11,7 +11,7 @@
 				<div class="float-right">
 					{if $album['privacy'] == "me"}
 						<i class="fa fa-lock" data-toggle="tooltip" data-placement="top" title='{__("Shared with")}: {__("Only Me")}'></i>
-					{elseif $album['privacy'] == "friends"}
+					{elseif $album['privacy']|in_array:["friends", "friends-of-friends"]}
 						<i class="fa fa-users" data-toggle="tooltip" data-placement="top" title='{__("Shared with")}: {__("Friends")}'></i>
 					{elseif $album['privacy'] == "public"}
 						<i class="fa fa-globe" data-toggle="tooltip" data-placement="top" title='{__("Shared with")}: {__("Public")}'></i>

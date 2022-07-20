@@ -42,10 +42,10 @@
             <!-- post time & location & privacy -->
             <div class="post-time">
                 <a href="{$system['system_url']}/posts/{$post['post_id']}" class="js_moment" data-time="{$post['time']}">{$post['time']}</a>
-                
+
                 {if $post['privacy'] == "me"}
                     <i class="fa fa-lock" data-toggle="tooltip" data-placement="top" title='{__("Shared with")} {__("Only Me")}'></i>
-                {elseif $post['privacy'] == "friends"}
+                {elseif $post['privacy']|in_array:["friends", "friends-of-friends"]}
                     <i class="fa fa-users" data-toggle="tooltip" data-placement="top" title='{__("Shared with")} {__("Friends")}'></i>
                 {elseif $post['privacy'] == "public"}
                     <i class="fa fa-globe" data-toggle="tooltip" data-placement="top" title='{__("Shared with")} {__("Public")}'></i>

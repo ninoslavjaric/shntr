@@ -1,3 +1,4 @@
+
 <!-- post header -->
 <div class="post-header">
     <!-- post picture -->
@@ -409,7 +410,7 @@
                             <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" data-display="static">
                                 <i class="btn-group-icon fa fa-lock"></i>
                             </button>
-                    {elseif $_post['privacy'] == "friends"}
+                    {elseif $_post['privacy']|in_array:["friends", "friends-of-friends"]}
                         <div class="btn-group" data-toggle="tooltip" data-placement="top" data-value="friends" title='{__("Shared with: Friends")}'>
                             <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" data-display="static">
                                 <i class="btn-group-icon fa fa-users"></i>
@@ -436,7 +437,7 @@
                 {else}
                     {if $_post['privacy'] == "me"}
                         <i class="fa fa-lock" data-toggle="tooltip" data-placement="top" title='{__("Shared with")} {__("Only Me")}'></i>
-                    {elseif $_post['privacy'] == "friends"}
+                    {elseif $_post['privacy']|in_array:["friends", "friends-of-friends"]}
                         <i class="fa fa-users" data-toggle="tooltip" data-placement="top" title='{__("Shared with")} {__("Friends")}'></i>
                     {elseif $_post['privacy'] == "public"}
                         <i class="fa fa-globe" data-toggle="tooltip" data-placement="top" title='{__("Shared with")} {__("Public")}'></i>
