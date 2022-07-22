@@ -28,6 +28,9 @@
                             {else}
                                 ---
                             {/if}
+                            {if $row['link']}
+                                <a href="{$row['link']}" target="_blank">link</a>
+                            {/if}
                         </td>
                         <td>
                             <span class="js_moment" data-time="{$row['created_at']}">{$row['created_at']}</span>

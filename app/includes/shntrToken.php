@@ -68,10 +68,25 @@ class shntrToken
         global $db;
 
         return $db->query(
-            'select amount, created_at, snd.user_name as sender_name, rcp.user_name as recipient_name, note
+            'select 
+                amount, 
+                created_at, 
+                snd.user_name as sender_name, 
+                rcp.user_name as recipient_name, 
+                note,
+                coalesce(
+                   concat(\'/events/\', e.event_id),
+                   concat(\'/pages/\', pg.page_name),
+                   concat(\'/groups/\', g.group_name),
+                   concat(\'/posts/\', pd.post_id)
+                ) as link
             from token_transactions
-            inner join users as snd on snd.user_id = sender_id
-            inner join users as rcp on rcp.user_id = recipient_id
+                inner join users as snd on snd.user_id = sender_id
+                inner join users as rcp on rcp.user_id = recipient_id
+                left join events as e on e.event_id = basis_entity_id and basis_name = \'events\'
+                left join pages as pg on pg.page_id = basis_entity_id and basis_name = \'pages\'
+                left join groups as g on g.group_id = basis_entity_id and basis_name = \'groups\'
+                left join posts_products as pd on pd.post_id = basis_entity_id and basis_name = \'products\'
             order by created_at desc'
         )->fetch_all(MYSQLI_ASSOC);
     }
@@ -87,10 +102,22 @@ class shntrToken
                 created_at, 
                 note, 
                 snd.user_name as sender_name, 
-                rcp.user_name as recipient_name
+                rcp.user_name as recipient_name,
+                basis_name, 
+                basis_entity_id,
+                coalesce(
+                   concat('/events/', e.event_id),
+                   concat('/pages/', pg.page_name),
+                   concat('/groups/', g.group_name),
+                   concat('/posts/', pd.post_id)
+                ) as link
             from token_transactions
                 inner join users as snd on snd.user_id = sender_id
                 inner join users as rcp on rcp.user_id = recipient_id
+                left join events as e on e.event_id = basis_entity_id and basis_name = 'events'
+                left join pages as pg on pg.page_id = basis_entity_id and basis_name = 'pages'
+                left join groups as g on g.group_id = basis_entity_id and basis_name = 'groups'
+                left join posts_products as pd on pd.post_id = basis_entity_id and basis_name = 'products'
             where {$userId} in (sender_id, recipient_id)
             order by created_at desc"
         )->fetch_all(MYSQLI_ASSOC);

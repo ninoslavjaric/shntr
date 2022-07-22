@@ -2876,6 +2876,9 @@
                                                     {else}
                                                         ---
                                                     {/if}
+                                                    {if $transaction['link']}
+                                                        <a href="{$transaction['link']}" target="_blank">link</a>
+                                                    {/if}
                                                 </td>
                                             </tr>
                                         {/foreach}
