@@ -52,18 +52,18 @@
                         <div class="card-body">
                             <form action="{$system['system_url']}/people/find" method="post">
                                 {if $system['location_finder_enabled']}
-                                    <div class="form-group">
-                                        <label class="form-control-label">{__("Distance")}</label>
-                                        <div>
-                                            <input type="range" class="custom-range" min="1" max="5000" value="5000" name="distance_slider" oninput="this.form.distance_value.value=this.value">
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text" id="basic-addon1">{if $system['system_distance'] == "mile"}{__("ML")}{else}{__("KM")}{/if}</span>
-                                                </div>
-                                                <input type="number" class="form-control" min="1" max="5000" value="5000" name="distance_value" oninput="this.form.distance_slider.value=this.value">
-                                            </div>
-                                        </div>
-                                    </div>
+{*                                    <div class="form-group">*}
+{*                                        <label class="form-control-label">{__("Distance")}</label>*}
+{*                                        <div>*}
+{*                                            <input type="range" class="custom-range" min="1" max="5000" value="5000" name="distance_slider" oninput="this.form.distance_value.value=this.value">*}
+{*                                            <div class="input-group">*}
+{*                                                <div class="input-group-prepend">*}
+{*                                                    <span class="input-group-text" id="basic-addon1">{if $system['system_distance'] == "mile"}{__("ML")}{else}{__("KM")}{/if}</span>*}
+{*                                                </div>*}
+{*                                                <input type="number" class="form-control" min="1" max="5000" value="5000" name="distance_value" oninput="this.form.distance_slider.value=this.value">*}
+{*                                            </div>*}
+{*                                        </div>*}
+{*                                    </div>*}
                                     <div class="form-group">
                                         <label class="form-control-label">{__('Hometown')}</label>
                                         <div>

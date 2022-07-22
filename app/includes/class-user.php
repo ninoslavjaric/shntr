@@ -1190,7 +1190,7 @@ class User
         // prepare where statement
         $where = "";
         /* user not IN (friends, followings, friend requests & friend requests sent) */
-        $old_people_ids = array_unique(array_merge($this->_data['friends_ids'], $this->_data['followings_ids'], $this->_data['friend_requests_ids'], $this->_data['friend_requests_sent_ids']));
+        $old_people_ids = []; //array_unique(array_merge($this->_data['friends_ids'], $this->_data['followings_ids'], $this->_data['friend_requests_ids'], $this->_data['friend_requests_sent_ids']));
         $where .= sprintf("WHERE user_banned = '0' AND user_id != %s AND user_id NOT IN (%s)", secure($this->_data['user_id'], 'int'), $this->spread_ids($old_people_ids));
         if ($system['activation_enabled']) {
             $where .= " AND user_activated = '1'";
@@ -1237,7 +1237,7 @@ class User
         if ($system['location_finder_enabled']) {
             /* validate distance */
             $unit = ($system['system_distance'] == "mile") ? 3958 : 6371;
-            $distance = ($distance && is_numeric($distance) && $distance > 0) ? $distance : 25;
+            $distance = ($distance && is_numeric($distance) && $distance > 0) ? $distance : PHP_INT_MAX;
             /* prepare query */
             $query = sprintf("SELECT " . $distinct_query . " user_id, user_name, user_firstname, user_lastname, user_gender, user_picture, user_subscribed, user_verified, (%s * acos(cos(radians(%s)) * cos(radians(user_latitude)) * cos(radians(user_longitude) - radians(%s)) + sin(radians(%s)) * sin(radians(user_latitude))) ) AS distance FROM users ", secure($unit, 'int'), secure($this->_data['user_latitude']), secure($this->_data['user_longitude']), secure($this->_data['user_latitude']));
             $query .= $join_query;
