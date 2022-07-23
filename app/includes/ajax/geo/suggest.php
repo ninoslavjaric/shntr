@@ -64,7 +64,7 @@ switch ($_GET['type']) {
                          left join states as st on st.id = ct.state_id
                          inner join countries as co on co.id = ct.country_id
                 where {$liker}
-                order by co.name, st.alternative_name, ct.asciiname";
+                order by ct.population desc, ct.asciiname, st.alternative_name, co.name";
         break;
 
     default:
