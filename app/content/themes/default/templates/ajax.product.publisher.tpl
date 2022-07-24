@@ -75,14 +75,26 @@
         {include file='__custom_fields.tpl' _custom_fields=$custom_fields _registration=true}
         {/if}
         <!-- custom fields -->
-        <div class="form-group">
-            <label class="form-control-label">{__("Photos")}</label>
-            <div class="attachments clearfix" data-type="photos">
-                <ul>
-                    <li class="add">
-                        <i class="fa fa-camera js_x-uploader" data-handle="publisher-mini" data-multiple="true"></i>
-                    </li>
-                </ul>
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label class="form-control-label">{__("Photos")}</label>
+                <div class="attachments clearfix" data-type="photos">
+                    <ul>
+                        <li class="add">
+                            <i class="fa fa-camera js_x-uploader" data-handle="publisher-mini" data-multiple="true"></i>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="form-group col-md-3">
+                <label class="form-control-label">{__("Filtes")}</label>
+                <div class="attachments clearfix" data-type="files">
+                    <ul>
+                        <li class="add">
+                            <i class="fa fa-camera js_x-uploader" data-type="file" data-handle="publisher-mini" data-multiple="true"></i>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
         <!-- error -->

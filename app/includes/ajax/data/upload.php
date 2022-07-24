@@ -761,60 +761,81 @@ try {
             $folder = 'files';
             $directory = $folder . '/' . date('Y') . '/' . date('m') . '/';
 
-            // valid inputs
-            if (!isset($_FILES["file"]) || $_FILES["file"]["error"] != UPLOAD_ERR_OK) {
-                modal("ERROR", __("Upload Error"), __("Something wrong with upload! Is 'upload_max_filesize' set correctly?"));
-            }
 
-            // check file size
-            if ($_FILES["file"]["size"] > $max_allowed_size) {
-                modal("ERROR", __("Upload Error"), __("The file size is so big") . ", " . __("The allowed file size is:") . " " . ($max_allowed_size / 1024 / 1024) . __("MB"));
-            }
-
-            // check file extesnion
-            $extension = get_extension($_FILES['file']['name']);
-            if (!valid_extension($extension, $system['file_extensions'])) {
-                modal("ERROR", __("Upload Error"), __("The file type is not valid or not supported"));
-            }
-
-            // prepare file name & path
-            $prefix = $system['uploads_prefix'] . '_' . get_hash_token();
-            $file_name = $directory . $prefix . '.' . $extension;
-            $path = ABSPATH . $system['uploads_directory'] . '/' . $file_name;
-
-            // upload to
-            if ($system['s3_enabled']) {
-                /* Amazon S3 */
-                aws_s3_upload($_FILES['file']['tmp_name'], $file_name, mime_content_type($_FILES['file']['tmp_name']));
-            } elseif ($system['digitalocean_enabled']) {
-                /* DigitalOcean */
-                digitalocean_space_upload($_FILES['file']['tmp_name'], $file_name);
-            } elseif ($system['wasabi_enabled']) {
-                /* Wasabi */
-                wasabi_upload($_FILES['file']['tmp_name'], $file_name, mime_content_type($_FILES['file']['tmp_name']));
-            } elseif ($system['ftp_enabled']) {
-                /* FTP */
-                ftp_upload($_FILES['file']['tmp_name'], $file_name);
+            $files = [];
+            if ($_POST["multiple"] == 'true') {
+                foreach ($_FILES['file'] as $key => $val) {
+                    for ($i = 0; $i < count($val); $i++) {
+                        $files[$i][$key] = $val[$i];
+                    }
+                }
             } else {
-                /* local server */
-                /* set uploads directory */
-                if (!file_exists(ABSPATH . $system['uploads_directory'] . '/' . $folder)) {
-                    @mkdir(ABSPATH . $system['uploads_directory'] . '/' . $folder, 0777, true);
-                }
-                if (!file_exists(ABSPATH . $system['uploads_directory'] . '/' . $folder . '/' . date('Y'))) {
-                    @mkdir(ABSPATH . $system['uploads_directory'] . '/' . $folder . '/' . date('Y'), 0777, true);
-                }
-                if (!file_exists($system['uploads_directory'] . '/' . $folder . '/' . date('Y') . '/' . date('m'))) {
-                    @mkdir(ABSPATH . $system['uploads_directory'] . '/' . $folder . '/' . date('Y') . '/' . date('m'), 0777, true);
-                }
-                /* check if the file uploaded successfully */
-                if (!@move_uploaded_file($_FILES['file']['tmp_name'], $path)) {
-                    modal("ERROR", __("Upload Error"), __("Sorry, can not upload the file"));
-                }
+                $files[] = $_FILES;
             }
+
+
+            $file_names = [];
+            foreach ($files as $file) {
+                // valid inputs
+                if (!isset($file) || $file["error"] != UPLOAD_ERR_OK) {
+                    modal("ERROR", __("Upload Error"), __("Something wrong with upload! Is 'upload_max_filesize' set correctly?"));
+                }
+
+                // check file size
+                if ($file["size"] > $max_allowed_size) {
+                    modal("ERROR", __("Upload Error"), __("The file size is so big") . ", " . __("The allowed file size is:") . " " . ($max_allowed_size / 1024 / 1024) . __("MB"));
+                }
+
+                // check file extesnion
+                $extension = get_extension($file['name']);
+                if (!valid_extension($extension, $system['file_extensions'])) {
+                    modal("ERROR", __("Upload Error"), __("The file type is not valid or not supported"));
+                }
+
+                // prepare file name & path
+                $prefix = $system['uploads_prefix'] . '_' . get_hash_token();
+                $file_name = $directory . $prefix . '.' . $extension;
+                $path = ABSPATH . $system['uploads_directory'] . '/' . $file_name;
+
+                // upload to
+                if ($system['s3_enabled']) {
+                    /* Amazon S3 */
+                    aws_s3_upload($file['tmp_name'], $file_name, mime_content_type($file['tmp_name']));
+                } elseif ($system['digitalocean_enabled']) {
+                    /* DigitalOcean */
+                    digitalocean_space_upload($file['tmp_name'], $file_name);
+                } elseif ($system['wasabi_enabled']) {
+                    /* Wasabi */
+                    wasabi_upload($file['tmp_name'], $file_name, mime_content_type($file['tmp_name']));
+                } elseif ($system['ftp_enabled']) {
+                    /* FTP */
+                    ftp_upload($file['tmp_name'], $file_name);
+                } else {
+                    /* local server */
+                    /* set uploads directory */
+                    if (!file_exists(ABSPATH . $system['uploads_directory'] . '/' . $folder)) {
+                        @mkdir(ABSPATH . $system['uploads_directory'] . '/' . $folder, 0777, true);
+                    }
+                    if (!file_exists(ABSPATH . $system['uploads_directory'] . '/' . $folder . '/' . date('Y'))) {
+                        @mkdir(ABSPATH . $system['uploads_directory'] . '/' . $folder . '/' . date('Y'), 0777, true);
+                    }
+                    if (!file_exists($system['uploads_directory'] . '/' . $folder . '/' . date('Y') . '/' . date('m'))) {
+                        @mkdir(ABSPATH . $system['uploads_directory'] . '/' . $folder . '/' . date('Y') . '/' . date('m'), 0777, true);
+                    }
+                    /* check if the file uploaded successfully */
+                    if (!@move_uploaded_file($file['tmp_name'], $path)) {
+                        modal("ERROR", __("Upload Error"), __("Sorry, can not upload the file"));
+                    }
+                }
+
+                $file_names[] = $file_name;
+            }
+
 
             // return the file new name & exit
-            return_json(array("file" => $file_name));
+            $_POST["multiple"] == 'true'
+                ? return_json(['files' => $file_names])
+                : return_json(['file' => $file_name]);
             break;
 
         default:

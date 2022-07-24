@@ -9,3 +9,4 @@ coin-svc/purse.json
 app/includes/config.php
 app/includes/libs/HTMLPurifier/HTMLPurifier/DefinitionCache/Serializer/HTML/
 app/content/uploads/photos
+app/content/uploads

@@ -986,7 +986,10 @@ $(function () {
             }
         } else if (type == "audio" || type == "file") {
             /* check handle */
-            if (handle == "publisher") {
+            if (handle == "publisher-mini") {
+                // todo frontend dev part
+            }
+            else if (handle == "publisher") {
                 /* show upload loader */
                 var publisher = $(this).parents('.publisher');
                 var publisher_button = publisher.find('.js_publisher-btn');
