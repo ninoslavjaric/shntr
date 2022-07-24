@@ -1168,9 +1168,12 @@ class User
      * @param string $gender
      * @param string $relationship
      * @param string $status
+     * @param string $religion
      * @return array
      */
-    public function search_users($distance, $keyword, $gender, $relationship, $status, $homePlaceId, $currentPlaceId)
+    public function search_users(
+        $distance, $keyword, $gender, $relationship, $status, $homePlaceId, $currentPlaceId, $religion
+    )
     {
         global $db, $system;
         $results = [];
@@ -1206,6 +1209,10 @@ class User
         /* relationship */
         if (isset($relationship) && $relationship != "any") {
             $where .= " AND users.user_relationship = '$relationship'";
+        }
+        /* relationship */
+        if (isset($religion) && $religion != "any") {
+            $where .= " AND users.user_religion = '$religion'";
         }
         /* status */
         if ($status != "any") {
@@ -15754,6 +15761,9 @@ class User
 
             case 'basic':
                 /* validate firstname */
+                if (is_empty($args['religion'])) {
+                    throw new Exception(__("You must enter religion"));
+                }
                 if (is_empty($args['firstname'])) {
                     throw new Exception(__("You must enter first name"));
                 }
@@ -15820,7 +15830,32 @@ class User
                 /* set custom fields */
                 $this->set_custom_fields($args, "user", "settings", $this->_data['user_id']);
                 /* update user */
-                $db->query(sprintf("UPDATE users SET user_firstname = %s, user_lastname = %s, user_gender = %s, user_country = %s, user_birthdate = %s, user_relationship = %s, user_biography = %s, user_website = %s WHERE user_id = %s", secure($args['firstname']), secure($args['lastname']), secure($args['gender']), secure($args['country'], 'int'), secure($args['birth_date']), secure($args['relationship']), secure($args['biography']), secure($args['website']), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf(
+                    "UPDATE 
+                        users 
+                    SET 
+                        user_firstname = %s, 
+                        user_lastname = %s, 
+                        user_gender = %s, 
+                        user_country = %s, 
+                        user_birthdate = %s, 
+                        user_relationship = %s, 
+                        user_biography = %s, 
+                        user_website = %s , 
+                        user_religion = %s 
+                    WHERE 
+                          user_id = %s",
+                    secure($args['firstname']),
+                    secure($args['lastname']),
+                    secure($args['gender']),
+                    secure($args['country'], 'int'),
+                    secure($args['birth_date']),
+                    secure($args['relationship']),
+                    secure($args['biography']),
+                    secure($args['website']),
+                    secure($args['religion']),
+                    secure($this->_data['user_id'], 'int'))
+                ) or _error("SQL_ERROR_THROWEN");
                 /* verification badge */
                 if ($this->_data['user_verified'] && ($this->_data['user_firstname'] !=  $args['firstname'] || $this->_data['user_lastname'] !=  $args['lastname'])) {
                     $db->query(sprintf("UPDATE users SET user_verified = '0' WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
@@ -17289,6 +17324,18 @@ class User
     public function get_current_place()
     {
         return $this->get_place($this->_data['user_current_place_id']);
+    }
+
+    public function get_religions(): array
+    {
+        global $db;
+
+        return array_column(
+            $db->query(
+                'select distinct user_religion from users where user_religion is not null'
+            )->fetch_all(MYSQLI_ASSOC),
+            'user_religion'
+        );
     }
 }
 

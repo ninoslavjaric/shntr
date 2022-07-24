@@ -122,6 +122,15 @@
                                 </div>
                                 <!-- online status -->
                                 <!-- custom fields -->
+                                <div class="form-group">
+                                    <label class="form-control-label">{__("Religion")}</label>
+                                    <select class="form-control" name="religion">
+                                        <option value="any">{__("Any")}</option>
+                                        {foreach $religions as $religion}
+                                            <option value="{$religion}">{$religion}</option>
+                                        {/foreach}
+                                    </select>
+                                </div>
                                 {if $custom_fields}
                                 {include file='__custom_fields.tpl' _custom_fields=$custom_fields _registration=true _search=true}
                                 {/if}

@@ -551,6 +551,11 @@
                                     </div>
                                 {/if}
 
+                                <div class="form-group">
+                                    <label class="form-control-label">{__('Religion')}</label>
+                                    <input type="text" class="form-control" name="religion" value="{$user->_data['user_religion']}">
+                                </div>
+
                                 <!-- custom fields -->
                                 {if $custom_fields['basic']}
                                 {include file='__custom_fields.tpl' _custom_fields=$custom_fields['basic'] _registration=false}

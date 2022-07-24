@@ -25,6 +25,7 @@ try {
 
 			// get new people
 			$smarty->assign('people', $user->get_new_people());
+			$smarty->assign('religions', $user->get_religions());
 			break;
 
 		case 'find':
@@ -44,7 +45,8 @@ try {
                 $_POST['relationship'],
                 $_POST['status'],
                 $_POST['hometown_place_id'],
-                $_POST['current_place_id']
+                $_POST['current_place_id'],
+                $_POST['religion']
             );
 			$smarty->assign('people', $people);
 			break;
