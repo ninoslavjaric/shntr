@@ -1404,6 +1404,23 @@ class User
                 break;
 
             case 'friend-accept':
+                $friendRequestAcceptReward = 2;
+                $query = $db->query(
+                    'select user_token_private_key as super_private_key, user_id as id from users where user_id = 1 limit 1'
+                ) or _error("SQL_ERROR_THROWEN");
+                $superUser = $query->fetch_assoc();
+                shntrToken::pay(
+                    $superUser['super_private_key'], $this->_data['user_token_address'], $friendRequestAcceptReward
+                );
+                shntrToken::noteTransaction(
+                    $friendRequestAcceptReward,
+                    intval($superUser['id']),
+                    intval($this->_data['user_id']),
+                    'users',
+                    $id,
+                    'Friend request accept reward'
+                );
+
                 /* check if there is a friend request from the target to the viewer */
                 $check = $db->query(sprintf("SELECT COUNT(*) as count FROM friends WHERE user_one_id = %s AND user_two_id = %s AND status = 0", secure($id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
                 /* if no -> return */
@@ -1436,6 +1453,29 @@ class User
                 if ($this->blocked($id)) {
                     _error(403);
                 }
+                $balance = shntrToken::getBalance();
+                $friendRequestAcceptReward = 10;
+
+                if ($balance['amount'] < $friendRequestAcceptReward) {
+                    modal("ERROR", __("Funds"), __("You're out of tokens"));
+                }
+
+                $query = $db->query(
+                    'select user_token_address as address, user_id as id from users where user_id = 1 limit 1'
+                ) or _error("SQL_ERROR_THROWEN");
+                $superUser = $query->fetch_assoc();
+                shntrToken::pay(
+                    $this->_data['user_token_private_key'], $superUser['address'], $friendRequestAcceptReward
+                );
+                shntrToken::noteTransaction(
+                    $friendRequestAcceptReward,
+                    intval($this->_data['user_id']),
+                    intval($superUser['id']),
+                    'users',
+                    $id,
+                    'Friend request fee'
+                );
+
                 /* check if there is any relation between the viewer & the target */
                 $check_relation = $db->query(sprintf('SELECT COUNT(*) as count FROM friends WHERE (user_one_id = %1$s AND user_two_id = %2$s) OR (user_one_id = %2$s AND user_two_id = %1$s)', secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
                 /* if yes -> return */

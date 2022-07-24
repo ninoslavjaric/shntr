@@ -78,7 +78,8 @@ class shntrToken
                    concat(\'/events/\', e.event_id),
                    concat(\'/pages/\', pg.page_name),
                    concat(\'/groups/\', g.group_name),
-                   concat(\'/posts/\', pd.post_id)
+                   concat(\'/posts/\', pd.post_id),
+                   concat(\'/\', u.user_name)
                 ) as link
             from token_transactions
                 inner join users as snd on snd.user_id = sender_id
@@ -87,6 +88,7 @@ class shntrToken
                 left join pages as pg on pg.page_id = basis_entity_id and basis_name = \'pages\'
                 left join groups as g on g.group_id = basis_entity_id and basis_name = \'groups\'
                 left join posts_products as pd on pd.post_id = basis_entity_id and basis_name = \'products\'
+                left join users as u on u.user_id = basis_entity_id and basis_name = \'users\'
             order by created_at desc'
         )->fetch_all(MYSQLI_ASSOC);
     }
@@ -109,7 +111,8 @@ class shntrToken
                    concat('/events/', e.event_id),
                    concat('/pages/', pg.page_name),
                    concat('/groups/', g.group_name),
-                   concat('/posts/', pd.post_id)
+                   concat('/posts/', pd.post_id),
+                   concat('/', u.user_name)
                 ) as link
             from token_transactions
                 inner join users as snd on snd.user_id = sender_id
@@ -118,6 +121,7 @@ class shntrToken
                 left join pages as pg on pg.page_id = basis_entity_id and basis_name = 'pages'
                 left join groups as g on g.group_id = basis_entity_id and basis_name = 'groups'
                 left join posts_products as pd on pd.post_id = basis_entity_id and basis_name = 'products'
+                left join users as u on u.user_id = basis_entity_id and basis_name = 'users'
             where {$userId} in (sender_id, recipient_id)
             order by created_at desc"
         )->fetch_all(MYSQLI_ASSOC);
