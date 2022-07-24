@@ -16061,6 +16061,29 @@ class User
                 } else {
                     $args['work_url'] = 'null';
                 }
+                if (!isset($args['relationship']) || $args['relationship'] == "none") {
+                    $args['relationship'] = 'null';
+                } else {
+                    $relationships = array(
+                        'single', 'relationship', 'married', "complicated", 'separated', 'divorced', 'widowed'
+                    );
+                    if (!in_array($args['relationship'], $relationships)) {
+                        throw new Exception(__("Please select a valid relationship"));
+                    }
+                }
+
+                if ($args['birth_year'] != "none" && $args['birth_month'] != "none" && $args['birth_day'] != "none") {
+                    $args['birthdate'] = $args['birth_year'] . '-' . $args['birth_month'] . '-' . $args['birth_day'];
+                } else {
+                    $args['birthdate'] = 'null';
+                }
+
+                if (isset($args['is_jewish'])) {
+                    $args['is_jewish'] = $args['is_jewish'] == 'on';
+                } else {
+                    $args['is_jewish'] = false;
+                }
+
                 /* update user */
                 $db->query(
                     sprintf(
@@ -16076,7 +16099,10 @@ class User
                             user_edu_school = %s, 
                             user_edu_class = %s,
                             user_current_place_id = %s, 
-                            user_hometown_place_id = %s
+                            user_hometown_place_id = %s,
+                            user_biography = %s,
+                            user_birthdate = %s,
+                            user_is_jewish = %s
                         WHERE user_id = %s",
                         secure($args['country'], 'int'),
                         secure($args['work_title']),
@@ -16089,6 +16115,9 @@ class User
                         secure($args['edu_class']),
                         secure($args['city_id'], 'int'),
                         secure($args['hometown_id'], 'int'),
+                        secure($args['biography']),
+                        secure($args['birthdate']),
+                        secure($args['is_jewish'], 'bool'),
                         secure($this->_data['user_id'], 'int')
                     )
                 ) or _error("SQL_ERROR_THROWEN");

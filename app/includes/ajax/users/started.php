@@ -2,7 +2,7 @@
 
 /**
  * ajax -> users -> started
- * 
+ *
  * @package Sngine
  * @author Zamblek
  */

@@ -211,6 +211,9 @@ function secure($value, $type = "", $quoted = true)
                     $value = (!is_empty($value)) ? "'%%" . $value . "%%'" : "''";
                 }
                 break;
+            case 'bool':
+                $value = $value ? 1 : 0;
+                break;
             default:
                 $value = (!is_empty($value)) ? $value : "";
                 $value = ($quoted) ? "'" . $value . "'" : $value;
