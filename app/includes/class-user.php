@@ -14362,9 +14362,10 @@ class User
      *
      * @param integer $id
      * @param string $handle
+     * @param string $note
      * @return void
      */
-    public function report($id, $handle)
+    public function report($id, $handle, $note)
     {
         global $db, $date;
         switch ($handle) {
@@ -14422,7 +14423,7 @@ class User
             throw new Exception(__("You have already reported this before!"));
         }
         /* report */
-        $db->query(sprintf("INSERT INTO reports (user_id, node_id, node_type, time) VALUES (%s, %s, %s, %s)", secure($this->_data['user_id'], 'int'), secure($id, 'int'), secure($handle), secure($date))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO reports (user_id, node_id, node_type, time, note) VALUES (%s, %s, %s, %s, %s)", secure($this->_data['user_id'], 'int'), secure($id, 'int'), secure($handle), secure($date), secure($note))) or _error("SQL_ERROR_THROWEN");
         /* send notification to admins & moderators */
         $this->notify_system_admins("report", true);
     }

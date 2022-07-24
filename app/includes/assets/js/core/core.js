@@ -214,8 +214,8 @@ function modal() {
 
 
 // confirm
-function confirm(title, message, callback, password_check = false) {
-    modal("#modal-confirm", { 'title': title, 'message': message, 'password_check': password_check });
+function confirm(title, message, callback, password_check = false, extra_content = '') {
+    modal("#modal-confirm", { title, message, password_check, extra_content });
     $("#modal-confirm-ok").click(function () {
         button_status($(this), "loading");
         if (callback) callback();

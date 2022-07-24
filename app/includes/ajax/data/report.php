@@ -2,7 +2,7 @@
 
 /**
  * ajax -> data -> report
- * 
+ *
  * @package Sngine
  * @author Zamblek
  */
@@ -17,14 +17,13 @@ is_ajax();
 user_access(true);
 
 // valid inputs
-if (!isset($_POST['id']) || !is_numeric($_POST['id'])) {
-	_error(400);
+if (!isset($_POST['id']) || !is_numeric($_POST['id']) || !isset($_POST['note'])) {
+    modal("ERROR", __("Error"), __('Params not valid'));
 }
 
 try {
-
 	// report
-	$user->report($_POST['id'], $_POST['handle']);
+	$user->report($_POST['id'], $_POST['handle'], $_POST['note']);
 
 	// return & exit
 	modal("SUCCESS", __("Thanks"), __("Your report has been submitted"));

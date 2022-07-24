@@ -16,6 +16,7 @@
                         <th>{__("Node")}</th>
                         <th>{__("Type")}</th>
                         <th>{__("Reporter By")}</th>
+                        <th>{__("Note")}</th>
                         <th>{__("Time")}</th>
                         <th>{__("Actions")}</th>
                     </tr>
@@ -73,6 +74,7 @@
                                 </a>
                             </td>
 
+                            <td data-toggle="tooltip" data-html="true" title="{$row['note']}">{$row['note']}</td>
                             <td>{$row['time']|date_format:"%e %B %Y"}</td>
                             <td>
                                 {if $row['node_type'] == "user"}

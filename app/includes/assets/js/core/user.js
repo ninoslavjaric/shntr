@@ -1994,10 +1994,17 @@ $(function () {
     // handle reports
     $('body').on('click', '.js_report', function (e) {
         e.preventDefault;
-        var id = $(this).data('id');
-        var handle = $(this).data('handle');
+        const id = $(this).data('id');
+        const handle = $(this).data('handle');
+        const note = $('<div></div>').addClass('form-group').append(
+          $('<textarea></textarea>').addClass('form-control').attr('placeholder', 'Note').attr('id', 'report-note')
+        );
+
         confirm(__['Report'], __['Are you sure you want to report this?'], function () {
-            $.post(api['data/report'], { 'handle': handle, 'id': id }, function (response) {
+            $.post(
+              api['data/report'],
+              { 'handle': handle, 'id': id, 'note': $('#report-note').val() },
+              function (response) {
                 /* check the response */
                 if (response.callback) {
                     eval(response.callback);
@@ -2006,7 +2013,7 @@ $(function () {
                 .fail(function () {
                     modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
                 });
-        });
+        }, false, note.html());
         return false;
     });
 

@@ -61,6 +61,7 @@
     </div>
     <div class="modal-body">
         <h6>{literal}{{message}}{/literal}</h6>
+        {literal}{{{extra_content}}}{/literal}
         {literal}{{#password_check}}{/literal}
             <div class="form-group mt20">
                 <label class="form-control-label" for="modal-password-check">{__("Confirm Password")}</label>
@@ -176,7 +177,7 @@
                     <div class="live-counter" id="js_live-counter">
                         <span class="status offline" id=js_live-counter-status>{__("Offline")}</span>
                         <span class="number">
-                            <i class="fas fa-eye mr5"></i><strong id="js_live-counter-number">0</strong>    
+                            <i class="fas fa-eye mr5"></i><strong id="js_live-counter-number">0</strong>
                         </span>
                     </div>
 
@@ -206,7 +207,7 @@
 
 
 {if !$user->_logged_in}
-    
+
     <!-- Forget Password -->
     <script id="forget-password-confirm" type="text/template">
         <div class="modal-header">
@@ -242,7 +243,7 @@
             </div>
         </form>
     </script>
-    
+
     <script id="forget-password-reset" type="text/template">
         <div class="modal-header">
             <h6 class="modal-title">{__("Change Your Password!")}</h6>
@@ -307,7 +308,7 @@
     <!-- Two-Factor Authentication -->
 
 {else}
-    
+
     <!-- Email Activation -->
     <script id="activation-email-reset" type="text/template">
         <div class="modal-header">
@@ -321,7 +322,7 @@
                 <div class="form-group">
                     <label class="form-control-label mb10">{__("Current Email")}</label><br>
                     <span class="badge badge-lg badge-info">{$user->_data['user_email']}</span>
-                    
+
                 </div>
                 <div class="form-group">
                     <label class="form-control-label" for="email">{__("New Email")}</label>
@@ -395,7 +396,7 @@
                     <div class="form-group">
                         <label class="form-control-label">{__("Current Phone")}</label>
                         <p class="form-control-plaintext">{$user->_data['user_phone']}</p>
-                        
+
                     </div>
                 {/if}
                 <div class="form-group">
@@ -677,7 +678,7 @@
     </script>
 
     <script id="chat-box" type="text/template">
-        <div class="chat-widget chat-box opened" id="{literal}{{chat_key_value}}{/literal}" 
+        <div class="chat-widget chat-box opened" id="{literal}{{chat_key_value}}{/literal}"
         {literal}{{#conversation_id}}{/literal}data-cid="{literal}{{conversation_id}}{/literal}"{literal}{{/conversation_id}}{/literal}
         {literal}{{#user_id}}{/literal}data-uid="{literal}{{user_id}}{/literal}"{literal}{{/user_id}}{/literal}>
             <!-- head -->
@@ -823,7 +824,7 @@
         <div class="modal-body text-center">
             <h3>{literal}{{name}}{/literal}</h3>
             <p class="text-lg js_chat-calling-message">{__("Connecting")}<span class="loading-dots"></span></p>
-            
+
             <div class="twilio-stream-wrapper">
                 <div class="twilio-stream"></div>
                 <div class="twilio-stream-local"></div>
@@ -858,7 +859,7 @@
             <h3>{literal}{{name}}{/literal}</h3>
             {literal}{{#is_video}}{/literal}<p class="text-lg js_chat-ringing-message">{__("Wants to have video call with you")}</p>{literal}{{/is_video}}{/literal}
             {literal}{{#is_audio}}{/literal}<p class="text-lg js_chat-ringing-message">{__("Wants to have audio call with you")}</p>{literal}{{/is_audio}}{/literal}
-            
+
             <div class="twilio-stream-wrapper">
                 <div class="twilio-stream"></div>
                 <div class="twilio-stream-local"></div>
@@ -963,7 +964,7 @@
     </script>
     <!-- Chat -->
 
-    
+
     <!-- DayTime Messages -->
     {if $system['daytime_msg_enabled'] && $page == "index"}
         <script id="message-morning" type="text/template">
@@ -987,7 +988,7 @@
                 </div>
             </div>
         </script>
-        
+
         <script id="message-evening" type="text/template">
             <div class="card daytime_message">
                 <button type="button" class="close float-right js_daytime-remover"><span>&times;</span></button>
@@ -1168,7 +1169,7 @@
                 </div>
             </div>
         </script>
-        
+
         <script id="edit-comment" type="text/template">
             <div class="comment-edit">
                 <div class="x-form comment-form">
@@ -1277,7 +1278,7 @@
                 </div>
             </form>
         </script>
-        
+
         <script id="wallet-withdraw-affiliates" type="text/template">
             <div class="modal-header">
                 <h6 class="modal-title"><i class="fa fa-exchange-alt mr5"></i>{__("Withdraw Affiliates Credit")}</h6>
@@ -1526,10 +1527,10 @@
                 <div class="row justify-content-center" style="margin-left: -5px; margin-right: -5px;">
                     {if $system['paypal_enabled']}
                         <div class="col-12 col-sm-4 plr5">
-                            <button class="js_payment-paypal btn btn-block btn-payment plr20 mb10" 
-                            data-handle="{literal}{{handle}}{/literal}" 
-                            {literal}{{#id}}{/literal} data-id="{literal}{{id}}{/literal}" {literal}{{/id}}{/literal} 
-                            {literal}{{#price}}{/literal} data-price="{literal}{{price}}{/literal}" {literal}{{/price}}{/literal} 
+                            <button class="js_payment-paypal btn btn-block btn-payment plr20 mb10"
+                            data-handle="{literal}{{handle}}{/literal}"
+                            {literal}{{#id}}{/literal} data-id="{literal}{{id}}{/literal}" {literal}{{/id}}{/literal}
+                            {literal}{{#price}}{/literal} data-price="{literal}{{price}}{/literal}" {literal}{{/price}}{/literal}
                             >
                                 <i class="fab fa-paypal fa-lg fa-fw mr5" style="color: #00186A;"></i>{__("PayPal")}
                             </button>
@@ -1537,25 +1538,25 @@
                     {/if}
                     {if $system['creditcard_enabled']}
                         <div class="col-12 col-sm-4 plr5">
-                            <button class="js_payment-stripe btn btn-block btn-payment plr20 mb10" 
-                            data-handle="{literal}{{handle}}{/literal}" 
-                            {literal}{{#id}}{/literal} data-id="{literal}{{id}}{/literal}" {literal}{{/id}}{/literal} 
-                            {literal}{{#price}}{/literal} data-price="{literal}{{price}}{/literal}" {literal}{{/price}}{/literal} 
-                            {literal}{{#name}}{/literal} data-name="{literal}{{name}}{/literal}" {literal}{{/name}}{/literal} 
-                            {literal}{{#img}}{/literal} data-img="{literal}{{img}}{/literal}" {literal}{{/img}}{/literal} 
-                            data-method="credit"> 
+                            <button class="js_payment-stripe btn btn-block btn-payment plr20 mb10"
+                            data-handle="{literal}{{handle}}{/literal}"
+                            {literal}{{#id}}{/literal} data-id="{literal}{{id}}{/literal}" {literal}{{/id}}{/literal}
+                            {literal}{{#price}}{/literal} data-price="{literal}{{price}}{/literal}" {literal}{{/price}}{/literal}
+                            {literal}{{#name}}{/literal} data-name="{literal}{{name}}{/literal}" {literal}{{/name}}{/literal}
+                            {literal}{{#img}}{/literal} data-img="{literal}{{img}}{/literal}" {literal}{{/img}}{/literal}
+                            data-method="credit">
                                 <i class="fa fa-credit-card fa-lg fa-fw mr5" style="color: #8798CC;"></i>{__("Credit Card")}
                             </button>
                         </div>
                     {/if}
                     {if $system['alipay_enabled']}
                         <div class="col-12 col-sm-4 plr5">
-                            <button class="js_payment-stripe btn btn-block btn-payment plr20 mb10" 
-                            data-handle="{literal}{{handle}}{/literal}" 
-                            {literal}{{#id}}{/literal} data-id="{literal}{{id}}{/literal}" {literal}{{/id}}{/literal} 
-                            {literal}{{#price}}{/literal} data-price="{literal}{{price}}{/literal}" {literal}{{/price}}{/literal} 
-                            {literal}{{#name}}{/literal} data-name="{literal}{{name}}{/literal}" {literal}{{/name}}{/literal} 
-                            {literal}{{#img}}{/literal} data-img="{literal}{{img}}{/literal}" {literal}{{/img}}{/literal} 
+                            <button class="js_payment-stripe btn btn-block btn-payment plr20 mb10"
+                            data-handle="{literal}{{handle}}{/literal}"
+                            {literal}{{#id}}{/literal} data-id="{literal}{{id}}{/literal}" {literal}{{/id}}{/literal}
+                            {literal}{{#price}}{/literal} data-price="{literal}{{price}}{/literal}" {literal}{{/price}}{/literal}
+                            {literal}{{#name}}{/literal} data-name="{literal}{{name}}{/literal}" {literal}{{/name}}{/literal}
+                            {literal}{{#img}}{/literal} data-img="{literal}{{img}}{/literal}" {literal}{{/img}}{/literal}
                             data-method="alipay">
                                 <i class="fab fa-alipay fa-lg fa-fw mr5" style="color: #5B9EDD;"></i>{__("Alipay")}
                             </button>
@@ -1563,10 +1564,10 @@
                     {/if}
                     {if $system['paystack_enabled']}
                         <div class="col-12 col-sm-4 plr5">
-                            <button class="js_payment-paystack btn btn-block btn-payment plr20 mb10" 
-                            data-handle="{literal}{{handle}}{/literal}" 
-                            {literal}{{#id}}{/literal} data-id="{literal}{{id}}{/literal}" {literal}{{/id}}{/literal} 
-                            {literal}{{#price}}{/literal} data-price="{literal}{{price}}{/literal}" {literal}{{/price}}{/literal} 
+                            <button class="js_payment-paystack btn btn-block btn-payment plr20 mb10"
+                            data-handle="{literal}{{handle}}{/literal}"
+                            {literal}{{#id}}{/literal} data-id="{literal}{{id}}{/literal}" {literal}{{/id}}{/literal}
+                            {literal}{{#price}}{/literal} data-price="{literal}{{price}}{/literal}" {literal}{{/price}}{/literal}
                             >
                                 {include file='__svg_icons.tpl' icon="paystack" width="20px" height="20px" class="mr5"}{__("Paystack")}
                             </button>
@@ -1574,10 +1575,10 @@
                     {/if}
                     {if $system['coinpayments_enabled']}
                         <div class="col-12 col-sm-4 plr5">
-                            <button class="js_payment-coinpayments btn btn-block btn-payment plr20 mb10" 
-                            data-handle="{literal}{{handle}}{/literal}" 
-                            {literal}{{#id}}{/literal} data-id="{literal}{{id}}{/literal}" {literal}{{/id}}{/literal} 
-                            {literal}{{#price}}{/literal} data-price="{literal}{{price}}{/literal}" {literal}{{/price}}{/literal} 
+                            <button class="js_payment-coinpayments btn btn-block btn-payment plr20 mb10"
+                            data-handle="{literal}{{handle}}{/literal}"
+                            {literal}{{#id}}{/literal} data-id="{literal}{{id}}{/literal}" {literal}{{/id}}{/literal}
+                            {literal}{{#price}}{/literal} data-price="{literal}{{price}}{/literal}" {literal}{{/price}}{/literal}
                             >
                                 <i class="fab fa-bitcoin fa-lg fa-fw mr5" style="color: #FFC107;"></i>{__("CoinPayments")}
                             </button>
