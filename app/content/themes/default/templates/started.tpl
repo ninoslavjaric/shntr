@@ -138,7 +138,7 @@
                                             {__("I'm jewish")}
                                         </span>
                                         <label class="switch" for="is_jewish">
-                                            <input type="checkbox" name="is_jewish" id="is_jewish">
+                                            <input type="checkbox" name="is_jewish" id="is_jewish" {if $user->_data['user_is_jewish']}checked{/if}>
                                             <span class="slider round"></span>
                                         </label>
                                     </div>

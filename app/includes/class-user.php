@@ -16102,6 +16102,7 @@ class User
                             user_hometown_place_id = %s,
                             user_biography = %s,
                             user_birthdate = %s,
+                            user_relationship = %s,
                             user_is_jewish = %s
                         WHERE user_id = %s",
                         secure($args['country'], 'int'),
@@ -16117,6 +16118,7 @@ class User
                         secure($args['hometown_id'], 'int'),
                         secure($args['biography']),
                         secure($args['birthdate']),
+                        secure($args['relationship']),
                         secure($args['is_jewish'], 'bool'),
                         secure($this->_data['user_id'], 'int')
                     )
