@@ -156,6 +156,7 @@ try {
 			break;
 	}
 
+	$where_query .= "AND (!posts_products.sold OR posts_products.product_id IN (SELECT basis_entity_id FROM token_transactions WHERE note = 'Buying product' AND created_at > now() - INTERVAL 72 HOUR))";
 	// get products
 	require('includes/class-pager.php');
 	$params['selected_page'] = ((int) $_GET['page'] == 0) ? 1 : $_GET['page'];

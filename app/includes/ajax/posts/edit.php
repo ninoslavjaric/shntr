@@ -76,9 +76,9 @@ try {
 
             $post = $user->get_post($_POST['id']);
 
-            if ($post['product']['buying_candidate_id'] != $user->_data['user_id']) {
-                _error(403);
-            }
+//            if ($post['product']['buying_candidate_id'] != $user->_data['user_id']) {
+//                _error(403);
+//            }
 
             $owner = $user->get_user($post['user_id']);
 
@@ -97,7 +97,7 @@ try {
                     floatval($post['product']['price']), intval($user->_data['user_id']), $owner['user_id'], 'post_products', $post['product']['product_id'], 'Buying product'
                 );
 
-                $db->query("UPDATE posts_products SET sold = 1 WHERE product_id = " . intval($post['product']['product_id']));
+                $db->query("UPDATE posts_products SET sold = 1, buying_candidate_id = {$user->_data['user_id']} WHERE product_id = " . intval($post['product']['product_id']));
 
                 $db->commit();
             } catch (Exception $e) {

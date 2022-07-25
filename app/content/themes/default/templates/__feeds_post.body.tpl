@@ -953,12 +953,12 @@
         {if $_post['product']['available'] && $_post['author_id'] != $user->_data['user_id'] }
             <div class="mt10 clearfix">
                 <button type="button" class="btn btn-info btn-block js_chat-start" data-uid="{$_post['author_id']}" data-name="{$_post['post_author_name']}">
-                    <i class="fa fa-comments mr5"></i>{__("Buy")}
+                    <i class="fa fa-comments mr5"></i>{__("Contact")}
                 </button>
             </div>
         {/if}
         <!-- custom fileds -->
-        {if $_post['product']['buying_candidate_id'] == $user->_data['user_id'] && !$_post['product']['sold'] }
+        {if !$_post['product']['sold'] }
             <div class="mt10 clearfix">
                 <button type="button" class="btn btn-warning btn-block js_buy-product">
                     <i class="fa fa-comments mr5"></i>{__("Buy")}
