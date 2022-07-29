@@ -9,6 +9,9 @@ RUN docker-php-ext-install -j$(nproc) gd
 
 RUN docker-php-ext-install mysqli pdo pdo_mysql
 
+RUN echo 'upload_max_filesize = 128M' >> /usr/local/etc/php/php.ini
+RUN echo 'post_max_size = 128M' >> /usr/local/etc/php/php.ini
+
 RUN adduser -u 1000 -D webmaster
 USER webmaster
 WORKDIR .

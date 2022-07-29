@@ -41,6 +41,7 @@ class Image
         switch ($this->_img_type) {
             case 'image/jpeg':
             case 'image/jpg':
+                ini_set('memory_limit', '256M');
                 $this->_img = imagecreatefromjpeg($file);
                 if (!$this->_img) {
                     throw new Exception(__("The file type is not valid image"));
