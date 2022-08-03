@@ -69,15 +69,18 @@ export class AppController {
   @Header('content-type', 'application/json')
   async sendTokens(@Req() request: Request): Promise<string> {
     try {
+      console.log(['headers', request.headers]);
       if (!request.headers['x-key']) {
         return JSON.stringify({ message: 'no key' });
       }
+      console.log(['sending', request.body]);
       const message = await this.appService.sendFunds(
         request.headers['x-key'],
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         request.body,
       );
+      console.log('sent');
 
       return JSON.stringify({
         message: message,
