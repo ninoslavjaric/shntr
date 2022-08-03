@@ -22,7 +22,7 @@ class shntrToken
 
     public static function pay($senderPrivateKey, $recipientAddress, $amount)
     {
-        return http_call(
+        $paymentMessage = http_call(
             shntr_TOKEN_SERVICE . '/pay',
             'POST',
             [
@@ -34,6 +34,12 @@ class shntrToken
                 "content-type: application/json",
             ],
         );
+
+        if (!$paymentMessage) {
+            _error('PAYMENT_shntr');
+        }
+
+        return $paymentMessage;
     }
 
     private static function transformInsertQuery(array $params): string

@@ -627,6 +627,12 @@ function _error()
                 }
                 break;
 
+            case 'PAYMENT_shntr':
+                http_send_status(500);
+                $title = __("Payment failed");
+                $message = __("Sorry but the payment transaction failed. Try again.");
+                break;
+
             case '404':
                 global $smarty;
                 header('HTTP/1.0 404 Not Found');
@@ -2613,17 +2619,17 @@ function print_money($amount)
 
 function http_call(string $url, string $method = 'GET', array $data = [], array $headers = [])
 {
-    $opts = [
-        "http" => [
-            'timeout' => 30,
-            "method" => $method,
-            "header" => implode(PHP_EOL, $headers) . PHP_EOL,
-            "content" => json_encode($data),
-        ]
-    ];
-    $context = stream_context_create($opts);
+    $ch = curl_init($url);
+    if ($method != 'GET') {
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    }
 
-    $response = file_get_contents($url, false, $context);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    $result = curl_exec($ch);
+    curl_close($ch);
 
-    return json_decode($response, true);
+    return json_decode($result, true);
 }
