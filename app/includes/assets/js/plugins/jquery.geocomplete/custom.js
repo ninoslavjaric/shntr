@@ -10,6 +10,7 @@ window.geocompletionSetup = () => {
   if (!sessionStorage.getItem(lsKey)) {
     sessionStorage.setItem(lsKey, JSON.stringify({}));
   }
+  let selectedText = '';
 
   const getSuggestion = function(term, target, callback)
   {
@@ -29,6 +30,11 @@ window.geocompletionSetup = () => {
     delay: 0,
     change: function(evt, ui) {
       const _target = $(evt.target);
+
+      if (selectedText.trim() === _target.val().trim()) {
+        return;
+      }
+
       getSuggestion(_target.val(), _target, function(result) {
         if (result.length === 0) {
           return _target.val('').next().val('');
@@ -56,11 +62,14 @@ window.geocompletionSetup = () => {
     },
     select: function(evt, ui) {
       evt.preventDefault();
+      selectedText = ui.item.label;
       $(evt.target).val(ui.item.label).next().val(ui.item.value);
     },
     // focus: function(evt, ui) {
-    //   $(evt.target).data('initial', $(evt.target).val());
+    //   console.log(123);
+    //   // $(evt.target).data('initial', $(evt.target).val());
     // }
   });
+  // item.focus((ev) => $(ev.target).val('').next().val(''))
 }
 $(geocompletionSetup);

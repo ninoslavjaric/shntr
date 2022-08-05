@@ -53,7 +53,6 @@ try {
 			break;
 
 		case 'publish':
-		    var_dump($_POST);die;
 			// valid inputs
 			/* filter product */
 			if (!isset($_POST['product'])) {
