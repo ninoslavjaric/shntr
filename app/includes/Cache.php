@@ -26,6 +26,13 @@ class Cache implements Cachable
         );
 
         if ($result = self::getDb()->query($query)->fetch_assoc()) {
+            self::getDb()->query(
+                sprintf(
+                    'update %s set hits = hits + 1 where `key` = %s',
+                    secure(static::TABLE_NAME, null, false),
+                    secure($key)
+                )
+            );
             $result = json_decode(htmlspecialchars_decode($result['value']));
         }
 
@@ -36,7 +43,7 @@ class Cache implements Cachable
     {
         static::delete($key);
         $query = sprintf(
-            'insert into %s values (%s, COMPRESS(%s))',
+            'insert into %s (`key`, `value`) values (%s, COMPRESS(%s))',
             secure(static::TABLE_NAME, null, false),
             secure($key),
             secure(json_encode($value))
