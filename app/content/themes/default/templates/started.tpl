@@ -352,6 +352,7 @@
         });
 
         $('#activate-step-3').on('click', function(e) {
+            $('.js_ajax-forms').submit();
             $('.js_wizard-steps li:eq(2) a').removeClass('disabled');
             $('.js_wizard-steps li a[href="#step-3"]').trigger('click');
         });
