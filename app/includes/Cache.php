@@ -20,7 +20,7 @@ class Cache implements Cachable
     public static function get(string $key): ?array
     {
         $query = sprintf(
-            'select value from %s where `key` = %s',
+            'select UNCOMPRESS(value) value from %s where `key` = %s',
             secure(static::TABLE_NAME, null, false),
             secure($key)
         );
@@ -36,10 +36,10 @@ class Cache implements Cachable
     {
         static::delete($key);
         $query = sprintf(
-            'insert into %s values (%s, %s)',
+            'insert into %s values (%s, COMPRESS(%s))',
             secure(static::TABLE_NAME, null, false),
             secure($key),
-            secure(serialize($value))
+            secure(htmlspecialchars_decode(serialize($value)))
         );
 
         self::getDb()->query($query);
