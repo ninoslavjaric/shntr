@@ -26,10 +26,10 @@ class Cache implements Cachable
         );
 
         if ($result = self::getDb()->query($query)->fetch_assoc()) {
-            $result = unserialize(htmlspecialchars_decode($result['value']));
+            $result = json_decode(htmlspecialchars_decode($result['value']));
         }
 
-        return $result;
+        return $result ?: null;
     }
 
     public static function set(string $key, mixed $value): void
@@ -39,7 +39,7 @@ class Cache implements Cachable
             'insert into %s values (%s, COMPRESS(%s))',
             secure(static::TABLE_NAME, null, false),
             secure($key),
-            secure(htmlspecialchars_decode(serialize($value)))
+            secure(json_encode($value))
         );
 
         self::getDb()->query($query);

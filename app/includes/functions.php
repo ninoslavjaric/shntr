@@ -301,6 +301,10 @@ function get_hash_number()
  */
 function is_ajax()
 {
+    if ($_SERVER["HTTP_HOST"] == 'localhost') {
+        return;
+    }
+
     if (!isset($_SERVER['HTTP_X_REQUESTED_WITH']) || ($_SERVER['HTTP_X_REQUESTED_WITH'] != 'XMLHttpRequest')) {
         redirect();
     }
