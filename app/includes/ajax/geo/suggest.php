@@ -10,12 +10,18 @@ is_ajax();
  * @var $db mysqli
  */
 
-if (!array_key_exists('query', $_GET)) {
+if (!array_key_exists('query', $_GET) || !array_key_exists('type', $_GET)) {
     _error(400);
 }
 $query = $_GET['query'];
 
 $queries = explode(' ', $query);
+
+$cacheKey = md5(__FILE__) . '::' . $_GET['type'] . '::' . urlencode($_GET['query']);
+
+if ($cacheResult = Cache::get($cacheKey)) {
+    return_json($cacheResult);
+}
 
 switch ($_GET['type']) {
     case 'countries':
@@ -66,11 +72,12 @@ switch ($_GET['type']) {
                 where {$liker}
                 order by ct.population desc, ct.asciiname, st.alternative_name, co.name";
         break;
-
-    default:
-        _error(400);
 }
 
 $dbQuery = $db->query($sql);
 
-return_json($dbQuery->fetch_all(MYSQLI_ASSOC));
+$result = $dbQuery->fetch_all(MYSQLI_ASSOC);
+
+Cache::set($cacheKey, $result);
+
+return_json($result);

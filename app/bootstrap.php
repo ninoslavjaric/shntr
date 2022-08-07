@@ -249,6 +249,7 @@ $smarty->loadFilter('output', 'trimwhitespace');
 
 // get user
 require_once(ABSPATH . 'includes/class-user.php');
+require_once(ABSPATH . 'includes/Cache.php');
 require_once(ABSPATH . 'includes/shntrToken.php');
 
 
