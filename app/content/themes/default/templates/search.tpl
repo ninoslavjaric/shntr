@@ -77,11 +77,11 @@
                                 </a>
                             </li>
                         {/if}
-                        <li class="nav-item">
-                            <a class="nav-link rounded-pill {if $tab == "users"}active{/if}" href="{$system['system_url']}/search/{$query}/users{$query_string}">
-                                <i class="fa fa-user mr5"></i><strong>{__("Users")}</strong>
-                            </a>
-                        </li>
+{*                        <li class="nav-item">*}
+{*                            <a class="nav-link rounded-pill {if $tab == "users"}active{/if}" href="{$system['system_url']}/search/{$query}/users{$query_string}">*}
+{*                                <i class="fa fa-user mr5"></i><strong>{__("Users")}</strong>*}
+{*                            </a>*}
+{*                        </li>*}
                         {if $system['pages_enabled']}
                             <li class="nav-item">
                                 <a class="nav-link rounded-pill {if $tab == "pages"}active{/if}" href="{$system['system_url']}/search/{$query}/pages{$query_string}">
