@@ -81,7 +81,7 @@ switch ($_GET['type']) {
                 latitude float,
                 longitude float,
                 unique (coid, stid, ctid)
-            );',
+            ) character set = "utf8" collate = "utf8_general_ci";',
             "insert into tmp_suggestions select 
                     co.id as country_id, 
                     st.id as state_id, 
