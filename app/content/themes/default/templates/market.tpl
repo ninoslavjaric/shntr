@@ -198,7 +198,7 @@
 						</div>
 					</div>
 					<!-- sort -->
-					{if $user->_logged_in && $system['location_finder_enabled']}
+					{if $user->_logged_in && $system['location_finder_enabled'] && !$current_category['category_dominant']}
 						<!-- location filter -->
 						<div class="float-right">
 							<div class="dropdown">
