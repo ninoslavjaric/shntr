@@ -80,7 +80,7 @@
                                 {if $system['system_logo']}
                                     <img class="img-fluid" src="{$system['system_uploads']}/{$system['system_logo']}" alt="{$system['system_title']}" title="{$system['system_title']}">
                                 {else}
-                                    {$system['system_title']}
+                                    <img src="/content/themes/default/images/svg/logo.svg" alt="{$system['system_title']}" class="img-fluid" title="{$system['system_title']}"> {$system['system_title']}
                                 {/if}
                             </a>
                             <!-- logo -->

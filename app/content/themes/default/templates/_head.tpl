@@ -34,7 +34,7 @@
 
     <!-- Favicon -->
     {if $system['system_favicon_default']}
-        <link rel="shortcut icon" href="{$system['system_url']}/content/themes/{$system['theme']}/images/favicon.png" />
+        <link rel="shortcut icon" href="{$system['system_url']}/content/themes/{$system['theme']}/images/favicon.ico" />
     {elseif $system['system_favicon']}
         <link rel="shortcut icon" href="{$system['system_uploads']}/{$system['system_favicon']}" />
     {/if}

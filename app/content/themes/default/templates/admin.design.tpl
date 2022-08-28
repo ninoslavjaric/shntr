@@ -141,7 +141,7 @@
                 <div>
                     <div class="form-control-label h6">{__("Default Favicon")}</div>
                     <div class="form-text d-none d-sm-block">
-                        {__("Use the default")} (<a target="_blank" href="{$system['system_url']}/content/themes/{$system['theme']}/images/favicon.png">{__("preview")}</a>) ({__("Disable it to use your custom uploaded image")})
+                        {__("Use the default")} (<a target="_blank" href="{$system['system_url']}/content/themes/{$system['theme']}/images/favicon.ico">{__("preview")}</a>) ({__("Disable it to use your custom uploaded image")})
                     </div>
                 </div>
                 <div class="text-right">
@@ -483,5 +483,5 @@
             <button type="submit" class="btn btn-primary">{__("Save Changes")}</button>
         </div>
     </form>
-    
+
 </div>
