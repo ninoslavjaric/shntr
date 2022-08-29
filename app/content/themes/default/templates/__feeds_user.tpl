@@ -30,7 +30,7 @@
                     <button type="button" class="btn btn-sm btn-danger js_friend-decline" data-uid="{$_user['user_id']}">{__("Decline")}</button>
 
                 {elseif $_connection == "add"}
-                    <button type="button" class="btn btn-sm btn-success js_friend-add" data-uid="{$_user['user_id']}">
+                    <button type="button" class="btn btn-sm btn-dark js_friend-add" data-uid="{$_user['user_id']}">
                         <i class="fa fa-user-plus mr5"></i>{if $_small}{__("Add")}{else}{__("Add Friend")}{/if}
                     </button>
 
@@ -132,7 +132,7 @@
                         <button type="button" class="btn btn-sm btn-danger js_friend-decline" data-uid="{$_user['user_id']}">{__("Decline")}</button>
 
                     {elseif $_connection == "add"}
-                        <button type="button" class="btn btn-sm btn-success js_friend-add" data-uid="{$_user['user_id']}">
+                        <button type="button" class="btn btn-sm btn-dark js_friend-add" data-uid="{$_user['user_id']}">
                             <i class="fa fa-user-plus mr5"></i>{if $_small}{__("Add")}{else}{__("Add Friend")}{/if}
                         </button>
 

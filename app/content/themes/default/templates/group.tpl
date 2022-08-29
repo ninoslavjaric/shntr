@@ -108,7 +108,7 @@
                         <button type="button" class="btn btn-sm btn-success btn-primary js_group-fund" data-id="{$group['group_id']}">
                             <i class="fa fa-check mr5"></i>{__("Fund")}
                         </button>
-                        <button type="button" class="btn btn-sm btn-success btn-delete js_leave-group" data-id="{$group['group_id']}" data-privacy="{$group['group_privacy']}">
+                        <button type="button" class="btn btn-sm btn-dark btn-delete js_leave-group" data-id="{$group['group_id']}" data-privacy="{$group['group_privacy']}">
                             <i class="fa fa-check mr5"></i>{__("Joined")}
                         </button>
                     {elseif $group['i_joined'] == "pending"}
