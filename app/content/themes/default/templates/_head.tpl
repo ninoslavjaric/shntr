@@ -40,6 +40,9 @@
     {/if}
     <!-- Favicon -->
 
+    <!-- Fonts CiscoSans -->
+    <link href="{$system['system_url']}/content/themes/{$system['theme']}/fonts/CiscoSans/stylesheet.css" rel="stylesheet" crossorigin="anonymous" />
+
     <!-- Fonts [Poppins|Roboto|Font-Awesome] -->
     {if $system['language']['dir'] == "LTR"}
         <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet" crossorigin="anonymous" />

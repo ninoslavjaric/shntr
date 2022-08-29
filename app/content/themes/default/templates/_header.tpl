@@ -58,6 +58,7 @@
             <!-- top-bar alert-->
         {/if}
 
+        {if $user->_logged_in}
         <!-- main-header -->
         <div class="main-header">
             <div class="container">
@@ -324,6 +325,7 @@
             </div>
         </div>
         <!-- main-header -->
+        {/if}
 
         <!-- ads -->
         {include file='_ads.tpl' _ads=$ads_master['header'] _master=true}

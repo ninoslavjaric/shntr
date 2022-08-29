@@ -3,40 +3,12 @@
 
 <!-- page content -->
 {if !$user->_logged_in && !$system['newsfeed_public']}
-    
-    <div class="container pt30">
-        <div class="index-intro">
-            <h1>
-                {__("Welcome to")} {$system['system_title']}
-            </h1>
-            <p>
-                {__($system['system_description'])}
-            </p>
-        </div>
+    <div class="container">
         <div class="row">
-            <div class="col-md-6 col-lg-7">
-                <img style="width: 100%; max-height: 500px;" class="d-none d-md-block" src="{$system['system_url']}/content/themes/{$system['theme']}/images/home/drawkit-nature-man-colour.svg">
-            </div>
+            <div class="col-md-6 col-lg-7"></div>
 
             <div class="col-md-6 col-lg-5">
                 {include file='_sign_form.tpl' do="in"}
-                <div class="text-center">
-                    {if $system['play_store_badge_enabled']}
-                        <a href="{$system['play_store_link']}" target="_blank">
-                            {include file='__svg_icons.tpl' icon="playstore_badge" height="58px"}
-                        </a>
-                    {/if}
-                    {if $system['appgallery_badge_enabled']}
-                        <a href="{$system['appgallery_store_link']}" target="_blank">
-                            {include file='__svg_icons.tpl' icon="appgallery_badge" height="40px" class="mr10"}
-                        </a>
-                    {/if}
-                    {if $system['app_store_badge_enabled']}
-                        <a href="{$system['app_store_link']}" target="_blank">
-                            {include file='__svg_icons.tpl' icon="appstore_badge" height="40px"}
-                        </a>
-                    {/if}
-                </div>
             </div>
         </div>
     </div>
@@ -44,7 +16,6 @@
     {include file='_footer.links.tpl'}
 
 {else}
-
     <div class="container mt20 offcanvas">
         <div class="row">
 
@@ -74,16 +45,18 @@
                                             <strong class="text-muted">{__("Stories")}</strong>
                                             {if $has_story}
                                                 <div class="float-right">
-                                                    <button data-toggle="tooltip" data-placement="top" title='{__("Delete Your Story")}' class="btn btn-sm btn-icon btn-rounded btn-danger js_story-deleter">
+                                                    <button data-toggle="tooltip" data-placement="top" title='{__("Delete Your Story")}'
+                                                        class="btn btn-sm btn-icon btn-rounded btn-danger js_story-deleter">
                                                         <i class="fa fa-trash-alt"></i>
                                                     </button>
                                                 </div>
                                             {else}
                                                 <div class="d-none d-sm-block text-muted pointer float-right">
-                                                    <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title='{__("Stories are photos and videos that only last 24 hours")}'></i>
+                                                    <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top"
+                                                        title='{__("Stories are photos and videos that only last 24 hours")}'></i>
                                                 </div>
                                             {/if}
-                                                
+
                                         </div>
                                         <div class="card-body pt5 stories-wrapper">
                                             <div id="stories" data-json='{htmlspecialchars($stories["json"], ENT_QUOTES, 'UTF-8')}'>
@@ -176,11 +149,13 @@
                                     </div>
                                     <div class="text">
                                         <strong>{__("Membership")}</strong><br>
-                                        {__("Choose the Plan That's Right for You")}, {__("Check the package from")} <a href="{$system['system_url']}/packages">{__("Here")}</a>
+                                        {__("Choose the Plan That's Right for You")}, {__("Check the package from")} <a
+                                            href="{$system['system_url']}/packages">{__("Here")}</a>
                                     </div>
                                 </div>
                                 <div class="text-center">
-                                    <a href="{$system['system_url']}/packages" class="btn btn-primary"><i class="fa fa-rocket mr5"></i>{__("Upgrade to Pro")}</a>
+                                    <a href="{$system['system_url']}/packages" class="btn btn-primary"><i
+                                            class="fa fa-rocket mr5"></i>{__("Upgrade to Pro")}</a>
                                 </div>
                                 <!-- upgrade -->
                             {/if}
@@ -220,11 +195,13 @@
                                     </div>
                                     <div class="text">
                                         <strong>{__("Membership")}</strong><br>
-                                        {__("Choose the Plan That's Right for You")}, {__("Check the package from")} <a href="{$system['system_url']}/packages">{__("Here")}</a>
+                                        {__("Choose the Plan That's Right for You")}, {__("Check the package from")} <a
+                                            href="{$system['system_url']}/packages">{__("Here")}</a>
                                     </div>
                                 </div>
                                 <div class="text-center">
-                                    <a href="{$system['system_url']}/packages" class="btn btn-primary"><i class="fa fa-rocket mr5"></i>{__("Upgrade to Pro")}</a>
+                                    <a href="{$system['system_url']}/packages" class="btn btn-primary"><i
+                                            class="fa fa-rocket mr5"></i>{__("Upgrade to Pro")}</a>
                                 </div>
                                 <!-- upgrade -->
                             {/if}
@@ -235,14 +212,15 @@
 
                     <!-- right panel -->
                     <div class="col-lg-4 js_sticky-sidebar">
-                        
+
                         <!-- pro users -->
                         {if $pro_members}
                             <div class="card bg-gradient-indigo border-0">
                                 <div class="card-header ptb20 bg-transparent border-bottom-0">
                                     {if $system['packages_enabled'] && !$user->_data['user_subscribed']}
                                         <div class="float-right">
-                                            <small><a class="text-white text-underline" href="{$system['system_url']}/packages">{__("Upgrade")}</a></small>
+                                            <small><a class="text-white text-underline"
+                                                    href="{$system['system_url']}/packages">{__("Upgrade")}</a></small>
                                         </div>
                                     {/if}
                                     <h6 class="pb0"><i class="fa fa-user-shield mr5"></i> {__("Pro Users")}</h6>
@@ -273,7 +251,8 @@
                                 <div class="card-header ptb20 bg-transparent border-bottom-0">
                                     {if $system['packages_enabled'] && !$user->_data['user_subscribed']}
                                         <div class="float-right">
-                                            <small><a class="text-white text-underline" href="{$system['system_url']}/packages">{__("Upgrade")}</a></small>
+                                            <small><a class="text-white text-underline"
+                                                    href="{$system['system_url']}/packages">{__("Upgrade")}</a></small>
                                         </div>
                                     {/if}
                                     <h6 class="pb0"><i class="fa fa-flag-checkered mr5"></i> {__("Pro Pages")}</h6>
@@ -281,7 +260,8 @@
                                 <div class="card-body pt0 plr5">
                                     <div class="pro-box-wrapper {if count($promoted_pages) > 3}js_slick{else}full-opacity{/if}">
                                         {foreach $promoted_pages as $_page}
-                                            <a class="user-box text-white" href="{$system['system_url']}/pages/{$_page['page_name']}">
+                                            <a class="user-box text-white"
+                                                href="{$system['system_url']}/pages/{$_page['page_name']}">
                                                 <img alt="{$_page['page_title']}" src="{$_page['page_picture']}" />
                                                 <div class="name" title="{$_page['page_title']}">
                                                     {$_page['page_title']}
@@ -302,7 +282,8 @@
                                 </div>
                                 <div class="card-body pt0">
                                     {foreach $trending_hashtags as $hashtag}
-                                        <a class="trending-item" href="{$system['system_url']}/search/hashtag/{$hashtag['hashtag']}">
+                                        <a class="trending-item"
+                                            href="{$system['system_url']}/search/hashtag/{$hashtag['hashtag']}">
                                             <span class="hash">
                                                 #{$hashtag['hashtag']}
                                             </span>
@@ -332,13 +313,13 @@
                                 <div class="card-body with-list">
                                     <ul>
                                         {foreach $new_people as $_user}
-                                        {include file='__feeds_user.tpl' _tpl="list" _connection="add" _small=true}
+                                            {include file='__feeds_user.tpl' _tpl="list" _connection="add" _small=true}
                                         {/foreach}
                                     </ul>
                                 </div>
                             </div>
                         {/if}
-                         <!-- friend suggestions -->
+                        <!-- friend suggestions -->
 
                         <!-- suggested pages -->
                         {if $new_pages}
@@ -352,7 +333,7 @@
                                 <div class="card-body with-list">
                                     <ul>
                                         {foreach $new_pages as $_page}
-                                        {include file='__feeds_page.tpl' _tpl="list"}
+                                            {include file='__feeds_page.tpl' _tpl="list"}
                                         {/foreach}
                                     </ul>
                                 </div>
@@ -372,7 +353,7 @@
                                 <div class="card-body with-list">
                                     <ul>
                                         {foreach $new_groups as $_group}
-                                        {include file='__feeds_group.tpl' _tpl="list"}
+                                            {include file='__feeds_group.tpl' _tpl="list"}
                                         {/foreach}
                                     </ul>
                                 </div>
@@ -392,7 +373,7 @@
                                 <div class="card-body with-list">
                                     <ul>
                                         {foreach $new_events as $_event}
-                                        {include file='__feeds_event.tpl' _tpl="list" _small=true}
+                                            {include file='__feeds_event.tpl' _tpl="list" _small=true}
                                         {/foreach}
                                     </ul>
                                 </div>
@@ -407,7 +388,8 @@
                                     <div class="mb10">
                                         {include file='__svg_icons.tpl' icon="invite_friend" width="60px" height="60px"}
                                     </div>
-                                    <a class="btn btn-sm btn-primary rounded-pill" href="{$system['system_url']}/settings/invitations">{__("Invite Your Friends")}</a>
+                                    <a class="btn btn-sm btn-primary rounded-pill"
+                                        href="{$system['system_url']}/settings/invitations">{__("Invite Your Friends")}</a>
                                 </div>
                             </div>
                         {/if}
@@ -426,7 +408,8 @@
                                     <div class="js_scroller">
                                         {foreach $system['languages'] as $language}
                                             <a class="dropdown-item" href="?lang={$language['code']}">
-                                                <img width="16" height="16" class="mr10" src="{$language['flag']}">{$language['title']}
+                                                <img width="16" height="16" class="mr10"
+                                                    src="{$language['flag']}">{$language['title']}
                                             </a>
                                         {/foreach}
                                     </div>
@@ -460,7 +443,7 @@
                             </ul>
                         </div>
                         <!-- mini footer -->
-                        
+
                     </div>
                     <!-- right panel -->
                 </div>
