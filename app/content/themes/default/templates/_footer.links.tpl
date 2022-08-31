@@ -2,7 +2,7 @@
 <div class="container">
 	<div class="row footer {if $page == 'index' && !$user->_logged_in}border-top-0{/if}">
 		<div class="col-sm-6 dropdown">
-			<span class="mr5">&copy; {'Y'|date} {$system['system_title']}</span>
+			<span class="mr10">&copy; {'Y'|date} {$system['system_title']}</span>
 			<!-- language -->
 			<a href="#" class="language-dropdown" data-toggle="dropdown">
                 <img width="16" height="16" class="mr10" src="{$system['language']['flag']}">

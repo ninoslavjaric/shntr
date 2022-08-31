@@ -5,9 +5,9 @@
 {if !$user->_logged_in && !$system['newsfeed_public']}
     <div class="container">
         <div class="row">
-            <div class="col-md-6 col-lg-7"></div>
+            <div class="d-none d-lg-block col-lg-7"></div>
 
-            <div class="col-md-6 col-lg-5">
+            <div class="col-md-12 col-lg-5">
                 {include file='_sign_form.tpl' do="in"}
             </div>
         </div>

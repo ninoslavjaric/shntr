@@ -55,11 +55,12 @@
 
 body {
   font-family: var(--body-font-family);
-  padding-top: 70px; /* 70px for header */
+  padding-top: 370px; /* 70px for header */
   font-size: 13px;
   color: var(--body-color);
   background-color: var(--body-bg-color);
 }
+
 body.night-mode {
   color: var(--body-color-dark);
   background-color: var(--body-bg-color-dark);
@@ -1616,25 +1617,43 @@ body.night-mode .bootstrap-datetimepicker-widget table td.new {
   top: 0;
   left: 0;
   right: 0;
-  height: 70px;
-  background: var(--header-bg-color);
+  height: 370px;
   z-index: 1001;
 }
+
+.main-header .brand-bar {
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background-image: url("../images/main-background-min.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.main-header .menu-bar {
+  background-color: #000;
+  height: 70px;
+}
+
 body.night-mode:not(.visitor) .main-header {
   background: var(--header-bg-color-dark);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
+
 /* ** fix bootstrap modal padding-right for hiding scroll */
 body.modal-open .main-header,
 body.modal-open .top-bar {
   padding-right: 17px !important;
 }
+
 @media (min-width: 768px) {
   body.modal-open:not(.n_chat) .main-header,
   body.modal-open:not(.n_chat) .top-bar {
     padding-right: 227px !important;
   }
 }
+
 /* -- */
 @media (min-width: 1200px) {
   .main-wrapper,
@@ -1663,26 +1682,32 @@ body.n_live .main-header {
   overflow: hidden;
   word-break: break-all;
 }
+
 .main-header .logo {
-  display: block;
+  display: inline-block;
   font-size: 20px;
   font-weight: 600;
   line-height: 70px;
   color: #fff;
   opacity: 1;
   text-transform: uppercase;
+  transition: all 160ms;
+  margin-bottom: 20px;
 }
+
 @media (max-width: 768px) {
   .main-header .logo.with-menu-icon {
     margin-left: 40px;
   }
 }
+
 .main-header .logo:hover {
   opacity: 0.8;
   text-decoration: none;
 }
+
 .main-header .logo img {
-  max-height: 50px;
+  width: 300px;
 }
 
 .main-header .menu-icon,
@@ -1718,29 +1743,36 @@ body.n_live .main-header {
   left: 12px;
   color: #96aad4;
 }
+
 .main-header .search-wrapper .form-control {
   height: 44px;
   margin-top: 13px;
   margin-bottom: 8px;
   padding-left: 34px;
   box-shadow: none;
-  background: #2850a7;
+  background: #202020;
   border: 0 none;
   border-radius: 8px;
   color: #fff;
+  transition: all 160ms;
 }
+
+.main-header .search-wrapper .form-control:hover {
+  background: #292929;
+}
+
 body.night-mode:not(.visitor) .main-header .search-wrapper .form-control {
   background: var(--body-bg-color-dark);
 }
 .main-header .search-wrapper .form-control::-webkit-input-placeholder {
-  color: #96aad4;
+  color: #fff;
 }
 .main-header .search-wrapper .form-control:-moz-placeholder {
-  color: #96aad4;
+  color: #fff;
   opacity: 1;
 }
 .main-header .search-wrapper .form-control:-ms-input-placeholder {
-  color: #96aad4;
+  color: #fff;
 }
 /* -- */
 
@@ -5208,15 +5240,18 @@ body.night-mode .add-story .add {
   display: none;
   position: fixed;
   right: 0;
-  top: 70px;
+  top: 0;
   bottom: 0;
   width: 210px;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+  z-index: 1002;
 }
+
 body.night-mode .chat-sidebar {
   background: #212121;
   box-shadow: -6px 0 20px rgba(0, 0, 0, 0.04);
 }
+
 @media (min-width: 1200px) {
   .chat-sidebar {
     display: block;
@@ -5231,9 +5266,11 @@ body.night-mode .chat-sidebar {
   padding: 10px;
   line-height: 20px;
 }
+
 .chat-sidebar-header .fa {
   color: #c2c2c2;
 }
+
 .chat-sidebar-header .fa:hover {
   color: #999;
   cursor: pointer;
@@ -7303,6 +7340,7 @@ body.index-body .main-wrapper .footer {
 
 body.index-body .main-wrapper .footer a {
   color: #3c3c3c;
+  transition: all 160ms;
 }
 
 body.index-body .main-wrapper .footer a:hover {
