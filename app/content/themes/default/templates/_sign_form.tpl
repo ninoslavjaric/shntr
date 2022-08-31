@@ -85,8 +85,8 @@
     <!-- signup -->
     <div class="js_panel {if $do != 'up'}x-hidden{/if}">
         <div class="card-header">
-            <img class="card-img" src="{$system['system_url']}/content/themes/{$system['theme']}/images/home/square1.jpg">
             <h4 class="card-title">{__("Register")}</h4>
+            <img class="card-img" src="{$system['system_url']}/content/themes/{$system['theme']}/images/shntr-logo-login.svg">
         </div>
         <div class="card-body">
             <form class="js_ajax-forms" data-url="core/signup.php" method="POST">
@@ -248,8 +248,8 @@
                     </div>
                     <!-- privacy & terms consent -->
                 </div>
-                <div class="form-group">
-                    <button type="submit" class="btn btn-block btn-success bg-gradient-green border-0 rounded-pill">{__("Sign Up")}</button>
+                <div class="form-group mt30">
+                    <button type="submit" class="btn btn-block btn-primary border-0 rounded-pill">{__("Sign Up")}</button>
                 </div>
                 <!-- error -->
                 <div class="alert alert-danger mb0 x-hidden"></div>
