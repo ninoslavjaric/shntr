@@ -6,8 +6,27 @@
  */
 class shntrToken
 {
+    public static function getPurse()
+    {
+        if ($_SERVER['SERVER_NAME'] == 'test.shntr.com') {
+            return [
+                'satoshis' => 1000,
+            ];
+        }
+
+        return http_call(shntr_TOKEN_SERVICE . '/purse');
+    }
+
     public static function generateWallet()
     {
+        if ($_SERVER['SERVER_NAME'] == 'test.shntr.com') {
+            return [
+                'private' => 'private',
+                'public' => 'public',
+                'address' => 'address',
+            ];
+        }
+
         return http_call(shntr_TOKEN_SERVICE . '/generate-wallet');
     }
 
