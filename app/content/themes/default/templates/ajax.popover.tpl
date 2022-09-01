@@ -72,7 +72,7 @@
                         <i class="fa fa-user-plus mr5"></i>{__("Sent")}
                     </button>
                 {else}
-                    <button type="button" class="btn btn-sm btn-success js_friend-add" data-uid="{$profile['user_id']}">
+                    <button type="button" class="btn btn-sm btn-dark js_friend-add" data-uid="{$profile['user_id']}">
                         <i class="fa fa-user-plus mr5"></i>{__("Add Friend")}
                     </button>
                 {/if}

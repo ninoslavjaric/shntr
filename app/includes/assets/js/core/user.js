@@ -1537,7 +1537,7 @@ $(function () {
                 } else if (_do == 'friend-fund') {
                     alert(response.message);
                 } else {
-                    _this.after('<button type"button" class="btn btn-sm btn-success js_friend-add" data-uid="' + id + '"><i class="fa fa-user-plus mr5"></i>' + __['Add Friend'] + '</button>');
+                    _this.after('<button type"button" class="btn btn-sm btn-dark js_friend-add" data-uid="' + id + '"><i class="fa fa-user-plus mr5"></i>' + __['Add Friend'] + '</button>');
                     _this.remove();
                 }
             }
@@ -1792,7 +1792,7 @@ $(function () {
             } else {
                 if (_this.hasClass('js_join-group')) {
                     if (privacy == "public") {
-                        _this.replaceWith('<button type="button" class="btn btn-sm btn-success btn-delete js_leave-group" data-id="' + id + '" data-privacy="' + privacy + '"><i class="fa fa-check mr5"></i>' + __['Joined'] + '</button>');
+                        _this.replaceWith('<button type="button" class="btn btn-sm btn-dark btn-delete js_leave-group" data-id="' + id + '" data-privacy="' + privacy + '"><i class="fa fa-check mr5"></i>' + __['Joined'] + '</button>');
                     } else {
                         _this.replaceWith('<button type="button" class="btn btn-sm btn-warning js_leave-group" data-id="' + id + '" data-privacy="' + privacy + '"><i class="fa fa-clock mr5"></i>' + __['Pending'] + '</button>');
                     }

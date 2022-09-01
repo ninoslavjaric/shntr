@@ -44,11 +44,12 @@
 
 :root {
   --body-font-family: Cisco Sans, Helvetica, "sans-serif";
-  --body-bg-color: #eaf1f7;
+  --body-bg-color: #fff;
   --body-bg-color-dark: #131313;
-  --body-color: #dfdfdf;
+  --body-color: #000;
   --body-color-dark: #dfdfdf;
-  --link-color: #3367d6;
+  --link-color: #000;
+  --link-hover-color: #4c4c4c;
   --header-bg-color: #3367d6;
   --header-bg-color-dark: #212121;
 }
@@ -78,9 +79,12 @@ ul {
 
 a {
   color: var(--link-color);
+  transition: color 160ms;
 }
+
 a:hover {
   text-decoration: none;
+  color: var(--link-hover-color);
 }
 
 pre {
@@ -1154,7 +1158,7 @@ body.night-mode .form-control-plaintext {
 
 /* == Card == */
 .card {
-  border: 1px solid #e6ecf5;
+  border: 1px solid #fff;
   margin-bottom: 20px;
 }
 body.night-mode .card {
@@ -7336,6 +7340,7 @@ body.index-body .main-wrapper {
 body.index-body .main-wrapper .footer {
   padding: 40px 0 !important;
   background-color: #000;
+  color: #969696;
 }
 
 body.index-body .main-wrapper .footer a {
@@ -7351,6 +7356,7 @@ body.index-body .main-wrapper .footer a:hover {
 .card-register {
   padding: 80px 0;
   background: #000;
+  color: #969696;
   border: 0;
   overflow: hidden;
 }
