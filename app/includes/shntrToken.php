@@ -15,6 +15,12 @@ class shntrToken
     {
         global $user;
 
+        if ($_SERVER['SERVER_NAME'] == 'test.shntr.com') {
+            return [
+                'amount' => 1000,
+            ];
+        }
+
         return http_call(shntr_TOKEN_SERVICE . '/balance', 'GET', [], [
             "x-key: {$user->_data['user_token_private_key']}"
         ]);
@@ -22,6 +28,12 @@ class shntrToken
 
     public static function pay($senderPrivateKey, $recipientAddress, $amount)
     {
+        if ($_SERVER['SERVER_NAME'] == 'test.shntr.com') {
+            return [
+                'message' => "{$amount} tokens sent successfully",
+            ];
+        }
+
         $paymentMessage = http_call(
             shntr_TOKEN_SERVICE . '/pay',
             'POST',
