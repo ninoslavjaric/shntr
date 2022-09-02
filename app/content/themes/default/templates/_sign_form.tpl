@@ -159,7 +159,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="js_hidden-section x-hidden">
+                {* <div class="js_hidden-section x-hidden"> *}
                     <div class="form-group">
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -247,7 +247,7 @@
                         </label>
                     </div>
                     <!-- privacy & terms consent -->
-                </div>
+                {* </div> *}
                 <div class="form-group mt30">
                     <button type="submit" class="btn btn-block btn-primary border-0 rounded-pill">{__("Sign Up")}</button>
                 </div>
