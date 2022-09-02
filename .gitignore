@@ -11,3 +11,4 @@ app/includes/libs/HTMLPurifier/HTMLPurifier/DefinitionCache/Serializer/HTML/
 app/content/uploads/photos
 app/content/uploads
 dump.sql
+app/includes/.cache-buster

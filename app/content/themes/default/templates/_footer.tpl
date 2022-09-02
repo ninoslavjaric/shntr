@@ -10,7 +10,7 @@
 <!-- main wrapper -->
 
 <!-- Dependencies CSS [Twemoji-Awesome] -->
-<link rel="stylesheet" href="{$system['system_url']}/includes/assets/css/twemoji-amazing/twemoji-amazing.css">
+<link rel="stylesheet" href="{$system['system_url']}/includes/assets/css/twemoji-amazing/twemoji-amazing.css#{$cache_buster}">
 <!-- Dependencies CSS [Twemoji-Awesome] -->
 
 <!-- JS Files -->

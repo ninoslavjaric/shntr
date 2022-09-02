@@ -298,3 +298,8 @@ $smarty->assign('secret', $_SESSION['secret']);
 $smarty->assign('session_hash', $session_hash);
 $smarty->assign('system', $system);
 $smarty->assign('date', $date);
+
+if (file_exists(ABSPATH . 'includes/.cache-buster')) {
+    $buster = trim(file_get_contents(ABSPATH . 'includes/.cache-buster'));
+    $smarty->assign('cache_buster', $buster);
+}
