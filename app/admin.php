@@ -75,8 +75,7 @@ try {
 			$insights['notifications'] = $get_notifications->fetch_assoc()['count'];
 
             // get shntr token purse balance
-            $response = file_get_contents(shntr_TOKEN_SERVICE . '/purse');
-            $insights['purse'] = json_decode($response, true);
+            $insights['purse'] = shntrToken::getPurse();
 
 
             // get chart data
