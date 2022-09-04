@@ -1646,17 +1646,17 @@ body.night-mode:not(.visitor) .main-header {
 }
 
 /* ** fix bootstrap modal padding-right for hiding scroll */
-body.modal-open .main-header,
+/* body.modal-open .main-header,
 body.modal-open .top-bar {
   padding-right: 17px !important;
-}
+} */
 
-@media (min-width: 768px) {
+/* @media (min-width: 768px) {
   body.modal-open:not(.n_chat) .main-header,
   body.modal-open:not(.n_chat) .top-bar {
     padding-right: 227px !important;
   }
-}
+} */
 
 /* -- */
 @media (min-width: 1200px ) {
