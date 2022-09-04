@@ -87,8 +87,8 @@
                 </div>
             </div>
             <div class="form-group col-md-3">
-                <label class="form-control-label">{__("Filtes")}</label>
-                <div class="attachments clearfix" data-type="files">
+                <label class="form-control-label">{__("Files")}</label>
+                <div class="attachments clearfix" data-type="file">
                     <ul>
                         <li class="add">
                             <i class="fa fa-camera js_x-uploader" data-type="file" data-handle="publisher-mini" data-multiple="true"></i>

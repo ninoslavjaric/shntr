@@ -2600,7 +2600,12 @@ body.night-mode .attachments li.item {
   width: 64px;
   height: 64px;
   content: "";
-  display: none;
+  opacity: 0;
+  display: block;
+  transition-property: opacity;
+  transition-duration: 440ms;
+  transition-timing-function: cubic-bezier(0.46, 0.03, 0.17, 1.2);
+  transition-delay: 0s;
 }
 @media (min-width: 768px) {
   .attachments li.item.deletable:before {
@@ -2609,7 +2614,7 @@ body.night-mode .attachments li.item {
   }
 }
 .attachments li.item.deletable:hover:before {
-  display: block;
+  opacity: 1;
 }
 .attachments li.item button {
   position: absolute;
@@ -2623,6 +2628,10 @@ body.night-mode .attachments li.item {
 }
 .attachments li.item.deletable:hover button {
   display: block;
+  z-index: 2;
+}
+.attachments li.item.deletable button {
+  transition: opacity 200ms;
 }
 .attachments li.item.deletable button:hover {
   filter: alpha(opacity=80);
@@ -2658,6 +2667,24 @@ body.night-mode .attachments li.loading {
     padding: 30px 0 0 35px;
     font-size: 24px;
   }
+}
+
+.attachments li.file-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.attachments li.file-item .svg-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.attachments li.item.file-item svg {
+  width: 31px !important;
+  height: 36px !important;
 }
 /* -- */
 
@@ -4290,6 +4317,39 @@ body.night-mode .post-product-details {
 body.night-mode .post-product-details .description {
   color: #adadad;
 }
+
+.product-files {
+  margin: 20px 0;
+}
+
+.product-files h3 {
+  font-size: 14px;
+}
+
+.product-files .files-box {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: #eee;
+  padding: 15px;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.product-files .files-box a.file {
+  font-size: 13px;
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  align-items: center;
+  margin: 10px;
+}
+
+.product-files .files-box a.file svg {
+  margin-right: 10px;
+}
+.product-files .files-box a.file span {}
+
 /* -- */
 
 /* post-dropdown-menu */
@@ -5667,6 +5727,7 @@ body.night-mode .conversation-body .text {
   border: 1px solid #eee;
   cursor: pointer;
 }
+
 .conversation-body .attachments li.item img {
   width: 64px;
   height: 64px;

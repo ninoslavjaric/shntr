@@ -873,6 +873,22 @@
                 <i class="fa fa-map-marker fa-fw"></i> {$_post['product']['location']}
             </div>
         {/if}
+
+        {if $_post['files'] }
+            <div class="product-files">
+                <h3>{__("Files")}:</h3>
+
+                <div class="files-box">
+                    {foreach $_post['files'] as $file}
+                        <a class="file" target="_blank" href="{$system['system_uploads']}/{$file['source']}">
+                            {include file='__svg_icons.tpl' icon="icons8-document"}
+                            <span>Download file</span>
+                        </a>
+                    {/foreach}
+                </div>
+            </div>
+        {/if}
+
         <!-- post text -->
         {if !$_shared}
             {include file='__feeds_post.text.tpl'}
