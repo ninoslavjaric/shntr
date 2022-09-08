@@ -6,9 +6,13 @@
  */
 class shntrToken
 {
+    private const AVOIDABLES = [
+        'test.shntr.com', 'localhost'
+    ];
+
     public static function getPurse()
     {
-        if ($_SERVER['SERVER_NAME'] == 'test.shntr.com') {
+        if (in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES)) {
             return [
                 'satoshis' => 1000,
             ];
@@ -19,7 +23,7 @@ class shntrToken
 
     public static function generateWallet()
     {
-        if ($_SERVER['SERVER_NAME'] == 'test.shntr.com') {
+        if (in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES)) {
             return [
                 'private' => 'private',
                 'public' => 'public',
@@ -34,7 +38,7 @@ class shntrToken
     {
         global $user;
 
-        if ($_SERVER['SERVER_NAME'] == 'test.shntr.com') {
+        if (in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES)) {
             return [
                 'amount' => 1000,
             ];
@@ -47,7 +51,7 @@ class shntrToken
 
     public static function pay($senderPrivateKey, $recipientAddress, $amount)
     {
-        if ($_SERVER['SERVER_NAME'] == 'test.shntr.com') {
+        if (in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES)) {
             return [
                 'message' => "{$amount} tokens sent successfully",
             ];

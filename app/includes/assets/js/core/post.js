@@ -932,6 +932,9 @@ $(function () {
         /* get product */
         var product = {};
         publisher.find('input, textarea, select').each(function (index) {
+            if ($(this).attr('type') === 'radio' && !$(this).is(':checked')) {
+                return;
+            }
             product[$(this).attr('name')] = $(this).val();
         });
         if (!$.isEmptyObject(product)) {
