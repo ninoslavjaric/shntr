@@ -224,6 +224,10 @@ body.night-mode pre {
   max-width: none;
   border-radius: 2px;
 }
+
+.tooltip.show {
+  z-index: 9999999;
+}
 /* == */
 
 /* == Badge == */

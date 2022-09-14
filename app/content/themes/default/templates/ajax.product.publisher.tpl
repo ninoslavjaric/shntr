@@ -26,7 +26,7 @@
             </div>
             <div class="form-group col-md-4">
                 <label class="form-control-label">{__("Price")}</label>
-                <input name="price" type="text" class="form-control">
+                <input id="product_price_input" name="price" type="text" class="form-control">
             </div>
         </div>
         <div class="row">
