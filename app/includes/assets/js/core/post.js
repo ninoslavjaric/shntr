@@ -708,6 +708,22 @@ $(function () {
         /* remove the attachment item */
         item.remove();
     });
+    /* publisher attachment image remover */
+    $('body').on('click', '.js_publisher-mini-attachment-file-remover', function () {
+        var item = $(this).parents('li.item');
+        var src = item.data('src');
+        /* remove the attachment from publisher data */
+        var publisher = $(this).parents('.publisher-mini');
+        var files = publisher.data('file');
+        delete files[src];
+        if (Object.keys(files).length > 0) {
+            publisher.data('file', files);
+        } else {
+            publisher.removeData('file');
+        }
+        /* remove the attachment item */
+        item.remove();
+    });
     /* publisher mini attachment video remover */
     $('body').on('click', '.js_publisher-mini-attachment-video-remover', function () {
         var item = $(this).parents('li.item');
@@ -924,6 +940,7 @@ $(function () {
                 modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
             });
     });
+
     /* publish new product */
     $('body').on('click', '.js_publisher-product', function () {
         var _this = $(this);
@@ -947,9 +964,10 @@ $(function () {
         var textarea = publisher.find('textarea');
         /* get photos */
         var photos = publisher.data('photos');
+        var files = publisher.data('file');
         /* button loading */
         button_status(_this, "loading");
-        $.post(api['posts/product'], { 'do': 'publish', 'product': JSON.stringify(product), 'message': textarea.val(), 'photos': JSON.stringify(photos) }, function (response) {
+        $.post(api['posts/product'], { 'do': 'publish', 'product': JSON.stringify(product), 'message': textarea.val(), 'photos': JSON.stringify(photos), 'files': JSON.stringify(files) }, function (response) {
             /* button reset */
             button_status(_this, "reset");
             if (response.error) {
@@ -964,6 +982,7 @@ $(function () {
                 modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
             });
     });
+
     /* publish new photos to album */
     $('body').on('click', '.js_publisher-album', function () {
         var _this = $(this);

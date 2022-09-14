@@ -102,6 +102,23 @@ try {
 					_error(400);
 				}
 			}
+
+			/* filter files */
+			$files = array();
+			if (isset($_POST['files'])) {
+				$_POST['files'] = json_decode($_POST['files']);
+				if (!is_object($_POST['files'])) {
+					_error(400);
+				}
+				/* filter the files */
+				foreach ($_POST['files'] as $file) {
+					$files[] = (array) $file;
+				}
+
+				if (count($files) == 0) {
+					_error(400);
+				}
+			}
 			/* set custom fields */
 			try {
 				$inputs['custom_fields'] = $user->set_custom_fields($_POST['product'], 'product');
@@ -116,6 +133,7 @@ try {
 			$inputs['message'] = $_POST['message'];
 			$inputs['product'] = $_POST['product'];
 			$inputs['photos'] = $photos;
+			$inputs['files'] = $files;
 
 			// publish
 			$post = $user->publisher($inputs);

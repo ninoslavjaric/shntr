@@ -677,6 +677,8 @@
     {elseif $icon == "interests"}
 
         {include file='../images/svg/interests.svg'}
+    {elseif $icon == "icons8-document"}
+        {include file='../images/svg/icons8-document.svg'}
 
     {/if}
 </div>

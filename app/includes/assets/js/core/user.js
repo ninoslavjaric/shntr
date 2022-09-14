@@ -988,6 +988,20 @@ $(function () {
             /* check handle */
             if (handle == "publisher-mini") {
                 // todo frontend dev part
+                var publisher = $(this).parents('.publisher-mini');
+                var publisher_button = publisher.find('.js_publisher-btn');
+                var files_num = uploader.get(0).files.length;
+                /* check if there is already uploading process */
+                if (!publisher.data('file')) {
+                    publisher.data('file', {});
+                }
+                var attachments = publisher.find('.attachments[data-type="file"]');
+                var loader = $('<ul></ul>').appendTo(attachments);
+                for (var i = 0; i < files_num; ++i) {
+                    $('<li class="loading"><div class="progress x-progress"><div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div></div></li>').appendTo(loader).show();
+                }
+                /* disable publisher button */
+                button_status(publisher_button, "loading");
             }
             else if (handle == "publisher") {
                 /* show upload loader */
@@ -1222,6 +1236,24 @@ $(function () {
                         parent.find('.js_x-image-input').val(response.file);
                         /* show the remover */
                         parent.find('button').show();
+
+                    } else if (handle == "publisher-mini") {
+                        /* remove upload loader */
+                        if (loader) loader.remove();
+                        /* add the attachment to publisher data */
+                        var files = publisher.data('file');
+                        if (attachments.find('ul').length == 0) {
+                            attachments.append('<ul></ul>');
+                        }
+                        for (var i in response.files) {
+                            files[response.files[i]['source']] = response.files[i];
+                            /* add publisher-attachments */
+                            var image_path = uploads_path + '/' + response.files[i]['source'];
+                            attachments.find('ul').append(render_template("#uploader-attachments-file-item", { 'src': response.files[i]['source'], 'image_path': image_path, 'mini': true }));
+                        }
+                        publisher.data('file', files);
+                        /* enable publisher button */
+                        button_status(publisher_button, "reset");
 
                     }
 

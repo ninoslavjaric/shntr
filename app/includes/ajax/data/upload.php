@@ -828,7 +828,7 @@ try {
                     }
                 }
 
-                $file_names[] = $file_name;
+                $file_names[] = ["source" => $file_name];
             }
 
 
