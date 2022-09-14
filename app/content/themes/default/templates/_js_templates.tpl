@@ -779,6 +779,7 @@
                             <i class="fa fa-circle fa-lg fa-fw"></i>
                         </li>
                     </ul>
+                    <button type="button" class="btn btn-sm btn-dark send-message-btn js_post-message">Send</button>
                 </div>
             </div>
             <!-- content -->
