@@ -154,10 +154,12 @@
 									<div class="product-meta">
 										{if $post['product']['rent'] }{__("For rent")}{else}{__("For sale")}{/if}
 									</div>
+									{if !$current_category['category_dominant']}
 									<div class="product-meta">
 										<i class="fa fa-tag fa-fw mr5" style="color: #1f9cff;"></i>{__("Type")}:
 										{if $post['product']['status'] == "new"}{__("New")}{else}{__("Used")}{/if}
 									</div>
+									{/if}
 									<div class="product-meta">
 										<i class="fa fa-map-marker fa-fw"></i> {if $post['product']['location']}{$post['product']['location']}{else}{__("N/A")}{/if}
 									</div>
@@ -271,10 +273,12 @@
 									<div class="product-meta">
 										<span class="badge">{if $post['product']['rent'] }{__("For rent")}{else}{__("For sale")}{/if}</span>
 									</div>
+									{if !$current_category['category_dominant']}
 									<div class="product-meta">
 										<i class="fa fa-tag fa-fw mr5" style="color: #1f9cff;"></i>{__("Type")}:
 										{if $post['product']['status'] == "new"}{__("New")}{else}{__("Used")}{/if}
 									</div>
+									{/if}
 									<div class="product-meta">
 										<i class="fa fa-map-marker fa-fw"></i> {if $post['product']['location']}{$post['product']['location']}{else}{__("N/A")}{/if}
 									</div>
