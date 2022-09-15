@@ -1366,6 +1366,59 @@ function aws_s3_test($s3_bucket, $s3_region, $s3_key, $s3_secret)
     }
 }
 
+function aws_s3_get_object($s3_bucket, $key): string
+{
+    require_once(ABSPATH . 'includes/libs/AWS/aws-autoloader.php');
+    try {
+        $s3Client = Aws\S3\S3Client::factory(array(
+            'version'    => 'latest',
+            'region'      => 'us-east-1', //getenv('AWS_DEFAULT_REGION'),
+            'credentials' => array(
+                'key'    => 'AKIATEUFQGU2QWTLDU74', //getenv('AWS_ACCESS_KEY_ID'),
+                'secret' => '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', //getenv('AWS_SECRET_ACCESS_KEY'),
+            )
+        ));
+
+        $result = $s3Client->getObject([
+            'Bucket' => 'shntr.mails',
+            'Key' => $key,
+        ]);
+
+        return $result->toArray()['Body']->getContents();
+    } catch (Exception $e) {
+        if (DEBUGGING) {
+            throw new Exception($e->getMessage());
+        } else {
+            throw new Exception(__("Connection Failed, Please check your settings"));
+        }
+    }
+}
+
+function aws_s3_list_dir($s3_bucket)
+{
+    require_once(ABSPATH . 'includes/libs/AWS/aws-autoloader.php');
+    try {
+        $s3Client = Aws\S3\S3Client::factory(array(
+            'version'    => 'latest',
+            'region'      => 'us-east-1', //getenv('AWS_DEFAULT_REGION'),
+            'credentials' => array(
+                'key'    => 'AKIATEUFQGU2QWTLDU74', //getenv('AWS_ACCESS_KEY_ID'),
+                'secret' => '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', //getenv('AWS_SECRET_ACCESS_KEY'),
+            )
+        ));
+
+        return $s3Client->listObjects([
+            'Bucket'  => $s3_bucket,
+        ])->get('Contents');
+    } catch (Exception $e) {
+        if (DEBUGGING) {
+            throw new Exception($e->getMessage());
+        } else {
+            throw new Exception(__("Connection Failed, Please check your settings"));
+        }
+    }
+}
+
 
 /**
  * aws_s3_upload

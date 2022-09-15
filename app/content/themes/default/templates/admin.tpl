@@ -161,6 +161,14 @@
                                 </a>
                             </li>
                             <!-- Genders -->
+
+                            <!-- Genders -->
+                            <li {if $view == "webmail"}class="active"{/if}>
+                                <a href="{$system['system_url']}/{$control_panel['url']}/webmail">
+                                    <i class="fa fa-venus-mars fa-fw mr10" style="color: #3F51B5"></i>{__("Webmail")}
+                                </a>
+                            </li>
+                            <!-- Genders -->
                         {/if}
                     </ul>
                 </div>

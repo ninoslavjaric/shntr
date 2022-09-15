@@ -3302,6 +3302,56 @@ try {
 			page_header($control_panel['title'] . " &rsaquo; " . __("Changelog"));
 			break;
 
+        case 'webmail':
+            if ($_SERVER['SERVER_NAME'] !== 'shntr.com') {
+                _error(404);
+            }
+
+            switch ($_GET['sub_view']) {
+                case '':
+                    $emails = aws_s3_list_dir('shntr.mails');
+
+                    foreach ($emails as &$email) {
+                        $email = [
+                            'key' => $email['Key'],
+                            'lastModified' => $email['LastModified']->getTimestamp(),
+                        ];
+                    }
+
+                    usort($emails, function($email1, $email2) {
+                        if ($email1['lastModified'] === $email2['lastModified']) {
+                            return 0;
+                        }
+
+                        return ($email1['lastModified'] > $email2['lastModified']) ? -1 : 1;
+                    });
+
+                    $smarty->assign('rows', $emails);
+                    break;
+
+                case 'email':
+                    $smarty->assign('emailKey', $_GET['id']);
+                    break;
+
+                case 'email-if':
+                    require_once __DIR__.'/includes/libs/vendor/autoload.php';
+
+                    $parser = new PhpMimeMailParser\Parser();
+                    $email = aws_s3_get_object('shntr.mails', $_GET['id']);
+                    $parser->setText($email);
+
+                    $email = $parser->getMessageBody('html') ?? $parser->getMessageBody();
+
+                    $email = preg_replace("/<head([^>]*)>/", '<head$1><base target="_blank">', $email);
+
+                    die($email);
+
+                default:
+                    _error(404);
+            }
+
+            break;
+
 		default:
 			// check admin|moderator permission
 			if (!$user->_is_admin || !$user->_is_moderator) {
