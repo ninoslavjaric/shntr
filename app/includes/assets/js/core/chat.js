@@ -725,6 +725,9 @@ $(function () {
             _post_message(this);
         }
     });
+    $('body').on('click', 'button.js_post-message', function (event) {
+        _post_message(this);
+    });
     /* chat attachment remover */
     $('body').on('click', '.js_chat-attachment-remover', function () {
         var widget = $(this).parents('.chat-widget, .panel-messages');

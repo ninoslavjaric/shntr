@@ -224,6 +224,10 @@ body.night-mode pre {
   max-width: none;
   border-radius: 2px;
 }
+
+.tooltip.show {
+  z-index: 9999999;
+}
 /* == */
 
 /* == Badge == */
@@ -5396,6 +5400,7 @@ body.night-mode .chat-sidebar-footer .form-control {
   width: 260px;
   z-index: 1000;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+  z-index: 9999;
 }
 @media (min-width: 992px) {
   .chat-widget {
@@ -5542,11 +5547,17 @@ body.night-mode .chat-attachments {
 /* chat-form */
 .chat-form {
   background: #fff;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
+
 body.night-mode .chat-form {
   background: #212121;
 }
 .chat-form-message {
+  width: 100%;
   background: transparent;
   padding: 7px;
   overflow-y: auto;
@@ -5554,6 +5565,7 @@ body.night-mode .chat-form {
   max-height: 69px; /* 14px*4 (lines) + 14px (padding) + 1px (top-border) */
   border-top: 1px solid #dfe8f5;
 }
+
 body.night-mode .chat-form-message {
   border-color: #121212;
 }
@@ -5598,6 +5610,11 @@ body.night-mode .chat-form-message input[type="text"] {
 .chat-form .emoji-menu:after {
   right: auto;
   left: 39px;
+}
+
+.chat-form .send-message-btn {
+  padding: 5px 10px;
+  margin: 0 7px 7px 7px;
 }
 /* -- */
 

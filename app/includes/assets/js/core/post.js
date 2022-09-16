@@ -942,6 +942,25 @@ $(function () {
     });
 
     /* publish new product */
+
+    /* product price input validation */
+    $('body').on('input click focusout', '#product_price_input', function(event){
+        var eventType = event.type;
+        var _this = $(this);
+        var value = _this.val();
+        var modifiedVal = value.replace(/\D/g, '');
+
+        _this.tooltip({
+            title: 'Only numbers alowed',
+            trigger: 'manual',
+        });
+
+        _this.val() !== modifiedVal && _this.tooltip('show');
+        eventType === 'focusout' && _this.tooltip('hide');
+
+        _this.val(value.replace(/\D/g, ''));
+    });
+
     $('body').on('click', '.js_publisher-product', function () {
         var _this = $(this);
         /* get publisher */
@@ -956,7 +975,7 @@ $(function () {
         });
         if (!$.isEmptyObject(product)) {
             product['category'] = publisher.find('select[name="category"], input[name="category"]').val();
-            product['status'] = publisher.find('select[name="status"]').val();
+            product['status'] = publisher.find('[name="status"]').val();
         } else {
             return;
         }

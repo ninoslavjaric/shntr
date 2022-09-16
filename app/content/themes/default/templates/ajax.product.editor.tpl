@@ -26,7 +26,7 @@
             </div>
             <div class="form-group col-md-4">
                 <label class="form-control-label">{__("Price")}</label>
-                <input name="price" type="text" class="form-control" value="{$post['product']['price']}">
+                <input id="product_price_input" name="price" type="text" class="form-control" value="{$post['product']['price']}">
             </div>
         </div>
         <div class="row">
@@ -54,6 +54,7 @@
                     <label class="form-check-label" for="rent2">{__('Rent')}</label>
                 </div>
             </div>
+            {if !$market_category['category_dominant']}
             <div class="form-group col-md-4">
                 <label class="form-control-label">{__("Status")}</label>
                 <select name="status" class="form-control">
@@ -61,6 +62,9 @@
                     <option {if $post['product']['status'] == "old"}selected{/if} value="old">{__("Used")}</option>
                 </select>
             </div>
+            {else}
+                <input type="hidden" name="status" value="new">
+            {/if}
         </div>
         <div class="form-group">
             <label class="form-control-label">{__("Location")}</label>
