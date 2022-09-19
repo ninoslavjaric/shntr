@@ -95,7 +95,7 @@
                 <div class="attachments clearfix" data-type="file">
                     <ul>
                         <li class="add">
-                            <i class="fa fa-camera js_x-uploader" data-type="file" data-handle="publisher-mini" data-multiple="true"></i>
+                            <i class="fa fa-file js_x-uploader" data-type="file" data-handle="publisher-mini" data-multiple="true"></i>
                         </li>
                     </ul>
                 </div>
