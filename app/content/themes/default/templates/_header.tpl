@@ -61,7 +61,7 @@
         {if $user->_logged_in}
         <!-- main-header -->
         <div class="main-header">
-            <div class="brand-bar">
+            {* <div class="brand-bar">
                 <div class="container">
                     <!-- logo -->
                     <a href="{$system['system_url']}" class="logo {if !$user->_logged_in && $system['newsfeed_public']}with-menu-icon{/if}">
@@ -73,7 +73,7 @@
                     </a>
                     <!-- logo -->
                 </div>
-            </div>
+            </div> *}
             <div class="menu-bar">
                 <div class="container">
                     <div class="row">
@@ -89,6 +89,16 @@
                                     </a>
                                     <!-- menu-icon -->
                                 {/if}
+
+                                <!-- logo -->
+                                <a href="{$system['system_url']}" class="logo {if !$user->_logged_in && $system['newsfeed_public']}with-menu-icon{/if}">
+                                    {if $system['system_logo']}
+                                        <img class="img-fluid" src="{$system['system_uploads']}/{$system['system_logo']}" alt="{$system['system_title']}" title="{$system['system_title']}">
+                                    {else}
+                                        <img src="/content/themes/default/images/shntr-logo-login.svg" alt="{$system['system_title']}" class="img-fluid" title="{$system['system_title']}">
+                                    {/if}
+                                </a>
+                                <!-- logo -->
 
                                 {if $user->_logged_in}
                                     <!-- home-icon -->

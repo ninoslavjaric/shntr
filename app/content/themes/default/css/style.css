@@ -56,7 +56,7 @@
 
 body {
   font-family: var(--body-font-family);
-  padding-top: 370px; /* 70px for header */
+  padding-top: 70px; /* 70px for header */
   font-size: 13px;
   color: var(--body-color);
   background-color: var(--body-bg-color);
@@ -1625,7 +1625,7 @@ body.night-mode .bootstrap-datetimepicker-widget table td.new {
   top: 0;
   left: 0;
   right: 0;
-  height: 370px;
+  height: 70px;
   z-index: 1001;
 }
 
@@ -1713,7 +1713,7 @@ body.n_live .main-header {
 }
 
 .main-header .logo img {
-  width: 300px;
+  width: auto;
 }
 
 .main-header .menu-icon,
@@ -5309,7 +5309,7 @@ body.night-mode .add-story .add {
   top: 0;
   bottom: 0;
   width: 210px;
-  top: 390px;
+  top: 90px;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
   z-index: 1002;
 }
