@@ -8109,7 +8109,7 @@ body.night-mode .profile-header {
 /* profile-avatar-wrapper */
 .profile-avatar-wrapper {
   position: absolute;
-  top: 112px;
+  top: 35px;
   left: 50%;
   transform: translate(-50%);
   padding: 2px;
@@ -8117,22 +8117,27 @@ body.night-mode .profile-header {
   border-radius: 50%;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3);
 }
+
 @media (min-width: 576px) {
   .profile-avatar-wrapper {
-    top: 140px;
+    top: 90px;
   }
 }
+
 @media (min-width: 768px) {
   .profile-avatar-wrapper {
-    top: 170px;
+    top: 160px;
   }
 }
+
 body.night-mode .profile-avatar-wrapper {
   background: #121212;
 }
+
 .profile-avatar-wrapper.static {
   top: 0;
 }
+
 @media (min-width: 992px) {
   .profile-avatar-wrapper {
     padding: 4px;
@@ -8147,15 +8152,15 @@ body.night-mode .profile-avatar-wrapper {
 
 /* profile-avatar-wrapper -> img */
 .profile-avatar-wrapper img {
-  width: 90px;
-  height: 90px;
+  width: 160px;
+  height: 160px;
   border-radius: 50%;
   transition: all 0.5s;
 }
 .profile-avatar-wrapper img.js_lightbox:hover {
   cursor: pointer;
 }
-@media (min-width: 576px) {
+/* @media (min-width: 576px) {
   .profile-avatar-wrapper img {
     width: 120px;
     height: 120px;
@@ -8172,7 +8177,7 @@ body.night-mode .profile-avatar-wrapper {
     width: 160px;
     height: 160px;
   }
-}
+} */
 /* -- */
 
 /* profile-avatar-wrapper -> buttons */
