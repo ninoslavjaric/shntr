@@ -680,5 +680,23 @@
     {elseif $icon == "icons8-document"}
         {include file='../images/svg/icons8-document.svg'}
 
+    {elseif $icon == "shn-chat"}
+        {include file='../images/svg/shn-chat.svg'}
+
+    {elseif $icon == "shn-favourites"}
+        {include file='../images/svg/shn-favourites.svg'}
+
+    {elseif $icon == "shn-news"}
+        {include file='../images/svg/shn-news.svg'}
+
+    {elseif $icon == "shn-profile"}
+        {include file='../images/svg/shn-profile.svg'}
+
+    {elseif $icon == "shn-settings"}
+        {include file='../images/svg/shn-settings.svg'}
+
+    {elseif $icon == "shn-token"}
+        {include file='../images/svg/shn-token.svg'}
+
     {/if}
 </div>
