@@ -775,6 +775,7 @@ try {
 
 
             $file_names = [];
+
             foreach ($files as $file) {
                 // valid inputs
                 if (!isset($file) || $file["error"] != UPLOAD_ERR_OK) {
@@ -791,6 +792,9 @@ try {
                 if (!valid_extension($extension, $system['file_extensions'])) {
                     modal("ERROR", __("Upload Error"), __("The file type is not valid or not supported"));
                 }
+
+                // prepare file title
+                $file_title = $file["name"];
 
                 // prepare file name & path
                 $prefix = $system['uploads_prefix'] . '_' . get_hash_token();
@@ -828,7 +832,7 @@ try {
                     }
                 }
 
-                $file_names[] = ["source" => $file_name];
+                $file_names[] = ["title" => $file_title, "source" => $file_name];
             }
 
 

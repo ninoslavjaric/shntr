@@ -1066,7 +1066,7 @@
 
     <!-- File Uploader -->
     <script id="uploader-attachments-file-item" type="text/template">
-        <li class="file-item item deletable" data-src="{literal}{{src}}{/literal}">
+        <li class="file-item item deletable" data-toggle="tooltip" title="{literal}{{title}}{/literal}" data-src="{literal}{{src}}{/literal}">
             {include file='__svg_icons.tpl' icon="icons8-document"}
             <button type="button" class="close {literal}{{#mini}}{/literal}js_publisher-mini-attachment-file-remover{literal}{{/mini}}{/literal}{literal}{{^mini}}{/literal}js_publisher-attachment-image-remover{literal}{{/mini}}{/literal}" title='{__("Remove")}'><span>&times;</span></button>
         </li>

@@ -5176,7 +5176,7 @@ class User
                     }
                     if (count($args['files']) > 0) {
                         foreach ($args['files'] as $file) {
-                            $db->query(sprintf("INSERT INTO posts_files (post_id, source) VALUES (%s, %s)", secure($post['post_id'], 'int'), secure($file['source']))) or _error("SQL_ERROR_THROWEN");
+                            $db->query(sprintf("INSERT INTO posts_files (post_id, file_title, source) VALUES (%s, %s, %s)", secure($post['post_id'], 'int'), secure($file['title']), secure($file['source']))) or _error("SQL_ERROR_THROWEN");
                         }
                     }
                     break;

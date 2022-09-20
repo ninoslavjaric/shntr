@@ -1249,7 +1249,7 @@ $(function () {
                             files[response.files[i]['source']] = response.files[i];
                             /* add publisher-attachments */
                             var image_path = uploads_path + '/' + response.files[i]['source'];
-                            attachments.find('ul').append(render_template("#uploader-attachments-file-item", { 'src': response.files[i]['source'], 'image_path': image_path, 'mini': true }));
+                            attachments.find('ul').append(render_template("#uploader-attachments-file-item", { 'title': response.files[i]['title'], 'src': response.files[i]['source'], 'image_path': image_path, 'mini': true }));
                         }
                         publisher.data('file', files);
                         /* enable publisher button */

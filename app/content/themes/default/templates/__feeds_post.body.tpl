@@ -882,7 +882,12 @@
                     {foreach $_post['files'] as $file}
                         <a class="file" target="_blank" href="{$system['system_uploads']}/{$file['source']}">
                             {include file='__svg_icons.tpl' icon="icons8-document"}
-                            <span>Download file</span>
+
+                            {if isset($file['file_title']) }
+                                <span>{$file['file_title']}</span>
+                            {else}
+                                <span>Download file</span>
+                            {/if}
                         </a>
                     {/foreach}
                 </div>
