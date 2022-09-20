@@ -1390,6 +1390,28 @@ class User
                 $this->delete_user_app($id);
                 break;
 
+            case 'paywall':
+                if ($value == 0) {
+                    $db->query(
+                        sprintf(
+                            'delete from paywalls where paywall_owner_id = %1$s and paywall_invader_id = %2$d',
+                            secure($this->_data['user_id'], 'int'),
+                            secure($id, 'int')
+                        ),
+                    ) or _error("SQL_ERROR_THROWEN");
+                    break;
+                }
+
+                $db->query(
+                    sprintf(
+                        'INSERT INTO paywalls VALUES (%1$s, %2$s, %3$d) on duplicate key update paywall_price = %3$d',
+                        secure($this->_data['user_id'], 'int'),
+                        secure($id, 'int'),
+                        secure($value, 'int', false)
+                    ),
+                ) or _error("SQL_ERROR_THROWEN");
+                break;
+
             case 'block':
                 /* check blocking */
                 if ($this->blocked($id)) {
@@ -1460,6 +1482,11 @@ class User
                 if ($this->blocked($id)) {
                     _error(403);
                 }
+
+                if ($this->paywalled($id)) {
+                    $this->breach_paywall($id);
+                }
+
                 $balance = shntrToken::getBalance();
                 $friendRequestAcceptReward = 10;
 
@@ -2176,6 +2203,54 @@ class User
         return false;
     }
 
+    public function breach_paywall(int $user_id): void
+    {
+        global $db;
+
+        if ($this->_logged_in) {
+            $price = $this->paywalled($user_id);
+
+            $balance = shntrToken::getBalance();
+            if ($balance['amount'] < $price) {
+                modal("ERROR", __("Funds"), __("You're out of tokens"));
+            }
+
+            $query = $db->query(sprintf('select user_token_address as address from users where user_id = %1$s limit 1', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $recipientAddress = $query->fetch_row()[0];
+
+            $response = shntrToken::pay($this->_data['user_token_private_key'], $recipientAddress, floatval($price));
+
+            if (!str_contains($response['message'], 'success')) {
+                _error(403, $response['message']);
+            }
+
+            shntrToken::noteTransaction(
+                floatval($price), intval($this->_data['user_id']), $user_id, 'paywalls', $user_id, 'Paywall fee'
+            );
+        }
+    }
+
+    public function paywalled(int $user_id): ?int
+    {
+        global $db;
+
+        if ($this->_logged_in) {
+            $check = $db->query(
+                sprintf(
+                    'SELECT paywall_price as price FROM paywalls WHERE paywall_owner_id = %1$s AND paywall_invader_id = %2$s',
+                    secure($user_id, 'int'),
+                    secure($this->_data['user_id'], 'int')
+                )
+            ) or _error("SQL_ERROR_THROWEN");
+
+            if ($check->num_rows != 0) {
+                return intval($check->fetch_assoc()['price']);
+            }
+        }
+
+        return null;
+    }
+
 
     /**
      * blocked
@@ -2367,6 +2442,10 @@ class User
         /* check blocking */
         if ($this->blocked($user_id)) {
             _error(403);
+        }
+
+        if ($this->paywalled($user_id)) {
+            $this->breach_paywall($user_id);
         }
         /* check if the viewer already follow the target */
         $check = $db->query(sprintf("SELECT COUNT(*) as count FROM followings WHERE user_id = %s AND following_id = %s", secure($this->_data['user_id'], 'int'),  secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
@@ -3961,6 +4040,10 @@ class User
         /* check blocking */
         if ($this->blocked($to_user_id)) {
             return false;
+        }
+
+        if ($this->paywalled($to_user_id)) {
+            $this->breach_paywall($to_user_id);
         }
         /* check if target user offline */
         $check_target_busy_offline = $db->query(sprintf("SELECT COUNT(*) as count FROM users WHERE user_id = %s AND user_last_seen >= SUBTIME(NOW(), SEC_TO_TIME(%s))", secure($to_user_id, 'int'), secure($system['offline_time'], 'int', false))) or _error("SQL_ERROR_THROWEN");
@@ -6519,6 +6602,10 @@ class User
         if ($this->blocked($post['author_id'])) {
             _error(403);
         }
+
+        if ($this->paywalled($post['author_id'])) {
+            $this->breach_paywall($post['author_id']);
+        }
         // share post
         /* get the origin post */
         if ($post['post_type'] == "shared") {
@@ -7540,6 +7627,10 @@ class User
         if ($this->blocked($post['author_id'])) {
             _error(403);
         }
+
+        if ($this->paywalled($post['author_id'])) {
+            $this->breach_paywall($post['author_id']);
+        }
         /* react the post */
         if ($post['i_react']) {
             /* remove any previous reaction */
@@ -7587,6 +7678,10 @@ class User
         if ($this->blocked($post['author_id'])) {
             _error(403);
         }
+
+        if ($this->paywalled($post['author_id'])) {
+            $this->breach_paywall($post['author_id']);
+        }
         /* unreact the post */
         if ($post['i_react']) {
             $db->query(sprintf("DELETE FROM posts_reactions WHERE user_id = %s AND post_id = %s", secure($this->_data['user_id'], 'int'), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
@@ -7618,6 +7713,10 @@ class User
         /* check blocking */
         if ($this->blocked($post['author_id'])) {
             _error(403);
+        }
+
+        if ($this->paywalled($post['author_id'])) {
+            $this->breach_paywall($post['author_id']);
         }
         /* hide the post */
         $db->query(sprintf("INSERT INTO posts_hidden (user_id, post_id) VALUES (%s, %s)", secure($this->_data['user_id'], 'int'), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
@@ -7667,6 +7766,10 @@ class User
         if ($this->blocked($post['author_id'])) {
             _error(403);
         }
+
+        if ($this->paywalled($post['author_id'])) {
+            $this->breach_paywall($post['author_id']);
+        }
         /* insert user vote */
         $vote = $db->query(sprintf("INSERT INTO posts_polls_options_users (user_id, poll_id, option_id) VALUES (%s, %s, %s)", secure($this->_data['user_id'], 'int'), secure($poll['poll_id'], 'int'), secure($option_id, 'int')));
         if ($vote) {
@@ -7701,6 +7804,10 @@ class User
         /* check blocking */
         if ($this->blocked($post['author_id'])) {
             _error(403);
+        }
+
+        if ($this->paywalled($post['author_id'])) {
+            $this->breach_paywall($post['author_id']);
         }
         /* delete user vote */
         $db->query(sprintf("DELETE FROM posts_polls_options_users WHERE user_id = %s AND poll_id = %s AND option_id = %s", secure($this->_data['user_id'], 'int'), secure($poll['poll_id'], 'int'), secure($option_id, 'int'))) or _error("SQL_ERROR_THROWEN");
@@ -7737,6 +7844,10 @@ class User
         /* check blocking */
         if ($this->blocked($post['author_id'])) {
             _error(403);
+        }
+
+        if ($this->paywalled($post['author_id'])) {
+            $this->breach_paywall($post['author_id']);
         }
         /* delete old vote */
         $db->query(sprintf("DELETE FROM posts_polls_options_users WHERE user_id = %s AND poll_id = %s AND option_id = %s", secure($this->_data['user_id'], 'int'), secure($poll['poll_id'], 'int'), secure($checked_id, 'int'))) or _error("SQL_ERROR_THROWEN");
@@ -8128,6 +8239,10 @@ class User
             _error(403);
         }
 
+        if ($this->paywalled($post['author_id'])) {
+            $this->breach_paywall($post['author_id']);
+        }
+
         /* check if the viewer is page admin of the target post */
         if (!$post['is_page_admin']) {
             $comment['user_id'] = $this->_data['user_id'];
@@ -8455,6 +8570,9 @@ class User
         if ($this->blocked($comment['author_id'])) {
             _error(403);
         }
+        if ($this->paywalled($comment['author_id'])) {
+            $this->breach_paywall($comment['author_id']);
+        }
         /* react the comment */
         if ($comment['i_react']) {
             $db->query(sprintf("DELETE FROM posts_comments_reactions WHERE user_id = %s AND comment_id = %s", secure($this->_data['user_id'], 'int'), secure($comment_id, 'int'))) or _error("SQL_ERROR_THROWEN");
@@ -8523,6 +8641,9 @@ class User
         /* check blocking */
         if ($this->blocked($comment['author_id'])) {
             _error(403);
+        }
+        if ($this->paywalled($comment['author_id'])) {
+            $this->breach_paywall($comment['author_id']);
         }
         /* unreact the comment */
         if ($comment['i_react']) {
@@ -8943,6 +9064,9 @@ class User
         /* check blocking */
         if ($this->blocked($post['author_id'])) {
             _error(403);
+        }
+        if ($this->paywalled($post['author_id'])) {
+            $this->breach_paywall($post['author_id']);
         }
 
         /* reaction the post */

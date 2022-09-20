@@ -23,6 +23,7 @@ if ($user->_data['user_demo']) {
 
 // valid inputs
 if (!in_array($_POST['do'], [
+    'paywall',
     'block',
     'unblock',
     'friend-accept',

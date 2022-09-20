@@ -127,9 +127,9 @@ class shntrToken
                 inner join users as rcp on rcp.user_id = recipient_id
                 left join events as e on e.event_id = basis_entity_id and basis_name = \'events\'
                 left join pages as pg on pg.page_id = basis_entity_id and basis_name = \'pages\'
-                left join groups as g on g.group_id = basis_entity_id and basis_name = \'groups\'
+                left join `groups` as g on g.group_id = basis_entity_id and basis_name = \'groups\'
                 left join posts_products as pd on (pd.post_id = basis_entity_id and basis_name = \'products\') OR (pd.product_id = basis_entity_id and basis_name = \'post_products\')
-                left join users as u on u.user_id = basis_entity_id and basis_name = \'users\'
+                left join users as u on u.user_id = basis_entity_id and basis_name in (\'users\',\'paywalls\')
             order by created_at desc'
         )->fetch_all(MYSQLI_ASSOC);
     }
@@ -160,9 +160,9 @@ class shntrToken
                 inner join users as rcp on rcp.user_id = recipient_id
                 left join events as e on e.event_id = basis_entity_id and basis_name = 'events'
                 left join pages as pg on pg.page_id = basis_entity_id and basis_name = 'pages'
-                left join groups as g on g.group_id = basis_entity_id and basis_name = 'groups'
+                left join `groups` as g on g.group_id = basis_entity_id and basis_name = 'groups'
                 left join posts_products as pd on (pd.post_id = basis_entity_id and basis_name = 'products') OR (pd.product_id = basis_entity_id and basis_name = 'post_products')
-                left join users as u on u.user_id = basis_entity_id and basis_name = 'users'
+                left join users as u on u.user_id = basis_entity_id and basis_name in ('users', 'paywalls')
             where {$userId} in (sender_id, recipient_id)
             order by created_at desc"
         )->fetch_all(MYSQLI_ASSOC);

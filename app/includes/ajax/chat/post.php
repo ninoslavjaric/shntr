@@ -9,7 +9,10 @@
 
 // fetch bootstrap
 require('../../../bootstrap.php');
-
+/**
+ * @var $db mysqli
+ * @var $user User
+ */
 // check AJAX Request
 is_ajax();
 
@@ -59,7 +62,21 @@ if (isset($_POST['recipients'])) {
 		if ($user->blocked($recipient)) {
 			_error(403);
 		}
+
+		if (($price = $user->paywalled($recipient))) {
+            $user->breach_paywall($recipient);
+        }
 	}
+} else {
+    $interlocutors = $db->query(
+        "select user_id from conversations_users where conversation_id = {$_POST['conversation_id']} and user_id <> {$user->_data['user_id']}"
+    )->fetch_all(MYSQLI_ASSOC);
+
+    foreach (array_column($interlocutors, 'user_id') as $interlocutor_id) {
+        if ($user->paywalled($interlocutor_id)) {
+            $user->breach_paywall($interlocutor_id);
+        }
+    }
 }
 
 try {

@@ -1607,6 +1607,28 @@ $(function () {
                 modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
             });
     });
+    /* paywall user */
+    $('body').on('click', '.js_paywall', function (e) {
+        e.preventDefault();
+        const id = $(this).data('id');
+        confirm(__['Paywall User'], __['Are you sure you want to paywall this user?'], function () {
+            const value = prompt("Set the wall break price?", "1");
+
+            $.post(api['users/connect'], { 'do': 'paywall', id: id, value: value }, function (response) {
+                /* check the response */
+                if (response.callback) {
+                    eval(response.callback);
+                } else {
+                    window.location = site_path;
+                }
+            }, 'json')
+              .fail(function () {
+                  modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+              });
+
+        });
+    });
+
     /* block user */
     $('body').on('click', '.js_block-user', function (e) {
         e.preventDefault();

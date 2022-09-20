@@ -34,6 +34,7 @@ services:
       - backend-shntr
     volumes:
       - ./data:/var/lib/mysql/
+      - ./mariadb:/tmp/mariadb
     ports:
       - 3307:3306
     environment:
@@ -41,6 +42,7 @@ services:
       - MYSQL_USER=shntrco_sngine
       - MYSQL_DATABASE=shntrco_sngine
       - MYSQL_PASSWORD=shntrco_sngine
+    command: runuser -u mysql /tmp/mariadb/starter
   coin-svc:
     build: './coin-svc'
     ports:

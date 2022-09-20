@@ -16,6 +16,7 @@
 {__("Are you sure you want to delete this comment?")}
 {__("Are you sure you want to delete this conversation?")}
 {__("Are you sure you want to report this?")}
+{__("Are you sure you want to paywall this user?")}
 {__("Are you sure you want to block this user?")}
 {__("Are you sure you want to unblock this user?")}
 {__("Are you sure you want to delete your account?")}
@@ -166,7 +167,7 @@
 <!-- /placeholders & titles -->
 
 <!-- emails -->
-{__("Hi")} 
+{__("Hi")}
 {__("To complete the sign-in process, please use the following 6-digit key")}
 {__("Two-factor authentication key")}
 {__("Team")}

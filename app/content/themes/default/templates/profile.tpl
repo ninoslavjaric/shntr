@@ -166,6 +166,11 @@
                                         <i class="fa fa-flag fa-fw mr10"></i>{__("Report")}
                                     </div>
                                     <!-- report -->
+                                    <!-- report -->
+                                    <div class="dropdown-item pointer js_paywall" data-handle="user" data-id="{$profile['user_id']}">
+                                        <i class="fa fa-user-tag fa-fw mr10"></i>{__("Paywall")}
+                                    </div>
+                                    <!-- report -->
                                     <!-- block -->
                                     <div class="dropdown-item pointer js_block-user" data-uid="{$profile['user_id']}">
                                         <i class="fa fa-minus-circle fa-fw mr10"></i>{__("Block")}

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+(
+  /tmp/mariadb/wait_for_it.sh localhost:3306
+  cd /tmp/mariadb//migrations || exit 2
+  for file in ./*.sql; do
+    mysql -u$MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE -e "source $file"
+  done
+) &
+
+mariadbd

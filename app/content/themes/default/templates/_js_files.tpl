@@ -100,6 +100,7 @@
     __['Delete Comment'] = "{__('Delete Comment')}";
     __['Delete Conversation'] = "{__('Delete Conversation')}";
     __['Report'] = "{__('Report')}";
+    __['Paywall User'] = "{__('Paywall User')}";
     __['Block User'] = "{__('Block User')}";
     __['Unblock User'] = "{__('Unblock User')}";
     __['Mark as Available'] = "{__('Mark as Available')}";
@@ -145,6 +146,7 @@
     __['Are you sure you want to delete this comment?'] = "{__('Are you sure you want to delete this comment?')}";
     __['Are you sure you want to delete this conversation?'] = "{__('Are you sure you want to delete this conversation?')}";
     __['Are you sure you want to report this?'] = "{__('Are you sure you want to report this?')}";
+    __['Are you sure you want to paywall this user?'] = "{__('Are you sure you want to paywall this user?')}";
     __['Are you sure you want to block this user?'] = "{__('Are you sure you want to block this user?')}";
     __['Are you sure you want to unblock this user?'] = "{__('Are you sure you want to unblock this user?')}";
     __['Are you sure you want to delete your account?'] = "{__('Are you sure you want to delete your account?')}";
