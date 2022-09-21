@@ -1689,8 +1689,9 @@ body.n_live .main-header {
   word-break: break-all;
 }
 
-.main-header .logo {
-  display: inline-block;
+.main-header .logo, .main-header .unaligned-logo {
+  display: none;
+  margin-left: 30px;
   font-size: 20px;
   font-weight: 600;
   line-height: 70px;
@@ -1699,6 +1700,21 @@ body.n_live .main-header {
   text-transform: uppercase;
   transition: all 160ms;
   margin-bottom: 20px;
+}
+
+.main-header .unaligned-logo {
+  display: inline-block;
+  position: absolute;
+}
+
+@media (max-width: 1199px) {
+  .main-header .logo {
+    display: inline-block;
+  }
+
+  .main-header .unaligned-logo {
+    display: none;
+  }
 }
 
 @media (max-width: 768px) {
