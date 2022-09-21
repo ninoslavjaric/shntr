@@ -793,13 +793,11 @@ try {
                     modal("ERROR", __("Upload Error"), __("The file type is not valid or not supported"));
                 }
 
-                // prepare file title
-                $file_title = $file["name"];
-
                 // prepare file name & path
                 $prefix = $system['uploads_prefix'] . '_' . get_hash_token();
-                $file_name = $directory . $prefix . '.' . $extension;
-                $path = ABSPATH . $system['uploads_directory'] . '/' . $file_name;
+                $file_name =  $file["name"];
+                $source = $directory . $prefix . '/' . $file_name;
+                $path = ABSPATH . $system['uploads_directory'] . '/' . $source;
 
                 // upload to
                 if ($system['s3_enabled']) {
@@ -826,13 +824,16 @@ try {
                     if (!file_exists($system['uploads_directory'] . '/' . $folder . '/' . date('Y') . '/' . date('m'))) {
                         @mkdir(ABSPATH . $system['uploads_directory'] . '/' . $folder . '/' . date('Y') . '/' . date('m'), 0777, true);
                     }
+                    if (!file_exists($system['uploads_directory'] . '/' . $folder . '/' . date('Y') . '/' . date('m') . '/' . $prefix)) {
+                        @mkdir(ABSPATH . $system['uploads_directory'] . '/' . $folder . '/' . date('Y') . '/' . date('m') . '/' . $prefix, 0777, true);
+                    }
                     /* check if the file uploaded successfully */
                     if (!@move_uploaded_file($file['tmp_name'], $path)) {
                         modal("ERROR", __("Upload Error"), __("Sorry, can not upload the file"));
                     }
                 }
 
-                $file_names[] = ["title" => $file_title, "source" => $file_name];
+                $file_names[] = ["title" => $file_name, "source" => $source];
             }
 
 
