@@ -5875,7 +5875,7 @@ class User
                 }
 
                 /* get files */
-                $get_files = $db->query(sprintf("SELECT * FROM posts_files WHERE post_id = %s ORDER BY file_id DESC", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_files = $db->query(sprintf("SELECT * FROM posts_files WHERE post_id = %s ORDER BY file_id ASC", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
                 $post['files_num'] = $get_files->num_rows;
                 /* check if photos has been deleted */
                 if ($post['files_num'] > 0) {
