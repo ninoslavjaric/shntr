@@ -5277,19 +5277,21 @@ class User
             $this->points_balance("add", $this->_data['user_id'], "post", $post['post_id']);
 
 
-            $query = $db->query(
-                'select user_token_address as address, user_id as id from users where user_id = 1 limit 1'
-            ) or _error("SQL_ERROR_THROWEN");
-            $superUser = $query->fetch_assoc();
-            shntrToken::pay($this->_data['user_token_private_key'], $superUser['address'], 100);
-            shntrToken::noteTransaction(
-                100,
-                intval($this->_data['user_id']),
-                intval($superUser['id']),
-                'products',
-                $post['post_id'],
-                'Product creation charges'
-            );
+            if ($post['post_type'] == 'product') {
+                $query = $db->query(
+                    'select user_token_address as address, user_id as id from users where user_id = 1 limit 1'
+                ) or _error("SQL_ERROR_THROWEN");
+                $superUser = $query->fetch_assoc();
+                shntrToken::pay($this->_data['user_token_private_key'], $superUser['address'], 100);
+                shntrToken::noteTransaction(
+                    100,
+                    intval($this->_data['user_id']),
+                    intval($superUser['id']),
+                    'products',
+                    $post['post_id'],
+                    'Product creation charges'
+                );
+            }
 
             $db->commit();
 
