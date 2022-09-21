@@ -802,16 +802,16 @@ try {
                 // upload to
                 if ($system['s3_enabled']) {
                     /* Amazon S3 */
-                    aws_s3_upload($file['tmp_name'], $file_name, mime_content_type($file['tmp_name']));
+                    aws_s3_upload($file['tmp_name'], $source, mime_content_type($file['tmp_name']));
                 } elseif ($system['digitalocean_enabled']) {
                     /* DigitalOcean */
-                    digitalocean_space_upload($file['tmp_name'], $file_name);
+                    digitalocean_space_upload($file['tmp_name'], $source);
                 } elseif ($system['wasabi_enabled']) {
                     /* Wasabi */
-                    wasabi_upload($file['tmp_name'], $file_name, mime_content_type($file['tmp_name']));
+                    wasabi_upload($file['tmp_name'], $source, mime_content_type($file['tmp_name']));
                 } elseif ($system['ftp_enabled']) {
                     /* FTP */
-                    ftp_upload($file['tmp_name'], $file_name);
+                    ftp_upload($file['tmp_name'], $source);
                 } else {
                     /* local server */
                     /* set uploads directory */
