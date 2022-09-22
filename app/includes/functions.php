@@ -152,12 +152,12 @@ function check_system_url()
  * @param string $url
  * @return void
  */
-function redirect($url = '')
+function redirect($url = '', $prefix = SYS_URL)
 {
     if ($url) {
-        header('Location: ' . SYS_URL . $url);
+        header('Location: ' . $prefix . $url);
     } else {
-        header('Location: ' . SYS_URL);
+        header('Location: ' . $prefix);
     }
     exit;
 }

@@ -7,14 +7,14 @@ namespace Composer\Autoload;
 class ComposerStaticInit5712fe436037bd22ede7a532aa4965ee
 {
     public static $prefixLengthsPsr4 = array (
-        'P' => 
+        'P' =>
         array (
             'PhpMimeMailParser\\' => 18,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'PhpMimeMailParser\\' => 
+        'PhpMimeMailParser\\' =>
         array (
             0 => __DIR__ . '/..' . '/php-mime-mail-parser/php-mime-mail-parser/src',
         ),

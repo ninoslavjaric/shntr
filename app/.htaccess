@@ -158,6 +158,10 @@ RewriteRule ^ads/edit/([^/]+)/?$ ads.php?view=edit&campaign_id=$1 [L,QSA]
 RewriteRule ^wallet/?$ wallet.php [L,QSA]
 RewriteRule ^wallet/payments/?$ wallet.php?view=payments [L,QSA]
 
+# Stripe
+RewriteRule ^buy-tokens/?$ stripe.php [L,QSA]
+RewriteRule ^buy-tokens/(checkout|success|fail)/?$ stripe.php?view=$1 [L,QSA]
+
 # Boosted
 RewriteRule ^boosted/posts/?$ index.php?view=boosted_posts [L,QSA]
 RewriteRule ^boosted/pages/?$ index.php?view=boosted_pages [L,QSA]
