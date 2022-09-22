@@ -40,38 +40,40 @@
                             {if $user->_logged_in}
                                 <!-- stories -->
                                 {if $user->_data['can_add_stories'] || ($system['stories_enabled'] && !empty($stories['array']))}
-                                    <div class="card">
-                                        <div class="card-header bg-transparent border-bottom-0">
-                                            <strong class="text-muted">{__("Stories")}</strong>
-                                            {if $has_story}
-                                                <div class="float-right">
-                                                    <button data-toggle="tooltip" data-placement="top" title='{__("Delete Your Story")}'
-                                                        class="btn btn-sm btn-icon btn-rounded btn-danger js_story-deleter">
-                                                        <i class="fa fa-trash-alt"></i>
-                                                    </button>
-                                                </div>
-                                            {else}
-                                                <div class="d-none d-sm-block text-muted pointer float-right">
-                                                    <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top"
-                                                        title='{__("Stories are photos and videos that only last 24 hours")}'></i>
-                                                </div>
-                                            {/if}
-
-                                        </div>
-                                        <div class="card-body pt5 stories-wrapper">
-                                            <div id="stories" data-json='{htmlspecialchars($stories["json"], ENT_QUOTES, 'UTF-8')}'>
-                                                {if $user->_data['can_add_stories']}
-                                                    <div class="add-story" data-toggle="modal" data-url="posts/story.php?do=create">
-                                                        <div class="img" style="background-image:url({$user->_data['user_picture']});">
-                                                        </div>
-                                                        <div class="add">
-                                                            <i class="fa fa-plus-circle"></i>
-                                                        </div>
+                                    {if $stories['array']}
+                                        <div class="card">
+                                            <div class="card-header bg-transparent border-bottom-0">
+                                                <strong class="text-muted">{__("Stories")}</strong>
+                                                {if $has_story}
+                                                    <div class="float-right">
+                                                        <button data-toggle="tooltip" data-placement="top" title='{__("Delete Your Story")}'
+                                                                class="btn btn-sm btn-icon btn-rounded btn-danger js_story-deleter">
+                                                            <i class="fa fa-trash-alt"></i>
+                                                        </button>
+                                                    </div>
+                                                {else}
+                                                    <div class="d-none d-sm-block text-muted pointer float-right">
+                                                        <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top"
+                                                           title='{__("Stories are photos and videos that only last 24 hours")}'></i>
                                                     </div>
                                                 {/if}
+
+                                            </div>
+                                            <div class="card-body pt5 stories-wrapper">
+                                                <div id="stories" data-json='{htmlspecialchars($stories["json"], ENT_QUOTES, 'UTF-8')}'>
+                                                    {if $user->_data['can_add_stories']}
+                                                        <div class="add-story" data-toggle="modal" data-url="posts/story.php?do=create">
+                                                            <div class="img" style="background-image:url({$user->_data['user_picture']});">
+                                                            </div>
+                                                            <div class="add">
+                                                                <i class="fa fa-plus-circle"></i>
+                                                            </div>
+                                                        </div>
+                                                    {/if}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    {/if}
                                 {/if}
                                 <!-- stories -->
 

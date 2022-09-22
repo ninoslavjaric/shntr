@@ -698,5 +698,8 @@
     {elseif $icon == "shn-token"}
         {include file='../images/svg/shn-token.svg'}
 
+    {elseif $icon == "short-logo"}
+        {include file='../images/svg/short-logo.svg'}
+
     {/if}
 </div>

@@ -775,6 +775,7 @@ try {
 
 
             $file_names = [];
+
             foreach ($files as $file) {
                 // valid inputs
                 if (!isset($file) || $file["error"] != UPLOAD_ERR_OK) {
@@ -794,22 +795,23 @@ try {
 
                 // prepare file name & path
                 $prefix = $system['uploads_prefix'] . '_' . get_hash_token();
-                $file_name = $directory . $prefix . '.' . $extension;
-                $path = ABSPATH . $system['uploads_directory'] . '/' . $file_name;
+                $file_name =  $file["name"];
+                $source = $directory . $prefix . '/' . $file_name;
+                $path = ABSPATH . $system['uploads_directory'] . '/' . $source;
 
                 // upload to
                 if ($system['s3_enabled']) {
                     /* Amazon S3 */
-                    aws_s3_upload($file['tmp_name'], $file_name, mime_content_type($file['tmp_name']));
+                    aws_s3_upload($file['tmp_name'], $source, mime_content_type($file['tmp_name']));
                 } elseif ($system['digitalocean_enabled']) {
                     /* DigitalOcean */
-                    digitalocean_space_upload($file['tmp_name'], $file_name);
+                    digitalocean_space_upload($file['tmp_name'], $source);
                 } elseif ($system['wasabi_enabled']) {
                     /* Wasabi */
-                    wasabi_upload($file['tmp_name'], $file_name, mime_content_type($file['tmp_name']));
+                    wasabi_upload($file['tmp_name'], $source, mime_content_type($file['tmp_name']));
                 } elseif ($system['ftp_enabled']) {
                     /* FTP */
-                    ftp_upload($file['tmp_name'], $file_name);
+                    ftp_upload($file['tmp_name'], $source);
                 } else {
                     /* local server */
                     /* set uploads directory */
@@ -822,13 +824,16 @@ try {
                     if (!file_exists($system['uploads_directory'] . '/' . $folder . '/' . date('Y') . '/' . date('m'))) {
                         @mkdir(ABSPATH . $system['uploads_directory'] . '/' . $folder . '/' . date('Y') . '/' . date('m'), 0777, true);
                     }
+                    if (!file_exists($system['uploads_directory'] . '/' . $folder . '/' . date('Y') . '/' . date('m') . '/' . $prefix)) {
+                        @mkdir(ABSPATH . $system['uploads_directory'] . '/' . $folder . '/' . date('Y') . '/' . date('m') . '/' . $prefix, 0777, true);
+                    }
                     /* check if the file uploaded successfully */
                     if (!@move_uploaded_file($file['tmp_name'], $path)) {
                         modal("ERROR", __("Upload Error"), __("Sorry, can not upload the file"));
                     }
                 }
 
-                $file_names[] = ["source" => $file_name];
+                $file_names[] = ["title" => $file_name, "source" => $source];
             }
 
 

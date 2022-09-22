@@ -882,7 +882,12 @@
                     {foreach $_post['files'] as $file}
                         <a class="file" target="_blank" href="{$system['system_uploads']}/{$file['source']}">
                             {include file='__svg_icons.tpl' icon="icons8-document"}
-                            <span>Download file</span>
+
+                            {if isset($file['file_title']) }
+                                <span>{$file['file_title']}</span>
+                            {else}
+                                <span>Download file</span>
+                            {/if}
                         </a>
                     {/foreach}
                 </div>
@@ -911,18 +916,20 @@
                     {/if}
                 </div>
             </div>
-            <div class="post-product-details">
-                <div class="title">
-                    <i class="fa fa-tag fa-fw mr5" style="color: #1f9cff;"></i>{__("Condition")}
+            {if !$_post['product']['category_dominant']}
+                <div class="post-product-details">
+                    <div class="title">
+                        <i class="fa fa-tag fa-fw mr5" style="color: #1f9cff;"></i>{__("Condition")}
+                    </div>
+                    <div class="description">
+                        {if $_post['product']['status'] == "new"}
+                            {__("New")}
+                        {else}
+                            {__("Used")}
+                        {/if}
+                    </div>
                 </div>
-                <div class="description">
-                    {if $_post['product']['status'] == "new"}
-                        {__("New")}
-                    {else}
-                        {__("Used")}
-                    {/if}
-                </div>
-            </div>
+            {/if}
             <div class="post-product-details">
                 <div class="title">
                     <i class="fa fa-money-bill-alt fa-fw mr5" style="color: #2bb431;"></i>{__("Price")}
