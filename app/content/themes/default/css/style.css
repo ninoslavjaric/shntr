@@ -10853,3 +10853,9 @@ body.night-mode .x-notifier {
     left: 80%;
   }
 }
+.line_one {
+  float: right;
+}
+.smallwidth {
+  width: 10px;
+}
