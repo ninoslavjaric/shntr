@@ -309,10 +309,15 @@
                                 <div class="card-header bg-transparent">
                                     <div class="float-right">
                                         <small><a href="{$system['system_url']}/people">{__("See All")}</a></small>
+                                        <div class="line_one smallwidth"></div>
+                                        <div class="custom-control custom-switch line_one">
+                                            <input type="checkbox" class="custom-control-input" id="customSwitches" checked>
+                                            <label class="custom-control-label new_people" for="customSwitches"></label>
+                                        </div>
                                     </div>
                                     {__("Friend Suggestions")}
                                 </div>
-                                <div class="card-body with-list">
+                                <div class="card-body with-list" id="new_people">
                                     <ul>
                                         {foreach $new_people as $_user}
                                             {include file='__feeds_user.tpl' _tpl="list" _connection="add" _small=true}
@@ -329,10 +334,15 @@
                                 <div class="card-header bg-transparent">
                                     <div class="float-right">
                                         <small><a href="{$system['system_url']}/pages">{__("See All")}</a></small>
+                                        <div class="line_one smallwidth"></div>
+                                        <div class="custom-control custom-switch line_one">
+                                            <input type="checkbox" class="custom-control-input" id="customSwitches1" checked>
+                                            <label class="custom-control-label new_pages" for="customSwitches1"></label>
+                                        </div>
                                     </div>
                                     {__("Suggested Pages")}
                                 </div>
-                                <div class="card-body with-list">
+                                <div class="card-body with-list" id="new_pages">
                                     <ul>
                                         {foreach $new_pages as $_page}
                                             {include file='__feeds_page.tpl' _tpl="list"}
@@ -349,10 +359,15 @@
                                 <div class="card-header bg-transparent">
                                     <div class="float-right">
                                         <small><a href="{$system['system_url']}/groups">{__("See All")}</a></small>
+                                        <div class="line_one smallwidth"></div>
+                                        <div class="custom-control custom-switch line_one">
+                                            <input type="checkbox" class="custom-control-input" id="customSwitches2" checked>
+                                            <label class="custom-control-label new_groups" for="customSwitches2"></label>
+                                        </div>
                                     </div>
                                     {__("Suggested Groups")}
                                 </div>
-                                <div class="card-body with-list">
+                                <div class="card-body with-list" id="new_groups">
                                     <ul>
                                         {foreach $new_groups as $_group}
                                             {include file='__feeds_group.tpl' _tpl="list"}
@@ -369,10 +384,15 @@
                                 <div class="card-header bg-transparent">
                                     <div class="float-right">
                                         <small><a href="{$system['system_url']}/events">{__("See All")}</a></small>
+                                        <div class="line_one smallwidth"></div>
+                                        <div class="custom-control custom-switch line_one">
+                                            <input type="checkbox" class="custom-control-input" id="customSwitches3" checked>
+                                            <label class="custom-control-label new_events" for="customSwitches3"></label>
+                                        </div>
                                     </div>
                                     {__("Suggested Events")}
                                 </div>
-                                <div class="card-body with-list">
+                                <div class="card-body with-list" id="new_events">
                                     <ul>
                                         {foreach $new_events as $_event}
                                             {include file='__feeds_event.tpl' _tpl="list" _small=true}

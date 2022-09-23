@@ -305,7 +305,7 @@
     {if $page == "started" || $page == "profile" || $page == "page" || $page == "group" || $page == "event"}
         <script src="{$system['system_url']}/includes/assets/js/plugins/jquery-ui.touch-punch/jquery-ui.touch-punch.min.js#{$cache_buster}"></script>
         <script src="{$system['system_url']}/includes/assets/js/plugins/jquery.imagedrag/jquery.imagedrag.min.js#{$cache_buster}"></script>
-        <script src="{$system['system_url']}/includes/assets/js/plugins/rcrop/rcrop.min.js#{$cache_buster}"></script>
+        <script src="{$system['system_url']}/includes/assets/js/plugins/rcrop/rcrop.js#{$cache_buster}"></script>
         <link rel="stylesheet" type='text/css' href="{$system['system_url']}/includes/assets/js/plugins/rcrop/rcrop.min.css#{$cache_buster}">
     {/if}
     <!-- Crop Profile Picture & Reposition Cover Photo -->

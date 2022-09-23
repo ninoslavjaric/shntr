@@ -106,6 +106,59 @@ try {
                 _error(403);
             }
 
+			try {
+				$fetchData = $db->query(sprintf("select users.user_email, users.user_name FROM users, posts where posts.post_id = %s and posts.user_id = users.user_id", secure($_POST['id'], 'int')));
+				$row = $fetchData->fetch_assoc();
+				if ($row) {
+					$seller_email = $row['user_email'];
+					$seller_name = $row['user_name'];
+				}
+
+				$fetchData = $db->query(sprintf("SELECT user_email, user_name FROM users WHERE user_id = %s", secure($user->_data['user_id'],'int'))) or _error("SQL_ERROR");
+				$row = $fetchData->fetch_assoc();
+				if ($row) {
+					$buyer_email = $row['user_email'];
+					$buyer_name = $row['user_name'];
+				}
+
+				$fetchData = $db->query(sprintf("SELECT price, name FROM posts_products WHERE post_id = %s", secure($_POST['id'],'int'))) or _error("SQL_ERROR");
+				$row = $fetchData->fetch_assoc();
+				if ($row) {
+					$price = $row['price'];
+					$product_name = $row['name'];
+				}
+
+				$link_product = "<a href='test.shntr.com/post/".$_POST['id']."'>".$product_name."</a>";
+
+				$buy_date = date("d.m.Y");
+				//send email to buyer
+				$buyer_subject = "Successfully bought a product on shntr";
+
+				$buyer_message = "<p>Dear ".$buyer_name."</p> 
+
+				<p>You have bought ".$link_product." for ".$price." tokens on ".$buy_date.".</p>
+				
+				<p>Best regards,</p>
+				<p>shntr team</p>";
+
+				$buyer_retval = _email ($buyer_email, $buyer_subject, $buyer_message, 'Success');
+
+				//send email to seller
+				$seller_subject = "Successfully sold a product on shntr";
+
+				$seller_message = "<p>Dear ".$seller_name."</>
+
+				<p>User ".$buyer_name." has bought your product ".$link_product." for ".$price." tokens  on ".$buy_date.".</p>
+				
+				<p>Best regards,</p>
+				<p>shntr team</p>";
+
+				$seller_retval = _email ($seller_email, $seller_subject, $seller_message, 'Success');
+
+			} catch (Exception $e) {
+				_error("Error", $e->getMessage());
+			}
+
             $return['callback'] = 'window.location = "' . $system['system_url'] . '/posts/' . $_POST['id'] . '";';
 		    break;
 

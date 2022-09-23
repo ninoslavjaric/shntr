@@ -1113,3 +1113,20 @@ $(function () {
     });
 
 });
+
+
+//Right column toggle
+$(document).ready(function(){
+    $('.new_people').click(function () {
+        $('#new_people').toggle("100");
+    });
+    $('.new_pages').click(function () {
+        $('#new_pages').toggle("100");
+    });
+    $('.new_groups').click(function () {
+        $('#new_groups').toggle("100");
+    });
+    $('.new_events').click(function () {
+        $('#new_events').toggle("100");
+    });
+})
