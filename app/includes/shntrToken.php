@@ -9,6 +9,7 @@ class shntrToken
     private const AVOIDABLES = [
         'design.shntr.com', 'localhost'
     ];
+    private const ENCRYPTION_ALGO = 'bf-cbc';
 
     public static function getPurse()
     {
@@ -21,17 +22,31 @@ class shntrToken
         return http_call(shntr_TOKEN_SERVICE . '/purse');
     }
 
+    private static function encrypt(string $data): string
+    {
+        return openssl_encrypt($data, self::ENCRYPTION_ALGO, getenv('shntr_TOKEN_PASSPHRASE'));
+    }
+
+    private static function decrypt(string $data): string|bool
+    {
+        return openssl_decrypt($data, self::ENCRYPTION_ALGO, getenv('shntr_TOKEN_PASSPHRASE'));
+    }
+
     public static function generateWallet()
     {
         if (in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES)) {
             return [
-                'private' => 'private',
+                'private' => self::encrypt('private'),
                 'public' => 'public',
                 'address' => 'address',
             ];
         }
 
-        return http_call(shntr_TOKEN_SERVICE . '/generate-wallet');
+        $params = http_call(shntr_TOKEN_SERVICE . '/generate-wallet');
+
+        $params['private'] = self::encrypt($params['private']);
+
+        return $params;
     }
 
     public static function getBalance()
@@ -56,6 +71,8 @@ class shntrToken
                 'message' => "{$amount} tokens sent successfully",
             ];
         }
+
+        $senderPrivateKey = self::decrypt($senderPrivateKey);
 
         $paymentMessage = http_call(
             shntr_TOKEN_SERVICE . '/pay',
