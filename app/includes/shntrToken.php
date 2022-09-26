@@ -7,7 +7,7 @@
 class shntrToken
 {
     private const AVOIDABLES = [
-        'design.shntr.com', 'test.shntr.com', 'localhost'
+        'design.shntr.com', 'localhost'
     ];
 
     public static function getPurse()
