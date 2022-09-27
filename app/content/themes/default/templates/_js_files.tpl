@@ -404,7 +404,7 @@
     <!-- Datatables -->
 
     <!-- Clipboard -->
-    {if $page == "settings" && $system['affiliates_enabled']}
+    {if $page == "settings" && $system['affiliates_enabled'] || true}
         <script src="{$system['system_url']}/includes/assets/js/plugins/clipboard/clipboard.min.js#{$cache_buster}"></script>
     {/if}
     <!-- Clipboard -->

@@ -10862,3 +10862,17 @@ body.night-mode .x-notifier {
 .js_sell-token {
   margin-right: 10px;
 }
+
+.shntr-address input#shntrAddress {
+  border-right: 0;
+}
+
+.shntr-address .copy-icon {
+  cursor: pointer;
+  color: #6072e4;
+  transition: color 160ms;
+}
+
+.shntr-address .copy-icon:hover {
+  color: #825fe4;
+}

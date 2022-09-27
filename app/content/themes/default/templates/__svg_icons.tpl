@@ -701,5 +701,8 @@
     {elseif $icon == "short-logo"}
         {include file='../images/svg/short-logo.svg'}
 
+    {elseif $icon == "copy-icon"}
+        {include file='../images/svg/copy-icon.svg'}
+
     {/if}
 </div>
