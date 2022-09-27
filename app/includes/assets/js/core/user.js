@@ -397,7 +397,21 @@ $(function () {
 
     // run Clipboard
     if ($(".js_clipboard").length > 0) {
-        new ClipboardJS('.js_clipboard');
+        var clipboard = new ClipboardJS('.js_clipboard');
+        clipboard.on('success', function(e) {
+            $(e.trigger).tooltip({
+                title: 'Copied!',
+                trigger: 'manual',
+            });
+
+            $(e.trigger).tooltip('show');
+
+            setTimeout(() => {
+                $(e.trigger).tooltip('hide');
+            }, 1000);
+
+            e.clearSelection();
+        });
     }
 
 

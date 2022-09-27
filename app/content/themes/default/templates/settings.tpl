@@ -2836,19 +2836,14 @@
                             </div>
                             <!-- money balance -->
                         </div>
-                        <div class="row justify-content-center">
+                        <div class="row justify-content-center shntr-address">
                             <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label class="form-control-label">{__("Public key")}</label>
-                                    <input disabled type="text" class="form-control" value="{$shntr_public_key}">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row justify-content-center">
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label class="form-control-label">{__("Address")}</label>
-                                    <input disabled type="text" class="form-control" value="{$shntr_address}">
+
+                                <div class="input-group mb-3">
+                                    <input disabled type="text" id="shntrAddress" class="form-control" value="{$shntr_address}">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text js_clipboard" data-clipboard-text="{$shntr_address}"> {include file='__svg_icons.tpl' icon="copy-icon" class="copy-icon" width="24px" height="24px"} </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
