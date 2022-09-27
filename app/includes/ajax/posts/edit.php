@@ -161,6 +161,14 @@ try {
 
             $return['callback'] = 'window.location = "' . $system['system_url'] . '/posts/' . $_POST['id'] . '";';
 		case 'sell-token':
+			
+			$send_data = $_POST['send_data'];
+			$name = $send_data['name'];
+			$address = $send_data['address'];
+			$country = $send_data['country'];
+			$iban = $send_data['iban'];
+			$amount = $send_data['amount'];
+            $server_add = '138UEaYBA7FLgiyuESNhenogM37PE6YNwU';
             // $db->begin_transaction();
             try {
                 if ($amount<10000) 

@@ -419,6 +419,18 @@ try {
 			$smarty->assign('shntr_transactions', $history);
 			$smarty->assign('sell_token_list', $sell_list);
 			break;
+			
+		case 'sell_token':
+			// check if shntr_token_enabled
+			if (!$system['shntr_token_enabled']) {
+				_error(404);
+			}
+
+			// page header
+			page_header(__("Settings") . " &rsaquo; " . __("shntr token settings"));
+
+			break;
+
 
 		case 'bank':
 			// check if bank transfers enabled

@@ -14,7 +14,7 @@ api['admin/bank'] = ajax_path + "admin/bank.php";
 api['admin/withdraw'] = ajax_path + "admin/withdraw.php";
 api['admin/tagify'] = ajax_path + "admin/tagify.php";
 api['admin/reset'] = ajax_path + "admin/reset.php";
-
+api['admin/change_state'] = ajax_path + "admin/change_state.php";
 
 $(function () {
 
@@ -333,4 +333,18 @@ $(function () {
         }, true);
     });
 
+    //sell request change state
+    $('.request-change-state').on('change', function () {
+        var id = $(this).data('id');
+        var state = $(this)[0].value;
+        var message = $(this).data('delete-message') || __['Are you sure you want to change this?'];
+        confirm(__['Change'], message, function () {
+            $.post(api['admin/change_state'], {'id': id, 'state': state }, function (response) {
+                /* check the response */
+            }, 'json')
+                .fail(function () {
+                    modal('#modal-message', { title: __['Success'], message: __['Successfully changed!'] });
+                });
+        });
+    });
 });

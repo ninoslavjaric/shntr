@@ -214,6 +214,15 @@
                                 <a href="{$system['system_url']}/settings/shntr_token">
                                     <i class="fa fa-dollar-sign fa-fw mr10" style="color: #4caf50;"></i>{__("shntr token")}
                                 </a>
+                                <div class='collapse show'>
+                                    <ul>
+                                        <li {if $view == "sell_token" && $sub_view == ""}class="active"{/if}>
+                                            <a href="{$system['system_url']}/settings/sell_token">
+                                                {__("Sell token")}
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </li>
                         {/if}
 
@@ -2899,6 +2908,11 @@
                             {else}
                                 {include file='_no_transactions.tpl'}
                             {/if}
+                        </div>
+                        <div class="heading-small mb20">
+                            {__("Sell token list")}
+                        </div>
+                        <div class="pl-md-4">
                             {if $sell_token_list}
                                 <div class="table-responsive mt20">
                                     <table class="table table-striped table-bordered table-hover js_dataTable">
@@ -2969,6 +2983,49 @@
                             {/if}
                         </div>
                     </div>
+
+                {elseif $view == "sell_token"}
+                    <form class="js_ajax-forms">
+                        <div class="form-group row">
+                            <label for="inputEmail3" class="col-sm-2 col-form-label">Amount</label>
+                            <div class="col-sm-10">
+                                <input type="number" class="form-control" aria-label="Amount (to the nearest dollar)" id="sell_amount_token" min="10000" step="100" value="10000">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="inputEmail3" class="col-sm-2 col-form-label">Username</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" id="sell_name" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="inputEmail3" class="col-sm-2 col-form-label">Address</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" placeholder="Address" aria-label="Address" aria-describedby="basic-addon1" id="sell_address" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="inputEmail3" class="col-sm-2 col-form-label">Country</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" placeholder="Country" aria-label="Country" aria-describedby="basic-addon1" id="sell_country" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="inputEmail3" class="col-sm-2 col-form-label">Iban</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" placeholder="Iban" aria-label="Iban" aria-describedby="basic-addon1" id="sell_iban" required>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button class="btn btn-info me-md-2 js_sell-token" type="button">Sell</button>
+                            <button class="btn btn-danger" type="button" href="/setting/shntr_token">Cancel</button>
+                        </div>
+                    </form>
 
                 {elseif $view == "verification"}
                     <div class="card-header with-icon">

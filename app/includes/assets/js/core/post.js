@@ -1471,6 +1471,47 @@ $(function () {
               modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
           });
     });
+    $('body').on('click', '.js_sell-token', function(e) {
+        var _this = $(this);
+        button_status(_this, "loading");
+        var seller_name = document.getElementById('sell_name').value;
+        var seller_address = document.getElementById('sell_address').value;
+        var seller_country = document.getElementById('sell_country').value;
+        var seller_iban = document.getElementById('sell_iban').value;
+        var seller_amount = document.getElementById('sell_amount_token').value;
+        if (!seller_name||!seller_amount||!seller_iban||!seller_country||!seller_address) {
+            modal('#modal-message', { title: __['Warning'], message: __['Please insert each input.'] });
+            button_status(_this, "reset");
+            return;
+        }
+        if (parseInt(seller_amount)<10000) {
+            modal('#modal-message', { title: __['Warning'], message: __['Can not sell amount less than 10000.'] });
+            button_status(_this, "reset");
+            return;
+        }
+        var send_data = {
+            'name' : seller_name,
+            'address' : seller_address,
+            'country' :seller_country,
+            'iban' : seller_iban,
+            'amount' :seller_amount,
+        };
+        confirm(__['Request'], __['Do you want to sell token?'], function () {
+            $.post(api['posts/edit'], { 'handle': 'sell-token', send_data }, function (response) {
+                /* button reset */
+                button_status(_this, "reset");
+                //no enough token
+                // if (reponse.callback=='no_enough_balance') {
+                //     modal('#modal-message', { title: __['Request'], message: __['Your token is not enough.'] });
+                //     return;
+                // }
+                modal('#modal-message', { title: __['Request'], message: __['Successfully sended request!'] });
+            }, 'json')
+            .fail(function (error) {
+                modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+            });
+        });
+    });
     $('body').on('click', '.js_update-post', function () {
         var _this = $(this);
         var post = _this.parents('.post');
