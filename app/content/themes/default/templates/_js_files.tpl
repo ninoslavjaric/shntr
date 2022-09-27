@@ -84,6 +84,7 @@
     __['Remove'] = "{__('Remove')}";
     __['Error'] = "{__('Error')}";
     __['Success'] = "{__('Success')}";
+    __['Warning'] = "{__('Warning')}";
     __['Loading'] = "{__('Loading')}";
     __['Like'] = "{__('Like')}";
     __['Unlike'] = "{__('Unlike')}";
@@ -94,6 +95,8 @@
     __['Going'] = "{__('Going')}";
     __['Interested'] = "{__('Interested')}";
     __['Delete'] = "{__('Delete')}";
+    __['Change'] = "{__('Change')}";
+    __['Request'] = "{__('Request')}";
     __['Delete Cover'] = "{__('Delete Cover')}";
     __['Delete Picture'] = "{__('Delete Picture')}";
     __['Delete Post'] = "{__('Delete Post')}";
@@ -139,7 +142,9 @@
     __['Events'] = "{__('Events')}";
     __['Posts'] = "{__('Posts')}";
     __['Translated'] = "{__('Translated')}";
-    __['Are you sure you want to delete this?'] = "{__('Are you sure you want to delete this?')}";
+    __['Are you sure you want to change this?'] = "{__('Are you sure you want to change this?')}";
+    __['Please insert each input.'] = "{__('Please insert each input.')}";
+    __['Do you want to sell token?'] = "{__('Do you want to sell token?')}";
     __['Are you sure you want to remove your cover photo?'] = "{__('Are you sure you want to remove your cover photo?')}";
     __['Are you sure you want to remove your profile picture?'] = "{__('Are you sure you want to remove your profile picture?')}";
     __['Are you sure you want to delete this post?'] = "{__('Are you sure you want to delete this post?')}";
@@ -211,6 +216,11 @@
     __['Offline'] = "{__('Offline')}";
     __['Switching stream sources'] = "{__('Switching stream sources')}";
     __['Successfully switched to new device'] = "{__('Successfully switched to new device')}";
+    __['Successfully changed!'] = "{__('Successfully changed!')}";
+    __['Successfully sended request!'] = "{__('Successfully sended request!')}";
+    __['Please insert each input.'] = "{__('Please insert each input.')}";
+    __['Can not sell amount less than 10000.'] = "{__('Can not sell amount less than 10000.')}";
+    __['Your token is not enough.'] = "{__('Your token is not enough.')}";
     __['Unable to determine device type'] = "{__('Unable to determine device type')}";
     __['Failed to switch to new device'] = "{__('Failed to switch to new device')}";
     __['Ending live error'] = "{__('Ending live error')}";

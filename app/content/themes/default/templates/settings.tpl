@@ -214,6 +214,15 @@
                                 <a href="{$system['system_url']}/settings/shntr_token">
                                     <i class="fa fa-dollar-sign fa-fw mr10" style="color: #4caf50;"></i>{__("shntr token")}
                                 </a>
+                                <div class='collapse show'>
+                                    <ul>
+                                        <li {if $view == "sell_token" && $sub_view == ""}class="active"{/if}>
+                                            <a href="{$system['system_url']}/settings/sell_token">
+                                                {__("Sell token")}
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </li>
                         {/if}
 
@@ -2850,49 +2859,122 @@
                         <div class="pl-md-4">
                             {if $shntr_transactions}
                                 <div class="table-responsive mt20">
-                                    <table class="table table-striped table-bordered table-hover">
+                                    <table class="table table-striped table-bordered table-hover js_dataTable">
                                         <thead>
-                                        <tr>
-                                            <th>{__("ID")}</th>
-                                            <th>{__("Sender")}</th>
-                                            <th>{__("Recipient")}</th>
-                                            <th>{__("Type")}</th>
-                                            <th>{__("Feature")}</th>
-                                            <th>{__("Amount")}</th>
-                                            <th>{__("Created")}</th>
-                                            <th>{__("Note")}</th>
-                                        </tr>
+                                            <tr>
+                                                <th>{__("ID")}</th>
+                                                <th>{__("Sender")}</th>
+                                                <th>{__("Recipient")}</th>
+                                                <th>{__("Type")}</th>
+                                                <th>{__("Feature")}</th>
+                                                <th>{__("Amount")}</th>
+                                                <th>{__("Created")}</th>
+                                                <th>{__("Note")}</th>
+                                            </tr>
                                         </thead>
                                         <tbody>
-                                        {foreach $shntr_transactions as $transaction}
+                                            {foreach $shntr_transactions as $transaction}
+                                                <tr>
+                                                    <td>{$transaction@iteration}</td>
+                                                    <td><a target="_blank" href="/{$transaction['sender_name']}">{$transaction['sender_name']}</a></td>
+                                                    <td><a target="_blank" href="/{$transaction['recipient_name']}">{$transaction['recipient_name']}</a></td>
+                                                    <td>{$transaction['type']}</td>
+                                                    <td>
+                                                        {if !empty($transaction['feature'])}
+                                                            {$transaction['feature']}
+                                                        {else}
+                                                            ---
+                                                        {/if}
+                                                    </td>
+                                                    <td>{$transaction['amount']|number_format:2}</td>
+                                                    <td>
+                                                        <span class="js_moment" data-time="{$transaction['created_at']}">{$transaction['created_at']}</span>
+                                                    </td>
+                                                    <td>
+                                                        {if !empty($transaction['note'])}
+                                                            {$transaction['note']}
+                                                        {else}
+                                                            ---
+                                                        {/if}
+                                                        {if $transaction['link']}
+                                                            <a href="{$transaction['link']}" target="_blank">link</a>
+                                                        {/if}
+                                                    </td>
+                                                </tr>
+                                            {/foreach}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {else}
+                                {include file='_no_transactions.tpl'}
+                            {/if}
+                        </div>
+                        <div class="heading-small mb20">
+                            {__("Sell token list")}
+                        </div>
+                        <div class="pl-md-4">
+                            {if $sell_token_list}
+                                <div class="table-responsive mt20">
+                                    <table class="table table-striped table-bordered table-hover js_dataTable">
+                                        <thead>
                                             <tr>
-                                                <td>{$transaction@iteration}</td>
-                                                <td><a target="_blank" href="/{$transaction['sender_name']}">{$transaction['sender_name']}</a></td>
-                                                <td><a target="_blank" href="/{$transaction['recipient_name']}">{$transaction['recipient_name']}</a></td>
-                                                <td>{$transaction['type']}</td>
-                                                <td>
-                                                    {if !empty($transaction['feature'])}
-                                                        {$transaction['feature']}
-                                                    {else}
-                                                        ---
-                                                    {/if}
-                                                </td>
-                                                <td>{$transaction['amount']|number_format:2}</td>
-                                                <td>
-                                                    <span class="js_moment" data-time="{$transaction['created_at']}">{$transaction['created_at']}</span>
-                                                </td>
-                                                <td>
-                                                    {if !empty($transaction['note'])}
-                                                        {$transaction['note']}
-                                                    {else}
-                                                        ---
-                                                    {/if}
-                                                    {if $transaction['link']}
-                                                        <a href="{$transaction['link']}" target="_blank">link</a>
-                                                    {/if}
-                                                </td>
+                                                <th>{__("ID")}</th>
+                                                <th>{__("Amount")}</th>
+                                                <th>{__("Iban")}</th>
+                                                <th>{__("Post time")}</th>
+                                                <th>{__("State")}</th>
                                             </tr>
-                                        {/foreach}
+                                        </thead>
+                                        <tbody>
+                                            {$id=1}
+                                            {foreach $sell_token_list as $post}
+                                                {if $post['state']=='pending'}
+                                                    <tr>
+                                                        <td>{$id}</td>
+                                                        <td>{$post['sell_amount_token']}</td>
+                                                        <td>{$post['iban']}</td>
+                                                        <td>{$post['post_time']}</td>
+                                                        <td>
+                                                            {if $post['state']=='pending'}<span class="ml5 badge badge-pill badge-info">Pending</span>{/if}
+                                                            {if $post['state']=='in_process'}<span class="ml5 badge badge-pill badge-secondary">In process</span>{/if}
+                                                            {if $post['state']=='completed'}<span class="ml5 badge badge-pill badge-success">Completed</span>{/if}
+                                                        </td>
+                                                    </tr>
+                                                    <div style="display: none;">{$id++}</div>
+                                                {/if}
+                                            {/foreach}
+                                            {foreach $sell_token_list as $post}
+                                                {if $post['state']=='in_process'}
+                                                    <tr>
+                                                        <td>{$id}</td>
+                                                        <td>{$post['sell_amount_token']}</td>
+                                                        <td>{$post['iban']}</td>
+                                                        <td>{$post['post_time']}</td>
+                                                        <td>
+                                                            {if $post['state']=='pending'}<span class="ml5 badge badge-pill badge-info">Pending</span>{/if}
+                                                            {if $post['state']=='in_process'}<span class="ml5 badge badge-pill badge-secondary">In process</span>{/if}
+                                                            {if $post['state']=='completed'}<span class="ml5 badge badge-pill badge-success">Completed</span>{/if}
+                                                        </td>
+                                                    </tr>
+                                                    <div style="display: none;">{$id++}</div>
+                                                {/if}
+                                            {/foreach}
+                                            {foreach $sell_token_list as $post}
+                                                {if $post['state']=='completed'}
+                                                    <tr>
+                                                        <td>{$id}</td>
+                                                        <td>{$post['sell_amount_token']}</td>
+                                                        <td>{$post['iban']}</td>
+                                                        <td>{$post['post_time']}</td>
+                                                        <td>
+                                                            {if $post['state']=='pending'}<span class="m6 badge badge-pill badge-info">Pending</span>{/if}
+                                                            {if $post['state']=='in_process'}<span class="m6 badge badge-pill badge-secondary">In process</span>{/if}
+                                                            {if $post['state']=='completed'}<span class="m6 badge badge-pill badge-success">Completed</span>{/if}
+                                                        </td>
+                                                    </tr>
+                                                    <div style="display: none;">{$id++}</div>
+                                                {/if}
+                                            {/foreach}
                                         </tbody>
                                     </table>
                                 </div>
@@ -2901,6 +2983,49 @@
                             {/if}
                         </div>
                     </div>
+
+                {elseif $view == "sell_token"}
+                    <form class="js_ajax-forms">
+                        <div class="form-group row">
+                            <label for="inputEmail3" class="col-sm-2 col-form-label">Amount</label>
+                            <div class="col-sm-10">
+                                <input type="number" class="form-control" aria-label="Amount (to the nearest dollar)" id="sell_amount_token" min="10000" step="100" value="10000">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="inputEmail3" class="col-sm-2 col-form-label">Username</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" id="sell_name" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="inputEmail3" class="col-sm-2 col-form-label">Address</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" placeholder="Address" aria-label="Address" aria-describedby="basic-addon1" id="sell_address" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="inputEmail3" class="col-sm-2 col-form-label">Country</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" placeholder="Country" aria-label="Country" aria-describedby="basic-addon1" id="sell_country" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="inputEmail3" class="col-sm-2 col-form-label">Iban</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" placeholder="Iban" aria-label="Iban" aria-describedby="basic-addon1" id="sell_iban" required>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button class="btn btn-info me-md-2 js_sell-token" type="button">Sell</button>
+                            <button class="btn btn-danger" type="button" href="/setting/shntr_token">Cancel</button>
+                        </div>
+                    </form>
 
                 {elseif $view == "verification"}
                     <div class="card-header with-icon">

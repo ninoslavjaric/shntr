@@ -431,7 +431,11 @@ try {
 
 			$history = shntrToken::getEntireHistory();
 
+			$total_list = $db->query(sprintf("SELECT * FROM info_sell_token;"));
+
 			$smarty->assign('rows', $history);
+
+			$smarty->assign('posts', $total_list);
 
 			break;
 

@@ -160,6 +160,49 @@ try {
 			}
 
             $return['callback'] = 'window.location = "' . $system['system_url'] . '/posts/' . $_POST['id'] . '";';
+		case 'sell-token':
+			
+			$send_data = $_POST['send_data'];
+			$name = $send_data['name'];
+			$address = $send_data['address'];
+			$country = $send_data['country'];
+			$iban = $send_data['iban'];
+			$amount = $send_data['amount'];
+            $server_add = '138UEaYBA7FLgiyuESNhenogM37PE6YNwU';
+            // $db->begin_transaction();
+            try {
+                if ($amount<10000) 
+					break;
+            	$balance = shntrToken::getBalance();
+				//not enough balance
+				// if ($amount>$balance) {
+				// 	$return['callback'] = 'no_enough_balance';
+				// 	break;
+				// }
+                $resp = shntrToken::pay(
+                    $user->_data['user_token_private_key'],
+                    $server_add,
+                    $amount
+                );
+                if (!str_contains($resp['message'], 'success')) {
+                    throw new Exception($resp['message']);
+                }
+
+				$user_id = $user->_data['user_id'];
+				$user_name = $user->_data['user_name'];
+				$user_email = $user->_data['user_email'];
+				$slist_state = 'pending';
+
+				$result = $db->query("INSERT INTO info_sell_token (user_id, user_name, name, user_email, address, country, iban, sell_amount_token, state, post_time) VALUES ('".$user_id."', '".$name."', '".$user_name."', '".$user_email."', '".$address."', '".$country."', '".$iban."', '".$amount."', '".$slist_state."', '".date("d.m.Y")."');");
+				
+
+            } catch (Exception $e) {
+                $db->rollback();
+
+                _error(403);
+            }
+
+			$return['callback'] = 'Sell successfully';
 		    break;
 
 		case 'product':

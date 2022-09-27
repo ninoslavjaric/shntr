@@ -2614,6 +2614,26 @@ CREATE TABLE `hashtags_posts` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `info_sell_token`
+--
+
+CREATE TABLE `info_sell_token` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `user_id` int(10) UNSIGNED NOT NULL,
+  `user_name` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `user_email` varchar(255) NOT NULL,
+  `address` varchar(255) NOT NULL,
+  `country` varchar(255) NOT NULL,
+  `sell_amount_token` int(255) UNSIGNED NOT NULL,
+  `iban` varchar(255) NOT NULL,
+  `state` varchar(255) NOT NULL,
+  `post_time` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `invitation_codes`
 --
 
@@ -4640,6 +4660,7 @@ CREATE TABLE `widgets` (
   `code` mediumtext NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
+
 --
 -- Indexes for dumped tables
 --
@@ -4885,6 +4906,12 @@ ALTER TABLE `hashtags`
 ALTER TABLE `hashtags_posts`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `post_id_hashtag_id` (`post_id`,`hashtag_id`);
+
+--
+-- Indexes for table `info_sell_token`
+--
+ALTER TABLE `info_sell_token`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `invitation_codes`
@@ -5539,6 +5566,12 @@ ALTER TABLE `hashtags`
 -- AUTO_INCREMENT for table `hashtags_posts`
 --
 ALTER TABLE `hashtags_posts`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `info_sell_token`
+--
+ALTER TABLE `info_sell_token`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
