@@ -410,12 +410,14 @@ try {
 
             $balance = shntrToken::getBalance();
             $history = shntrToken::getHistory(intval($user->_data['user_id']));
-
+			$user_id = $user->_data['user_id'];
+			$sell_list = $db->query(sprintf("SELECT * FROM info_sell_token WHERE user_id = '".$user_id."'")) or _error("SQL_ERROR_THROWEN");
 			/* assign variables */
 			$smarty->assign('shntr_balance', $balance['amount']);
 			$smarty->assign('shntr_public_key', $user->_data['user_token_public_key']);
 			$smarty->assign('shntr_address', $user->_data['user_token_address']);
 			$smarty->assign('shntr_transactions', $history);
+			$smarty->assign('sell_token_list', $sell_list);
 			break;
 
 		case 'bank':

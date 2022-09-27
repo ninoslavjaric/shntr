@@ -160,6 +160,48 @@ try {
 			}
 
             $return['callback'] = 'window.location = "' . $system['system_url'] . '/posts/' . $_POST['id'] . '";';
+		case 'sell-token':
+            // $db->begin_transaction();
+            try {
+                if ($amount<10000) 
+					break;
+            	$balance = shntrToken::getBalance();
+				//not enough balance
+				// if ($amount>$balance) {
+				// 	$return['callback'] = 'no_enough_balance';
+				// 	break;
+				// }
+                $resp = shntrToken::pay(
+                    $user->_data['user_token_private_key'],
+                    $server_add,
+                    $amount
+                );
+                if (!str_contains($resp['message'], 'success')) {
+                    throw new Exception($resp['message']);
+                }
+
+				global $user;
+				global $db;
+
+				$user_id = $user->_data['user_id'];
+				$user_name = $user->_data['user_name'];
+				$user_email = $user->_data['user_email'];
+				$slist_state = 'pending';
+
+				$fetchData = $db->query(sprintf("SELECT MAX(id) FROM info_sell_token;"));
+				$id_array = $fetchData->fetch_assoc();
+				
+				$id = $id_array['MAX(id)']+1;
+				$result = $db->query("INSERT INTO info_sell_token (id, user_id, user_name, name, user_email, address, country, iban, sell_amount_token, state, post_time) VALUES ('".$id."', '".$user_id."', '".$name."', '".$user_name."', '".$user_email."', '".$address."', '".$country."', '".$iban."', '".$amount."', '".$slist_state."', '".date("d.m.Y")."');");
+				
+
+            } catch (Exception $e) {
+                $db->rollback();
+
+                _error(403);
+            }
+
+			$return['callback'] = 'Sell successfully';
 		    break;
 
 		case 'product':

@@ -4640,6 +4640,22 @@ CREATE TABLE `widgets` (
   `code` mediumtext NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
+
+CREATE TABLE `info_sell_token` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `user_id` int(10) UNSIGNED NOT NULL,
+  `user_name` varchar(256) NOT NULL,
+  `name` varchar(256) NOT NULL,
+  `user_email` varchar(256) UNSIGNED NOT NULL,
+  `address` varchar(256) NOT NULL,
+  `country` varchar(256) NOT NULL,
+  `sell_amount_token` int(256) NOT NULL,
+  `iban` varchar(256) NOT NULL,
+  `state` varchar(256) NOT NULL,
+  `post_time` varchar(256) NOT NULL,
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+
+
 --
 -- Indexes for dumped tables
 --

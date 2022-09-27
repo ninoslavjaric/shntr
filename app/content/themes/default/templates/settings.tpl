@@ -2850,49 +2850,117 @@
                         <div class="pl-md-4">
                             {if $shntr_transactions}
                                 <div class="table-responsive mt20">
-                                    <table class="table table-striped table-bordered table-hover">
+                                    <table class="table table-striped table-bordered table-hover js_dataTable">
                                         <thead>
-                                        <tr>
-                                            <th>{__("ID")}</th>
-                                            <th>{__("Sender")}</th>
-                                            <th>{__("Recipient")}</th>
-                                            <th>{__("Type")}</th>
-                                            <th>{__("Feature")}</th>
-                                            <th>{__("Amount")}</th>
-                                            <th>{__("Created")}</th>
-                                            <th>{__("Note")}</th>
-                                        </tr>
+                                            <tr>
+                                                <th>{__("ID")}</th>
+                                                <th>{__("Sender")}</th>
+                                                <th>{__("Recipient")}</th>
+                                                <th>{__("Type")}</th>
+                                                <th>{__("Feature")}</th>
+                                                <th>{__("Amount")}</th>
+                                                <th>{__("Created")}</th>
+                                                <th>{__("Note")}</th>
+                                            </tr>
                                         </thead>
                                         <tbody>
-                                        {foreach $shntr_transactions as $transaction}
+                                            {foreach $shntr_transactions as $transaction}
+                                                <tr>
+                                                    <td>{$transaction@iteration}</td>
+                                                    <td><a target="_blank" href="/{$transaction['sender_name']}">{$transaction['sender_name']}</a></td>
+                                                    <td><a target="_blank" href="/{$transaction['recipient_name']}">{$transaction['recipient_name']}</a></td>
+                                                    <td>{$transaction['type']}</td>
+                                                    <td>
+                                                        {if !empty($transaction['feature'])}
+                                                            {$transaction['feature']}
+                                                        {else}
+                                                            ---
+                                                        {/if}
+                                                    </td>
+                                                    <td>{$transaction['amount']|number_format:2}</td>
+                                                    <td>
+                                                        <span class="js_moment" data-time="{$transaction['created_at']}">{$transaction['created_at']}</span>
+                                                    </td>
+                                                    <td>
+                                                        {if !empty($transaction['note'])}
+                                                            {$transaction['note']}
+                                                        {else}
+                                                            ---
+                                                        {/if}
+                                                        {if $transaction['link']}
+                                                            <a href="{$transaction['link']}" target="_blank">link</a>
+                                                        {/if}
+                                                    </td>
+                                                </tr>
+                                            {/foreach}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {else}
+                                {include file='_no_transactions.tpl'}
+                            {/if}
+                            {if $sell_token_list}
+                                <div class="table-responsive mt20">
+                                    <table class="table table-striped table-bordered table-hover js_dataTable">
+                                        <thead>
                                             <tr>
-                                                <td>{$transaction@iteration}</td>
-                                                <td><a target="_blank" href="/{$transaction['sender_name']}">{$transaction['sender_name']}</a></td>
-                                                <td><a target="_blank" href="/{$transaction['recipient_name']}">{$transaction['recipient_name']}</a></td>
-                                                <td>{$transaction['type']}</td>
-                                                <td>
-                                                    {if !empty($transaction['feature'])}
-                                                        {$transaction['feature']}
-                                                    {else}
-                                                        ---
-                                                    {/if}
-                                                </td>
-                                                <td>{$transaction['amount']|number_format:2}</td>
-                                                <td>
-                                                    <span class="js_moment" data-time="{$transaction['created_at']}">{$transaction['created_at']}</span>
-                                                </td>
-                                                <td>
-                                                    {if !empty($transaction['note'])}
-                                                        {$transaction['note']}
-                                                    {else}
-                                                        ---
-                                                    {/if}
-                                                    {if $transaction['link']}
-                                                        <a href="{$transaction['link']}" target="_blank">link</a>
-                                                    {/if}
-                                                </td>
+                                                <th>{__("ID")}</th>
+                                                <th>{__("Amount")}</th>
+                                                <th>{__("Iban")}</th>
+                                                <th>{__("Post time")}</th>
+                                                <th>{__("State")}</th>
                                             </tr>
-                                        {/foreach}
+                                        </thead>
+                                        <tbody>
+                                            {$id=1}
+                                            {foreach $sell_token_list as $post}
+                                                {if $post['state']=='pending'}
+                                                    <tr>
+                                                        <td>{$id}</td>
+                                                        <td>{$post['sell_amount_token']}</td>
+                                                        <td>{$post['iban']}</td>
+                                                        <td>{$post['post_time']}</td>
+                                                        <td>
+                                                            {if $post['state']=='pending'}<span class="ml5 badge badge-pill badge-info">Pending</span>{/if}
+                                                            {if $post['state']=='in_process'}<span class="ml5 badge badge-pill badge-secondary">In process</span>{/if}
+                                                            {if $post['state']=='completed'}<span class="ml5 badge badge-pill badge-success">Completed</span>{/if}
+                                                        </td>
+                                                    </tr>
+                                                    <div style="display: none;">{$id++}</div>
+                                                {/if}
+                                            {/foreach}
+                                            {foreach $sell_token_list as $post}
+                                                {if $post['state']=='in_process'}
+                                                    <tr>
+                                                        <td>{$id}</td>
+                                                        <td>{$post['sell_amount_token']}</td>
+                                                        <td>{$post['iban']}</td>
+                                                        <td>{$post['post_time']}</td>
+                                                        <td>
+                                                            {if $post['state']=='pending'}<span class="ml5 badge badge-pill badge-info">Pending</span>{/if}
+                                                            {if $post['state']=='in_process'}<span class="ml5 badge badge-pill badge-secondary">In process</span>{/if}
+                                                            {if $post['state']=='completed'}<span class="ml5 badge badge-pill badge-success">Completed</span>{/if}
+                                                        </td>
+                                                    </tr>
+                                                    <div style="display: none;">{$id++}</div>
+                                                {/if}
+                                            {/foreach}
+                                            {foreach $sell_token_list as $post}
+                                                {if $post['state']=='completed'}
+                                                    <tr>
+                                                        <td>{$id}</td>
+                                                        <td>{$post['sell_amount_token']}</td>
+                                                        <td>{$post['iban']}</td>
+                                                        <td>{$post['post_time']}</td>
+                                                        <td>
+                                                            {if $post['state']=='pending'}<span class="m6 badge badge-pill badge-info">Pending</span>{/if}
+                                                            {if $post['state']=='in_process'}<span class="m6 badge badge-pill badge-secondary">In process</span>{/if}
+                                                            {if $post['state']=='completed'}<span class="m6 badge badge-pill badge-success">Completed</span>{/if}
+                                                        </td>
+                                                    </tr>
+                                                    <div style="display: none;">{$id++}</div>
+                                                {/if}
+                                            {/foreach}
                                         </tbody>
                                     </table>
                                 </div>
