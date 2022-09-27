@@ -30,7 +30,7 @@ try {
 
             $checkout_session = \Stripe\Checkout\Session::create([
                 'line_items' => [[
-                    'price' => 'price_1LkarjJoiLHsoH4fXUJoNL5L',
+                    'price' => 'price_1LmnCgJoiLHsoH4fYQZKP71j',
                     'quantity' => $_POST['qty'] ?? 5,
                 ]],
                 'mode' => 'payment',
