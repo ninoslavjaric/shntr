@@ -116,13 +116,28 @@
                                 </a>
                             </li>
                         {/if}
+                        {if $system['people_enabled']}
+                            <li class="nav-item">
+                                <a class="nav-link rounded-pill {if $tab == "people"}active{/if}" href="{$system['system_url']}/search/{$query}/people{$query_string}">
+                                    <i class="fa fa-calendar mr5"></i><strong>{__("People")}</strong>
+                                </a>
+                            </li>
+                        {/if}
                     </ul>
                     <!-- panel nav -->
 
                     <div class="tab-content">
 
                         <div class="tab-pane active">
-                            {if $results}
+                            {if $tab == "people"}
+                                <div class="">
+                                    <div id="search-results_page">
+                                        <div class="dropdown-widget-body">
+                                            {include file='_no_data.tpl'}
+                                        </div>
+                                    </div>
+                                </div>
+                            {elseif $results}
                                 <ul>
                                     {if $tab == "" || $tab == "posts"}
                                         <!-- posts -->
