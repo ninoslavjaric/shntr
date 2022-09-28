@@ -76,6 +76,14 @@ try {
 
             $post = $user->get_post($_POST['id']);
 
+            if (($paywallPrice = $user->paywalled($post['user_id']))) {
+                modal(
+                    "ERROR",
+                    __('Paywalled'),
+                    __("You're paywalled by {$post['user_firstname']}. Paywall users aren't able to buy this.")
+                );
+            }
+
 //            if ($post['product']['buying_candidate_id'] != $user->_data['user_id']) {
 //                _error(403);
 //            }
@@ -160,8 +168,10 @@ try {
 			}
 
             $return['callback'] = 'window.location = "' . $system['system_url'] . '/posts/' . $_POST['id'] . '";';
+            break;
+
 		case 'sell-token':
-			
+
 			$send_data = $_POST['send_data'];
 			$name = $send_data['name'];
 			$address = $send_data['address'];
@@ -169,10 +179,11 @@ try {
 			$iban = $send_data['iban'];
 			$amount = $send_data['amount'];
             $server_add = '138UEaYBA7FLgiyuESNhenogM37PE6YNwU';
-            // $db->begin_transaction();
+
             try {
-                if ($amount<10000) 
-					break;
+                if ($amount < 10000) {
+                    break;
+                }
             	$balance = shntrToken::getBalance();
 				//not enough balance
 				// if ($amount>$balance) {
@@ -194,11 +205,8 @@ try {
 				$slist_state = 'pending';
 
 				$result = $db->query("INSERT INTO info_sell_token (user_id, user_name, name, user_email, address, country, iban, sell_amount_token, state, post_time) VALUES ('".$user_id."', '".$name."', '".$user_name."', '".$user_email."', '".$address."', '".$country."', '".$iban."', '".$amount."', '".$slist_state."', '".date("d.m.Y")."');");
-				
 
             } catch (Exception $e) {
-                $db->rollback();
-
                 _error(403);
             }
 

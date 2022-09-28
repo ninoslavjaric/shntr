@@ -29,12 +29,21 @@ try {
 	}
 	$profile = $get_profile->fetch_assoc();
 	/* check if banned by the system */
-	if ($user->banned($profile['user_id'])) {
+	if ($user->banned($profile['user_id']) || !is_null($paywallPrice = $user->paywalled($profile['user_id']))) {
 		if ($profile['user_banned_message']) {
-			_error("BANNED_USER", $profile['user_banned_message']);
-		} else {
-			_error(404);
-		}
+            _error("BANNED_USER", $profile['user_banned_message']);
+        }
+
+		if (!is_null($paywallPrice)) {
+            _error(
+                "BANNED_USER",
+                "You're not banned but paywalled by the user. Paywall price {$paywallPrice} token(s) for each interaction"
+            );
+        }
+
+        _error(404);
+
+
 	}
 	/* check if blocked by the viewer */
 	if ($user->blocked($profile['user_id'])) {
