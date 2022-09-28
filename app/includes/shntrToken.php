@@ -59,8 +59,10 @@ class shntrToken
             ];
         }
 
+        $privateKey = self::decrypt($user->_data['user_token_private_key']);
+
         return http_call(shntr_TOKEN_SERVICE . '/balance', 'GET', [], [
-            "x-key: {$user->_data['user_token_private_key']}"
+            "x-key: {$privateKey}"
         ]);
     }
 
