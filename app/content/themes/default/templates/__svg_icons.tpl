@@ -704,5 +704,35 @@
     {elseif $icon == "copy-icon"}
         {include file='../images/svg/copy-icon.svg'}
 
+    {elseif $icon == "shn-find-people"}
+        {include file='../images/svg/shn-find-people.svg'}
+
+    {elseif $icon == "shn-pages"}
+        {include file='../images/svg/shn-pages.svg'}
+
+    {elseif $icon == "shn-groups"}
+        {include file='../images/svg/shn-groups.svg'}
+
+    {elseif $icon == "shn-events"}
+        {include file='../images/svg/shn-events.svg'}
+
+    {elseif $icon == "shn-marketplace"}
+        {include file='../images/svg/shn-marketplace.svg'}
+
+    {elseif $icon == "shn-realestate"}
+        {include file='../images/svg/shn-realestate.svg'}
+
+    {elseif $icon == "shn-articles"}
+        {include file='../images/svg/shn-articles.svg'}
+
+    {elseif $icon == "shn-products"}
+        {include file='../images/svg/shn-products.svg'}
+
+    {elseif $icon == "shn-savedpost"}
+        {include file='../images/svg/shn-savedpost.svg'}
+
+    {elseif $icon == "shn-memories"}
+        {include file='../images/svg/shn-memories.svg'}
+
     {/if}
 </div>
