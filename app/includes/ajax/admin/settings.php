@@ -102,6 +102,7 @@ try {
 			$_POST['offers_enabled'] = (isset($_POST['offers_enabled'])) ? '1' : '0';
 			$_POST['groups_enabled'] = (isset($_POST['groups_enabled'])) ? '1' : '0';
 			$_POST['events_enabled'] = (isset($_POST['events_enabled'])) ? '1' : '0';
+			$_POST['people_enabled'] = (isset($_POST['people_enabled'])) ? '1' : '0';
 			$_POST['jobs_enabled'] = (isset($_POST['jobs_enabled'])) ? '1' : '0';
 			$_POST['blogs_enabled'] = (isset($_POST['blogs_enabled'])) ? '1' : '0';
 			$_POST['market_enabled'] = (isset($_POST['market_enabled'])) ? '1' : '0';
@@ -119,7 +120,9 @@ try {
 				'groups_enabled' => secure($_POST['groups_enabled']),
 				'groups_permission' => secure($_POST['groups_permission']),
 				'events_enabled' => secure($_POST['events_enabled']),
+				'people_enabled' => secure($_POST['people_enabled']),
 				'events_permission' => secure($_POST['events_permission']),
+				'people_permission' => secure($_POST['people_permission']),
 				'blogs_enabled' => secure($_POST['blogs_enabled']),
 				'blogs_permission' => secure($_POST['blogs_permission']),
 				'market_enabled' => secure($_POST['market_enabled']),

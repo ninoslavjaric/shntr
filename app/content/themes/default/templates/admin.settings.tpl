@@ -476,6 +476,38 @@
 
                         <div class="form-table-row">
                             <div class="avatar">
+                                {include file='__svg_icons.tpl' icon="groups" width="40px" height="40px"}
+                            </div>
+                            <div>
+                                <div class="form-control-label h6">{__("People")}</div>
+                                <div class="form-text d-none d-sm-block">{__("Turn the people On and Off")}</div>
+                            </div>
+                            <div class="text-right">
+                                <label class="switch" for="people_enabled">
+                                    <input type="checkbox" name="people_enabled" id="people_enabled" {if $system['people_enabled']}checked{/if}>
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group form-row">
+                            <label class="col-md-3 form-control-label">
+                                {__("Who Can Find People")}
+                            </label>
+                            <div class="col-md-9">
+                                <select class="form-control selectpicker" name="people_permission">
+                                    <option value="admins" {if $system['people_permission'] == "admins"}selected{/if} data-content="<div class='option'><div class='icon'><i class='fa fa-lock fa-lg fa-fw'></i></div><div class='text'><b>{__("Admins")}</b><br>{__("Only Admins and Moderators")}</div></div>">{__("Admins")}</option>
+                                    <option value="pro" {if $system['people_permission'] == "pro"}selected{/if} data-content="<div class='option'><div class='icon'><i class='fa fa-rocket fa-lg fa-fw'></i></div><div class='text'><b>{__("Pro Users")}</b><br>{__("Only Admins, Moderators and Pro Users")}</div></div>">{__("Pro Users")}</option>
+                                    <option value="verified" {if $system['people_permission'] == "verified"}selected{/if} data-content="<div class='option'><div class='icon'><i class='fa fa-check-circle fa-lg fa-fw'></i></div><div class='text'><b>{__("Verified Users")}</b><br>{__("Only Admins, Moderators, Pro and Verified Users")}</div></div>">{__("Verified Users")}</option>
+                                    <option value="everyone" {if $system['people_permission'] == "everyone"}selected{/if} data-content="<div class='option'><div class='icon'><i class='fa fa-globe fa-lg fa-fw'></i></div><div class='text'><b>{__("Everyone")}</b><br>{__("Any user in the system can")}</div></div>">{__("Everyone")}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <div class="form-table-row">
+                            <div class="avatar">
                                 {include file='__svg_icons.tpl' icon="blogs" width="40px" height="40px"}
                             </div>
                             <div>
