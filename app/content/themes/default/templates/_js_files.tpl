@@ -397,7 +397,7 @@
     <!-- Easytimer -->
 
     <!-- Datatables -->
-    {if $page == "admin" || $page == "ads" || $page == "wallet" || $page == "developers"}
+    {if $page == "admin" || $page == "ads" || $page == "wallet" || $page == "developers" || $page == "settings"}
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.21/datatables.min.css"/>
         <script src="https://cdn.datatables.net/v/bs4/dt-1.10.21/datatables.min.js"></script>
     {/if}
