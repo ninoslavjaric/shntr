@@ -31,11 +31,24 @@
                     <form class="js_search-form" data-tab="{$tab}">
                         <div class="form-group mb0">
                             <div class="input-group">
-                                <input type="text" class="form-control" name="query" placeholder='{__("Search")}' value="{$query}">
+                                <input id="search-input2" type="text" class="form-control" name="query" placeholder='{__("Search")}' value="{$query}">
                                 <div class="input-group-append">
                                     <button type="submit" name="submit" class="btn btn-danger plr30"><i class="fas fa-search mr10"></i>{__("Search")}</button>
                                 </div>
                             </div>
+                        </div>
+                        <div class="search-wrapper d-md-block mb0">
+                            <form>
+                                <div id="search-results2" class="dropdown-menu dropdown-widget dropdown-search js_dropdown-keepopen">
+                                    <div class="dropdown-widget-header">
+                                        <span class="title">{__("Search Results")}</span>
+                                    </div>
+                                    <div class="dropdown-widget-body">
+                                        <div class="loader loader_small ptb10"></div>
+                                    </div>
+                                    <a class="dropdown-widget-footer" id="search-results-all2" href="{$system['system_url']}/search/">{__("See All Results")}</a>
+                                </div>
+                            </form>
                         </div>
                         {if $tab == "users"}
                         <hr>

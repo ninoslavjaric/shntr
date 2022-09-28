@@ -713,6 +713,35 @@ $(function () {
             }
         }
     });
+    /* show and get the search results in search page */
+    $('body').on('keyup', '#search-input2', function () {
+        var query = $(this).val();
+        if (!is_empty(query)) {
+            $('#search-results2').show();
+            var hashtags = query.match(/#(\w+)/ig);
+            if (hashtags !== null && hashtags.length > 0) {
+                var query = hashtags[0].replace("#", "");
+                $('#search-results2 .dropdown-widget-header').hide();
+                $('#search-results-all2').hide();
+                $('#search-results2 .dropdown-widget-body').html(render_template('#search-for', { 'query': query, 'hashtag': true }));
+            } else {
+                $.post(api['data/search'], { 'query': query }, function (response) {
+                    if (response.callback) {
+                        eval(response.callback);
+                    } else if (response.results) {
+                        $('#search-results2 .dropdown-widget-header').show();
+                        $('#search-results-all2').show();
+                        $('#search-results2 .dropdown-widget-body').html(response.results);
+                        $('#search-results-all2').attr('href', site_path + '/search/' + query);
+                    } else {
+                        $('#search-results2 .dropdown-widget-header').hide();
+                        $('#search-results-all2').hide();
+                        $('#search-results2 .dropdown-widget-body').html(render_template('#search-for', { 'query': query }));
+                    }
+                }, 'json');
+            }
+        }
+    });
     /* submit search form */
     $('body').on('keydown', '#search-input', function (event) {
         if (event.keyCode == 13) {
@@ -738,10 +767,22 @@ $(function () {
             $('#search-history').show();
         }
     });
+    /* show previous search (results|history) when the search-input is clicked in search page */
+    $('body').on('click', '#search-input2', function () {
+        if ($(this).val() != '') {
+            $('#search-results2').show();
+        }
+    });
     /* hide the search (results|history) when clicked outside search-input */
     $('body').on('click', function (e) {
         if (!$(e.target).is("#search-input")) {
             $('#search-results, #search-history').hide();
+        }
+    });
+    /* hide the search (results|history) when clicked outside search-input in search page */
+    $('body').on('click', function (e) {
+        if (!$(e.target).is("#search-input2")) {
+            $('#search-results2').hide();
         }
     });
     /* submit search form */
