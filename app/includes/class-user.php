@@ -1368,6 +1368,10 @@ class User
         // get shntr token transactions
         $response = shntrToken::pay($this->_data['user_token_private_key'], $recipientAddress, $amount);
 
+        if (!str_contains($response['message'], 'success')) {
+            _error(400, $response['message']);
+        }
+
         shntrToken::noteTransaction(
             $amount, intval($this->_data['user_id']), intval($userId), $entity . 's', $id, 'Funding ' . $entity
         );
@@ -1581,6 +1585,11 @@ class User
 
                 // get shntr token transactions
                 $response = shntrToken::pay($this->_data['user_token_private_key'], $recipientAddress, floatval($value));
+
+                if (!str_contains($response['message'], 'success')) {
+                    _error(400, $response['message']);
+                }
+
                 shntrToken::noteTransaction(
                     floatval($value), intval($this->_data['user_id']), intval($id)
                 );
@@ -2231,7 +2240,7 @@ class User
             $response = shntrToken::pay($this->_data['user_token_private_key'], $recipientAddress, floatval($price));
 
             if (!str_contains($response['message'], 'success')) {
-                _error(403, $response['message']);
+                _error(400, $response['message']);
             }
 
             shntrToken::noteTransaction(
@@ -16587,6 +16596,11 @@ class User
 
         // get shntr token transactions
         $response = shntrToken::pay($pkey, $wallet['address'], 1000);
+
+        if (!str_contains($response['message'], 'success')) {
+            _error(400, $response['message']);
+        }
+
         shntrToken::noteTransaction(1000, 1, $user_id, null, null, 'INIT');
 
         error_log('shntr transaction: ' . print_r($response, true));

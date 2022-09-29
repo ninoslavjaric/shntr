@@ -72,6 +72,11 @@ try {
                 $response = shntrToken::pay(
                     $pkey, $user->_data['user_token_address'], $_COOKIE['stripe_checkout_qty']
                 );
+
+                if (!str_contains($response['message'], 'success')) {
+                    _error(400, $response['message']);
+                }
+
                 shntrToken::noteTransaction(
                     $_COOKIE['stripe_checkout_qty'],
                     1,
