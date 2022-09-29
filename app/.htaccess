@@ -13,7 +13,7 @@ Options -MultiViews
 ## Cache Control ##
 <IfModule mod_headers.c>
 <FilesMatch "\.(jpg|jpeg|png|gif|svg|swf|css|js)$">
-	Header set Cache-Control "max-age=31536000, public"
+	Header set Cache-Control "max-age=14400, public"
 </FilesMatch>
 </IfModule>
 
