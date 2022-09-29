@@ -310,10 +310,10 @@
                                     <div class="float-right">
                                         <small><a href="{$system['system_url']}/people">{__("See All")}</a></small>
                                         <div class="line_one smallwidth"></div>
-                                        <div class="custom-control custom-switch line_one">
-                                            <input type="checkbox" class="custom-control-input" id="customSwitches" checked>
-                                            <label class="custom-control-label new_people" for="customSwitches"></label>
-                                        </div>
+                                        <label class="dash_switch">
+                                            <input type="checkbox" id="customSwitches" checked>
+                                            <span class="dash_slider round new_people"></span>
+                                        </label>
                                     </div>
                                     {__("Friend Suggestions")}
                                 </div>
@@ -335,10 +335,10 @@
                                     <div class="float-right">
                                         <small><a href="{$system['system_url']}/pages">{__("See All")}</a></small>
                                         <div class="line_one smallwidth"></div>
-                                        <div class="custom-control custom-switch line_one">
-                                            <input type="checkbox" class="custom-control-input" id="customSwitches1" checked>
-                                            <label class="custom-control-label new_pages" for="customSwitches1"></label>
-                                        </div>
+                                        <label class="dash_switch">
+                                            <input type="checkbox" id="customSwitches1" checked>
+                                            <span class="dash_slider round new_pages"></span>
+                                        </label>
                                     </div>
                                     {__("Suggested Pages")}
                                 </div>
@@ -360,10 +360,10 @@
                                     <div class="float-right">
                                         <small><a href="{$system['system_url']}/groups">{__("See All")}</a></small>
                                         <div class="line_one smallwidth"></div>
-                                        <div class="custom-control custom-switch line_one">
-                                            <input type="checkbox" class="custom-control-input" id="customSwitches2" checked>
-                                            <label class="custom-control-label new_groups" for="customSwitches2"></label>
-                                        </div>
+                                        <label class="dash_switch">
+                                            <input type="checkbox" id="customSwitches2" checked>
+                                            <span class="dash_slider round new_groups"></span>
+                                        </label>
                                     </div>
                                     {__("Suggested Groups")}
                                 </div>
@@ -385,10 +385,10 @@
                                     <div class="float-right">
                                         <small><a href="{$system['system_url']}/events">{__("See All")}</a></small>
                                         <div class="line_one smallwidth"></div>
-                                        <div class="custom-control custom-switch line_one">
-                                            <input type="checkbox" class="custom-control-input" id="customSwitches3" checked>
-                                            <label class="custom-control-label new_events" for="customSwitches3"></label>
-                                        </div>
+                                        <label class="dash_switch">
+                                            <input type="checkbox" id="customSwitches3" checked>
+                                            <span class="dash_slider round new_events"></span>
+                                        </label>
                                     </div>
                                     {__("Suggested Events")}
                                 </div>
