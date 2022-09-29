@@ -1,15 +1,18 @@
 {include file='_head.tpl'}
-{include file='_header.tpl'}
+{include file='_header.tpl' wrapperClass='search-page'}
 
 {if $view == ""}
     <!-- page header -->
     <div class="page-header">
-        <img class="floating-img d-none d-md-block" src="{$system['system_url']}/content/themes/{$system['theme']}/images/headers/undraw_content_creator_xeju.svg">
-        <div class="circle-2"></div>
-        <div class="circle-3"></div>
-        <div class="inner">
-            <h2>{__("Blogs")}</h2>
-            <p class="text-xlg">{__($system['system_description_blogs'])}</p>
+        <div class="container d-flex flex-row align-items-center">
+            {include file='__svg_icons.tpl' icon="shn-news" class="header-img" width="200px" height="200px"}
+
+            <div class="d-flex flex-column w-100">
+                <h2>
+                    {__("Blogs")}
+                    <span style="max-width: 700px">{__($system['system_description_blogs'])}</span>
+                </h2>
+            </div>
         </div>
     </div>
     <!-- page header -->
