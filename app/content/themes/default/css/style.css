@@ -7149,7 +7149,7 @@ body.night-mode .reactions-container {
   background: linear-gradient(to right, #667db6, #0082c8, #0082c8, #667db6);
   position: relative;
   text-align: center;
-  padding: 70px 15px;
+  padding: 60px 15px;
   overflow: hidden;
   color: #fff;
   z-index: auto;
@@ -7165,7 +7165,7 @@ body.night-mode .reactions-container {
 
 @media (min-width: 768px) {
   .page-header {
-    padding: 90px 15px;
+    padding: 60px 15px;
   }
   .page-header.mini {
     padding: 45px 15px;
@@ -7263,7 +7263,6 @@ body.night-mode .reactions-container {
 .market .page-header h2 span {
   display: block;
   color: #02ADF8;
-  max-width: 380px;
 }
 
 .market .page-header input {

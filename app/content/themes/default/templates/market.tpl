@@ -9,10 +9,15 @@
         <div class="d-flex flex-column w-100">
             <h2>
                 {if $current_category}
-                    {$current_category['category_name']} <span>{__("all your products in one place")}</span></h2>
+                    {$current_category['category_name']}
+                    <span>{__("all your products")}</span>
+                    <span>{__("in one place")}</span>
                 {else}
-                    {__("MarketPlace")} <span>{__("all your products in one place")}</span></h2>
+                    {__("MarketPlace")}
+                    <span>{__("all your products")}</span>
+                    <span>{__("in one place")}</span>
                 {/if}
+            </h2>
                 
             <form class="js_search-form" data-handle="market">
                 <div class="input-group">
