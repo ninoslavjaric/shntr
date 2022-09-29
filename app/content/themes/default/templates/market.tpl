@@ -23,35 +23,6 @@
                 </div>
             </form>
         </div>
-
-        {* <h2>
-            {if $current_category}
-                {$current_category['category_name']}
-            {else}
-                {__("MarketPlace all your products in one place")}
-            {/if}
-        </h2>
-
-        <p class="text-xlg">
-            {if $current_category}
-                Discover {$current_category['category_name']|strtolower}
-            {else}
-                {__($system['system_description_marketplace'])}
-            {/if}
-        </p> *}
-
-        {* <div class="row mt20">
-            <div class="col-sm-9 col-lg-6 mx-sm-auto">
-                <form class="js_search-form" data-handle="market">
-                    <div class="input-group">
-                        <input type="text" class="form-control" name="query" placeholder='{if $current_category}Search for {$current_category['category_name']|strtolower}{else}{__("Search for products")}{/if}'>
-                        <div class="input-group-append">
-                            <button type="submit" class="btn btn-danger">{__("Search")}</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div> *}
     </div>
 </div>
 <!-- page header -->
