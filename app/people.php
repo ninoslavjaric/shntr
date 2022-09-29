@@ -39,6 +39,8 @@ try {
 
 			// search users
 			$people = $user->search_users(
+				$_POST['hometown_place'],
+				$_POST['current_place'],
 			    $_POST['distance_value'],
                 $_POST['query'],
                 $_POST['gender'],
