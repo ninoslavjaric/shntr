@@ -1163,6 +1163,8 @@ class User
     /**
      * search_users
      *
+     * @param string $hometown
+     * @param string $current
      * @param string $distance
      * @param string $keyword
      * @param string $gender
@@ -1172,7 +1174,7 @@ class User
      * @return array
      */
     public function search_users(
-        $distance, $keyword, $gender, $relationship, $status, $homePlaceId, $currentPlaceId, $religion
+        $hometown, $current, $distance, $keyword, $gender, $relationship, $status, $homePlaceId, $currentPlaceId, $religion
     )
     {
         global $db, $system;
@@ -1197,6 +1199,14 @@ class User
         $where .= sprintf("WHERE user_banned = '0' AND user_id != %s AND user_id NOT IN (%s)", secure($this->_data['user_id'], 'int'), $this->spread_ids($old_people_ids));
         if ($system['activation_enabled']) {
             $where .= " AND user_activated = '1'";
+        }
+        /* hometown */
+        if ($hometown) {
+            $where .= sprintf(' AND (user_hometown LIKE %1$s)', secure($hometown, 'search'));
+        }
+        /* current city */
+        if ($current) {
+            $where .= sprintf(' AND (user_current_city LIKE %1$s)', secure($current, 'search'));
         }
         /* keyword */
         if ($keyword) {
