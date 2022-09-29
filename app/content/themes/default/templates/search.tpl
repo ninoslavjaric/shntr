@@ -78,8 +78,15 @@
                 <div class="col-lg-8">
                     <!-- panel nav -->
                     <ul class="nav nav-pills nav-fill nav-search mb10">
+                        {if $system['people_enabled']}
+                            <li class="nav-item">
+                                <a class="nav-link rounded-pill {if $tab == "" || $tab == "people"}active{/if}" href="{$system['system_url']}/search/{$query}/people{$query_string}">
+                                    <i class="fa fa-calendar mr5"></i><strong>{__("People")}</strong>
+                                </a>
+                            </li>
+                        {/if}
                         <li class="nav-item">
-                            <a class="nav-link rounded-pill {if $tab == "" || $tab == "posts"}active{/if}" href="{$system['system_url']}/search/{if $hashtag}hashtag/{/if}{$query}/posts{$query_string}">
+                            <a class="nav-link rounded-pill {if $tab == "posts"}active{/if}" href="{$system['system_url']}/search/{if $hashtag}hashtag/{/if}{$query}/posts{$query_string}">
                                 <i class="fa fa-newspaper mr5"></i><strong>{__("Posts")}</strong>
                             </a>
                         </li>
@@ -116,20 +123,13 @@
                                 </a>
                             </li>
                         {/if}
-                        {if $system['people_enabled']}
-                            <li class="nav-item">
-                                <a class="nav-link rounded-pill {if $tab == "people"}active{/if}" href="{$system['system_url']}/search/{$query}/people{$query_string}">
-                                    <i class="fa fa-calendar mr5"></i><strong>{__("People")}</strong>
-                                </a>
-                            </li>
-                        {/if}
                     </ul>
                     <!-- panel nav -->
 
                     <div class="tab-content">
 
                         <div class="tab-pane active">
-                            {if $tab == "people"}
+                            {if $tab == "" || $tab == "people"}
                                 <div class="">
                                     <div id="search-results_page">
                                         <div class="dropdown-widget-body">
@@ -139,7 +139,7 @@
                                 </div>
                             {elseif $results}
                                 <ul>
-                                    {if $tab == "" || $tab == "posts"}
+                                    {if $tab == "posts"}
                                         <!-- posts -->
                                         {foreach $results as $post}
                                         {include file='__feeds_post.tpl'}
