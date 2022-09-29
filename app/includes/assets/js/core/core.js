@@ -390,7 +390,7 @@ $(function () {
         $.post(api['data/search'], { 'query': query }, function (response) {
             if (response.results) {
                 $('#search-results2 .dropdown-widget-body').html(response.results);
-                $('#search-results_page .dropdown-widget-body').html(response.results);
+                $('#search-results_page .dropdown-widget-body').html(response.results.user);
                 $('#search-results-all2').attr('href', site_path + '/search/' + query);
             } else {
                 $('#search-results2 .dropdown-widget-body').html(render_template('#search-for', { 'query': query }));
