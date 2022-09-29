@@ -7155,8 +7155,9 @@ body.night-mode .reactions-container {
   z-index: auto;
 }
 
-.market .page-header {
+.market .page-header, .search-page .page-header {
   background: #fff;
+  overflow: unset;
 }
 
 .page-header.mini {
@@ -7188,14 +7189,15 @@ body.night-mode .reactions-container {
   /*z-index: -997;*/
 }
 
-.market .page-header .header-img {
+.market .page-header .header-img, .search-page .page-header .header-img {
   padding: 30px;
   margin-right: 20px;
   box-sizing: content-box;
+  color: #000;
 }
 
 @media (max-width: 992px) {
-  .market .page-header .header-img {
+  .market .page-header .header-img, .search-page .page-header .header-img {
     display: none;
   }
 }
@@ -7251,7 +7253,7 @@ body.night-mode .reactions-container {
   font-weight: normal;
 }
 
-.market .page-header h2 {
+.market .page-header h2, .search-page .page-header h2 {
   color: #000;
   font-size: 46px;
   font-weight: 800;
@@ -7260,17 +7262,21 @@ body.night-mode .reactions-container {
   margin-bottom: 50px;
 }
 
-.market .page-header h2 span {
+.market .page-header h2 span, .search-page .page-header h2 span {
   display: block;
   color: #02ADF8;
 }
 
-.market .page-header input {
+.search-page .page-header .card .card-body {
+  padding: 0;
+}
+
+.market .page-header input, .search-page .page-header input {
   border: none;
   border-bottom: 1px solid #000;
 }
 
-.market .page-header input::placeholder {
+.market .page-header input::placeholder, .page-header input::placeholder {
   color: #E1E1E1;
   font-size: 26px;
   font-weight: 800;
@@ -7278,7 +7284,7 @@ body.night-mode .reactions-container {
   line-height: 1.1;
 }
 
-.market .page-header button {
+.market .page-header button, .search-page .page-header button.search-form-submit {
   background: transparent;
   border: none;
   box-shadow: none;
