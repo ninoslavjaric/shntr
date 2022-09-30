@@ -7267,6 +7267,12 @@ body.night-mode .reactions-container {
   color: #02ADF8;
 }
 
+@media (max-width: 768px) {
+  .search-page .page-header h2 {
+    display: none;
+  }
+}
+
 .search-page .page-header .card .card-body {
   padding: 0;
 }
