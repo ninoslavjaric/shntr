@@ -27,9 +27,22 @@ try {
 	$results = $user->search_quick($_POST['query']);
 	if ($results) {
 		/* assign variables */
-		$smarty->assign('results', $results);
-		/* return */
-		$return['results'] = $smarty->fetch("ajax.search.tpl");
+		if ($_POST['people']) {
+			$res = [];
+			for ($i=0; $i < count($results); $i++) {
+				if ($results[$i]['user_id']) {
+					array_push($res, $results[$i]);
+				}
+			}
+			if (count($res)>0) {
+				$smarty->assign('results', $res);
+				$return['results'] = $smarty->fetch("ajax.search.tpl");
+			}
+		}else {
+			$smarty->assign('results', $results);
+			/* return */
+			$return['results'] = $smarty->fetch("ajax.search.tpl");
+		}
 	}
 
 	// return & exit
