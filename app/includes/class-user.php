@@ -16041,12 +16041,60 @@ class User
             case 'location':
                 /* set custom fields */
                 $this->set_custom_fields($args, "user", "settings", $this->_data['user_id']);
+                if ($args['city_id']) {
+                    $array = explode(" > ", $args['city_id']);
+                    $fetchData = $db->query(sprintf(
+                        "SELECT id FROM countries WHERE name = %s",
+                        secure(($array[0]), 'string'),
+                    ));
+                    $row = $fetchData->fetch_assoc();
+                    $co_num = $row['id'];
+                    $fetchData = $db->query(sprintf(
+                        "SELECT id FROM states WHERE name = %s",
+                        secure(($array[1]), 'string'),
+                    ));
+                    $row = $fetchData->fetch_assoc();
+                    $st_num = $row['id'];
+                    $fetchData = $db->query(sprintf(
+                        "SELECT id FROM places WHERE country_id = %s and state_id = %s and name = %s",
+                        secure($co_num, 'int'),
+                        secure($st_num, 'int'),
+                        secure($array[2], 'string'),
+                    ));
+                    $row = $fetchData->fetch_assoc();
+                    $ct_num = $row['id'];
+                }
+                if ($args['hometown_id']) {
+                    $array = explode(" > ", $args['hometown_id']);
+                    $fetchData = $db->query(sprintf(
+                        "SELECT id FROM countries WHERE name = %s",
+                        secure(($array[0]), 'string'),
+                    ));
+                    $row = $fetchData->fetch_assoc();
+                    $co_num = $row['id'];
+                    $fetchData = $db->query(sprintf(
+                        "SELECT id FROM states WHERE name = %s",
+                        secure(($array[1]), 'string'),
+                    ));
+                    $row = $fetchData->fetch_assoc();
+                    $st_num = $row['id'];
+                    $fetchData = $db->query(sprintf(
+                        "SELECT id FROM places WHERE country_id = %s and state_id = %s and name = %s",
+                        secure($co_num, 'int'),
+                        secure($st_num, 'int'),
+                        secure($array[2], 'string'),
+                    ));
+                    $row = $fetchData->fetch_assoc();
+                    $ht_num = $row['id'];
+                }
                 /* update user */
                 $db->query(
                     sprintf(
-                        "UPDATE users SET user_current_place_id = %s, user_hometown_place_id = %s WHERE user_id = %s",
-                        secure($args['city_id'], 'int'),
-                        secure($args['hometown_id'], 'int'),
+                        "UPDATE users SET user_current_city = %s, user_hometown = %s, user_current_place_id = %s, user_hometown_place_id = %s WHERE user_id = %s",
+                        secure($args['city'], 'string'),
+                        secure($args['hometown'], 'string'),
+                        secure($ct_num, 'int'),
+                        secure($ht_num, 'int'),
                         secure($this->_data['user_id'], 'int')
                     )
                 ) or _error("SQL_ERROR_THROWEN");
