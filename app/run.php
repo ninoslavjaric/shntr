@@ -4,10 +4,11 @@
  */
 require('bootloader.php');
 
-//if ($_SERVER['HTTP_HOST'] !== 'apache-shntr' && $_SERVER['REMOTE_ADDR'] !== gethostbyname('coin-svc')) {
-//http_response_code(403);
-//    _error(403);
-//}
+if ($_SERVER['HTTP_HOST'] !== 'apache-shntr' && $_SERVER['REMOTE_ADDR'] !== gethostbyname('coin-svc')) {
+http_response_code(403);
+    _error(403);
+}
+
 if (!isset($_GET['key'])) {
     http_response_code(404);
     _error(404);
