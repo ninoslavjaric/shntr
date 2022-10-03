@@ -1,13 +1,28 @@
-import { Controller, Get, Post, Header, Request, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Header,
+  Request,
+  Req,
+  HttpCode,
+} from '@nestjs/common';
 import { AppService } from './app.service';
 import * as numble from '@runonbitcoin/nimble';
 import * as Run from 'run-sdk';
+import { Cache } from './Cache';
+import axios, { AxiosResponse } from 'axios';
 
 type SendTokensRequest = Request | { body: string };
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
+
+  @HttpCode(400)
+  fail(json: Record<any, any>): string {
+    return JSON.stringify(json);
+  }
 
   @Get()
   async getHello(): Promise<string> {
@@ -36,7 +51,10 @@ export class AppController {
       const classLocation =
         'd2be93e9866d070bc0247c66faeb6d13506a593926ccaab079657a63f8fd655f_o2';
       const privateKey = request.headers['x-key'];
-      const runner = new Run({ owner: privateKey });
+      const runner = new Run({
+        owner: privateKey,
+        cache: new Cache(),
+      });
 
       runner.trust('*');
       const SHNA = await runner.load(classLocation);
@@ -58,7 +76,8 @@ export class AppController {
           Math.pow(10, SHNA.decimals),
       });
     } catch (e) {
-      return JSON.stringify({
+      console.warn(e);
+      return this.fail({
         message: e.message,
         amount: 0,
       });
@@ -84,7 +103,7 @@ export class AppController {
       });
     } catch (e) {
       console.warn(e);
-      return JSON.stringify({
+      return this.fail({
         message: e.message,
       });
     }

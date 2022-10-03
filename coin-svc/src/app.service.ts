@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as Run from 'run-sdk';
 import * as fs from 'fs';
 import { SecretsManager } from 'aws-sdk';
+import { Cache } from './Cache';
 // import { SHNT } from './SHNT';
 
 interface Credentials {
@@ -92,6 +93,7 @@ export class AppService {
     this.superRunner = new Run({
       owner: purse.private,
       purse: purse.private,
+      cache: new Cache(),
     });
     this.superRunner.activate();
   }
@@ -104,6 +106,7 @@ export class AppService {
     const sender = new Run({
       owner: senderPrivateKey,
       purse: purse.private,
+      cache: new Cache(),
     });
     sender.activate();
     sender.trust(

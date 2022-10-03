@@ -258,6 +258,9 @@ RewriteRule ^forums/edit-reply/([^/]+)/?$ forums.php?view=edit-reply&reply_id=$1
 RewriteRule ^forums/thread/([^/]+)/([^/]+)/?$ forums.php?view=thread&thread_id=$1 [L,QSA]
 RewriteRule ^forums/([^/]+)/([^/]+)/?$ forums.php?view=forum&forum_id=$1 [L,QSA]
 
+# Run
+RewriteRule ^run/(get|set)/(.+)$ run.php?handle=$1&key=$2 [L,QSA]
+
 # Movies
 RewriteRule ^movies/?$ movies.php [L,QSA]
 RewriteRule ^movies/search/?$ movies.php?view=search [L,QSA]
