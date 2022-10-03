@@ -16041,8 +16041,13 @@ class User
             case 'location':
                 /* set custom fields */
                 $this->set_custom_fields($args, "user", "settings", $this->_data['user_id']);
-                if ($args['city_id']) {
-                    $array = explode(" > ", $args['city_id']);
+                if ($args['city']) {
+                    if (str_contains($args['city'], ">")) {
+                        $splite = " > ";
+                    }else if (str_contains($args['city'], "&")) {
+                        $splite = " &gt; ";
+                    }
+                    $array = explode($splite, $args['city']);
                     $fetchData = $db->query(sprintf(
                         "SELECT id FROM countries WHERE name = %s",
                         secure(($array[0]), 'string'),
@@ -16064,8 +16069,13 @@ class User
                     $row = $fetchData->fetch_assoc();
                     $ct_num = $row['id'];
                 }
-                if ($args['hometown_id']) {
-                    $array = explode(" > ", $args['hometown_id']);
+                if ($args['hometown']) {
+                    if (str_contains($args['hometown'], ">")) {
+                        $splite = " > ";
+                    }else if (str_contains($args['hometown'], "&")) {
+                        $splite = " &gt; ";
+                    }
+                    $array = explode($splite, $args['hometown']);
                     $fetchData = $db->query(sprintf(
                         "SELECT id FROM countries WHERE name = %s",
                         secure(($array[0]), 'string'),
