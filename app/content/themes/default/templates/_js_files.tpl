@@ -273,17 +273,17 @@
 <!-- Dependencies Libs [jQuery|Bootstrap] -->
 
 <!-- Dependencies Plugins -->
-<script src="{$system['system_url']}/includes/assets/js/plugins/mustache/mustache.min.js#{$cache_buster}" {if !$user->_logged_in}defer{/if}></script>
-<script src="{$system['system_url']}/includes/assets/js/plugins/jquery.form/jquery.form.min.js#{$cache_buster}" {if !$user->_logged_in}defer{/if}></script>
-<script src="{$system['system_url']}/includes/assets/js/plugins/jquery.inview/jquery.inview.min.js#{$cache_buster}" {if !$user->_logged_in}defer{/if}></script>
-<script src="{$system['system_url']}/includes/assets/js/plugins/autosize/autosize.min.js#{$cache_buster}" {if !$user->_logged_in}defer{/if}></script>
-<script src="{$system['system_url']}/includes/assets/js/plugins/readmore/readmore.min.js#{$cache_buster}" {if !$user->_logged_in}defer{/if}></script>
-<script src="{$system['system_url']}/includes/assets/js/plugins/moment/moment-with-locales.min.js#{$cache_buster}" {if !$user->_logged_in}defer{/if}></script>
-<script src="https://unpkg.com/video.js@7.8.4/dist/video.min.js#{$cache_buster}" {if !$user->_logged_in}defer{/if}></script>
+<script src="{$system['system_url']}/includes/assets/js/plugins/mustache/mustache.min.js?v={$cache_buster}" {if !$user->_logged_in}defer{/if}></script>
+<script src="{$system['system_url']}/includes/assets/js/plugins/jquery.form/jquery.form.min.js?v={$cache_buster}" {if !$user->_logged_in}defer{/if}></script>
+<script src="{$system['system_url']}/includes/assets/js/plugins/jquery.inview/jquery.inview.min.js?v={$cache_buster}" {if !$user->_logged_in}defer{/if}></script>
+<script src="{$system['system_url']}/includes/assets/js/plugins/autosize/autosize.min.js?v={$cache_buster}" {if !$user->_logged_in}defer{/if}></script>
+<script src="{$system['system_url']}/includes/assets/js/plugins/readmore/readmore.min.js?v={$cache_buster}" {if !$user->_logged_in}defer{/if}></script>
+<script src="{$system['system_url']}/includes/assets/js/plugins/moment/moment-with-locales.min.js?v={$cache_buster}" {if !$user->_logged_in}defer{/if}></script>
+<script src="https://unpkg.com/video.js@7.8.4/dist/video.min.js?v={$cache_buster}" {if !$user->_logged_in}defer{/if}></script>
 <script src="https://unpkg.com/videojs-contrib-hls@5.15.0/dist/videojs-contrib-hls.min.js" {if !$user->_logged_in}defer{/if}></script>
 <link href="https://unpkg.com/video.js@7.8.4/dist/video-js.min.css" rel="stylesheet">
 {if $system['auto_play_videos']}
-    <script src="{$system['system_url']}/includes/assets/js/plugins/jquery.fracs/jquery.fracs.min.js#{$cache_buster}" {if !$user->_logged_in}defer{/if}></script>
+    <script src="{$system['system_url']}/includes/assets/js/plugins/jquery.fracs/jquery.fracs.min.js?v={$cache_buster}" {if !$user->_logged_in}defer{/if}></script>
 {/if}
 
 {if $user->_logged_in}
@@ -291,80 +291,80 @@
     <script>var _tooltip = jQuery.fn.tooltip;</script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script>jQuery.fn.tooltip = _tooltip;</script>
-    <script src="{$system['system_url']}/includes/assets/js/plugins/jquery-ui.triggeredAutocomplete/jquery-ui.triggeredAutocomplete.js#{$cache_buster}"></script>
+    <script src="{$system['system_url']}/includes/assets/js/plugins/jquery-ui.triggeredAutocomplete/jquery-ui.triggeredAutocomplete.js?v={$cache_buster}"></script>
     <!-- jQuery-UI -->
 
     <!-- Sticky Sidebar -->
-    <script src="{$system['system_url']}/includes/assets/js/plugins/sticky-sidebar/theia-sticky-sidebar.min.js#{$cache_buster}"></script>
+    <script src="{$system['system_url']}/includes/assets/js/plugins/sticky-sidebar/theia-sticky-sidebar.min.js?v={$cache_buster}"></script>
     <!-- Sticky Sidebar -->
 
     <!-- Google Geocomplete -->
     {if $system['geolocation_enabled']}
-        <script src="{$system['system_url']}/includes/assets/js/plugins/jquery.geocomplete/custom.js#{$cache_buster}"></script>
-{*        <script src="{$system['system_url']}/includes/assets/js/plugins/jquery.geocomplete/jquery.geocomplete.min.js#{$cache_buster}"></script>*}
+        <script src="{$system['system_url']}/includes/assets/js/plugins/jquery.geocomplete/custom.js?v={$cache_buster}"></script>
+{*        <script src="{$system['system_url']}/includes/assets/js/plugins/jquery.geocomplete/jquery.geocomplete.min.js?v={$cache_buster}"></script>*}
 {*        <script src="https://maps.googleapis.com/maps/api/js?libraries=places&key={$system['geolocation_key']}"></script>*}
     {/if}
     <!-- Google Geocomplete -->
 
     <!-- Noty Notifications -->
     {if $system['noty_notifications_enabled']}
-        <script src="{$system['system_url']}/includes/assets/js/plugins/noty/noty.min.js#{$cache_buster}"></script>
-        <link rel="stylesheet" type='text/css' href="{$system['system_url']}/includes/assets/js/plugins/noty/noty.css#{$cache_buster}">
+        <script src="{$system['system_url']}/includes/assets/js/plugins/noty/noty.min.js?v={$cache_buster}"></script>
+        <link rel="stylesheet" type='text/css' href="{$system['system_url']}/includes/assets/js/plugins/noty/noty.css?v={$cache_buster}">
     {/if}
     <!-- Noty Notifications -->
 
     <!-- Crop Profile Picture & Reposition Cover Photo -->
     {if $page == "started" || $page == "profile" || $page == "page" || $page == "group" || $page == "event"}
-        <script src="{$system['system_url']}/includes/assets/js/plugins/jquery-ui.touch-punch/jquery-ui.touch-punch.min.js#{$cache_buster}"></script>
-        <script src="{$system['system_url']}/includes/assets/js/plugins/jquery.imagedrag/jquery.imagedrag.min.js#{$cache_buster}"></script>
-        <script src="{$system['system_url']}/includes/assets/js/plugins/rcrop/rcrop.js#{$cache_buster}"></script>
-        <link rel="stylesheet" type='text/css' href="{$system['system_url']}/includes/assets/js/plugins/rcrop/rcrop.min.css#{$cache_buster}">
+        <script src="{$system['system_url']}/includes/assets/js/plugins/jquery-ui.touch-punch/jquery-ui.touch-punch.min.js?v={$cache_buster}"></script>
+        <script src="{$system['system_url']}/includes/assets/js/plugins/jquery.imagedrag/jquery.imagedrag.min.js?v={$cache_buster}"></script>
+        <script src="{$system['system_url']}/includes/assets/js/plugins/rcrop/rcrop.js?v={$cache_buster}"></script>
+        <link rel="stylesheet" type='text/css' href="{$system['system_url']}/includes/assets/js/plugins/rcrop/rcrop.min.css?v={$cache_buster}">
     {/if}
     <!-- Crop Profile Picture & Reposition Cover Photo -->
 
     <!-- Stories -->
     {if $page == "index" && $view == ""}
-        <script src="{$system['system_url']}/includes/assets/js/plugins/zuck/zuck.js#{$cache_buster}"></script>
+        <script src="{$system['system_url']}/includes/assets/js/plugins/zuck/zuck.js?v={$cache_buster}"></script>
         {if $system['language']['dir'] == "LTR"}
-            <link rel="stylesheet" type='text/css' href="{$system['system_url']}/includes/assets/js/plugins/zuck/zuck.css#{$cache_buster}">
+            <link rel="stylesheet" type='text/css' href="{$system['system_url']}/includes/assets/js/plugins/zuck/zuck.css?v={$cache_buster}">
         {else}
-            <link rel="stylesheet" type='text/css' href="{$system['system_url']}/includes/assets/js/plugins/zuck/zuck.rtl.css#{$cache_buster}">
+            <link rel="stylesheet" type='text/css' href="{$system['system_url']}/includes/assets/js/plugins/zuck/zuck.rtl.css?v={$cache_buster}">
         {/if}
 
-        <script src="{$system['system_url']}/includes/assets/js/plugins/slick/slick.min.js#{$cache_buster}"></script>
-        <link rel="stylesheet" type='text/css' href="{$system['system_url']}/includes/assets/js/plugins/slick/slick.css#{$cache_buster}">
-        <link rel="stylesheet" type='text/css' href="{$system['system_url']}/includes/assets/js/plugins/slick/slick-theme.css#{$cache_buster}">
+        <script src="{$system['system_url']}/includes/assets/js/plugins/slick/slick.min.js?v={$cache_buster}"></script>
+        <link rel="stylesheet" type='text/css' href="{$system['system_url']}/includes/assets/js/plugins/slick/slick.css?v={$cache_buster}">
+        <link rel="stylesheet" type='text/css' href="{$system['system_url']}/includes/assets/js/plugins/slick/slick-theme.css?v={$cache_buster}">
     {/if}
     <!-- Stories -->
 
     <!-- Voice Notes -->
     {if $system['voice_notes_posts_enabled'] || $system['voice_notes_comments_enabled'] || $system['voice_notes_chat_enabled']}
-        <script src="{$system['system_url']}/includes/assets/js/plugins/webaudiorecorder/WebAudioRecorder.min.js#{$cache_buster}"></script>
+        <script src="{$system['system_url']}/includes/assets/js/plugins/webaudiorecorder/WebAudioRecorder.min.js?v={$cache_buster}"></script>
     {/if}
     <!-- Voice Notes -->
 
     <!-- Slick Slider -->
     {if $page == "index"}
-        <script src="{$system['system_url']}/includes/assets/js/plugins/slick/slick.min.js#{$cache_buster}"></script>
-        <link rel="stylesheet" type='text/css' href="{$system['system_url']}/includes/assets/js/plugins/slick/slick.css#{$cache_buster}">
-        <link rel="stylesheet" type='text/css' href="{$system['system_url']}/includes/assets/js/plugins/slick/slick-theme.css#{$cache_buster}">
+        <script src="{$system['system_url']}/includes/assets/js/plugins/slick/slick.min.js?v={$cache_buster}"></script>
+        <link rel="stylesheet" type='text/css' href="{$system['system_url']}/includes/assets/js/plugins/slick/slick.css?v={$cache_buster}">
+        <link rel="stylesheet" type='text/css' href="{$system['system_url']}/includes/assets/js/plugins/slick/slick-theme.css?v={$cache_buster}">
     {/if}
     <!-- Slick Slider -->
 
     <!-- TinyMCE -->
     {if $page == "admin" || $page == "blogs" || $page == "forums"}
-        <script src="{$system['system_url']}/includes/assets/js/plugins/tinymce/tinymce.min.js#{$cache_buster}"></script>
+        <script src="{$system['system_url']}/includes/assets/js/plugins/tinymce/tinymce.min.js?v={$cache_buster}"></script>
     {/if}
     <!-- TinyMCE -->
 
     <!-- Bootstrap selectpicker -->
-    <script src="{$system['system_url']}/includes/assets/js/plugins/bootstrap.select/bootstrap-select.min.js#{$cache_buster}"></script>
-    <link rel="stylesheet" type='text/css' href="{$system['system_url']}/includes/assets/js/plugins/bootstrap.select/bootstrap-select.min.css#{$cache_buster}">
+    <script src="{$system['system_url']}/includes/assets/js/plugins/bootstrap.select/bootstrap-select.min.js?v={$cache_buster}"></script>
+    <link rel="stylesheet" type='text/css' href="{$system['system_url']}/includes/assets/js/plugins/bootstrap.select/bootstrap-select.min.css?v={$cache_buster}">
     <!-- Bootstrap selectpicker -->
 
     <!-- Bootstrap datetimepicker -->
-    <script src="{$system['system_url']}/includes/assets/js/plugins/bootstrap.datetimepicker/bootstrap-datetimepicker.min.js#{$cache_buster}"></script>
-    <link rel="stylesheet" type='text/css' href="{$system['system_url']}/includes/assets/js/plugins/bootstrap.datetimepicker/bootstrap-datetimepicker.min.css#{$cache_buster}">
+    <script src="{$system['system_url']}/includes/assets/js/plugins/bootstrap.datetimepicker/bootstrap-datetimepicker.min.js?v={$cache_buster}"></script>
+    <link rel="stylesheet" type='text/css' href="{$system['system_url']}/includes/assets/js/plugins/bootstrap.datetimepicker/bootstrap-datetimepicker.min.css?v={$cache_buster}">
     <!-- Bootstrap datetimepicker -->
 
     <!-- Stripe & 2Checkout -->
@@ -392,7 +392,7 @@
 
     <!-- Easytimer -->
     {if $system['audio_call_enabled'] || $system['video_call_enabled'] || $system['voice_notes_posts_enabled'] || $system['voice_notes_comments_enabled'] || $system['voice_notes_chat_enabled']}
-        <script src="{$system['system_url']}/includes/assets/js/plugins/easytimer/easytimer.min.js#{$cache_buster}"></script>
+        <script src="{$system['system_url']}/includes/assets/js/plugins/easytimer/easytimer.min.js?v={$cache_buster}"></script>
     {/if}
     <!-- Easytimer -->
 
@@ -405,47 +405,47 @@
 
     <!-- Clipboard -->
     {if $page == "settings" && $system['affiliates_enabled'] || true}
-        <script src="{$system['system_url']}/includes/assets/js/plugins/clipboard/clipboard.min.js#{$cache_buster}"></script>
+        <script src="{$system['system_url']}/includes/assets/js/plugins/clipboard/clipboard.min.js?v={$cache_buster}"></script>
     {/if}
     <!-- Clipboard -->
 {/if}
 <!-- Dependencies Plugins -->
 
 <!-- Sngine [JS] -->
-<script src="{$system['system_url']}/includes/assets/js/core/core.js#{$cache_buster}" {if !$user->_logged_in}defer{/if}></script>
+<script src="{$system['system_url']}/includes/assets/js/core/core.js?v={$cache_buster}" {if !$user->_logged_in}defer{/if}></script>
 {if $user->_logged_in}
-    <script src="{$system['system_url']}/includes/assets/js/core/user.js#{$cache_buster}"></script>
-    <script src="{$system['system_url']}/includes/assets/js/core/post.js#{$cache_buster}"></script>
-    <script src="{$system['system_url']}/includes/assets/js/core/chat.js#{$cache_buster}"></script>
-    <script src="{$system['system_url']}/includes/assets/js/core/showads.js#{$cache_buster}"></script>
+    <script src="{$system['system_url']}/includes/assets/js/core/user.js?v={$cache_buster}"></script>
+    <script src="{$system['system_url']}/includes/assets/js/core/post.js?v={$cache_buster}"></script>
+    <script src="{$system['system_url']}/includes/assets/js/core/chat.js?v={$cache_buster}"></script>
+    <script src="{$system['system_url']}/includes/assets/js/core/showads.js?v={$cache_buster}"></script>
     {if $system['live_enabled'] && $page == "live"}
-        <script src="{$system['system_url']}/includes/assets/js/core/live.js#{$cache_buster}"></script>
+        <script src="{$system['system_url']}/includes/assets/js/core/live.js?v={$cache_buster}"></script>
     {/if}
 {else}
-    <script src="{$system['system_url']}/includes/assets/js/core/login.js#{$cache_buster}" defer></script>
+    <script src="{$system['system_url']}/includes/assets/js/core/login.js?v={$cache_buster}" defer></script>
 {/if}
 <!-- Sngine [JS] -->
 
 {if $page == "admin"}
     <!-- Dependencies Plugins -->
-    <script src="{$system['system_url']}/includes/assets/js/plugins/bootstrap.colorpicker/bootstrap-colorpicker.min.js#{$cache_buster}"></script>
-    <link rel="stylesheet" type='text/css' href="{$system['system_url']}/includes/assets/js/plugins/bootstrap.colorpicker/bootstrap-colorpicker.min.css#{$cache_buster}">
+    <script src="{$system['system_url']}/includes/assets/js/plugins/bootstrap.colorpicker/bootstrap-colorpicker.min.js?v={$cache_buster}"></script>
+    <link rel="stylesheet" type='text/css' href="{$system['system_url']}/includes/assets/js/plugins/bootstrap.colorpicker/bootstrap-colorpicker.min.css?v={$cache_buster}">
 
-    <script src="{$system['system_url']}/includes/assets/js/plugins/jquery.treegrid/jquery.treegrid.min.js#{$cache_buster}"></script>
-    <script src="{$system['system_url']}/includes/assets/js/plugins/jquery.treegrid/jquery.treegrid.fontawesome.js#{$cache_buster}"></script>
-    <link rel="stylesheet" type='text/css' href="{$system['system_url']}/includes/assets/js/plugins/jquery.treegrid/jquery.treegrid.css#{$cache_buster}">
+    <script src="{$system['system_url']}/includes/assets/js/plugins/jquery.treegrid/jquery.treegrid.min.js?v={$cache_buster}"></script>
+    <script src="{$system['system_url']}/includes/assets/js/plugins/jquery.treegrid/jquery.treegrid.fontawesome.js?v={$cache_buster}"></script>
+    <link rel="stylesheet" type='text/css' href="{$system['system_url']}/includes/assets/js/plugins/jquery.treegrid/jquery.treegrid.css?v={$cache_buster}">
 
-    <script src="{$system['system_url']}/includes/assets/js/plugins/codemirror/lib/codemirror.js#{$cache_buster}"></script>
-    <script src="{$system['system_url']}/includes/assets/js/plugins/codemirror/mode/css/css.js#{$cache_buster}"></script>
-    <script src="{$system['system_url']}/includes/assets/js/plugins/codemirror/mode/javascript/javascript.js#{$cache_buster}"></script>
-    <link rel="stylesheet" type='text/css' href="{$system['system_url']}/includes/assets/js/plugins/codemirror/lib/codemirror.css#{$cache_buster}">
+    <script src="{$system['system_url']}/includes/assets/js/plugins/codemirror/lib/codemirror.js?v={$cache_buster}"></script>
+    <script src="{$system['system_url']}/includes/assets/js/plugins/codemirror/mode/css/css.js?v={$cache_buster}"></script>
+    <script src="{$system['system_url']}/includes/assets/js/plugins/codemirror/mode/javascript/javascript.js?v={$cache_buster}"></script>
+    <link rel="stylesheet" type='text/css' href="{$system['system_url']}/includes/assets/js/plugins/codemirror/lib/codemirror.css?v={$cache_buster}">
 
-    <script src="{$system['system_url']}/includes/assets/js/plugins/tagify/jquery.tagify.min.js#{$cache_buster}"></script>
-    <link rel="stylesheet" type='text/css' href="{$system['system_url']}/includes/assets/js/plugins/tagify/tagify.css#{$cache_buster}">
+    <script src="{$system['system_url']}/includes/assets/js/plugins/tagify/jquery.tagify.min.js?v={$cache_buster}"></script>
+    <link rel="stylesheet" type='text/css' href="{$system['system_url']}/includes/assets/js/plugins/tagify/tagify.css?v={$cache_buster}">
     <!-- Dependencies Plugins [JS] -->
 
     <!-- Sngine [JS] -->
-    <script src="{$system['system_url']}/includes/assets/js/core/admin.js#{$cache_buster}"></script>
+    <script src="{$system['system_url']}/includes/assets/js/core/admin.js?v={$cache_buster}"></script>
     <!-- Sngine [JS] -->
 
     <!-- Admin Charts -->
