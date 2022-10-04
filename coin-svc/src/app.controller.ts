@@ -58,6 +58,8 @@ export class AppController {
         // cache: new Cache(),
       });
 
+      runner.activate();
+
       runner.trust('*');
       const SHNA = await runner.load(classLocation);
       // await SHNA.sync();
