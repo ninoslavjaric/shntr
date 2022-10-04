@@ -52,6 +52,9 @@ services:
       - backend-shntr
     volumes:
       - ~/.aws:/root/.aws
+      - ./coin-svc/cache:/tmp/cache
+      - ./coin-svc:/usr/app
+    command: sh /usr/app/runner.sh
 networks:
   frontend-shntr:
   backend-shntr:

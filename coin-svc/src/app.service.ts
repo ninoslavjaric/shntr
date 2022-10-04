@@ -93,7 +93,9 @@ export class AppService {
     this.superRunner = new Run({
       owner: purse.private,
       purse: purse.private,
-      cache: new Cache(),
+      // cache: new Cache(),
+      networkTimeout: 600000,
+      timeout: 600000,
     });
     this.superRunner.activate();
   }
@@ -106,7 +108,9 @@ export class AppService {
     const sender = new Run({
       owner: senderPrivateKey,
       purse: purse.private,
-      cache: new Cache(),
+      // cache: new Cache(),
+      networkTimeout: 600000,
+      timeout: 600000,
     });
     sender.activate();
     sender.trust(
