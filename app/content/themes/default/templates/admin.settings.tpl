@@ -277,12 +277,12 @@
 
                         <div class="form-group form-row">
                             <label class="col-md-3 form-control-label">
-                                {__("Blogs Description")}
+                                {__("News Description")}
                             </label>
                             <div class="col-md-9">
                                 <textarea class="form-control" name="system_description_blogs" rows="3">{$system['system_description_blogs']}</textarea>
                                 <span class="form-text">
-                                    {__("Description of your blogs module")}
+                                    {__("Description of your news module")}
                                 </span>
                             </div>
                         </div>
@@ -3631,7 +3631,7 @@
                                 <div style="width: 40px; height: 40px;"></div>
                             </div>
                             <div>
-                                <div class="form-control-label h6 mb5">{__("Photo Upload in Blogs and Forums")} </div>
+                                <div class="form-control-label h6 mb5">{__("Photo Upload in News and Forums")} </div>
                                 <div class="form-text d-none d-sm-block">{__("Enable photo upload in articles and forums threads")}</div>
                             </div>
                             <div class="text-right">

@@ -82,9 +82,9 @@
                             {/if}
                             {if $system['blogs_enabled']}
                                 <div class="col-sm-6 col-md-6 col-lg-4 mb25">
-                                    <a href="{$system['system_url']}/blogs" class="directory-card">
+                                    <a href="{$system['system_url']}/news" class="directory-card">
                                         {include file='__svg_icons.tpl' icon="blogs" width="120px" height="120px"}
-                                        <h5 class="title">{__("Blogs")}</h5>
+                                        <h5 class="title">{__("News")}</h5>
                                         <p>
                                             {__("Sharing thoughts, ideas and creating amazing contents")}
                                         </p>
@@ -223,9 +223,9 @@
                             {/if}
                             {if $system['blogs_enabled']}
                                 <li>
-                                    <a href="{$system['system_url']}/blogs">
+                                    <a href="{$system['system_url']}/news">
                                         {include file='__svg_icons.tpl' icon="blogs" class="mr10" width="24px" height="24px"}
-                                        {__("Blogs")}
+                                        {__("Bews")}
                                     </a>
                                 </li>
                             {/if}

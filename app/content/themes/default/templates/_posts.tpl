@@ -52,7 +52,7 @@
     {elseif $_filter == "article"}
     	{if $user->_data['can_write_articles']}
 	    	<div class="float-right">
-	    		<a href="{$system['system_url']}/blogs/new" class="btn btn-sm btn-primary">
+	    		<a href="{$system['system_url']}/news/new" class="btn btn-sm btn-primary">
 	                <i class="fa fa-plus-circle mr5"></i>{__("Add New Article")}
 	            </a>
 	    	</div>

@@ -9,7 +9,7 @@
 
             <div class="d-flex flex-column w-100">
                 <h2>
-                    {__("Blogs")}
+                    {__("News")}
                     <span style="max-width: 700px">{__($system['system_description_blogs'])}</span>
                 </h2>
             </div>
@@ -93,7 +93,7 @@
                         <!-- add new article -->
                         {if $user->_logged_in && $user->_data['can_write_articles']}
                             <div class="mb10 d-none d-sm-block">
-                                <a href="{$system['system_url']}/blogs/new" class="btn btn-success btn-block">
+                                <a href="{$system['system_url']}/news/new" class="btn btn-success btn-block">
                                     <i class="fa fa-edit mr5"></i>{__("Write New Article")}
                                 </a>
                             </div>
@@ -122,7 +122,7 @@
                             <ul class="article-categories clearfix">
                                 {foreach $blogs_categories as $category}
                                     <li>
-                                        <a class="article-category" href="{$system['system_url']}/blogs/category/{$category['category_id']}/{$category['category_url']}">
+                                        <a class="article-category" href="{$system['system_url']}/news/category/{$category['category_id']}/{$category['category_url']}">
                                             {__($category['category_name'])}
                                         </a>
                                     </li>
@@ -163,7 +163,7 @@
                             <div class="article-wrapper {if $user->_logged_in}pb10{/if}">
                                 {if $article['manage_post']}
                                     <div class="text-right">
-                                        <a class="btn btn-sm btn-outline-primary rounded-pill ml5 mb5" href="{$system['system_url']}/blogs/edit/{$article['post_id']}">
+                                        <a class="btn btn-sm btn-outline-primary rounded-pill ml5 mb5" href="{$system['system_url']}/news/edit/{$article['post_id']}">
                                             <i class="fa fa-edit fa-fw mr5"></i> {__("Edit")}
                                         </a>
                                         <button class="btn btn-sm btn-outline-danger rounded-pill ml5 mb5 js_delete-article" data-id="{$article['post_id']}">
@@ -174,7 +174,7 @@
 
                                 <!-- article category -->
                                 <div class="mb10">
-                                    <a class="article-category" href="{$system['system_url']}/blogs/category/{$article['article']['category_id']}/{$article['article']['category_url']}">
+                                    <a class="article-category" href="{$system['system_url']}/news/category/{$article['article']['category_id']}/{$article['article']['category_url']}">
                                         {__($article['article']['category_name'])}
                                     </a>
                                 </div>
@@ -227,25 +227,25 @@
 
                                 <!-- social share -->
                                 <div class="mb20">
-                                    <a href="http://www.facebook.com/sharer.php?u={$system['system_url']}/blogs/{$article['post_id']}/{$article['article']['title_url']}" class="btn btn-sm btn-rounded btn-social-icon btn-facebook" target="_blank">
+                                    <a href="http://www.facebook.com/sharer.php?u={$system['system_url']}/news/{$article['post_id']}/{$article['article']['title_url']}" class="btn btn-sm btn-rounded btn-social-icon btn-facebook" target="_blank">
                                         <i class="fab fa-facebook-f"></i>
                                     </a>
-                                    <a href="https://twitter.com/intent/tweet?url={$system['system_url']}/blogs/{$article['post_id']}/{$article['article']['title_url']}" class="btn btn-sm btn-rounded btn-social-icon btn-rounded btn-twitter" target="_blank">
+                                    <a href="https://twitter.com/intent/tweet?url={$system['system_url']}/news/{$article['post_id']}/{$article['article']['title_url']}" class="btn btn-sm btn-rounded btn-social-icon btn-rounded btn-twitter" target="_blank">
                                         <i class="fab fa-twitter"></i>
                                     </a>
-                                    <a href="https://vk.com/share.php?url={$system['system_url']}/blogs/{$article['post_id']}/{$article['article']['title_url']}" class="btn btn-sm btn-rounded btn-social-icon btn-vk" target="_blank">
+                                    <a href="https://vk.com/share.php?url={$system['system_url']}/news/{$article['post_id']}/{$article['article']['title_url']}" class="btn btn-sm btn-rounded btn-social-icon btn-vk" target="_blank">
                                         <i class="fab fa-vk"></i>
                                     </a>
-                                    <a href="https://www.linkedin.com/shareArticle?mini=true&url={$system['system_url']}/blogs/{$article['post_id']}/{$article['article']['title_url']}" class="btn btn-sm btn-rounded btn-social-icon btn-linkedin" target="_blank">
+                                    <a href="https://www.linkedin.com/shareArticle?mini=true&url={$system['system_url']}/news/{$article['post_id']}/{$article['article']['title_url']}" class="btn btn-sm btn-rounded btn-social-icon btn-linkedin" target="_blank">
                                         <i class="fab fa-linkedin"></i>
                                     </a>
-                                    <a href="https://api.whatsapp.com/send?text={$system['system_url']}/blogs/{$article['post_id']}/{$article['article']['title_url']}" class="btn btn-sm btn-rounded btn-social-icon btn-whatsapp" target="_blank">
+                                    <a href="https://api.whatsapp.com/send?text={$system['system_url']}/news/{$article['post_id']}/{$article['article']['title_url']}" class="btn btn-sm btn-rounded btn-social-icon btn-whatsapp" target="_blank">
                                         <i class="fab fa-whatsapp"></i>
                                     </a>
-                                    <a href="https://reddit.com/submit?url={$system['system_url']}/blogs/{$article['post_id']}/{$article['article']['title_url']}" class="btn btn-sm btn-rounded btn-social-icon btn-reddit" target="_blank">
+                                    <a href="https://reddit.com/submit?url={$system['system_url']}/news/{$article['post_id']}/{$article['article']['title_url']}" class="btn btn-sm btn-rounded btn-social-icon btn-reddit" target="_blank">
                                         <i class="fab fa-reddit"></i>
                                     </a>
-                                    <a href="https://pinterest.com/pin/create/button/?url={$system['system_url']}/blogs/{$article['post_id']}/{$article['article']['title_url']}" class="btn btn-sm btn-rounded btn-social-icon btn-pinterest" target="_blank">
+                                    <a href="https://pinterest.com/pin/create/button/?url={$system['system_url']}/news/{$article['post_id']}/{$article['article']['title_url']}" class="btn btn-sm btn-rounded btn-social-icon btn-pinterest" target="_blank">
                                         <i class="fab fa-pinterest"></i>
                                     </a>
                                 </div>
@@ -375,7 +375,7 @@
                         <!-- add new article -->
                         {if $user->_logged_in && $user->_data['can_write_articles']}
                             <div class="mb10 d-none d-sm-block">
-                                <a href="{$system['system_url']}/blogs/new" class="btn btn-sm btn-success btn-block">
+                                <a href="{$system['system_url']}/news/new" class="btn btn-sm btn-success btn-block">
                                     <i class="fa fa-edit mr5"></i>{__("Write New Article")}
                                 </a>
                             </div>
@@ -392,7 +392,7 @@
                         <ul class="article-categories clearfix">
                             {foreach $blogs_categories as $category}
                                 <li>
-                                    <a class="article-category" href="{$system['system_url']}/blogs/category/{$category['category_id']}/{$category['category_url']}">
+                                    <a class="article-category" href="{$system['system_url']}/news/category/{$category['category_id']}/{$category['category_url']}">
                                         {__($category['category_name'])}
                                     </a>
                                 </li>
@@ -430,7 +430,7 @@
                     <div class="card-header with-icon">
                         <i class="fa fa-blog mr10" style="color: #f25e4e;"></i>{__("Edit Article")}
                         <div class="float-right">
-                            <a href="{$system['system_url']}/blogs/{$article['post_id']}/{$article['article']['title_url']}" class="btn btn-sm btn-light">
+                            <a href="{$system['system_url']}/news/{$article['post_id']}/{$article['article']['title_url']}" class="btn btn-sm btn-light">
                                 <i class="fa fa-arrow-circle-left mr5"></i>{__("Go Back")}
                             </a>
                         </div>
