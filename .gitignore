@@ -6,6 +6,7 @@ coin-svc/node_modules
 coin-svc/.runcache
 coin-svc/purse.json
 /coin-svc/dist
+/coin-svc/cache
 app/includes/config.php
 app/includes/libs/HTMLPurifier/HTMLPurifier/DefinitionCache/Serializer/HTML/
 app/content/uploads/photos

@@ -53,7 +53,9 @@ export class AppController {
       const privateKey = request.headers['x-key'];
       const runner = new Run({
         owner: privateKey,
-        cache: new Cache(),
+        networkTimeout: 600000,
+        timeout: 600000,
+        // cache: new Cache(),
       });
 
       runner.trust('*');
@@ -76,7 +78,7 @@ export class AppController {
           Math.pow(10, SHNA.decimals),
       });
     } catch (e) {
-      console.warn(e);
+      console.warn('Balance exception ', e.message);
       return this.fail({
         message: e.message,
         amount: 0,
@@ -102,7 +104,7 @@ export class AppController {
         message: message,
       });
     } catch (e) {
-      console.warn(e);
+      console.warn('Balance exception ', e.message);
       return this.fail({
         message: e.message,
       });
