@@ -14,9 +14,9 @@
                         <table class="table table-striped table-bordered table-hover js_dataTable">
                             <thead>
                             <tr>
-                                <th>{__("ID")}</th>
                                 <th>{__("Subject")}</th>
                                 <th>{__("Sender")}</th>
+                                <th>{__("Recipient")}</th>
                                 <th>{__("Date")}</th>
                             </tr>
                             </thead>
@@ -24,12 +24,14 @@
                             {foreach $rows as $row}
                                 <tr>
                                     <td>
-                                        <a href="/admincp/webmail/email/{$row['key']}">{$row['key']}</a>
+                                        <a href="/admincp/webmail/email/{$row['key']}">{$row['subject']}</a>
                                     </td>
-                                    <td>Subject 123</td>
-                                    <td>aaa@domain.com</td>
-                                    <td>
-                                        <span class="js_moment" data-time="{$row['lastModified']|date_format}">{$row['lastModified']|date_format}</span>
+                                    <td>{$row['from']}</td>
+                                    <td>{$row['to']}</td>
+                                    <td data-order="{$row['lastModified']|strtotime}">
+                                        <span class="js_moment" data-time="{$row['date']|date_format:"%e %B %Y"}">
+                                            {$row['date']|date_format:"%e %B %Y"}
+                                        </span>
                                     </td>
                                 </tr>
                             {/foreach}

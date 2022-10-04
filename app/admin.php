@@ -3313,22 +3313,26 @@ try {
 
             switch ($_GET['sub_view']) {
                 case '':
+                    require_once __DIR__.'/includes/libs/vendor/autoload.php';
+
+                    $parser = new PhpMimeMailParser\Parser();
+
                     $emails = aws_s3_list_dir('shntr.mails');
 
                     foreach ($emails as &$email) {
+                        $emailContent = aws_s3_get_object('shntr.mails', $email['Key']);
+
+                        $parser->setText($emailContent);
+
                         $email = [
                             'key' => $email['Key'],
-                            'lastModified' => $email['LastModified']->getTimestamp(),
+                            'lastModified' => $email['LastModified'],//->getTimestamp(),
+                            'subject' => $parser->getHeader('subject'),
+                            'from' => $parser->getHeader('from'),
+                            'date' => $parser->getHeader('date'),
+                            'to' => $parser->getHeader('to'),
                         ];
                     }
-
-                    usort($emails, function($email1, $email2) {
-                        if ($email1['lastModified'] === $email2['lastModified']) {
-                            return 0;
-                        }
-
-                        return ($email1['lastModified'] > $email2['lastModified']) ? -1 : 1;
-                    });
 
                     $smarty->assign('rows', $emails);
                     break;
@@ -3342,6 +3346,7 @@ try {
 
                     $parser = new PhpMimeMailParser\Parser();
                     $email = aws_s3_get_object('shntr.mails', $_GET['id']);
+
                     $parser->setText($email);
 
                     $email = $parser->getMessageBody('html') ?? $parser->getMessageBody();
