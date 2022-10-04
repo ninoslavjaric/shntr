@@ -304,12 +304,12 @@
                             <div class='collapse {if $view == "blogs"}show{/if}' id="blogs">
                                 <ul>
                                     <li {if $view == "blogs" && $sub_view == ""}class="active"{/if}>
-                                        <a href="{$system['system_url']}/{$control_panel['url']}/blogs">
+                                        <a href="{$system['system_url']}/{$control_panel['url']}/news">
                                             {__("List Articles")}
                                         </a>
                                     </li>
                                     <li {if $view == "blogs" && $sub_view == "categories"}class="active"{/if}>
-                                        <a href="{$system['system_url']}/{$control_panel['url']}/blogs/categories">
+                                        <a href="{$system['system_url']}/{$control_panel['url']}/news/categories">
                                             {__("List Categories")}
                                         </a>
                                     </li>

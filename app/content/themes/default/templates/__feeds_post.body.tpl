@@ -115,7 +115,7 @@
                         <!-- Pin -->
                         <!-- Edit -->
                         {if $_post['post_type'] == "article"}
-                            <a href="{$system['system_url']}/blogs/edit/{$_post['post_id']}" class="dropdown-item pointer">
+                            <a href="{$system['system_url']}/news/edit/{$_post['post_id']}" class="dropdown-item pointer">
                                 <div class="action no-desc">
                                     <i class="fa fa-pencil-alt fa-fw"></i> {__("Edit Article")}
                                 </div>
@@ -622,12 +622,12 @@
     <div class="mt10">
         <div class="post-media">
             {if $_post['article']['cover']}
-                <a class="post-media-image" href="{$system['system_url']}/blogs/{$_post['post_id']}/{$_post['article']['title_url']}">
+                <a class="post-media-image" href="{$system['system_url']}/news/{$_post['post_id']}/{$_post['article']['title_url']}">
                     <div style="padding-top: 50%; background-size: cover; background-image:url('{$system['system_uploads']}/{$_post['article']['cover']}');"></div>
                 </a>
             {/if}
             <div class="post-media-meta">
-                <a class="title mb5" href="{$system['system_url']}/blogs/{$_post['post_id']}/{$_post['article']['title_url']}">{$_post['article']['title']}</a>
+                <a class="title mb5" href="{$system['system_url']}/news/{$_post['post_id']}/{$_post['article']['title_url']}">{$_post['article']['title']}</a>
                 <div class="text mb5">{$_post['article']['text_snippet']|truncate:400}</div>
             </div>
         </div>

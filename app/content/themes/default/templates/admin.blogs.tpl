@@ -2,24 +2,24 @@
     <div class="card-header with-icon">
         {if $sub_view == "find"}
             <div class="float-right">
-                <a href="{$system['system_url']}/{$control_panel['url']}/blogs" class="btn btn-sm btn-light">
+                <a href="{$system['system_url']}/{$control_panel['url']}/news" class="btn btn-sm btn-light">
                     <i class="fa fa-arrow-circle-left mr5"></i>{__("Go Back")}
                 </a>
             </div>
         {elseif $sub_view == "categories"}
             <div class="float-right">
-                <a href="{$system['system_url']}/{$control_panel['url']}/blogs/add_category" class="btn btn-sm btn-primary">
+                <a href="{$system['system_url']}/{$control_panel['url']}/news/add_category" class="btn btn-sm btn-primary">
                     <i class="fa fa-plus mr5"></i>{__("Add New Category")}
                 </a>
             </div>
         {elseif $sub_view == "add_category" || $sub_view == "edit_category"}
             <div class="float-right">
-                <a href="{$system['system_url']}/{$control_panel['url']}/blogs/categories" class="btn btn-sm btn-light">
+                <a href="{$system['system_url']}/{$control_panel['url']}/news/categories" class="btn btn-sm btn-light">
                     <i class="fa fa-arrow-circle-left mr5"></i>{__("Go Back")}
                 </a>
             </div>
         {/if}
-        <i class="fab fa-blogger-b mr10"></i>{__("Blogs")}
+        <i class="fab fa-blogger-b mr10"></i>{__("News")}
         {if $sub_view == "find"} &rsaquo; {__("Find")}{/if}
         {if $sub_view == "categories"} &rsaquo; {__("Categories")}{/if}
         {if $sub_view == "add_category"} &rsaquo; {__("Categories")} &rsaquo; {__("Add New Category")}{/if}
@@ -99,7 +99,7 @@
             </div>
 
             {$pager}
-            
+
         </div>
 
     {elseif $sub_view == "categories"}
@@ -247,6 +247,6 @@
                 <button type="submit" class="btn btn-primary">{__("Save Changes")}</button>
             </div>
         </form>
-        
+
     {/if}
 </div>

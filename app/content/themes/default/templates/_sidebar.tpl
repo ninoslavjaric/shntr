@@ -235,7 +235,7 @@
 
             {if $system['blogs_enabled']}
                 <li {if $page == "blogs"}class="active"{/if}>
-                    <a href="{$system['system_url']}/blogs">
+                    <a href="{$system['system_url']}/news">
                         {include file='__svg_icons.tpl' icon="shn-news" class="mr10" width="24px" height="24px"}
                         {__("News")}
                     </a>

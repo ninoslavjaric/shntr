@@ -301,7 +301,7 @@
                 {/if}
                 {if $user->_data['can_write_articles'] && $_handle != "page" && $_handle != "group" && $_handle != "event"}
                     <li class="col-md-6">
-                        <a class="publisher-tools-tab link js_publisher-tab" data-tab="article" href="{$system['system_url']}/blogs/new">
+                        <a class="publisher-tools-tab link js_publisher-tab" data-tab="article" href="{$system['system_url']}/news/new">
                             {include file='__svg_icons.tpl' icon="write_article" class="mr5" width="24px" height="24px"}
                             {__("Write Article")}
                         </a>
