@@ -737,5 +737,8 @@
     {elseif $icon == "shn-magnifier"}
         {include file='../images/svg/shn-magnifier.svg'}
 
+    {elseif $icon == "shntr-fund-success-logo"}
+        {include file='../images/svg/shntr-fund-success-logo.svg'}
+
     {/if}
 </div>

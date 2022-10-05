@@ -179,6 +179,7 @@ function initialize() {
 
 // modal
 function modal() {
+    var className = arguments[0].replace('#', '');
     if (arguments[0] == "#modal-login" || arguments[0] == "#chat-calling" || arguments[0] == "#chat-ringing") {
         /* disable the backdrop (don't close modal when click outside) */
         if ($('#modal').data('bs.modal')) {
@@ -187,6 +188,14 @@ function modal() {
             $('#modal').modal({ backdrop: 'static', keyboard: false });
         }
     }
+
+    $('#modal').addClass(className);
+
+    $('#modal').on('hidden.bs.modal', function (e) {
+        $('#modal').removeClass(className);
+        $('.modal-dialog').removeClass('modal-dialog-centered');
+    })
+
     /* check if the modal not visible, show it */
     if (!$('#modal').is(":visible")) $('#modal').modal('show');
     /* prepare modal size */
@@ -202,6 +211,9 @@ function modal() {
             break;
         case 'extra-large':
             $('.modal-dialog').addClass('modal-xl');
+            break;
+        case 'modal-dialog-centered':
+            $('.modal-dialog').addClass('modal-dialog-centered');
             break;
     }
     /* update the modal-content with the rendered template */
@@ -222,6 +234,28 @@ function confirm(title, message, callback, password_check = false, extra_content
     });
 }
 
+function fund(title, message, callback, password_check = false, extra_content = '') {
+    modal("#modal-fund", { title, message, password_check, extra_content });
+    $("#modal-fund-ok").on('click focusout', function(event){
+        var eventType = event.type;
+        var _this = $(this);
+        var value = _this.closest('.modal-content').find('input#tokenInput').val();
+
+        _this.tooltip({
+            title: 'At least one token must be entered',
+            trigger: 'manual',
+        });
+
+        if (value == 0) {
+            _this.tooltip('show');
+            eventType === 'focusout' && _this.tooltip('hide');
+            event.stopPropagation();
+            return;
+        }
+
+        if (callback) callback(value);
+    });
+}
 
 // render template
 function render_template(selector, options) {

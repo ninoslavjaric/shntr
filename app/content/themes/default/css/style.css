@@ -341,6 +341,44 @@ body.night-mode .modal-footer {
   padding-bottom: 0;
   border-bottom: 0;
 }
+
+.modal-fund-success {
+  backdrop-filter: blur(18px);
+}
+
+.modal-fund-success .modal-content {
+  background-color: #00A4DC;
+  border-radius: 20px;
+  border: none !important;
+}
+
+.modal-fund-success .modal-body {
+  text-align: center;
+  padding: 40px;
+  border: none !important;
+}
+
+.modal-fund-success .shntr-fund-success-logo {
+  margin-bottom: 15px;
+}
+
+.modal-fund-success p {
+  color: #fff;
+  font-size: 18px;
+  margin: 0;
+}
+
+.modal-fund-success .close {
+  position: absolute;
+  top: 14px;
+  left: 19px;
+  font-size: 15px;
+  color: #fff;
+  opacity: 1;
+  text-shadow: unset;
+  cursor: pointer;
+}
+
 /* == */
 
 /* == Alert == */

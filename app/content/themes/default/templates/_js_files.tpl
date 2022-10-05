@@ -259,6 +259,8 @@
     __['UNSUBSCRIBE'] = "{__('UNSUBSCRIBE')}";
     __['Unblock Notifications'] = "{__('Unblock Notifications')}";
     __['Follow these instructions to allow notifications:'] = "{__('Follow these instructions to allow notifications:')}";
+    __['Send tokens'] = "{__('Send tokens')}";
+    __['How many tokens to send?'] = "{__('How many tokens to send?')}";
 </script>
 <!-- Initialize -->
 

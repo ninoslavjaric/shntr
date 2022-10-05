@@ -80,6 +80,33 @@
         <div class="spinner-border text-primary"></div>
     </div>
 </script>
+
+<script id="modal-fund" type="text/template">
+    <div class="modal-header">
+        <h6 class="modal-title">{literal}{{title}}{/literal}</h6>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+            <label for="tokenInput">{literal}{{message}}{/literal}</label>
+            <input type="number" class="form-control" id="tokenInput" min="0" placeholder="0">
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-dismiss="modal">{__("Cancel")}</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="modal-fund-ok">{__("Confirm")}</button>
+    </div>
+</script>
+
+<script id="modal-fund-success" type="text/template">
+    <div class="modal-body">
+        <div class="close" data-dismiss="modal"><i class="fa fa-times"></i></div>
+        {include file='__svg_icons.tpl' icon="shntr-fund-success-logo" class="shntr-fund-success-logo"}
+        <p>Token Sent</p>
+    </div>
+</script>
 <!-- Modals -->
 
 
