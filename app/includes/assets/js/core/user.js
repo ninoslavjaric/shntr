@@ -1544,8 +1544,9 @@ $(function () {
                 modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
             });
     });
+
     /* friend & unfriend */
-    $('body').on('click', '.js_friend-add, .js_friend-cancel, .js_friend-remove, .js_friend-fund', function () {
+    $('body').on('click', '.js_friend-add, .js_friend-cancel, .js_friend-remove', function () {
         var _this = $(this);
         var id = _this.data('uid');
         var _do = 'friend-remove';
@@ -1555,18 +1556,11 @@ $(function () {
             _do = 'friend-add';
         } else if (_this.hasClass('js_friend-cancel')) {
             _do = 'friend-cancel';
-        } else if (_this.hasClass('js_friend-fund') ) {
-            _do = 'friend-fund';
-            value = prompt("How many tokens to send?", "0");
-
-            if (isNaN(value) || Number(value) <= 0) {
-                alert(`${value} is not valid`)
-                return
-            }
-            window.onbeforeunload = () => true;
         }
+
         /* button loading */
         button_status(_this, "loading");
+
         /* post the request */
         $.post(api['users/connect'], { 'do': _do, 'uid': 0, 'id': id, 'value': value }, function (response) {
             window.onbeforeunload = null;
@@ -1580,8 +1574,6 @@ $(function () {
                 if (_do == 'friend-add') {
                     _this.after('<button type="button" class="btn btn-sm btn-warning js_friend-cancel" data-uid="' + id + '"><i class="fa fa-clock mr5"></i>' + __['Sent'] + '</button>');
                     _this.remove();
-                } else if (_do == 'friend-fund') {
-                    alert(response.message);
                 } else {
                     _this.after('<button type"button" class="btn btn-sm btn-dark js_friend-add" data-uid="' + id + '"><i class="fa fa-user-plus mr5"></i>' + __['Add Friend'] + '</button>');
                     _this.remove();
@@ -1594,6 +1586,7 @@ $(function () {
                 modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
             });
     });
+
     /* follow & unfollow */
     $('body').on('click', '.js_follow, .js_unfollow', function () {
         var _this = $(this);
@@ -1820,27 +1813,48 @@ $(function () {
                 modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
             });
     });
-    /* group join & leave */
-    $('body').on('click', '.js_group-fund, .js_event-fund, .js_page-fund', function () {
-        const value = prompt("How many tokens to send?", "0");
 
-        if (isNaN(value) || Number(value) <= 0) {
-            alert(`${value} is not valid`)
-            return;
-        }
-        const _this = $(this)
-        window.onbeforeunload = () => true;
-        button_status(_this, "loading");
-        const id = _this.data('id');
-        const _do = _this.attr('class').match(/js_(\w+-fund)/)[1];
-        $.post(api['users/connect'], { 'do': _do, 'uid': 0, 'id': id, 'value': value }, function (response) {
-            button_status(_this, "reset");
-            window.onbeforeunload = null;
-            alert(response.message);
-        }).fail(function () {
-            button_status(_this, "reset");
-            window.onbeforeunload = null;
-            alert('Funding failed');
+    /* group join & leave */
+    $('body').on('click', '.js_friend-fund, .js_group-fund, .js_event-fund, .js_page-fund', function () {
+        var _this = $(this);
+
+        fund(__['Send tokens'], __['How many tokens to send?'], function (value) {
+            button_status(_this, "loading");
+
+            if (isNaN(value) || Number(value) <= 0) {
+                setTimeout(() => {
+                    button_status(_this, "reset");
+                    modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                }, 500);
+                return;
+            }
+
+            window.onbeforeunload = () => true;
+            var _do = _this.attr('class').match(/js_(\w+-fund)/)[1];
+            var id = _this.data('uid') || _this.data('id');
+
+            /* post the request */
+            $.post(api['users/connect'], { 'do': _do, 'uid': 0, 'id': id, 'value': value }, function (response) {
+                window.onbeforeunload = null;
+
+                if (response && response.message) {
+                    setTimeout(() => {
+                        button_status(_this, "reset");
+                        modal('#modal-fund-success', null, 'modal-dialog-centered');
+                    }, 500);
+                } else {
+                    setTimeout(() => {
+                        button_status(_this, "reset");
+                        modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                    }, 500);
+                }
+            }, "json")
+            .fail(function () {
+                setTimeout(() => {
+                    button_status(_this, "reset");
+                    modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                }, 500);
+            });
         });
     });
 
