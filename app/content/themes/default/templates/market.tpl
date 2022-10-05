@@ -256,9 +256,6 @@
                                         <a class="btn btn-sm btn-outline-secondary rounded-pill" href="{$system['system_url']}/posts/{$post['post_id']}">
                                             {__("More")}
                                         </a>
-                                        {if $post['author_id'] != $user->_data['user_id'] }
-                                            <button type="button" class="btn btn-sm btn-info rounded-pill js_chat-start" data-uid="{$post['author_id']}" data-name="{$post['post_author_name']}"><i class="fa fa-comments mr5"></i>{__("Buy")}</button>
-                                        {/if}
                                     </div>
                                 </div>
                                 <div class="product-info">
