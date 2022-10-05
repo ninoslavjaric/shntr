@@ -2270,6 +2270,31 @@ class User
         return null;
     }
 
+    /**
+     * Number of tokens set for paywall from paywall owner
+     * @param int $user_id
+     * @return int|null
+     * @throws Exception
+     */
+    public function paywalledPrice(int $user_id): ?int
+    {
+        global $db;
+
+            $check = $db->query(
+                sprintf(
+                    'SELECT paywall_price as price FROM paywalls WHERE paywall_owner_id = %1$s AND paywall_invader_id = %2$s',
+                    secure($this->_data['user_id'], 'int'),
+                    secure($user_id, 'int'),
+                )
+            ) or _error("SQL_ERROR_THROWEN");
+
+            if ($check->num_rows != 0) {
+                return intval($check->fetch_assoc()['price']);
+            }
+
+        return null;
+    }
+
 
     /**
      * blocked
