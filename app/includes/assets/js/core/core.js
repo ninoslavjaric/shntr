@@ -373,7 +373,7 @@ function photo_grid() {
 function button_status(element, handle) {
     if (handle == "loading") {
         /* loading */
-        element.data('text', element.html());
+        !element.data('text') && element.data('text', element.html());
         element.prop('disabled', true);
         element.html('<span class="spinner-grow spinner-grow-sm mr10"></span>' + __['Loading']);
     } else {
