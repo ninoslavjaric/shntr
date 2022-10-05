@@ -253,7 +253,7 @@ function fund(title, message, callback, password_check = false, extra_content = 
             return;
         }
 
-        if (callback) callback(value);
+        if (callback && eventType === 'click') callback(value);
     });
 }
 
