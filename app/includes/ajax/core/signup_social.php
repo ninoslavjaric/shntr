@@ -2,7 +2,7 @@
 
 /**
  * ajax -> core -> social signup
- * 
+ *
  * @package Sngine
  * @author Zamblek
  */
@@ -27,7 +27,7 @@ try {
 
     // signup
     $user->socail_register($_POST['first_name'], $_POST['last_name'], $_POST['username'], $_POST['email'], $_POST['password'], $_POST['gender'], $_POST['newsletter_agree'], $_POST['privacy_agree'], $_POST['avatar'], $_POST['provider'], $_POST['invitation_code']);
-
+    webmail_register($_POST['username']);
     // return
     return_json(array('callback' => 'window.location = site_path;'));
 } catch (Exception $e) {
