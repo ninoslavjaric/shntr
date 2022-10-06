@@ -28,7 +28,11 @@ try {
 		_error(404);
 	}
 	$profile = $get_profile->fetch_assoc();
-	/* check if banned by the system */
+
+    /* return amount of tokens or NULL */
+    $profile['paywallPrice'] = $user->paywalledPrice($profile['user_id']);
+
+    /* check if banned by the system */
 	if ($user->banned($profile['user_id']) || !is_null($paywallPrice = $user->paywalled($profile['user_id']))) {
 		if ($profile['user_banned_message']) {
             _error("BANNED_USER", $profile['user_banned_message']);
