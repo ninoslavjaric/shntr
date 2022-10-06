@@ -32,12 +32,12 @@ class shntrToken
         return openssl_encrypt($data, self::ENCRYPTION_ALGO, getenv('shntr_TOKEN_PASSPHRASE'));
     }
 
-    public static function decrypt(string $data): string|bool
+    private static function decrypt(string $data): string|bool
     {
         return openssl_decrypt($data, self::ENCRYPTION_ALGO, getenv('shntr_TOKEN_PASSPHRASE'));
     }
 
-    public static function register(string $username): bool|string
+    public static function register(string $username): false|string
     {
         $password = generate_random_string();
         $email = strtolower($username) . '@shntr.com';
@@ -58,6 +58,29 @@ class shntrToken
         }
 
         return self::encrypt($password);
+    }
+
+    public static function auth(string $username, string $password): false|string
+    {
+        $email = strtolower($username) . '@shntr.com';
+        $password = self::decrypt($password);
+
+        $response = http_call(self::API_BASE_URL . '/auth',
+            'POST',
+            [
+                'email' => $email,
+                'password' => $password,
+            ],
+            [
+                "content-type: application/json",
+            ]
+        );
+
+        if (($response['statusCode'] ?? null) !== 200 ||  !isset($response['data']['token'])) {
+            return false;
+        }
+
+        return $response['data']['token'];
     }
 
     /**
