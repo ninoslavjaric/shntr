@@ -1407,11 +1407,10 @@ class User
             case 'paywall':
                 if ($value == 0) {
                     $db->query(
-                        sprintf(
-                            'delete from paywalls where paywall_owner_id = %1$s and paywall_invader_id = %2$d',
-                            secure($this->_data['user_id'], 'int'),
-                            secure($id, 'int')
-                        ),
+                        'delete from paywalls where paywall_owner_id = ' . secure(
+                            $this->_data['user_id'],
+                            'int'
+                        ) . ' and paywall_invader_id = ' . secure($id, 'int'),
                     ) or _error("SQL_ERROR_THROWEN");
                     break;
                 }

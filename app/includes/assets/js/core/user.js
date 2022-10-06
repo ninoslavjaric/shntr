@@ -1619,7 +1619,7 @@ $(function () {
         e.preventDefault();
         const id = $(this).data('id');
         confirm(__['Paywall User'], __['Are you sure you want to paywall this user?'], function () {
-            const value = prompt("Set the wall break price?", "1");
+            const value = prompt("Set the wall break price, or set 0 to remove paywall?", "1");
 
             $.post(api['users/connect'], { 'do': 'paywall', id: id, value: value }, function (response) {
                 /* check the response */
