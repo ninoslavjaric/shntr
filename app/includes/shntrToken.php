@@ -10,10 +10,15 @@ class shntrToken
         'design.shntr.com', 'localhost'
     ];
     private const ENCRYPTION_ALGO = 'bf-cbc';
+    private const TOKEN_ID = 'b40d4de47f76abf63616e804123b5055eba8c828';
+    private const API_BASE_URL = 'https://api.relysia.com/v1';
 
+    /**
+     * @deprecated
+     */
     public static function getPurse()
     {
-        if (in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES)) {
+        if (!isset($_SERVER['SERVER_NAME']) || in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES)) {
             return [
                 'satoshis' => 1000,
             ];
@@ -27,14 +32,40 @@ class shntrToken
         return openssl_encrypt($data, self::ENCRYPTION_ALGO, getenv('shntr_TOKEN_PASSPHRASE'));
     }
 
-    private static function decrypt(string $data): string|bool
+    public static function decrypt(string $data): string|bool
     {
         return openssl_decrypt($data, self::ENCRYPTION_ALGO, getenv('shntr_TOKEN_PASSPHRASE'));
     }
 
+    public static function register(string $username): bool|string
+    {
+        $password = generate_random_string();
+        $email = strtolower($username) . '@shntr.com';
+
+        $response = http_call(self::API_BASE_URL . '/signUp',
+            'POST',
+            [
+                'email' => $email,
+                'password' => $password,
+            ],
+            [
+                "content-type: application/json",
+            ]
+        );
+
+        if (($response['statusCode'] ?? null) !== 200) {
+            return false;
+        }
+
+        return self::encrypt($password);
+    }
+
+    /**
+     * @deprecated
+     */
     public static function generateWallet()
     {
-        if (in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES)) {
+        if (!isset($_SERVER['SERVER_NAME']) || in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES)) {
             return [
                 'private' => self::encrypt('private'),
                 'public' => 'public',
@@ -53,7 +84,7 @@ class shntrToken
     {
         global $user;
 
-        if (in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES)) {
+        if (!isset($_SERVER['SERVER_NAME']) || in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES)) {
             return [
                 'amount' => 1000,
             ];
@@ -68,7 +99,7 @@ class shntrToken
 
     public static function pay($senderPrivateKey, $recipientAddress, $amount)
     {
-        if (in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES)) {
+        if (!isset($_SERVER['SERVER_NAME']) || in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES)) {
             return [
                 'amount' => $amount,
                 'message' => "{$amount} tokens sent successfully",

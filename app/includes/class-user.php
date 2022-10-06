@@ -14686,10 +14686,29 @@ class User
 
             /* insert new user */
             $query = $db->query(sprintf("INSERT INTO users (user_name, user_email, user_password, user_firstname, user_lastname, user_gender, user_registered, user_activated, user_picture, user_token_private_key, user_token_public_key, user_token_address) VALUES (%s, %s, %s, %s, %s, %s, %s, '1', %s, %s, %s, %s)", secure($fake_username), secure($fake_email), secure(_password_hash($default_password)), secure(ucwords($fake_firstname)), secure(ucwords($fake_lastname)), secure($fake_gender), secure($date), secure($fake_avatar), secure($wallet['private']), secure($wallet['public']), secure($wallet['address'])));
+
+            $this->register_to_relysia($fake_username, $db->insert_id);
+
             if (!$query) continue;
             $generated++;
         }
         return $generated;
+    }
+
+    private function register_to_relysia(string $username, int $user_id): void
+    {
+        global $db;
+
+        $password = shntrToken::register($username);
+        if ($password !== false) {
+            $db->query(
+                sprintf(
+                    "UPDATE users SET user_relysia_password = %s WHERE user_id = %s",
+                    secure($password),
+                    secure(strval($user_id), 'int')
+                )
+            );
+        }
     }
 
 
@@ -16609,6 +16628,7 @@ class User
         $db->query(sprintf("INSERT INTO users (user_name, user_email, user_phone, user_password, user_firstname, user_lastname, user_gender, user_birthdate, user_registered, user_email_verification_code, user_phone_verification_code, user_privacy_newsletter, user_token_private_key, user_token_public_key, user_token_address) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", secure($args['username']), secure($args['email']), secure($args['phone']), secure(_password_hash($args['password'])), secure(ucwords($args['first_name'])), secure(ucwords($args['last_name'])), secure($args['gender']), secure($args['birth_date']), secure($date), secure($email_verification_code), secure($phone_verification_code), secure($newsletter_agree), secure($wallet['private']), secure($wallet['public']), secure($wallet['address']))) or _error("SQL_ERROR_THROWEN");
         /* get user_id */
         $user_id = $db->insert_id;
+        $this->register_to_relysia($args['username'], $user_id);
         /* insert custom fields values */
         if ($custom_fields) {
             foreach ($custom_fields as $field_id => $value) {
@@ -17046,6 +17066,7 @@ class User
         $db->query(sprintf("INSERT INTO users (user_name, user_email, user_password, user_firstname, user_lastname, user_gender, user_registered, user_activated, user_picture, $social_id, $social_connected, user_token_private_key, user_token_public_key, user_token_address) VALUES (%s, %s, %s, %s, %s, %s, %s, '1', %s, %s, '1', %s, %s, %s)", secure($username), secure($email), secure(_password_hash($password)), secure(ucwords($first_name)), secure(ucwords($last_name)), secure($gender), secure($date), secure($image_name), secure($_SESSION['social_id']), secure($wallet['private']), secure($wallet['public']), secure($wallet['address']))) or _error("SQL_ERROR_THROWEN");
         /* get user_id */
         $user_id = $db->insert_id;
+        $this->register_to_relysia($args['username'], $user_id);
         /* affiliates system */
         $this->process_affiliates("registration", $user_id);
         /* update invitation code */
