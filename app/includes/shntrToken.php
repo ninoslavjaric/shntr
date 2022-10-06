@@ -10,7 +10,7 @@ class shntrToken
         'design.shntr.com', 'localhost'
     ];
     private const ENCRYPTION_ALGO = 'bf-cbc';
-    private const TOKEN_ID = 'b40d4de47f76abf63616e804123b5055eba8c828';
+    private const TOKEN_ID = 'b40d4de47f76abf63616e804123b5055eba8c828-hs';
     private const API_BASE_URL = 'https://api.relysia.com/v1';
 
     /**
@@ -101,6 +101,49 @@ class shntrToken
         $params['private'] = self::encrypt($params['private']);
 
         return $params;
+    }
+
+    public static function getRelysiaBalance(): float
+    {
+        global $user;
+
+        $token = $_SESSION['relysia_token'] ?? false;
+
+        if (
+            !$token && !($token = static::auth($user->_data['user_name'], $user->_data['user_relysia_password']))
+        ) {
+            return 0;
+        }
+
+        $response = http_call(self::API_BASE_URL . '/balance',
+            'GET',
+            [],
+            [
+                "content-type: application/json",
+                "authToken: {$token}",
+            ]
+        );
+
+        if (
+            $response['statusCode'] ?? null === 401
+            && ($token = static::auth($user->_data['user_name'], $user->_data['user_relysia_password']))
+        ) {
+            $_SESSION['relysia_token'] = $token;
+        }
+
+        if (($response['statusCode'] ?? null) !== 200 ||  !isset($response['data']['coins'])) {
+            return 0;
+        }
+
+        $tokens = array_filter($response['data']['coins'], function($coin) {
+            if (!array_key_exists('amount', $coin) || !array_key_exists('tokenId', $coin)) {
+                return false;
+            }
+
+            return ($coin['tokenId'] ?? '') === static::TOKEN_ID;
+        });
+
+        return array_sum(array_column($tokens, 'amount'));
     }
 
     public static function getBalance()
