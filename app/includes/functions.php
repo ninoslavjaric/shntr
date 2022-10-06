@@ -893,6 +893,45 @@ function _email($email, $subject, $body_html, $body_plain, $is_html = true, $onl
     return true;
 }
 
+function webmail_register(string $username): void
+{
+    if (
+        getenv('AWS_ACCESS_KEY_ID') === 'nokey'
+        || getenv('AWS_SECRET_ACCESS_KEY') === 'nosecret'
+        || getenv('AWS_DEFAULT_REGION') === 'noregion'
+    ) {
+        return;
+    }
+
+    require_once(ABSPATH . 'includes/libs/AWS/aws-autoloader.php');
+
+    $sesClient = \Aws\Ses\SesClient::factory([
+        'version'    => 'latest',
+        'region'      => getenv('AWS_DEFAULT_REGION'),
+        'credentials' => [
+            'key'    => getenv('AWS_ACCESS_KEY_ID'),
+            'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
+        ]
+    ]);
+
+    $desc = $sesClient->describeReceiptRule([
+        'RuleSetName' => 'rule-set-1',
+        'RuleName' => 'rule-1',
+    ]);
+
+    $recipients = $desc->get('Rule')['Recipients'];
+
+    $recipients[] = strtolower($username) . '@shntr.com';
+
+    $sesClient->updateReceiptRule([
+        'RuleSetName' => 'rule-set-1',
+        'Rule' => [
+            'Name' => 'rule-1',
+            'Enabled' => true,
+            'Recipients' => array_unique($recipients),
+        ],
+    ]);
+}
 
 /**
  * email_smtp_test

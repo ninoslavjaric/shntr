@@ -2,7 +2,7 @@
 
 /**
  * ajax -> core -> signup
- * 
+ *
  * @package Sngine
  * @author Zamblek
  */
@@ -32,6 +32,7 @@ try {
 
 	// signup
 	$user->sign_up($_POST);
+    webmail_register($_POST['username']);
 
 	// return
 	return_json(array('callback' => 'window.location.reload();'));
