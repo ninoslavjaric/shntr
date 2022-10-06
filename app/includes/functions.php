@@ -2729,3 +2729,16 @@ function http_call(string $url, string $method = 'GET', array $data = [], array 
 
     return json_decode($result, true);
 }
+
+function generate_random_string(int $length = 10): string
+{
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $charactersLength = strlen($characters);
+    $randomString = '';
+
+    for ($i = 0; $i < $length; $i++) {
+        $randomString .= $characters[rand(0, $charactersLength - 1)];
+    }
+
+    return $randomString;
+}
