@@ -224,6 +224,54 @@ function modal() {
     }
 }
 
+function blueModal() {
+    var className = arguments[0].replace('#', '');
+    if (arguments[0] == "#modal-login" || arguments[0] == "#chat-calling" || arguments[0] == "#chat-ringing") {
+        /* disable the backdrop (don't close modal when click outside) */
+        if ($('#modal').data('bs.modal')) {
+            $('#modal').data('bs.modal').options = { backdrop: 'static', keyboard: false };
+        } else {
+            $('#modal').modal({ backdrop: 'static', keyboard: false });
+        }
+    }
+
+    $('#modal').addClass(className);
+    $('#modal').addClass('blue-modal');
+
+    $('#modal').on('hidden.bs.modal', function (e) {
+        $('#modal').removeClass(className);
+        $('#modal').removeClass('blue-modal');
+        $('.modal-dialog').removeClass('modal-dialog-centered');
+    })
+
+    /* check if the modal not visible, show it */
+    if (!$('#modal').is(":visible")) $('#modal').modal('show');
+    /* prepare modal size */
+    $('.modal-dialog').removeClass('modal-sm');
+    $('.modal-dialog').removeClass('modal-lg');
+    $('.modal-dialog').removeClass('modal-xlg');
+    switch (arguments[2]) {
+        case 'small':
+            $('.modal-dialog').addClass('modal-sm');
+            break;
+        case 'large':
+            $('.modal-dialog').addClass('modal-lg');
+            break;
+        case 'extra-large':
+            $('.modal-dialog').addClass('modal-xl');
+            break;
+        case 'modal-dialog-centered':
+            $('.modal-dialog').addClass('modal-dialog-centered');
+            break;
+    }
+    /* update the modal-content with the rendered template */
+    $('.modal-content:last').html(render_template(arguments[0], arguments[1]));
+    /* initialize modal if the function defined (user logged in) */
+    if (typeof initialize_modal === "function") {
+        initialize_modal();
+    }
+}
+
 
 // confirm
 function confirm(title, message, callback, password_check = false, extra_content = '') {
@@ -235,14 +283,14 @@ function confirm(title, message, callback, password_check = false, extra_content
 }
 
 function fund(title, message, callback, password_check = false, extra_content = '') {
-    modal("#modal-fund", { title, message, password_check, extra_content });
+    blueModal("#modal-fund", { title, message, password_check, extra_content }, 'modal-dialog-centered');
     $("#modal-fund-ok").on('click focusout', function(event){
         var eventType = event.type;
         var _this = $(this);
         var value = _this.closest('.modal-content').find('input#tokenInput').val();
 
         _this.tooltip({
-            title: 'At least one token must be entered',
+            title: __['It is impossible to confirm a zero amount of tokens'],
             trigger: 'manual',
         });
 

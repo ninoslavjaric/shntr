@@ -70,6 +70,7 @@ class shntrToken
     {
         if (in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES)) {
             return [
+                'amount' => $amount,
                 'message' => "{$amount} tokens sent successfully",
             ];
         }

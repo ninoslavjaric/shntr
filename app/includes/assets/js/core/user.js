@@ -1837,22 +1837,24 @@ $(function () {
             $.post(api['users/connect'], { 'do': _do, 'uid': 0, 'id': id, 'value': value }, function (response) {
                 window.onbeforeunload = null;
 
-                if (response && response.message) {
+                if (response && response.amount ) {
                     setTimeout(() => {
                         button_status(_this, "reset");
-                        modal('#modal-fund-success', null, 'modal-dialog-centered');
+                        blueModal('#modal-success', { title: __['Tokens sent successfully'], message: __['You have successfully sent'] + ' ' + response.amount + ' tokens'}, 'modal-dialog-centered');
                     }, 500);
                 } else {
                     setTimeout(() => {
                         button_status(_this, "reset");
-                        modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                        blueModal('#modal-error', { title: __['Error'], message: __['There is something that went wrong!'] }, 'modal-dialog-centered');
                     }, 500);
                 }
             }, "json")
             .fail(function () {
+                window.onbeforeunload = null;
+
                 setTimeout(() => {
                     button_status(_this, "reset");
-                    modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                    blueModal('#modal-error', { title: __['Error'], message: __['There is something that went wrong!'] }, 'modal-dialog-centered');
                 }, 500);
             });
         });

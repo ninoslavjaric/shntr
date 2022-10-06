@@ -32,6 +32,7 @@
     </div>
     <div class="modal-body">
         <p>{literal}{{message}}{/literal}</p>
+        {include file='__svg_icons.tpl' icon="shntr-fund-success-logo" class="shntr-modal-body-logo"}
     </div>
 </script>
 
@@ -95,16 +96,8 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-light" data-dismiss="modal">{__("Cancel")}</button>
-        <button type="button" class="btn btn-primary" data-dismiss="modal" id="modal-fund-ok">{__("Confirm")}</button>
-    </div>
-</script>
-
-<script id="modal-fund-success" type="text/template">
-    <div class="modal-body">
-        <div class="close" data-dismiss="modal"><i class="fa fa-times"></i></div>
-        {include file='__svg_icons.tpl' icon="shntr-fund-success-logo" class="shntr-fund-success-logo"}
-        <p>Token Sent</p>
+        <button type="button" class="btn btn-sm btn-light" data-dismiss="modal">{__("Cancel")}</button>
+        <button type="button" class="btn btn-sm btn-success" data-dismiss="modal" id="modal-fund-ok">{__("Confirm")}</button>
     </div>
 </script>
 <!-- Modals -->

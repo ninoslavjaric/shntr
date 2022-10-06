@@ -261,6 +261,9 @@
     __['Follow these instructions to allow notifications:'] = "{__('Follow these instructions to allow notifications:')}";
     __['Send tokens'] = "{__('Send tokens')}";
     __['How many tokens to send?'] = "{__('How many tokens to send?')}";
+    __['It is impossible to confirm a zero amount of tokens'] = "{__('It is impossible to confirm a zero amount of tokens')}";
+    __['Tokens sent successfully'] = "{__('Tokens sent successfully')}";
+    __['You have successfully sent'] = "{__('You have successfully sent')}";
 </script>
 <!-- Initialize -->
 
