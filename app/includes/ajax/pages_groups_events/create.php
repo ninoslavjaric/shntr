@@ -35,8 +35,13 @@ try {
 	switch ($_GET['type']) {
 		case 'page':
 			if ($_GET['do'] == "create") {
-                $balance = shntrToken::getBalance();
-                if ($balance['amount'] < 100) {
+                if (empty($user->_data['user_relysia_password'])) {
+                    $user->register_to_relysia(
+                        $user->_data['user_name'], $user->_data['user_id']
+                    );
+                }
+                $balance = shntrToken::getRelysiaBalance();
+                if ($balance < 100) {
                     modal("ERROR", __("Funds"), __("You're out of tokens"));
                 }
 
@@ -65,8 +70,13 @@ try {
 
 		case 'group':
 			if ($_GET['do'] == "create") {
-                $balance = shntrToken::getBalance();
-                if ($balance['amount'] < 100) {
+                if (empty($user->_data['user_relysia_password'])) {
+                    $user->register_to_relysia(
+                        $user->_data['user_name'], $user->_data['user_id']
+                    );
+                }
+                $balance = shntrToken::getRelysiaBalance();
+                if ($balance < 100) {
                     modal("ERROR", __("Funds"), __("You're out of tokens"));
                 }
 
@@ -115,8 +125,13 @@ try {
 
 		case 'event':
 			if ($_GET['do'] == "create") {
-			    $balance = shntrToken::getBalance();
-                if ($balance['amount'] < 100) {
+                if (empty($user->_data['user_relysia_password'])) {
+                    $user->register_to_relysia(
+                        $user->_data['user_name'], $user->_data['user_id']
+                    );
+                }
+			    $balance = shntrToken::getRelysiaBalance();
+                if ($balance < 100) {
                     modal("ERROR", __("Funds"), __("You're out of tokens"));
                 }
 
