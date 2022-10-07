@@ -154,6 +154,14 @@
                             </li>
                             <!-- shntr-token -->
 
+                            <!-- manage-prices -->
+                            <li {if $view == "manage-prices"}class="active"{/if}>
+                                <a href="{$system['system_url']}/{$control_panel['url']}/manage-prices">
+                                    <i class="fa fa-dollar fa-fw mr10" style="color: #3F51B5"></i>{__("Manage prices")}
+                                </a>
+                            </li>
+                            <!-- manage-prices -->
+
                             <!-- Genders -->
                             <li {if $view == "genders"}class="active"{/if}>
                                 <a href="{$system['system_url']}/{$control_panel['url']}/genders">

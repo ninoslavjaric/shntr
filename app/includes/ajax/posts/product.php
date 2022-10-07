@@ -38,7 +38,9 @@ try {
 
 	switch ($_REQUEST['do']) {
 		case 'create':
-            $smarty->assign('price', 100);
+			$query = $db->query("SELECT * FROM prices WHERE price_name = 'product_price';");
+			$price = $query->fetch_assoc();
+            $smarty->assign('price', $price['price']);
 			// assign variables
             if (isset($_GET['category_id'])) {
                     $smarty->assign('market_category', $user->get_category("market_categories", $_GET['category_id']));
@@ -64,7 +66,9 @@ try {
 			}
 
             $balance = shntrToken::getBalance();
-            if ($balance['amount'] < 100) {
+			$query = $db->query("SELECT * FROM prices WHERE price_name = 'product_price';");
+			$price = $query->fetch_assoc();
+            if ($balance['amount'] < $price['price']) {
                 modal("ERROR", __("Funds"), __("You're out of tokens"));
             }
 

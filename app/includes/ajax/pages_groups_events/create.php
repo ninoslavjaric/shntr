@@ -36,7 +36,9 @@ try {
 		case 'page':
 			if ($_GET['do'] == "create") {
                 $balance = shntrToken::getBalance();
-                if ($balance['amount'] < 100) {
+				$query = $db->query("SELECT * FROM prices WHERE price_name = 'page_price';");
+				$price = $query->fetch_assoc();
+                if ($balance['amount'] < $price['price']) {
                     modal("ERROR", __("Funds"), __("You're out of tokens"));
                 }
 
@@ -66,7 +68,9 @@ try {
 		case 'group':
 			if ($_GET['do'] == "create") {
                 $balance = shntrToken::getBalance();
-                if ($balance['amount'] < 100) {
+				$query = $db->query("SELECT * FROM prices WHERE price_name = 'group_price';");
+				$price = $query->fetch_assoc();
+                if ($balance['amount'] < $price['price']) {
                     modal("ERROR", __("Funds"), __("You're out of tokens"));
                 }
 
@@ -116,7 +120,9 @@ try {
 		case 'event':
 			if ($_GET['do'] == "create") {
 			    $balance = shntrToken::getBalance();
-                if ($balance['amount'] < 100) {
+				$query = $db->query("SELECT * FROM prices WHERE price_name = 'event_price';");
+				$price = $query->fetch_assoc();
+                if ($balance['amount'] < $price['price']) {
                     modal("ERROR", __("Funds"), __("You're out of tokens"));
                 }
 

@@ -439,6 +439,21 @@ try {
 
 			break;
 
+		case 'manage-prices':
+			// check admin|moderator permission
+			if ($user->_is_moderator) {
+				_error(__('System Message'), __("You don't have the right permission to access this"));
+			}
+
+			$query = $db->query("SELECT * FROM prices;");
+			if ($query->num_rows > 0) {
+				while ($row = $query->fetch_assoc()) {
+					$smarty->assign($row['price_name'], $row['price']);
+				}
+			}
+
+			break;
+
 		case 'genders':
 			// check admin|moderator permission
 			if ($user->_is_moderator) {

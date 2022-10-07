@@ -86,6 +86,23 @@ function update_system_options($args = [], $error_thrown = true)
     $db->query("INSERT INTO system_options (option_name, option_value) VALUES " . $query_values . " ON DUPLICATE KEY UPDATE option_name = VALUES(option_name), option_value = VALUES(option_value)") or ($error_thrown) ? _error("SQL_ERROR_THROWEN") : _error("Error", $db->error);
 }
 
+/**
+ * update_system_options
+ *
+ * @param array $args
+ * @param boolean $error_thrown
+ * @return void
+ */
+function update_prices($args = [], $error_thrown = true)
+{
+    global $db;
+    $query_values = "";
+    foreach ($args as $key => $value) {
+        $query_values .= sprintf(" ('%s', %s),", $key, $value);
+    }
+    $query_values = substr($query_values, 0, -1);
+    $db->query("INSERT INTO prices (price_name, price) VALUES " . $query_values . " ON DUPLICATE KEY UPDATE price_name = VALUES(price_name), price = VALUES(price)") or ($error_thrown) ? _error("SQL_ERROR_THROWEN") : _error("Error", $db->error);
+}
 
 /**
  * get_licence_key
