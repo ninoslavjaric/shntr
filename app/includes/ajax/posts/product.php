@@ -38,7 +38,9 @@ try {
 
 	switch ($_REQUEST['do']) {
 		case 'create':
-            $smarty->assign('price', 100);
+			$query = $db->query("SELECT * FROM prices WHERE price_name = 'product_price';");
+			$price = $query->fetch_assoc();
+            $smarty->assign('price', $price['price']);
 			// assign variables
             if (isset($_GET['category_id'])) {
                     $smarty->assign('market_category', $user->get_category("market_categories", $_GET['category_id']));
@@ -63,15 +65,17 @@ try {
 				_error(400);
 			}
 
-            if (empty($user->_data['user_relysia_password'])) {
-                $user->register_to_relysia(
-                    $user->_data['user_name'], $user->_data['user_id']
-                );
-            }
-            $balance = shntrToken::getRelysiaBalance();
-            if ($balance < 100) {
-                modal("ERROR", __("Funds"), __("You're out of tokens"));
-            }
+      if (empty($user->_data['user_relysia_password'])) {
+          $user->register_to_relysia(
+              $user->_data['user_name'], $user->_data['user_id']
+          );
+      }
+      $balance = shntrToken::getRelysiaBalance();
+      $query = $db->query("SELECT * FROM prices WHERE price_name = 'product_price';");
+      $price = $query->fetch_assoc();
+      if ($balance['amount'] < $price['price']) {
+          modal("ERROR", __("Funds"), __("You're out of tokens"));
+      }
 
 			/* check product name */
 			if (is_empty($_POST['product']->name)) {
