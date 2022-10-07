@@ -168,7 +168,7 @@
                                     <!-- report -->
                                     <!-- paywall -->
                                     {if $profile['paywallPrice'] === NULL}
-                                        <div class="dropdown-item pointer js_paywall" data-handle="user" data-id="{$profile['user_id']}">
+                                        <div class="dropdown-item pointer js_paywall" data-handle="user" data-name="{$profile['name']}" data-intruder="{$profile['paywallPriceForIntruder']}" data-id="{$profile['user_id']}">
                                             <i class="fa fa-user-tag fa-fw mr10"></i>{__("Paywall")}
                                         </div>
                                     {elseif $profile['paywallPrice'] !== NULL}

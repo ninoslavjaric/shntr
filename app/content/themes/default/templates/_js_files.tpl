@@ -83,6 +83,9 @@
     __['Pending'] = "{__('Pending')}";
     __['Remove'] = "{__('Remove')}";
     __['Error'] = "{__('Error')}";
+    __['Paywall was established'] = "{__('Paywall was established')}";
+    __['By paying the paywall of  '] = "{__('By paying the paywall of ')}";
+    __[' token(s), you will again have the possibility to interact fully with '] = "{__(' token(s), you will again have the possibility to interact fully with ')}";
     __['Success'] = "{__('Success')}";
     __['Warning'] = "{__('Warning')}";
     __['Loading'] = "{__('Loading')}";

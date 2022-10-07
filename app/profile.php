@@ -32,17 +32,12 @@ try {
     /* return amount of tokens or NULL */
     $profile['paywallPrice'] = $user->paywalledPrice($profile['user_id']);
 
+    $profile['paywallPriceForIntruder'] = $user->paywalled($profile['user_id']);
+
     /* check if banned by the system */
-	if ($user->banned($profile['user_id']) || !is_null($paywallPrice = $user->paywalled($profile['user_id']))) {
+	if ($user->banned($profile['user_id'])) {
 		if ($profile['user_banned_message']) {
             _error("BANNED_USER", $profile['user_banned_message']);
-        }
-
-		if (!is_null($paywallPrice)) {
-            _error(
-                "BANNED_USER",
-                "You're not banned but paywalled by the user. Paywall price {$paywallPrice} token(s) for each interaction"
-            );
         }
 
         _error(404);

@@ -1670,6 +1670,23 @@ $(function () {
         });
     });
 
+    /* paywall intruder modal with notification, price to pay */
+    $( document ).ready(function() {
+        var paywallPriceForIntruder = $('.js_paywall').data('intruder');
+        var name = $('.js_paywall').data('name');
+
+        if (paywallPriceForIntruder > 0) {
+            blueModal('#modal-error', {
+                title: __['Paywall was established'],
+                message: __['By paying the paywall of  '] + paywallPriceForIntruder  +
+                    __[' token(s), you will again have the possibility to interact fully with '] + name
+            }, 'modal-dialog-centered')
+
+            //$('.mt20').after('<button type="button" class="btn btn-primary" id="modal-confirm-ok">Pay</button>');
+            $('.mt20').after('<button type="button" class="btn btn-light" onclick="history.go(-1);">Go back</button>');
+        }
+    });
+
     /* block user */
     $('body').on('click', '.js_block-user', function (e) {
         e.preventDefault();
