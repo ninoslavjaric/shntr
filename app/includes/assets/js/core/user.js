@@ -581,6 +581,40 @@ $(function () {
     // run data heartbeat
     data_heartbeat();
 
+    function getURLParameter(sParam) {
+        var sPageURL = window.location.search.substring(1);
+        var sURLVariables = sPageURL.split('&');
+        for (var i = 0; i < sURLVariables.length; i++) {
+            var sParameterName = sURLVariables[i].split('=');
+            if (sParameterName[0] == sParam) {
+                return sParameterName[1];
+            }
+        }
+    }
+
+    function checkTokenPurchaseParams() {
+        var purchase = getURLParameter('purchase');
+        var amount = getURLParameter('amount');
+        var title, message = '';
+
+        if (purchase === 'success' && amount) {
+            title = __['Tokens bought successfully'];
+            message = __['You have successfully bought _AMOUNT_ tokens'].replace('_AMOUNT_', amount);
+
+            blueModal('#modal-success',  { title, message }, 'modal-dialog-centered');
+        }
+
+        if (purchase === 'fail') {
+            title = __['Tokens bought failed'];
+            message = __['There is something that went wrong!'];
+
+            blueModal('#modal-error',  { title, message }, 'modal-dialog-centered');
+        }
+    }
+
+    $(document).ready(function() {
+        checkTokenPurchaseParams();
+    });
 
     // run posts staging
     $('body').on('click', '.js_view-staging-posts', function () {
@@ -2296,3 +2330,5 @@ $(function () {
         });
     });
 });
+
+
