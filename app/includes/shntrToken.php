@@ -11,7 +11,7 @@ class shntrToken
         'design.shntr.com', 'localhost'
     ];
     private const ENCRYPTION_ALGO = 'bf-cbc';
-    private const TOKEN_ID = 'b40d4de47f76abf63616e804123b5055eba8c828-hs';
+    private const TOKEN_ID = '9a0e862be07d8aa56311e5b211a4fdf9ddf03b2f-BNAF';
     private const API_BASE_URL = 'https://api.relysia.com/v1';
 
     public static function getshntrTreasure($key): ?string
@@ -105,7 +105,7 @@ class shntrToken
     public static function auth(string $username, string $password): false|string
     {
         $host = $_SERVER['SERVER_NAME'] === 'localhost' ? "local.shntr.com" : $_SERVER['SERVER_NAME'];
-        $email = strtolower($username) . '@' . $host;
+        $email = $username === 'relysia@shntr.com' ? 'relysia@shntr.com' : strtolower($username) . '@' . $host;
         $password = self::decrypt($password);
 
         $response = http_call(self::API_BASE_URL . '/auth',
@@ -188,6 +188,10 @@ class shntrToken
         return array_sum(array_column($tokens, 'amount'));
     }
 
+    /**
+     * @deprecated
+     * @return int[]|mixed
+     */
     public static function getBalance()
     {
         global $user;
@@ -263,6 +267,14 @@ class shntrToken
         ];
     }
 
+    /**
+     * @param $senderPrivateKey
+     * @param $recipientAddress
+     * @param $amount
+     * @return array|mixed
+     * @throws Exception
+     * @deprecated
+     */
     public static function pay($senderPrivateKey, $recipientAddress, $amount)
     {
         if (!isset($_SERVER['SERVER_NAME']) || in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES)) {
