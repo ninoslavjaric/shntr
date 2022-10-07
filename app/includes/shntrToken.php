@@ -146,15 +146,21 @@ class shntrToken
         return $params;
     }
 
-    public static function getRelysiaBalance(): float
+    public static function getRelysiaBalance(string $user_name = null, string $password = null): float
     {
         global $user;
 
-        $token = $_SESSION['relysia_token'] ?? false;
+        if (in_array(null, [$user_name, $password])) {
+            $user_name = null;
+            $password = null;
+        }
 
-        if (
-            !$token && !($token = static::auth($user->_data['user_name'], $user->_data['user_relysia_password']))
-        ) {
+        $token = static::auth(
+            $user_name ?? $user->_data['user_name'],
+            $password ?? $user->_data['user_relysia_password']
+        );
+
+        if (!$token) {
             return 0;
         }
 
@@ -166,13 +172,6 @@ class shntrToken
                 "authToken: {$token}",
             ]
         );
-
-        if (
-            $response['statusCode'] ?? null === 401
-            && ($token = static::auth($user->_data['user_name'], $user->_data['user_relysia_password']))
-        ) {
-            $_SESSION['relysia_token'] = $token;
-        }
 
         if (($response['statusCode'] ?? null) !== 200 ||  !isset($response['data']['coins'])) {
             return 0;
@@ -227,6 +226,15 @@ class shntrToken
         }
 
         $senderToken = static::auth($senderUsername, $senderPassword);
+
+        $balance = static::getRelysiaBalance($senderUsername, $senderPassword);
+
+        if ($balance < $amount) {
+            return [
+                'amount' => $amount,
+                'message' => "Not enough funds to pay {$amount} token(s).",
+            ];
+        }
 
         $response = http_call(self::API_BASE_URL . '/send',
             'POST',
