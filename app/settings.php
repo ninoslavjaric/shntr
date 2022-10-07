@@ -421,7 +421,7 @@ try {
 			/* assign variables */
 			$smarty->assign('shntr_balance', $balance);
 			$smarty->assign('shntr_public_key', $user->_data['user_token_public_key']);
-			$smarty->assign('shntr_address', $user->_data['user_token_address']);
+			$smarty->assign('shntr_address', $user->_data['user_relysia_paymail']);
 			$smarty->assign('shntr_transactions', $history);
 			$smarty->assign('sell_token_list', $sell_list);
 			break;
