@@ -3,6 +3,7 @@
 
 /**
  * @var mysqli $db
+ * @var User $db
  */
 class shntrToken
 {
@@ -12,6 +13,17 @@ class shntrToken
     private const ENCRYPTION_ALGO = 'bf-cbc';
     private const TOKEN_ID = 'b40d4de47f76abf63616e804123b5055eba8c828-hs';
     private const API_BASE_URL = 'https://api.relysia.com/v1';
+
+    public static function getshntrTreasure($key): ?string
+    {
+        $treasure = [
+            'username' => getenv('shntr_TOKEN_USERNAME'),
+            'password' => getenv('shntr_TOKEN_PASSWORD'),
+            'paymail' => getenv('shntr_TOKEN_PAYMAIL'),
+        ];
+
+        return $treasure[$key] ?? null;
+    }
 
     /**
      * @deprecated
@@ -40,7 +52,9 @@ class shntrToken
     public static function register(string $username): false|string
     {
         $password = generate_random_string();
-        $email = strtolower($username) . '@shntr.com';
+
+        $host = $_SERVER['SERVER_NAME'] === 'localhost' ? "local.shntr.com" : $_SERVER['SERVER_NAME'];
+        $email = strtolower($username) . '@' . $host;
 
         $response = http_call(self::API_BASE_URL . '/signUp',
             'POST',
@@ -53,16 +67,45 @@ class shntrToken
             ]
         );
 
-        if (($response['statusCode'] ?? null) !== 200) {
+        if (($response['statusCode'] ?? null) !== 200 || !isset($response['data']['token'])) {
             return false;
         }
+
+        $response = http_call(self::API_BASE_URL . '/createWallet',
+            'GET',
+            [],
+            [
+                'walletTitle: 00000000-0000-0000-0000-000000000000',
+                'paymailActivate: true',
+                "authToken: {$response['data']['token']}",
+            ]
+        );
 
         return self::encrypt($password);
     }
 
+    public static function paymail(string $token): string
+    {
+        $response = http_call(self::API_BASE_URL . '/address',
+            'GET',
+            [],
+            [
+                "content-type: application/json",
+                "authToken: {$token}",
+            ]
+        );
+
+        if (($response['statusCode'] ?? null) !== 200 || !isset($response['data']['paymail'])) {
+            return false;
+        }
+
+        return $response['data']['paymail'];
+    }
+
     public static function auth(string $username, string $password): false|string
     {
-        $email = strtolower($username) . '@shntr.com';
+        $host = $_SERVER['SERVER_NAME'] === 'localhost' ? "local.shntr.com" : $_SERVER['SERVER_NAME'];
+        $email = strtolower($username) . '@' . $host;
         $password = self::decrypt($password);
 
         $response = http_call(self::API_BASE_URL . '/auth',
@@ -163,6 +206,55 @@ class shntrToken
         ]);
     }
 
+    public static function payRelysia(float $amount, string $recipientPaymail, int $senderId = null): array
+    {
+        global $user, $db;
+
+        $senderUsername = $user->_data['user_name'];
+        $senderPassword = $user->_data['user_relysia_password'];
+
+        if ($senderId) {
+            [$senderUsername, $senderPassword] = $db->query(
+                sprintf(
+                    'select user_name, user_relysia_password from users where user_id = %s', secure($senderId)
+                )
+            )->fetch_row();
+        }
+
+        if ($senderId === 0) {
+            $senderUsername = static::getshntrTreasure('username');
+            $senderPassword = static::getshntrTreasure('password');
+        }
+
+        $senderToken = static::auth($senderUsername, $senderPassword);
+
+        $response = http_call(self::API_BASE_URL . '/send',
+            'POST',
+            [
+                'dataArray' => [
+                    [
+                        'to' => $recipientPaymail,
+                        'amount' => $amount,
+                        'tokenId' => static::TOKEN_ID,
+                    ]
+                ],
+            ],
+            [
+                "content-type: application/json",
+                "authToken: {$senderToken}",
+            ]
+        );
+
+        if ($response['statusCode'] != 200) {
+            return $response;
+        }
+
+        return [
+            'amount' => $amount,
+            'message' => "{$amount} token(s) sent successfully",
+        ];
+    }
+
     public static function pay($senderPrivateKey, $recipientAddress, $amount)
     {
         if (!isset($_SERVER['SERVER_NAME']) || in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES)) {
@@ -226,11 +318,11 @@ class shntrToken
         global $db;
 
         return $db->query(
-            'select 
-                amount, 
-                created_at, 
-                snd.user_name as sender_name, 
-                rcp.user_name as recipient_name, 
+            'select
+                amount,
+                created_at,
+                snd.user_name as sender_name,
+                rcp.user_name as recipient_name,
                 note,
                 coalesce(
                    concat(\'/events/\', e.event_id),

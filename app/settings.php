@@ -408,18 +408,24 @@ try {
 			// page header
 			page_header(__("Settings") . " &rsaquo; " . __("shntr token settings"));
 
-            $balance = shntrToken::getBalance();
+			if (empty($user->_data['user_relysia_password'])) {
+			    $user->register_to_relysia(
+			        $user->_data['user_name'], $user->_data['user_id']
+                );
+            }
+
+            $balance = shntrToken::getRelysiaBalance();
             $history = shntrToken::getHistory(intval($user->_data['user_id']));
 			$user_id = $user->_data['user_id'];
 			$sell_list = $db->query(sprintf("SELECT * FROM info_sell_token WHERE user_id = %s", secure($user->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
 			/* assign variables */
-			$smarty->assign('shntr_balance', $balance['amount']);
+			$smarty->assign('shntr_balance', $balance);
 			$smarty->assign('shntr_public_key', $user->_data['user_token_public_key']);
 			$smarty->assign('shntr_address', $user->_data['user_token_address']);
 			$smarty->assign('shntr_transactions', $history);
 			$smarty->assign('sell_token_list', $sell_list);
 			break;
-			
+
 		case 'sell_token':
 			// check if shntr_token_enabled
 			if (!$system['shntr_token_enabled']) {

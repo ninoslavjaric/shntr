@@ -69,8 +69,8 @@ try {
                 $query = $db->query('select user_token_private_key from users where user_id = 1');
                 $pkey = $query->fetch_row()[0];
 
-                $response = shntrToken::pay(
-                    $pkey, $user->_data['user_token_address'], $_COOKIE['stripe_checkout_qty']
+                $response = shntrToken::payRelysia(
+                    $_COOKIE['stripe_checkout_qty'], $this->_data['user_relysia_paymail'], 0
                 );
 
                 if (!str_contains($response['message'], 'success')) {

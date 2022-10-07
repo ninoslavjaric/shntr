@@ -6,6 +6,9 @@ services:
       AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY:-nosecret}"
       AWS_DEFAULT_REGION: "${AWS_DEFAULT_REGION:-noregion}"
       shntr_TOKEN_PASSPHRASE: "${shntr_TOKEN_PASSPHRASE:-nopassphrase}"
+      shntr_TOKEN_USERNAME: "${shntr_TOKEN_USERNAME:-nousername}"
+      shntr_TOKEN_PASSWORD: "${shntr_TOKEN_PASSWORD:-nopassword}"
+      shntr_TOKEN_PAYMAIL: "${shntr_TOKEN_PAYMAIL:-nopaymail}"
     build:
       context: './php/'
       dockerfile: ${DOCKERFILE_NAME:-Dockerfile}
