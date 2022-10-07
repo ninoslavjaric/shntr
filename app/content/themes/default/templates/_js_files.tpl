@@ -264,6 +264,9 @@
     __['It is impossible to confirm a zero amount of tokens'] = "{__('It is impossible to confirm a zero amount of tokens')}";
     __['Tokens sent successfully'] = "{__('Tokens sent successfully')}";
     __['You have successfully sent'] = "{__('You have successfully sent')}";
+    __['You have successfully bought _AMOUNT_ tokens'] = "{__('You have successfully bought _AMOUNT_ tokens')}";
+    __['Tokens bought successfully'] = "{__('Tokens bought successfully')}";
+    __['Tokens bought failed'] = "{__('Tokens bought failed')}";
 </script>
 <!-- Initialize -->
 

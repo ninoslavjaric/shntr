@@ -92,10 +92,9 @@ try {
 
             $db->begin_transaction();
             try {
-                $resp = shntrToken::pay(
-                    $user->_data['user_token_private_key'],
-                    $owner['user_token_address'],
-                    floatval($post['product']['price'])
+                $resp = shntrToken::payRelysia(
+                    floatval($post['product']['price']),
+                    $owner['user_relysia_paymail'],
                 );
                 if (!str_contains($resp['message'], 'success')) {
                     throw new Exception($resp['message']);
@@ -184,16 +183,21 @@ try {
                 if ($amount < 10000) {
                     break;
                 }
-            	$balance = shntrToken::getBalance();
+                if (empty($user->_data['user_relysia_password'])) {
+                    $user->register_to_relysia(
+                        $user->_data['user_name'], $user->_data['user_id']
+                    );
+                }
+            	$balance = shntrToken::getRelysiaBalance();
 				//not enough balance
-				// if ($amount>$balance) {
+				// if ($amount) {
 				// 	$return['callback'] = 'no_enough_balance';
 				// 	break;
 				// }
-                $resp = shntrToken::pay(
-                    $user->_data['user_token_private_key'],
-                    $server_add,
-                    $amount
+                $resp = shntrToken::payRelysia(
+                    $amount,
+                    shntrToken::getshntrTreasure('paymail'),
+                    $user->_data['user_id'],
                 );
                 if (!str_contains($resp['message'], 'success')) {
                     throw new Exception($resp['message']);
