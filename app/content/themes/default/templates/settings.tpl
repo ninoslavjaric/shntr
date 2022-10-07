@@ -210,11 +210,11 @@
                         {/if}
 
                         {if $system['shntr_token_enabled']}
-                            <li {if $view == "shntr_token"}class="active"{/if}>
+                            <li {if $view == "shntr_token" || $view == "sell_token"}class="active"{/if}>
                                 <a href="{$system['system_url']}/settings/shntr_token">
                                     <i class="fa fa-dollar-sign fa-fw mr10" style="color: #4caf50;"></i>{__("shntr token")}
                                 </a>
-                                <div class='collapse show'>
+                                <div class='collapse {if $view == "sell_token" || $view == "shntr_token"}show{/if}'>
                                     <ul>
                                         <li {if $view == "sell_token" && $sub_view == ""}class="active"{/if}>
                                             <a href="{$system['system_url']}/settings/sell_token">
