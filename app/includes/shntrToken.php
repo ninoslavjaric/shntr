@@ -148,17 +148,6 @@ class shntrToken
             return 0;
         }
 
-        http_call(self::API_BASE_URL . '/tokenMetrics',
-            'GET',
-            [],
-            [
-                "authToken: {$token}",
-                "serviceID: 9ab1b69e-92ae-4612-9a4f-c5a102a6c068",
-            ]
-        );
-
-        sleep(3);
-
         $response = http_call(self::API_BASE_URL . '/balance',
             'GET',
             [],

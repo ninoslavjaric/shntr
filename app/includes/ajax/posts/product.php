@@ -74,7 +74,7 @@ try {
       $query = $db->query("SELECT * FROM prices WHERE price_name = 'product_price';");
       $price = $query->fetch_assoc();
       if ($balance < $price['price']) {
-          modal("ERROR", __("Funds"), __("You're out of tokens"));
+          modal("ERROR", __("Funds"), __("You're out of tokens {$balance}"));
       }
 
 			/* check product name */
