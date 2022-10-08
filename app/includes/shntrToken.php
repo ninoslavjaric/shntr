@@ -26,20 +26,6 @@ class shntrToken
         return $treasure[$key] ?? null;
     }
 
-    /**
-     * @deprecated
-     */
-    public static function getPurse()
-    {
-        if (!isset($_SERVER['SERVER_NAME']) || in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES)) {
-            return [
-                'satoshis' => 1000,
-            ];
-        }
-
-        return http_call(shntr_TOKEN_SERVICE . '/purse');
-    }
-
     private static function encrypt(string $data): string
     {
         return openssl_encrypt($data, self::ENCRYPTION_ALGO, getenv('shntr_TOKEN_PASSPHRASE'));
@@ -137,19 +123,11 @@ class shntrToken
      */
     public static function generateWallet()
     {
-        if (!isset($_SERVER['SERVER_NAME']) || in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES)) {
-            return [
-                'private' => self::encrypt('private'),
-                'public' => 'public',
-                'address' => 'address',
-            ];
-        }
-
-        $params = http_call(shntr_TOKEN_SERVICE . '/generate-wallet');
-
-        $params['private'] = self::encrypt($params['private']);
-
-        return $params;
+        return [
+            'private' => self::encrypt('private'),
+            'public' => 'public',
+            'address' => 'address',
+        ];
     }
 
     public static function getRelysiaBalance(string $user_name = null, string $password = null): float
@@ -203,27 +181,6 @@ class shntrToken
         });
 
         return array_sum(array_column($tokens, 'amount'));
-    }
-
-    /**
-     * @deprecated
-     * @return int[]|mixed
-     */
-    public static function getBalance()
-    {
-        global $user;
-
-        if (!isset($_SERVER['SERVER_NAME']) || in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES)) {
-            return [
-                'amount' => 1000,
-            ];
-        }
-
-        $privateKey = self::decrypt($user->_data['user_token_private_key']);
-
-        return http_call(shntr_TOKEN_SERVICE . '/balance', 'GET', [], [
-            "x-key: {$privateKey}"
-        ]);
     }
 
     public static function payRelysia(float $amount, string $recipientPaymail, int $senderId = null): array
@@ -284,45 +241,6 @@ class shntrToken
             'amount' => $amount,
             'message' => "{$amount} token(s) sent successfully",
         ];
-    }
-
-    /**
-     * @param $senderPrivateKey
-     * @param $recipientAddress
-     * @param $amount
-     * @return array|mixed
-     * @throws Exception
-     * @deprecated
-     */
-    public static function pay($senderPrivateKey, $recipientAddress, $amount)
-    {
-        if (!isset($_SERVER['SERVER_NAME']) || in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES)) {
-            return [
-                'amount' => $amount,
-                'message' => "{$amount} tokens sent successfully",
-            ];
-        }
-
-        $senderPrivateKey = self::decrypt($senderPrivateKey);
-
-        $paymentMessage = http_call(
-            shntr_TOKEN_SERVICE . '/pay',
-            'POST',
-            [
-                'recipientAddress' => $recipientAddress,
-                'amount' => floatval($amount),
-            ],
-            [
-                "x-key: {$senderPrivateKey}",
-                "content-type: application/json",
-            ],
-        );
-
-        if (!$paymentMessage) {
-            _error('PAYMENT_shntr');
-        }
-
-        return $paymentMessage;
     }
 
     private static function transformInsertQuery(array $params): string

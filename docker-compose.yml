@@ -9,6 +9,7 @@ services:
       shntr_TOKEN_USERNAME: "${shntr_TOKEN_USERNAME:-nousername}"
       shntr_TOKEN_PASSWORD: "${shntr_TOKEN_PASSWORD:-nopassword}"
       shntr_TOKEN_PAYMAIL: "${shntr_TOKEN_PAYMAIL:-nopaymail}"
+      shntr_TOKEN_ADDRESS: "${shntr_TOKEN_ADDRESS:-noaddress}"
     build:
       context: './php/'
       dockerfile: ${DOCKERFILE_NAME:-Dockerfile}
@@ -47,17 +48,6 @@ services:
       - MYSQL_DATABASE=shntrco_sngine
       - MYSQL_PASSWORD=shntrco_sngine
     command: runuser -u mysql /tmp/mariadb/starter
-  coin-svc:
-    build: './coin-svc'
-    ports:
-    - 3001:3000
-    networks:
-      - backend-shntr
-    volumes:
-      - ~/.aws:/root/.aws
-      - ./coin-svc/cache:/tmp/cache
-      - ./coin-svc:/usr/app
-    command: sh /usr/app/runner.sh
 networks:
   frontend-shntr:
   backend-shntr:
