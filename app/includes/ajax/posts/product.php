@@ -73,7 +73,7 @@ try {
       $balance = shntrToken::getRelysiaBalance();
       $query = $db->query("SELECT * FROM prices WHERE price_name = 'product_price';");
       $price = $query->fetch_assoc();
-      if ($balance['amount'] < $price['price']) {
+      if ($balance < $price['price']) {
           modal("ERROR", __("Funds"), __("You're out of tokens"));
       }
 

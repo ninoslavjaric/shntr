@@ -43,7 +43,7 @@ try {
         $balance = shntrToken::getRelysiaBalance();
         $query = $db->query("SELECT * FROM prices WHERE price_name = 'page_price';");
 				$price = $query->fetch_assoc();
-        if ($balance['amount'] < $price['price']) {
+        if ($balance < $price['price']) {
             modal("ERROR", __("Funds"), __("You're out of tokens"));
         }
 
@@ -78,10 +78,10 @@ try {
             );
         }
         $balance = shntrToken::getRelysiaBalance();
-                
+
 				$query = $db->query("SELECT * FROM prices WHERE price_name = 'group_price';");
 				$price = $query->fetch_assoc();
-        if ($balance['amount'] < $price['price']) {
+        if ($balance < $price['price']) {
             modal("ERROR", __("Funds"), __("You're out of tokens"));
         }
 
@@ -136,10 +136,10 @@ try {
             );
         }
         $balance = shntrToken::getRelysiaBalance();
-         
+
 				$query = $db->query("SELECT * FROM prices WHERE price_name = 'event_price';");
 				$price = $query->fetch_assoc();
-        if ($balance['amount'] < $price['price']) {
+        if ($balance < $price['price']) {
             modal("ERROR", __("Funds"), __("You're out of tokens"));
         }
 
