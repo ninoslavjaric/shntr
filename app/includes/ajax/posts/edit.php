@@ -94,7 +94,7 @@ try {
             try {
                 $resp = shntrToken::payRelysia(
                     floatval($post['product']['price']),
-                    $owner['user_relysia_paymail'],
+                    $owner['user_relysia_address'],
                 );
                 if (!str_contains($resp['message'], 'success')) {
                     throw new Exception($resp['message']);
@@ -196,7 +196,7 @@ try {
 				// }
                 $resp = shntrToken::payRelysia(
                     $amount,
-                    shntrToken::getshntrTreasure('paymail'),
+                    shntrToken::getshntrTreasure('address'),
                     $user->_data['user_id'],
                 );
                 if (!str_contains($resp['message'], 'success')) {

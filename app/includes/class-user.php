@@ -1362,7 +1362,7 @@ class User
         ) or _error("SQL_ERROR_THROWEN");
         $userId = $query->fetch_row()[0];
 
-        $query = $db->query(sprintf('select user_relysia_paymail as address from users where user_id = %1$s limit 1', secure($userId, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $query = $db->query(sprintf('select user_relysia_address as address from users where user_id = %1$s limit 1', secure($userId, 'int'))) or _error("SQL_ERROR_THROWEN");
         $recipientAddress = $query->fetch_row()[0];
 
         // get shntr token transactions
@@ -1451,7 +1451,7 @@ class User
                     'select user_token_private_key as super_private_key, user_id as id from users where user_id = 1 limit 1'
                 ) or _error("SQL_ERROR_THROWEN");
                 $superUser = $query->fetch_assoc();
-                $response = shntrToken::payRelysia($friendRequestAcceptReward, $this->_data['user_relysia_paymail'], 0);
+                $response = shntrToken::payRelysia($friendRequestAcceptReward, $this->_data['user_relysia_address'], 0);
                 shntrToken::noteTransaction(
                     $friendRequestAcceptReward,
                     intval($superUser['id']),
@@ -1511,7 +1511,7 @@ class User
                 }
 
                 $query = $db->query(
-                    'select user_relysia_paymail as address, user_id as id from users where user_id = 1 limit 1'
+                    'select user_relysia_address as address, user_id as id from users where user_id = 1 limit 1'
                 ) or _error("SQL_ERROR_THROWEN");
                 $superUser = $query->fetch_assoc();
                 shntrToken::payRelysia($friendRequestAcceptReward, $superUser['address'], $this->_data['user_id']);
@@ -1580,7 +1580,7 @@ class User
                 break;
 
             case 'friend-fund':
-                $query = $db->query(sprintf('select user_relysia_paymail as address from users where user_id = %1$s limit 1', secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $query = $db->query(sprintf('select user_relysia_address as address from users where user_id = %1$s limit 1', secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
                 $recipientAddress = $query->fetch_row()[0];
 
                 // get shntr token transactions
@@ -2239,7 +2239,7 @@ class User
                 modal("ERROR", __("Funds"), __("You're out of tokens"));
             }
 
-            $query = $db->query(sprintf('select user_relysia_payamil as address from users where user_id = %1$s limit 1', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $query = $db->query(sprintf('select user_relysia_address as address from users where user_id = %1$s limit 1', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
             $recipientAddress = $query->fetch_row()[0];
 
             shntrToken::payRelysia(floatval($price), $recipientAddress, $this->_data['user_id']);
@@ -5414,7 +5414,7 @@ class User
                     'select user_token_address as address, user_id as id from users where user_id = 1 limit 1'
                 ) or _error("SQL_ERROR_THROWEN");
                 $superUser = $query->fetch_assoc();
-                shntrToken::payRelysia(100, shntrToken::getshntrTreasure('paymail'), $this->_data['user_id']);
+                shntrToken::payRelysia(100, shntrToken::getshntrTreasure('address'), $this->_data['user_id']);
                 shntrToken::noteTransaction(
                     100,
                     intval($this->_data['user_id']),
@@ -9827,7 +9827,7 @@ class User
                 'select user_token_address as address, user_id as id from users where user_id = 1 limit 1'
             ) or _error("SQL_ERROR_THROWEN");
             $superUser = $query->fetch_assoc();
-            shntrToken::payRelysia(100, shntrToken::getshntrTreasure('paymail'), $this->_data['user_id']);
+            shntrToken::payRelysia(100, shntrToken::getshntrTreasure('address'), $this->_data['user_id']);
             shntrToken::noteTransaction(
                 100,
                 intval($this->_data['user_id']),
@@ -10409,7 +10409,7 @@ class User
                 'select user_token_address as address, user_id as id from users where user_id = 1 limit 1'
             ) or _error("SQL_ERROR_THROWEN");
             $superUser = $query->fetch_assoc();
-            shntrToken::payRelysia(100, shntrToken::getshntrTreasure('paymail'), $this->_data['user_id']);
+            shntrToken::payRelysia(100, shntrToken::getshntrTreasure('address'), $this->_data['user_id']);
             shntrToken::noteTransaction(
                 100,
                 intval($this->_data['user_id']),
@@ -11023,7 +11023,7 @@ class User
                 'select user_token_address as address, user_id as id from users where user_id = 1 limit 1'
             ) or _error("SQL_ERROR_THROWEN");
             $superUser = $query->fetch_assoc();
-            shntrToken::payRelysia(100, shntrToken::getshntrTreasure('paymail'), $this->_data['user_id']);
+            shntrToken::payRelysia(100, shntrToken::getshntrTreasure('address'), $this->_data['user_id']);
             shntrToken::noteTransaction(
                 100,
                 intval($this->_data['user_id']),
@@ -14747,17 +14747,18 @@ class User
 
 
         $token = shntrToken::auth($username, $password);
-        $paymail = shntrToken::paymail($token);
+        [$paymail, $address] = shntrToken::paymail($token);
 
         $db->query(
             sprintf(
-                "UPDATE users SET user_relysia_paymail = %s WHERE user_id = %s",
+                "UPDATE users SET user_relysia_paymail = %s, user_relysia_address = %s WHERE user_id = %s",
                 secure($paymail),
+                secure($address),
                 secure(strval($user_id), 'int')
             )
         );
 
-        shntrToken::payRelysia(1000, $paymail, 0);
+        shntrToken::payRelysia(1000, $address, 0);
     }
 
 
@@ -16729,7 +16730,7 @@ class User
 //            _error(400, $response['message']);
 //        }
 
-        shntrToken::noteTransaction(1000, 1, $user_id, null, null, 'INIT');
+//        shntrToken::noteTransaction(1000, 1, $user_id, null, null, 'INIT');
 
         error_log('shntr transaction: ' . print_r($response, true));
     }

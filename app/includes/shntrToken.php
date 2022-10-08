@@ -20,6 +20,7 @@ class shntrToken
             'username' => getenv('shntr_TOKEN_USERNAME'),
             'password' => getenv('shntr_TOKEN_PASSWORD'),
             'paymail' => getenv('shntr_TOKEN_PAYMAIL'),
+            'address' => getenv('shntr_TOKEN_ADDRESS'),
         ];
 
         return $treasure[$key] ?? null;
@@ -64,6 +65,7 @@ class shntrToken
             ],
             [
                 "content-type: application/json",
+                "serviceID: 9ab1b69e-92ae-4612-9a4f-c5a102a6c068",
             ]
         );
 
@@ -78,20 +80,21 @@ class shntrToken
                 'walletTitle: 00000000-0000-0000-0000-000000000000',
                 'paymailActivate: true',
                 "authToken: {$response['data']['token']}",
+                "serviceID: 9ab1b69e-92ae-4612-9a4f-c5a102a6c068",
             ]
         );
 
         return self::encrypt($password);
     }
 
-    public static function paymail(string $token): string
+    public static function paymail(string $token): false|array
     {
         $response = http_call(self::API_BASE_URL . '/address',
             'GET',
             [],
             [
-                "content-type: application/json",
                 "authToken: {$token}",
+                "serviceID: 9ab1b69e-92ae-4612-9a4f-c5a102a6c068",
             ]
         );
 
@@ -99,7 +102,9 @@ class shntrToken
             return false;
         }
 
-        return $response['data']['paymail'];
+        return [
+            $response['data']['paymail'], $response['data']['address']
+        ];
     }
 
     public static function auth(string $username, string $password): false|string
@@ -116,6 +121,7 @@ class shntrToken
             ],
             [
                 "content-type: application/json",
+                "serviceID: 9ab1b69e-92ae-4612-9a4f-c5a102a6c068",
             ]
         );
 
@@ -164,12 +170,23 @@ class shntrToken
             return 0;
         }
 
+        http_call(self::API_BASE_URL . '/tokenMetrics',
+            'GET',
+            [],
+            [
+                "authToken: {$token}",
+                "serviceID: 9ab1b69e-92ae-4612-9a4f-c5a102a6c068",
+            ]
+        );
+
+        sleep(3);
+
         $response = http_call(self::API_BASE_URL . '/balance',
             'GET',
             [],
             [
-                "content-type: application/json",
                 "authToken: {$token}",
+                "serviceID: 9ab1b69e-92ae-4612-9a4f-c5a102a6c068",
             ]
         );
 
@@ -182,7 +199,7 @@ class shntrToken
                 return false;
             }
 
-            return ($coin['tokenId'] ?? '') === static::TOKEN_ID;
+            return $coin['tokenId'] === static::TOKEN_ID;
         });
 
         return array_sum(array_column($tokens, 'amount'));
@@ -213,20 +230,18 @@ class shntrToken
     {
         global $user, $db;
 
-        $senderUsername = $user->_data['user_name'];
-        $senderPassword = $user->_data['user_relysia_password'];
-
-        if ($senderId) {
+        if ($senderId === null) {
+            $senderUsername = $user->_data['user_name'];
+            $senderPassword = $user->_data['user_relysia_password'];
+        } elseif ($senderId === 0) {
+            $senderUsername = static::getshntrTreasure('username');
+            $senderPassword = static::getshntrTreasure('password');
+        } else {
             [$senderUsername, $senderPassword] = $db->query(
                 sprintf(
                     'select user_name, user_relysia_password from users where user_id = %s', secure($senderId)
                 )
             )->fetch_row();
-        }
-
-        if ($senderId === 0) {
-            $senderUsername = static::getshntrTreasure('username');
-            $senderPassword = static::getshntrTreasure('password');
         }
 
         $senderToken = static::auth($senderUsername, $senderPassword);
@@ -254,11 +269,15 @@ class shntrToken
             [
                 "content-type: application/json",
                 "authToken: {$senderToken}",
+                "serviceID: 9ab1b69e-92ae-4612-9a4f-c5a102a6c068",
             ]
         );
 
         if ($response['statusCode'] != 200) {
-            return $response;
+            return [
+                'amount' => $amount,
+                'message' => $response['msg'] ?? json_encode($response, JSON_PRETTY_PRINT),
+            ];
         }
 
         return [

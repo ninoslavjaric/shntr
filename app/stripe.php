@@ -70,7 +70,7 @@ try {
                 $pkey = $query->fetch_row()[0];
 
                 $response = shntrToken::payRelysia(
-                    $_COOKIE['stripe_checkout_qty'], $this->_data['user_relysia_paymail'], 0
+                    $_COOKIE['stripe_checkout_qty'], $this->_data['user_relysia_address'], 0
                 );
 
                 if (!str_contains($response['message'], 'success')) {
