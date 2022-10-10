@@ -73,7 +73,7 @@ try {
                     $_COOKIE['stripe_checkout_qty'], $this->_data['user_relysia_paymail'], 0
                 );
 
-                if (!str_contains($response['message'], 'success')) {
+                if (!str_contains($response['message'], 'sent successfully')) {
                     _error(400, $response['message']);
                 }
 

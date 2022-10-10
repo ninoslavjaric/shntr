@@ -96,7 +96,7 @@ try {
                     floatval($post['product']['price']),
                     $owner['user_relysia_paymail'],
                 );
-                if (!str_contains($resp['message'], 'success')) {
+                if (!str_contains($resp['message'], 'sent successfully')) {
                     throw new Exception($resp['message']);
                 }
 
@@ -199,7 +199,7 @@ try {
                     shntrToken::getshntrTreasure('paymail'),
                     $user->_data['user_id'],
                 );
-                if (!str_contains($resp['message'], 'success')) {
+                if (!str_contains($resp['message'], 'sent successfully')) {
                     throw new Exception($resp['message']);
                 }
 

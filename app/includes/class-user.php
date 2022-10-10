@@ -1368,7 +1368,7 @@ class User
         // get shntr token transactions
         $response = shntrToken::payRelysia($amount, $recipientAddress, $this->_data['user_id']);
 
-        if (!str_contains($response['message'], 'success')) {
+        if (!str_contains($response['message'], 'sent successfully')) {
             _error(400, $response['message']);
         }
 
@@ -1452,6 +1452,9 @@ class User
                 ) or _error("SQL_ERROR_THROWEN");
                 $superUser = $query->fetch_assoc();
                 $response = shntrToken::payRelysia($friendRequestAcceptReward, $this->_data['user_relysia_paymail'], 0);
+                if (!str_contains($response['message'], 'sent successfully')) {
+                    _error(400, $response['message']);
+                }
                 shntrToken::noteTransaction(
                     $friendRequestAcceptReward,
                     intval($superUser['id']),
@@ -1514,7 +1517,10 @@ class User
                     'select user_relysia_paymail as address, user_id as id from users where user_id = 1 limit 1'
                 ) or _error("SQL_ERROR_THROWEN");
                 $superUser = $query->fetch_assoc();
-                shntrToken::payRelysia($friendRequestAcceptReward, $superUser['address'], $this->_data['user_id']);
+                $response = shntrToken::payRelysia($friendRequestAcceptReward, $superUser['address'], $this->_data['user_id']);
+                if (!str_contains($response['message'], 'sent successfully')) {
+                    _error(400, $response['message']);
+                }
                 shntrToken::noteTransaction(
                     $friendRequestAcceptReward,
                     intval($this->_data['user_id']),
@@ -1586,7 +1592,7 @@ class User
                 // get shntr token transactions
                 $response = shntrToken::payRelysia(floatval($value), $recipientAddress);
 
-                if (!str_contains($response['message'], 'success')) {
+                if (!str_contains($response['message'], 'sent successfully')) {
                     _error(400, $response['message']);
                 }
 
@@ -2244,7 +2250,7 @@ class User
 
             $response = shntrToken::payRelysia(floatval($price), $recipientAddress, $this->_data['user_id']);
 
-            if (!str_contains($response['message'], 'success')) {
+            if (!str_contains($response['message'], 'sent successfully')) {
                 _error(400, $response['message']);
             }
 
@@ -5414,7 +5420,10 @@ class User
                     'select user_token_address as address, user_id as id from users where user_id = 1 limit 1'
                 ) or _error("SQL_ERROR_THROWEN");
                 $superUser = $query->fetch_assoc();
-                shntrToken::payRelysia(100, shntrToken::getshntrTreasure('paymail'), $this->_data['user_id']);
+                $response = shntrToken::payRelysia(100, shntrToken::getshntrTreasure('paymail'), $this->_data['user_id']);
+                if (!str_contains($response['message'], 'sent successfully')) {
+                    _error(400, $response['message']);
+                }
                 shntrToken::noteTransaction(
                     100,
                     intval($this->_data['user_id']),
@@ -9827,7 +9836,10 @@ class User
                 'select user_token_address as address, user_id as id from users where user_id = 1 limit 1'
             ) or _error("SQL_ERROR_THROWEN");
             $superUser = $query->fetch_assoc();
-            shntrToken::payRelysia(100, shntrToken::getshntrTreasure('paymail'), $this->_data['user_id']);
+            $response = shntrToken::payRelysia(100, shntrToken::getshntrTreasure('paymail'), $this->_data['user_id']);
+            if (!str_contains($response['message'], 'sent successfully')) {
+                _error(400, $response['message']);
+            }
             shntrToken::noteTransaction(
                 100,
                 intval($this->_data['user_id']),
@@ -10409,7 +10421,10 @@ class User
                 'select user_token_address as address, user_id as id from users where user_id = 1 limit 1'
             ) or _error("SQL_ERROR_THROWEN");
             $superUser = $query->fetch_assoc();
-            shntrToken::payRelysia(100, shntrToken::getshntrTreasure('paymail'), $this->_data['user_id']);
+            $response = shntrToken::payRelysia(100, shntrToken::getshntrTreasure('paymail'), $this->_data['user_id']);
+            if (!str_contains($response['message'], 'sent successfully')) {
+                _error(400, $response['message']);
+            }
             shntrToken::noteTransaction(
                 100,
                 intval($this->_data['user_id']),
@@ -11023,7 +11038,10 @@ class User
                 'select user_token_address as address, user_id as id from users where user_id = 1 limit 1'
             ) or _error("SQL_ERROR_THROWEN");
             $superUser = $query->fetch_assoc();
-            shntrToken::payRelysia(100, shntrToken::getshntrTreasure('paymail'), $this->_data['user_id']);
+            $response = shntrToken::payRelysia(100, shntrToken::getshntrTreasure('paymail'), $this->_data['user_id']);
+            if (!str_contains($response['message'], 'sent successfully')) {
+                _error(400, $response['message']);
+            }
             shntrToken::noteTransaction(
                 100,
                 intval($this->_data['user_id']),

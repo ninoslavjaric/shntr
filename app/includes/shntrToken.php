@@ -220,6 +220,7 @@ class shntrToken
         );
 
         if ($response['statusCode'] != 200) {
+            error_log('Payment fail: ' . json_encode($response, JSON_PRETTY_PRINT));
             return [
                 'amount' => $amount,
                 'message' => $response['msg'] ?? json_encode($response, JSON_PRETTY_PRINT),
