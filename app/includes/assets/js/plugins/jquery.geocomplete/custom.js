@@ -6,10 +6,10 @@ window.geocompletionSetup = () => {
   //   //
   // }
   const lsKey = 'autocomplete-geo';
-  const cache = JSON.parse(sessionStorage.getItem(lsKey));
   if (!sessionStorage.getItem(lsKey)) {
     sessionStorage.setItem(lsKey, JSON.stringify({}));
   }
+  const cache = JSON.parse(sessionStorage.getItem(lsKey));
   let selectedText = '';
 
   const getSuggestion = function(term, target, callback)
