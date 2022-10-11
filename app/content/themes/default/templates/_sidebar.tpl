@@ -98,20 +98,20 @@
 {*                {/if}*}
 {*            </li>*}
 
-            {if $user->_data['can_write_articles']}
-                <li {if $page == "index" && $view == "articles"}class="active"{/if}>
-                    <a href="{$system['system_url']}/articles">
-                        {include file='__svg_icons.tpl' icon="shn-articles" class="mr10" width="24px" height="24px"}
-                        {__("My Articles")}
+            {if $user->_logged_in}
+                <li {if $page == "people"}class="active"{/if}>
+                    <a href="{$system['system_url']}/people">
+                        {include file='__svg_icons.tpl' icon="shn-find-people" class="mr10" width="24px" height="24px"}
+                        {__("People")}
                     </a>
                 </li>
             {/if}
 
-            {if $user->_data['can_sell_products']}
-                <li {if $page == "index" && $view == "products"}class="active"{/if}>
-                    <a href="{$system['system_url']}/products">
-                        {include file='__svg_icons.tpl' icon="shn-products" class="mr10" width="24px" height="24px"}
-                        {__("My Products")}
+            {if $system['events_enabled']}
+                <li {if $page == "events"}class="active"{/if}>
+                    <a href="{$system['system_url']}/events">
+                        {include file='__svg_icons.tpl' icon="shn-events" class="mr10" width="24px" height="24px"}
+                        {__("Events")}
                     </a>
                 </li>
             {/if}
@@ -121,15 +121,6 @@
                     <a href="{$system['system_url']}/funding_requests">
                         {include file='__svg_icons.tpl' icon="money-bag" class="mr10 invisible" width="24px" height="24px"}
                         {__("My Funding")}
-                    </a>
-                </li>
-            {/if}
-
-            {if $user->_logged_in}
-                <li {if $page == "index" && $view == "saved"}class="active"{/if}>
-                    <a href="{$system['system_url']}/saved">
-                        {include file='__svg_icons.tpl' icon="shn-savedpost" class="mr10" width="24px" height="24px"}
-                        {__("Saved Posts")}
                     </a>
                 </li>
             {/if}
@@ -197,11 +188,29 @@
                 <small class="text-muted">{__("explore")|upper}</small>
             </li>
 
+            {if $user->_data['can_write_articles']}
+                <li {if $page == "index" && $view == "articles"}class="active"{/if}>
+                    <a href="{$system['system_url']}/articles">
+                        {include file='__svg_icons.tpl' icon="shn-articles" class="mr10" width="24px" height="24px"}
+                        {__("My Articles")}
+                    </a>
+                </li>
+            {/if}
+
+            {if $user->_data['can_sell_products']}
+                <li {if $page == "index" && $view == "products"}class="active"{/if}>
+                    <a href="{$system['system_url']}/products">
+                        {include file='__svg_icons.tpl' icon="shn-products" class="mr10" width="24px" height="24px"}
+                        {__("My Products")}
+                    </a>
+                </li>
+            {/if}
+
             {if $user->_logged_in}
-                <li {if $page == "people"}class="active"{/if}>
-                    <a href="{$system['system_url']}/people">
-                        {include file='__svg_icons.tpl' icon="shn-find-people" class="mr10" width="24px" height="24px"}
-                        {__("People")}
+                <li {if $page == "index" && $view == "saved"}class="active"{/if}>
+                    <a href="{$system['system_url']}/saved">
+                        {include file='__svg_icons.tpl' icon="shn-savedpost" class="mr10" width="24px" height="24px"}
+                        {__("Saved Posts")}
                     </a>
                 </li>
             {/if}
@@ -220,15 +229,6 @@
                     <a href="{$system['system_url']}/groups">
                         {include file='__svg_icons.tpl' icon="shn-groups" class="mr10" width="24px" height="24px"}
                         {__("Groups")}
-                    </a>
-                </li>
-            {/if}
-
-            {if $system['events_enabled']}
-                <li {if $page == "events"}class="active"{/if}>
-                    <a href="{$system['system_url']}/events">
-                        {include file='__svg_icons.tpl' icon="shn-events" class="mr10" width="24px" height="24px"}
-                        {__("Events")}
                     </a>
                 </li>
             {/if}
