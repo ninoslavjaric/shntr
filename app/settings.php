@@ -418,6 +418,9 @@ try {
             $history = shntrToken::getHistory(intval($user->_data['user_id']));
 			$user_id = $user->_data['user_id'];
 			$sell_list = $db->query(sprintf("SELECT * FROM info_sell_token WHERE user_id = %s", secure($user->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+			if ($sell_list->num_rows == 0) {
+				$sell_list = [];
+			}
 			/* assign variables */
 			$smarty->assign('shntr_balance', $balance);
 			$smarty->assign('shntr_public_key', $user->_data['user_token_public_key']);
