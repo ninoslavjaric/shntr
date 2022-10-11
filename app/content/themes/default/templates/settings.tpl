@@ -2906,11 +2906,11 @@
                                 {include file='_no_transactions.tpl'}
                             {/if}
                         </div>
-                        <div class="heading-small mb20">
-                            {__("Sell token list")}
-                        </div>
-                        <div class="pl-md-4">
-                            {if $sell_token_list}
+                        {if $sell_token_list != []}
+                            <div class="heading-small mb20">
+                                {__("Sell token list")}
+                            </div>
+                            <div class="pl-md-4">
                                 <div class="table-responsive mt20">
                                     <table class="table table-striped table-bordered table-hover js_dataTable">
                                         <thead>
@@ -2975,10 +2975,8 @@
                                         </tbody>
                                     </table>
                                 </div>
-                            {else}
-                                {include file='_no_transactions.tpl'}
-                            {/if}
-                        </div>
+                            </div>
+                        {/if}
                     </div>
 
                 {elseif $view == "sell_token"}
