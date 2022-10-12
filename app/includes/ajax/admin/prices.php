@@ -32,7 +32,9 @@ try {
 				'page_price' => secure($_POST['page_price']),
 				'product_price' => secure($_POST['product_price']),
 				'event_price' => secure($_POST['event_price']),
-				'group_price' => secure($_POST['group_price'])
+				'group_price' => secure($_POST['group_price']),
+				'send_fr_price' => secure($_POST['send_fr_price']),
+				'accept_fr_price' => secure($_POST['accept_fr_price'])
 			]);
 			/* return */
 			return_json(array('success' => true, 'message' => __("Prices have been updated")));
