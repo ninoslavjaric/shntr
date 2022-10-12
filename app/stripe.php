@@ -38,8 +38,8 @@ try {
                     'quantity' => $qty,
                 ]],
                 'mode' => 'payment',
-                'success_url' => SYS_URL . '/buy-tokens/success?token=' . $token,
-                'cancel_url' => SYS_URL . '/buy-tokens/fail?token=' . $token,
+                'success_url' => SYS_URL . '/settings/shntr_token?purchase=success&amount=' . $qty,
+                'cancel_url' => SYS_URL . '/settings/shntr_token?purchase=fail',
             ]);
 
             $secured = get_system_protocol() == 'https';
