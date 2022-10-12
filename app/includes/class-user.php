@@ -15840,7 +15840,7 @@ class User
     {
         return sprintf(
             'select 
-                   i.id, 
+                   i.id, i.parent_id,
                    coalesce(concat(ip.title, \' > \', i.title), i.title) as title, 
                    i.id in (select interest_id from interests_%1$ss where %1$s_id = %2$s) as interested
                 from interests as i
@@ -15859,6 +15859,23 @@ class User
 
         return $db->query(
             $this->transform_interests_query($this->_data['user_id'], 'user')
+        )->fetch_all(MYSQLI_ASSOC);
+    }
+
+    private function transform_main_interests_query(): string
+    {
+        return 'select id,title
+                from interests
+                where parent_id is null
+                order by id';
+    }
+
+    public function get_main_interests(): array
+    {
+        global $db;
+
+        return $db->query(
+            $this->transform_main_interests_query()
         )->fetch_all(MYSQLI_ASSOC);
     }
 

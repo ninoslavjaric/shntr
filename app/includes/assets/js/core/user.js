@@ -2054,6 +2054,15 @@ $(function () {
                 modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
             });
     });
+
+    /* Drpdown for selecting multiple interests */
+    $('body').on('change', '#interests', function () {
+        var selectValue = this.value;
+
+        $('input[type="checkbox"][data-parent="'+selectValue+'"]').attr('checked','checked');
+        $('input[type=checkbox][value="'+selectValue+'"]').attr('checked','checked');
+    });
+
     /* invite (page|group|event) */
     $('body').on('click', '.js_page-invite, .js_group-invite, .js_event-invite', function () {
         var _this = $(this);
