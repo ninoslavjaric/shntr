@@ -249,6 +249,14 @@
                                 <div class="heading-small mb20">
                                     {__("Interests")}
                                 </div>
+                                <div class="form-group">
+                                    <select class="form-control" name="interests" id="interests">
+                                        <option value="none">{__("Select Category")}</option>
+                                        {foreach $user->get_main_interests() as $interest}
+                                            <option value="{$interest['id']}">{$interest['title']}</option>
+                                        {/foreach}
+                                    </select>
+                                </div>
                                 <div class="pl-md-4" style="max-height: 500px; overflow-y: scroll; overflow-x:auto">
                                     <table class="table">
                                         <thead>
@@ -264,7 +272,7 @@
                                                     {$interest['title']}
                                                 </td>
                                                 <td>
-                                                    <input type="checkbox" value="{$interest['id']}" name="interests[]" {if $interest['interested']}checked{/if}>
+                                                    <input type="checkbox" data-parent="{$interest['parent_id']}"  value="{$interest['id']}" name="interests[]" {if $interest['interested']}checked{/if}>
                                                 </td>
                                             </tr>
                                         {/foreach}

@@ -58,8 +58,16 @@
             <label class="form-control-label" for="description">{__("About")}</label>
             <textarea class="form-control" name="description"></textarea>
         </div>
+        <label class="form-control-label" for="description">{__("Interests")}</label>
+        <div class="form-group">
+            <select class="form-control" name="interests" id="interests">
+                <option value="none">{__("Select Category")}</option>
+                {foreach $user->get_main_interests() as $interest}
+                    <option value="{$interest['id']}">{$interest['title']}</option>
+                {/foreach}
+            </select>
+        </div>
         <div class="form-group" style="max-height: 300px; overflow-y: scroll; overflow-x:auto">
-            <label class="form-control-label" for="description">{__("Interests")}</label>
             <table class="table">
                 <thead>
                 <tr>
@@ -74,7 +82,7 @@
                             {$interest['title']}
                         </td>
                         <td>
-                            <input type="checkbox" value="{$interest['id']}" name="interests[]" {if $interest['interested']}checked{/if}>
+                            <input type="checkbox" data-parent="{$interest['parent_id']}" value="{$interest['id']}" name="interests[]" {if $interest['interested']}checked{/if}>
                         </td>
                     </tr>
                 {/foreach}
