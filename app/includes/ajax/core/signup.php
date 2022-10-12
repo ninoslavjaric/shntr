@@ -40,9 +40,9 @@ try {
 	$db->query(sprintf("UPDATE users SET user_email_verification_code = %s WHERE user_name = %s", secure($email_verification_code), secure($_POST['username']))) or _error("SQL_ERROR_THROWEN");
 	/* prepare activation email */
 	$subject = __("Just one more step to get started on") . " " . $system['system_title'];
-	$body = get_email_template("activation_email", $subject, ["name" => $this->_data['name'], "email_verification_code" => $email_verification_code]);
+	$body = get_email_template("activation_email", $subject, ["name" => $_POST['username'], "email_verification_code" => $email_verification_code]);
 	/* send email */
-	if (!_email($this->_data['user_email'], $subject, $body['html'], $body['plain'])) {
+	if (!_email($_POST['email'], $subject, $body['html'], $body['plain'])) {
 		throw new Exception(__("Activation email could not be sent"));
 	}
 
