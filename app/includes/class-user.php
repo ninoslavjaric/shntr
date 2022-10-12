@@ -5420,12 +5420,14 @@ class User
                     'select user_token_address as address, user_id as id from users where user_id = 1 limit 1'
                 ) or _error("SQL_ERROR_THROWEN");
                 $superUser = $query->fetch_assoc();
-                $response = shntrToken::payRelysia(100, shntrToken::getshntrTreasure('paymail'), $this->_data['user_id']);
+                $query = $db->query("SELECT * FROM prices WHERE price_name = 'page_price';");
+                $price = $query->fetch_assoc();
+                $response = shntrToken::payRelysia($price["price"], shntrToken::getshntrTreasure('paymail'), $this->_data['user_id']);
                 if (!str_contains($response['message'], 'sent successfully')) {
                     _error(400, $response['message']);
                 }
                 shntrToken::noteTransaction(
-                    100,
+                    $price["price"],
                     intval($this->_data['user_id']),
                     intval($superUser['id']),
                     'products',
@@ -9836,12 +9838,14 @@ class User
                 'select user_token_address as address, user_id as id from users where user_id = 1 limit 1'
             ) or _error("SQL_ERROR_THROWEN");
             $superUser = $query->fetch_assoc();
-            $response = shntrToken::payRelysia(100, shntrToken::getshntrTreasure('paymail'), $this->_data['user_id']);
+            $query = $db->query("SELECT * FROM prices WHERE price_name = 'page_price';");
+            $price = $query->fetch_assoc();
+            $response = shntrToken::payRelysia($price['price'], shntrToken::getshntrTreasure('paymail'), $this->_data['user_id']);
             if (!str_contains($response['message'], 'sent successfully')) {
                 _error(400, $response['message']);
             }
             shntrToken::noteTransaction(
-                100,
+                $price['price'],
                 intval($this->_data['user_id']),
                 intval($superUser['id']),
                 'pages',
@@ -10421,12 +10425,14 @@ class User
                 'select user_token_address as address, user_id as id from users where user_id = 1 limit 1'
             ) or _error("SQL_ERROR_THROWEN");
             $superUser = $query->fetch_assoc();
-            $response = shntrToken::payRelysia(100, shntrToken::getshntrTreasure('paymail'), $this->_data['user_id']);
+            $query = $db->query("SELECT * FROM prices WHERE price_name = 'page_price';");
+            $price = $query->fetch_assoc();
+            $response = shntrToken::payRelysia($price["price"], shntrToken::getshntrTreasure('paymail'), $this->_data['user_id']);
             if (!str_contains($response['message'], 'sent successfully')) {
                 _error(400, $response['message']);
             }
             shntrToken::noteTransaction(
-                100,
+                $price["price"],
                 intval($this->_data['user_id']),
                 intval($superUser['id']),
                 'groups',
@@ -11038,12 +11044,14 @@ class User
                 'select user_token_address as address, user_id as id from users where user_id = 1 limit 1'
             ) or _error("SQL_ERROR_THROWEN");
             $superUser = $query->fetch_assoc();
-            $response = shntrToken::payRelysia(100, shntrToken::getshntrTreasure('paymail'), $this->_data['user_id']);
+            $query = $db->query("SELECT * FROM prices WHERE price_name = 'page_price';");
+            $price = $query->fetch_assoc();
+            $response = shntrToken::payRelysia($price["price"], shntrToken::getshntrTreasure('paymail'), $this->_data['user_id']);
             if (!str_contains($response['message'], 'sent successfully')) {
                 _error(400, $response['message']);
             }
             shntrToken::noteTransaction(
-                100,
+                $price["price"],
                 intval($this->_data['user_id']),
                 intval($superUser['id']),
                 'events',
