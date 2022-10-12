@@ -26,6 +26,16 @@
                         <input type="number" class="form-control" name="group_price" value="{$group_price}">
                     </div>
 
+                    <div class="form-group">
+                        <label class="form-control-label">{__("Price for sending friend request")}</label>
+                        <input type="number" class="form-control" name="send_fr_price" value="{$send_fr_price}">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-control-label">{__("Price for accepting friend request")}</label>
+                        <input type="number" class="form-control" name="accept_fr_price" value="{$accept_fr_price}">
+                    </div>
+
                     <!-- success -->
                     <div class="alert alert-success mb0 x-hidden"></div>
                     <!-- success -->
