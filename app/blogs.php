@@ -26,7 +26,7 @@ try {
 	switch ($_GET['view']) {
 		case '':
 			// page header
-			page_header($system['system_title'] . ' - ' . __("Blogs"), __($system['system_description_blogs']));
+			page_header($system['system_title'] . ' - ' . __("News"), __($system['system_description_blogs']));
 
 			// get articles
 			$articles = $user->get_articles();
