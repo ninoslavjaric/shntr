@@ -268,8 +268,8 @@ class shntrToken
             'select
                 amount,
                 created_at,
-                snd.user_name as sender_name,
-                rcp.user_name as recipient_name,
+                if(sender_id = 0, \'TREASURE\', snd.user_name) as sender_name,
+                if(recipient_id = 0, \'TREASURE\', rcp.user_name) as recipient_name,
                 note,
                 coalesce(
                    concat(\'/events/\', e.event_id),
@@ -279,8 +279,8 @@ class shntrToken
                    concat(\'/\', u.user_name)
                 ) as link
             from token_transactions
-                inner join users as snd on snd.user_id = sender_id
-                inner join users as rcp on rcp.user_id = recipient_id
+                left join users as snd on snd.user_id = sender_id
+                left join users as rcp on rcp.user_id = recipient_id
                 left join events as e on e.event_id = basis_entity_id and basis_name = \'events\'
                 left join pages as pg on pg.page_id = basis_entity_id and basis_name = \'pages\'
                 left join `groups` as g on g.group_id = basis_entity_id and basis_name = \'groups\'
@@ -300,8 +300,8 @@ class shntrToken
                 if(sender_id = {$userId}, 'outgoing', 'incoming') as type, 
                 created_at, 
                 note, 
-                snd.user_name as sender_name, 
-                rcp.user_name as recipient_name,
+                if(sender_id = 0, 'TREASURE', snd.user_name) as sender_name,
+                if(recipient_id = 0, 'TREASURE', rcp.user_name) as recipient_name,
                 basis_name, 
                 basis_entity_id,
                 coalesce(
@@ -312,8 +312,8 @@ class shntrToken
                    concat('/', u.user_name)
                 ) as link
             from token_transactions
-                inner join users as snd on snd.user_id = sender_id
-                inner join users as rcp on rcp.user_id = recipient_id
+                left join users as snd on snd.user_id = sender_id
+                left join users as rcp on rcp.user_id = recipient_id
                 left join events as e on e.event_id = basis_entity_id and basis_name = 'events'
                 left join pages as pg on pg.page_id = basis_entity_id and basis_name = 'pages'
                 left join `groups` as g on g.group_id = basis_entity_id and basis_name = 'groups'

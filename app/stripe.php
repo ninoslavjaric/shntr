@@ -79,7 +79,7 @@ try {
 
                 shntrToken::noteTransaction(
                     $_COOKIE['stripe_checkout_qty'],
-                    1,
+                    0,
                     $user->_data['user_id'],
                     null,
                     null,
