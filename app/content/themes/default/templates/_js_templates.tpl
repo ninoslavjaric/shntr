@@ -100,6 +100,32 @@
         <button type="button" class="btn btn-sm btn-success" data-dismiss="modal" id="modal-fund-ok">{__("Confirm")}</button>
     </div>
 </script>
+
+<script id="modal-paywall" type="text/template">
+    <div class="modal-header">
+        <h6 class="modal-title">{literal}{{title}}{/literal}</h6>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+            <p>{literal}{{message}}{/literal}</p>
+            <input
+                type="number"
+                class="form-control"
+                id="paywallTokenInput"
+                min="{literal}{{price}}{/literal}"
+                max="{literal}{{price}}{/literal}"
+                value="{literal}{{price}}{/literal}"
+            >
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-light" data-dismiss="modal">{__("Cancel")}</button>
+        <button type="button" class="btn btn-sm btn-success" data-dismiss="modal" id="modal-paywall-ok">{__("Confirm")}</button>
+    </div>
+</script>
 <!-- Modals -->
 
 

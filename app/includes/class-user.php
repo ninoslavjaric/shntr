@@ -6239,6 +6239,9 @@ class User
             }
         }
 
+        $post['paywalled'] = $this->paywalled($post['author_id']);
+        $post['paywallPrice'] = $this->paywalledPrice($post['author_id']);
+
         return $post;
     }
 

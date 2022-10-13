@@ -224,9 +224,9 @@ function modal() {
     }
 }
 
-function blueModal() {
-    var className = arguments[0].replace('#', '');
-    if (arguments[0] == "#modal-login" || arguments[0] == "#chat-calling" || arguments[0] == "#chat-ringing") {
+function blueModal({ id, size, title, message, ...others } = {}) {
+    var className = id.replace('#', '');
+    if (id == "#modal-login" || id == "#chat-calling" || id == "#chat-ringing") {
         /* disable the backdrop (don't close modal when click outside) */
         if ($('#modal').data('bs.modal')) {
             $('#modal').data('bs.modal').options = { backdrop: 'static', keyboard: false };
@@ -237,6 +237,7 @@ function blueModal() {
 
     $('#modal').addClass(className);
     $('#modal').addClass('blue-modal');
+    $('.modal-dialog').addClass('modal-dialog-centered');
 
     $('#modal').on('hidden.bs.modal', function (e) {
         $('#modal').removeClass(className);
@@ -250,7 +251,7 @@ function blueModal() {
     $('.modal-dialog').removeClass('modal-sm');
     $('.modal-dialog').removeClass('modal-lg');
     $('.modal-dialog').removeClass('modal-xlg');
-    switch (arguments[2]) {
+    switch (size) {
         case 'small':
             $('.modal-dialog').addClass('modal-sm');
             break;
@@ -264,8 +265,9 @@ function blueModal() {
             $('.modal-dialog').addClass('modal-dialog-centered');
             break;
     }
+
     /* update the modal-content with the rendered template */
-    $('.modal-content:last').html(render_template(arguments[0], arguments[1]));
+    $('.modal-content:last').html(render_template(id, { title, message, ...others }));
     /* initialize modal if the function defined (user logged in) */
     if (typeof initialize_modal === "function") {
         initialize_modal();
@@ -282,8 +284,9 @@ function confirm(title, message, callback, password_check = false, extra_content
     });
 }
 
-function fund(title, message, callback, password_check = false, extra_content = '') {
-    blueModal("#modal-fund", { title, message, password_check, extra_content }, 'modal-dialog-centered');
+function fund(title, message, callback) {
+    blueModal({ id: "#modal-fund", title, message });
+
     $("#modal-fund-ok").on('click focusout', function(event){
         var eventType = event.type;
         var _this = $(this);

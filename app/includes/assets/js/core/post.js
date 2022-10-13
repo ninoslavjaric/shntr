@@ -2304,6 +2304,22 @@ $(function () {
         }, 'json');
     });
 
+    $('div[data-paywalled]').click(function() {
+        var paywallPrice = $(this).data('paywalled');
+        var authorName = $(this).data('author-name');
+
+        if (!Boolean(paywallPrice)) {
+            return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        var title = __['Paywall was established'];
+        var message = __['By paying the paywall of _AMOUNT_ token(s), you will again have the possibility to interact fully with _NAME_'].replace('_AMOUNT_', paywallPrice).replace('_NAME_', authorName);
+        blueModal({ id: "#modal-paywall", title, message, price: paywallPrice });
+    });
+
 
     // handle reactions
     function _show_reactions(element) {
@@ -2333,12 +2349,14 @@ $(function () {
             _show_reactions(this);
         }
     });
+
     $('body').on('mouseleave', '.reactions-wrapper', function () {
         if (!is_iPad() && $(window).width() >= 970) {
             /* desktop -> hide the reactions */
             _hide_reactions(this);
         }
     });
+
     $('body').on('click', '.reactions-wrapper', function () {
         if (is_iPad() || $(window).width() < 970) {
             /* mobile -> toggle the reactions */

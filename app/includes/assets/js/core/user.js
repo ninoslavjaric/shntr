@@ -601,14 +601,14 @@ $(function () {
             title = __['Tokens bought successfully'];
             message = __['You have successfully bought _AMOUNT_ tokens'].replace('_AMOUNT_', amount);
 
-            blueModal('#modal-success',  { title, message }, 'modal-dialog-centered');
+            blueModal({ id: '#modal-success', title, message });
         }
 
         if (purchase === 'fail') {
             title = __['Tokens bought failed'];
             message = __['There is something that went wrong!'];
 
-            blueModal('#modal-error',  { title, message }, 'modal-dialog-centered');
+            blueModal({ id: '#modal-error', title, message });
         }
     }
 
@@ -1676,11 +1676,11 @@ $(function () {
         var name = $('.js_paywall').data('name');
 
         if (paywallPriceForIntruder > 0) {
-            blueModal('#modal-error', {
+            blueModal({ 
+                id: '#modal-error',
                 title: __['Paywall was established'],
-                message: __['By paying the paywall of  '] + paywallPriceForIntruder  +
-                    __[' token(s), you will again have the possibility to interact fully with '] + name
-            }, 'modal-dialog-centered')
+                message: __['By paying the paywall of  '] + paywallPriceForIntruder  + __[' token(s), you will again have the possibility to interact fully with '] + name,
+            });
 
             //$('.mt20').after('<button type="button" class="btn btn-primary" id="modal-confirm-ok">Pay</button>');
             $('.mt20').after('<button type="button" class="btn btn-light" onclick="history.go(-1);">Go back</button>');
@@ -1891,12 +1891,21 @@ $(function () {
                 if (response && response.amount ) {
                     setTimeout(() => {
                         button_status(_this, "reset");
-                        blueModal('#modal-success', { title: __['Tokens sent successfully'], message: __['You have successfully sent'] + ' ' + response.amount + ' tokens'}, 'modal-dialog-centered');
+
+                        blueModal({
+                            id: '#modal-success',
+                            title: __['Tokens sent successfully'],
+                            message: __['You have successfully sent'] + ' ' + response.amount + ' tokens',
+                        });
                     }, 500);
                 } else {
                     setTimeout(() => {
                         button_status(_this, "reset");
-                        blueModal('#modal-error', { title: __['Error'], message: __['There is something that went wrong!'] }, 'modal-dialog-centered');
+                        blueModal({
+                            id: '#modal-error',
+                            title: __['Error'],
+                            message: __['There is something that went wrong!'],
+                        });
                     }, 500);
                 }
             }, "json")
@@ -1905,7 +1914,11 @@ $(function () {
 
                 setTimeout(() => {
                     button_status(_this, "reset");
-                    blueModal('#modal-error', { title: __['Error'], message: __['There is something that went wrong!'] }, 'modal-dialog-centered');
+                    blueModal({
+                        id: '#modal-error',
+                        title: __['Error'],
+                        message: __['There is something that went wrong!'],
+                    });
                 }, 500);
             });
         });
