@@ -1459,7 +1459,7 @@ class User
                 }
                 shntrToken::noteTransaction(
                     $friendRequestAcceptReward,
-                    intval($superUser['id']),
+                    0,
                     intval($this->_data['user_id']),
                     'users',
                     $id,
@@ -5420,10 +5420,6 @@ class User
 
 
             if ($post['post_type'] == 'product') {
-                $query = $db->query(
-                    'select user_token_address as address, user_id as id from users where user_id = 1 limit 1'
-                ) or _error("SQL_ERROR_THROWEN");
-                $superUser = $query->fetch_assoc();
                 $query = $db->query("SELECT * FROM prices WHERE price_name = 'page_price';");
                 $price = $query->fetch_assoc();
                 $response = shntrToken::payRelysia($price["price"], shntrToken::getshntrTreasure('paymail'), $this->_data['user_id']);
@@ -5433,7 +5429,7 @@ class User
                 shntrToken::noteTransaction(
                     $price["price"],
                     intval($this->_data['user_id']),
-                    intval($superUser['id']),
+                    0,
                     'products',
                     $post['post_id'],
                     'Product creation charges'
@@ -9851,7 +9847,7 @@ class User
             shntrToken::noteTransaction(
                 $price['price'],
                 intval($this->_data['user_id']),
-                intval($superUser['id']),
+                0,
                 'pages',
                 $page_id,
                 'Page creation charges'
@@ -10425,10 +10421,6 @@ class User
             /* group admin addation */
             $this->connect("group-admin-addation", $group_id, $this->_data['user_id']);
 
-            $query = $db->query(
-                'select user_token_address as address, user_id as id from users where user_id = 1 limit 1'
-            ) or _error("SQL_ERROR_THROWEN");
-            $superUser = $query->fetch_assoc();
             $query = $db->query("SELECT * FROM prices WHERE price_name = 'page_price';");
             $price = $query->fetch_assoc();
             $response = shntrToken::payRelysia($price["price"], shntrToken::getshntrTreasure('paymail'), $this->_data['user_id']);
@@ -10438,7 +10430,7 @@ class User
             shntrToken::noteTransaction(
                 $price["price"],
                 intval($this->_data['user_id']),
-                intval($superUser['id']),
+                0,
                 'groups',
                 $group_id,
                 'Group creation charges'
@@ -11057,7 +11049,7 @@ class User
             shntrToken::noteTransaction(
                 $price["price"],
                 intval($this->_data['user_id']),
-                intval($superUser['id']),
+                0,
                 'events',
                 $event_id,
                 'Event creation charges'
@@ -14789,6 +14781,7 @@ class User
         );
 
         shntrToken::payRelysia(1000, $paymail, 0);
+        shntrToken::noteTransaction(1000, 0, $user_id, null, null, 'INIT');
     }
 
 
