@@ -131,8 +131,8 @@
                     <div class="stat-panel bg-gradient-cyan">
                         <div class="stat-cell">
                             <i class="fa fa-bitcoin bg-icon"></i>
-                            <span class="text-xxlg">{$insights['purse']['satoshis']}</span>
-                            <span class="text-lg">{__("Purse balance in satoshies")}</span>
+                            <span class="text-xxlg">{$insights['purse']}</span>
+                            <span class="text-lg">{__("Treasure balance")}</span>
                         </div>
                     </div>
                 </div>
