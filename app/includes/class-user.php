@@ -16663,9 +16663,9 @@ class User
         } else {
             $args['phone'] = 'null';
         }
-        if (strlen($args['password']) < 6) {
-            throw new Exception(__("Your password must be at least 6 characters long. Please try another"));
-        }
+        // if (strlen($args['password']) < 6) {
+        //     throw new Exception(__("Your password must be at least 6 characters long. Please try another"));
+        // }
         if (!valid_name($args['first_name'])) {
             throw new Exception(__("Your first name contains invalid characters"));
         }
