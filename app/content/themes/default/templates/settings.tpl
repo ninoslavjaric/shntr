@@ -250,11 +250,11 @@
                             </li>
                         {/if}
 
-                        <li {if $view == "blocking"}class="active"{/if}>
+                        {*<li {if $view == "blocking"}class="active"{/if}>
                             <a href="{$system['system_url']}/settings/blocking">
                                 <i class="fa fa-minus-circle fa-fw mr10" style="color: #f44336;"></i>{__("Blocking")}
                             </a>
-                        </li>
+                        </li>*}
 
                         {if $system['download_info_enabled']}
                             <li {if $view == "information"}class="active"{/if}>

@@ -498,15 +498,15 @@ try {
 			$smarty->assign('case', $case);
 			break;
 
-		case 'blocking':
-			// page header
-			page_header(__("Settings") . " &rsaquo; " . __("Blocking"));
-
-			// get blocks
-			$blocks = $user->get_blocked();
-			/* assign variables */
-			$smarty->assign('blocks', $blocks);
-			break;
+//		case 'blocking':
+//			// page header
+//			page_header(__("Settings") . " &rsaquo; " . __("Blocking"));
+//
+//			// get blocks
+//			$blocks = $user->get_blocked();
+//			/* assign variables */
+//			$smarty->assign('blocks', $blocks);
+//			break;
 
 		case 'information':
 			// check if download info enabled

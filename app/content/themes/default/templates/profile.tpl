@@ -178,9 +178,9 @@
                                     {/if}
                                     <!-- paywall -->
                                     <!-- block -->
-                                    <div class="dropdown-item pointer js_block-user" data-uid="{$profile['user_id']}">
+                                    {*<div class="dropdown-item pointer js_block-user" data-uid="{$profile['user_id']}">
                                         <i class="fa fa-minus-circle fa-fw mr10"></i>{__("Block")}
-                                    </div>
+                                    </div>*}
                                     <!-- block -->
                                     <!-- manage -->
                                     {if $user->_is_admin}
