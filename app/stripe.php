@@ -6,8 +6,6 @@
  */
 // fetch bootloader
 require('bootloader.php');
-// user access
-user_access();
 
 if (!$system['creditcard_enabled'] && !$system['alipay_enabled']) {
     modal("MESSAGE", __("Error"), __("This feature has been disabled by the admin"));
@@ -22,6 +20,8 @@ try {
             break;
 
         case 'checkout':
+            user_access();
+
             require_once(ABSPATH . 'includes/libs/Stripe/init.php');
             if (strtolower($_SERVER['REQUEST_METHOD']) != 'post') {
                 _error(404);
@@ -32,6 +32,7 @@ try {
             $token = sha1($_COOKIE['PHPSESSID']);
             $qty = $_POST['qty'] ?? 5;
 
+            /** @var \Stripe\Checkout\Session $checkout_session */
             $checkout_session = \Stripe\Checkout\Session::create([
                 'line_items' => [[
                     'price' => 'price_1LmnCgJoiLHsoH4fYQZKP71j',
@@ -42,59 +43,166 @@ try {
                 'cancel_url' => SYS_URL . '/settings/shntr_token?purchase=fail',
             ]);
 
+            if (!$checkout_session->id){
+                _error(404, 'No session id');
+            }
+
+            $db->query(
+                sprintf("INSERT INTO stripe_transactions (session_id, user_id, qty) VALUES (%s, %s, %s)",
+                        secure($checkout_session->id),
+                        secure($user->_data['user_id'], 'int'),
+                        secure($qty)
+                    )
+                );
+
             $secured = get_system_protocol() == 'https';
             $expire = time() + 60;
             setcookie('stripe_checkout', sha1($token), $expire, '/', '', $secured, true);
             setcookie('stripe_checkout_qty', $qty, $expire, '/', '', $secured, true);
 
-            redirect($checkout_session->url, '');
+
+            header("HTTP/1.1 303 See Other");
+            header("Location: " . $checkout_session->url);
+
             break;
 
-        case 'success':
-        case 'fail':
-            $secured = get_system_protocol() == 'https';
+        case 'webhook':
+            require_once(ABSPATH . 'includes/libs/Stripe/init.php');
 
-            if (
-                !isset($_COOKIE['stripe_checkout'], $_COOKIE['stripe_checkout_qty'], $_GET['token'])
-                || count(
-                    array_unique([sha1(sha1($_COOKIE['PHPSESSID'])), sha1($_GET['token']), $_COOKIE['stripe_checkout']])
-                ) !== 1
-            ) {
-                setcookie('stripe_checkout', 0, time(), '/', '', $secured, true);
-                setcookie('stripe_checkout_qty', 0, time(), '/', '', $secured, true);
-                redirect('/settings/shntr_token');
+            $endpoint_secret = getenv('STRIPE_WEBHOOK_SECRET') ?? 'whsec_Rnqisjn8dexS96xoik089znWpeQn5b79';
+
+            $payload = @file_get_contents('php://input');
+            if (!($sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'] ?? null)) {
+                error_log('No signature');
+                http_response_code(404);
+                return_json([
+                    'success' => false,
+                    'msg' => "No signature",
+                ]);
+            }
+            $event = null;
+            try {
+                $event = \Stripe\Webhook::constructEvent(
+                    $payload, $sig_header, $endpoint_secret
+                );
+            } catch (\UnexpectedValueException $e) {
+                error_log('UnexpectedValueException ' . $e->getMessage());
+
+                http_response_code(400);
+                return_json([
+                    'success' => false,
+                    'msg' => $e->getMessage(),
+                ]);
+            } catch (\Stripe\Exception\SignatureVerificationException $e) {
+                error_log('SignatureVerificationException ' . $e->getMessage());
+                http_response_code(400);
+                return_json([
+                    'success' => false,
+                    'msg' => $e->getMessage(),
+                ]);
             }
 
-            if ($_GET['view'] == 'success' && in_array($_SERVER['SERVER_NAME'], ['localhost', 'test.shntr.com'])) {
-                $query = $db->query('select user_token_private_key from users where user_id = 1');
-                $pkey = $query->fetch_row()[0];
+            if (!str_starts_with($event->type, 'checkout.session')) {
+                error_log("Wrong event type ->> {$event->type}");
+                http_response_code(400);
+                return_json([
+                    'success' => false,
+                    'msg' => "Wrong event type ->> {$event->type}",
+                ]);
+            }
+            /** @var \Stripe\Checkout\Session $checkout_session */
+            $checkout_session = $event->data->object;
 
-                $response = shntrToken::payRelysia(
-                    $_COOKIE['stripe_checkout_qty'], $this->_data['user_relysia_paymail'], 0
-                );
+            $successUrlParsed = parse_url($checkout_session->success_url);
+            if ("{$successUrlParsed['scheme']}://{$successUrlParsed['host']}" !== SYS_URL) {
+                error_log("Wrong url {$successUrlParsed['scheme']}://{$successUrlParsed['host']}");
+                http_response_code(400);
+                return_json([
+                    'success' => false,
+                    'msg' => "Wrong url {$successUrlParsed['scheme']}://{$successUrlParsed['host']}",
+                ]);
+            }
 
-                if (!str_contains($response['message'], 'sent successfully')) {
-                    _error(400, $response['message']);
-                }
+            switch ($event->type) {
+                case 'checkout.session.expired':
+                case 'checkout.session.async_payment_failed':
+                    $db->query(
+                        sprintf(
+                            'update stripe_transactions set status = "FAILED" where session_id = %s',
+                            secure($checkout_session->id)
+                        )
+                    );
+
+                    return_json([
+                        'success' => true,
+                        'msg' => 'failed payment',
+                    ]);
+                    break;
+
+                case 'checkout.session.completed':
+                case 'checkout.session.async_payment_succeeded':
+
+                    $transaction = $db->query(
+                        sprintf(
+                            'select 
+                                           st.session_id, st.user_id, st.qty, u.user_relysia_paymail 
+                                    from stripe_transactions st 
+                                        inner join users u using(user_id) 
+                                    where st.session_id = %s',
+                            secure($checkout_session->id)
+                        )
+                    )->fetch_assoc();
+
+
+                    $response = shntrToken::payRelysia(
+                        $transaction['qty'],
+                        $transaction['user_relysia_paymail'],
+                        0
+                    );
+
+                    if (!str_contains($response['message'], 'sent successfully')) {
+                        http_response_code(400);
+                        return_json([
+                            'success' => false,
+                            'msg' => $response['message'],
+                        ]);
+                    }
 
                 shntrToken::noteTransaction(
-                    $_COOKIE['stripe_checkout_qty'],
+                        $transaction['qty'],
                     0,
-                    $user->_data['user_id'],
+                        $transaction['user_id'],
                     null,
                     null,
                     'Buying shntr token'
                 );
-            }
 
-            setcookie('stripe_checkout', 0, time(), '/', '', $secured, true);
-            setcookie('stripe_checkout_qty', 0, time(), '/', '', $secured, true);
+                    $db->query(
+                        sprintf(
+                            'update stripe_transactions set status = "SUCCEEDED" where session_id = %s',
+                            secure($checkout_session->id)
+                        )
+                    );
+
+                    return_json([
+                        'success' => true,
+                        'msg' => 'ok',
+                    ]);
+
+            break;
+
+        default:
+                    http_response_code(404);
+                    return_json([
+                        'success' => false,
+                        'msg' => 'bad request',
+                    ]);
+            }
 
             break;
 
         default:
             _error(404);
-            break;
     }
 } catch (Exception $e) {
     _error(__("Error"), $e->getMessage());
