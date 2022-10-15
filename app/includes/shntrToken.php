@@ -134,6 +134,10 @@ class shntrToken
     {
         global $user;
 
+        if (in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES) || str_contains(SYS_URL, 'ngrok')) {
+            return 1000;
+        }
+
         if (in_array(null, [$user_name, $password])) {
             $user_name = null;
             $password = null;
@@ -175,6 +179,13 @@ class shntrToken
     public static function payRelysia(float $amount, string $recipientPaymail, int $senderId = null): array
     {
         global $user, $db;
+
+        if (in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES) || str_contains(SYS_URL, 'ngrok')) {
+            return [
+                'amount' => $amount,
+                'message' => "{$amount} tokens sent successfully",
+            ];
+        }
 
         if ($senderId === null) {
             $senderUsername = $user->_data['user_name'];

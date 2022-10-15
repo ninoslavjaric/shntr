@@ -10,6 +10,7 @@ services:
       shntr_TOKEN_PASSWORD: "${shntr_TOKEN_PASSWORD:-nopassword}"
       shntr_TOKEN_PAYMAIL: "${shntr_TOKEN_PAYMAIL:-nopaymail}"
       shntr_TOKEN_ADDRESS: "${shntr_TOKEN_ADDRESS:-noaddress}"
+      STRIPE_WEBHOOK_SECRET: "${STRIPE_WEBHOOK_SECRET:-nosecret}"
     build:
       context: './php/'
       dockerfile: ${DOCKERFILE_NAME:-Dockerfile}

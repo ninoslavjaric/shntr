@@ -49,11 +49,11 @@ try {
 
             $db->query(
                 sprintf("INSERT INTO stripe_transactions (session_id, user_id, qty) VALUES (%s, %s, %s)",
-                        secure($checkout_session->id),
-                        secure($user->_data['user_id'], 'int'),
-                        secure($qty)
-                    )
-                );
+                    secure($checkout_session->id),
+                    secure($user->_data['user_id'], 'int'),
+                    secure($qty)
+                )
+            );
 
             $secured = get_system_protocol() == 'https';
             $expire = time() + 60;
@@ -168,14 +168,14 @@ try {
                         ]);
                     }
 
-                shntrToken::noteTransaction(
+                    shntrToken::noteTransaction(
                         $transaction['qty'],
-                    0,
+                        0,
                         $transaction['user_id'],
-                    null,
-                    null,
-                    'Buying shntr token'
-                );
+                        null,
+                        null,
+                        'Buying shntr token'
+                    );
 
                     $db->query(
                         sprintf(
@@ -189,9 +189,9 @@ try {
                         'msg' => 'ok',
                     ]);
 
-            break;
+                    break;
 
-        default:
+                default:
                     http_response_code(404);
                     return_json([
                         'success' => false,
