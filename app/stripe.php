@@ -172,6 +172,7 @@ try {
                         0
                     );
 
+                    error_log('debug stripe relysia ' . json_encode([$response, $transaction]));
                     if (!str_contains($response['message'], 'sent successfully')) {
                         http_response_code(400);
                         return_json([
