@@ -63,13 +63,8 @@ if (isset($_POST['recipients'])) {
 			_error(403);
 		}
 
-		$paywallPrice = $user->paywalled($recipient);
-
-		if ($paywallPrice) {
-			$paywallUser = $user->get_user_by_id($recipient);
-			$paywallUserName = $user->get_user_fullname($paywallUser);
-
-			paywallModal($paywallPrice, $paywallUserName);
+		if (($price = $user->paywalled($recipient))) {
+			$user->breach_paywall($recipient);
 		}
 	}
 } else {
