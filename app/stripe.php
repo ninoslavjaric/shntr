@@ -55,6 +55,11 @@ try {
                     secure($qty)
                 )
             );
+            error_log("debug stripe insert " . sprintf("INSERT INTO stripe_transactions (session_id, user_id, qty) VALUES (%s, %s, %s)",
+                    secure($checkout_session->id),
+                    secure($user->_data['user_id'], 'int'),
+                    secure($qty)
+                ));
 
             $secured = get_system_protocol() == 'https';
             $expire = time() + 60;
