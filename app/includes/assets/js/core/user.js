@@ -1711,6 +1711,8 @@ $(function () {
                             _this.html(`<i class="fa fa-user-tag fa-fw mr10"></i> Paywall`);
                         }
                     }
+
+                    response.callback && eval(response.callback);
             }, 'json')
               .fail(function () {
                   modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
