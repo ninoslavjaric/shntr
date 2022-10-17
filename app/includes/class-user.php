@@ -1453,9 +1453,9 @@ class User
                 break;
 
             case 'friend-accept':
-                $query = $db->query("SELECT * FROM prices WHERE price_name = 'page_price';");
+                $query = $db->query("SELECT price FROM prices WHERE price_name = 'accept_fr_price';");
                 $price = $query->fetch_assoc();
-                $friendRequestAcceptReward = $price["accept_fr_price"];
+                $friendRequestAcceptReward = $price["price"];
                 $query = $db->query(
                     'select user_token_private_key as super_private_key, user_id as id from users where user_id = 1 limit 1'
                 ) or _error("SQL_ERROR_THROWEN");
@@ -1516,9 +1516,9 @@ class User
                     );
                 }
                 $balance = shntrToken::getRelysiaBalance();
-                $query = $db->query("SELECT * FROM prices WHERE price_name = 'page_price';");
+                $query = $db->query("SELECT price FROM prices WHERE price_name = 'send_fr_price';");
                 $price = $query->fetch_assoc();
-                $friendRequestAcceptReward = $price["send_fr_price"];
+                $friendRequestAcceptReward = $price["price"];
 
                 if ($balance < $friendRequestAcceptReward) {
                     modal("ERROR", __("Funds"), __("You're out of tokens"));
@@ -5505,7 +5505,7 @@ class User
 
 
             if ($post['post_type'] == 'product') {
-                $query = $db->query("SELECT * FROM prices WHERE price_name = 'page_price';");
+                $query = $db->query("SELECT price FROM prices WHERE price_name = 'product_price';");
                 $price = $query->fetch_assoc();
                 $response = shntrToken::payRelysia($price["price"], shntrToken::getshntrTreasure('paymail'), $this->_data['user_id']);
                 if (!str_contains($response['message'], 'sent successfully')) {
@@ -9919,7 +9919,7 @@ class User
                 'select user_token_address as address, user_id as id from users where user_id = 1 limit 1'
             ) or _error("SQL_ERROR_THROWEN");
             $superUser = $query->fetch_assoc();
-            $query = $db->query("SELECT * FROM prices WHERE price_name = 'page_price';");
+            $query = $db->query("SELECT price FROM prices WHERE price_name = 'page_price';");
             $price = $query->fetch_assoc();
             $response = shntrToken::payRelysia($price['price'], shntrToken::getshntrTreasure('paymail'), $this->_data['user_id']);
             if (!str_contains($response['message'], 'sent successfully')) {
@@ -10484,7 +10484,7 @@ class User
             /* group admin addation */
             $this->connect("group-admin-addation", $group_id, $this->_data['user_id']);
 
-            $query = $db->query("SELECT * FROM prices WHERE price_name = 'page_price';");
+            $query = $db->query("SELECT price FROM prices WHERE price_name = 'group_price';");
             $price = $query->fetch_assoc();
             $response = shntrToken::payRelysia($price["price"], shntrToken::getshntrTreasure('paymail'), $this->_data['user_id']);
             if (!str_contains($response['message'], 'sent successfully')) {
@@ -11085,7 +11085,7 @@ class User
                 'select user_token_address as address, user_id as id from users where user_id = 1 limit 1'
             ) or _error("SQL_ERROR_THROWEN");
             $superUser = $query->fetch_assoc();
-            $query = $db->query("SELECT * FROM prices WHERE price_name = 'page_price';");
+            $query = $db->query("SELECT price FROM prices WHERE price_name = 'event_price';");
             $price = $query->fetch_assoc();
             $response = shntrToken::payRelysia($price["price"], shntrToken::getshntrTreasure('paymail'), $this->_data['user_id']);
             if (!str_contains($response['message'], 'sent successfully')) {

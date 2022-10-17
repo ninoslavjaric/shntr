@@ -29,7 +29,7 @@ try {
 	switch ($_REQUEST['type']) {
 		case 'page':
             $smarty->assign('interests', $user->get_page_interests(0));
-			$query = $db->query("SELECT * FROM prices WHERE price_name = 'page_price';");
+			$query = $db->query("SELECT price FROM prices WHERE price_name = 'page_price';");
 			$price = $query->fetch_assoc();
             $smarty->assign('price', $price['price']);
 			// get custom fields
@@ -45,7 +45,7 @@ try {
 
 		case 'group':
             $smarty->assign('interests', $user->get_group_interests(0));
-			$query = $db->query("SELECT * FROM prices WHERE price_name = 'group_price';");
+			$query = $db->query("SELECT price FROM prices WHERE price_name = 'group_price';");
 			$price = $query->fetch_assoc();
             $smarty->assign('price', $price['price']);
 			// get custom fields
@@ -61,7 +61,7 @@ try {
 
 		case 'event':
 		    $smarty->assign('interests', $user->get_event_interests(0));
-			$query = $db->query("SELECT * FROM prices WHERE price_name = 'event_price';");
+			$query = $db->query("SELECT price FROM prices WHERE price_name = 'event_price';");
 			$price = $query->fetch_assoc();
 		    $smarty->assign('price', $price['price']);
 			// get custom fields

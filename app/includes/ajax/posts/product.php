@@ -38,7 +38,7 @@ try {
 
 	switch ($_REQUEST['do']) {
 		case 'create':
-			$query = $db->query("SELECT * FROM prices WHERE price_name = 'product_price';");
+			$query = $db->query("SELECT price FROM prices WHERE price_name = 'product_price';");
 			$price = $query->fetch_assoc();
             $smarty->assign('price', $price['price']);
 			// assign variables
@@ -71,7 +71,7 @@ try {
           );
       }
       $balance = shntrToken::getRelysiaBalance();
-      $query = $db->query("SELECT * FROM prices WHERE price_name = 'product_price';");
+      $query = $db->query("SELECT price FROM prices WHERE price_name = 'product_price';");
       $price = $query->fetch_assoc();
       if ($balance < $price['price']) {
           modal("ERROR", __("Funds"), __("You're out of tokens {$balance}"));
