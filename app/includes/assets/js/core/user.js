@@ -1702,7 +1702,14 @@ $(function () {
                         blueModal({id: "#modal-success", title, message });
                         _this.attr('data-paywalled', value);
                         _this.data('paywalled', value);
-                        _this.text(`Paywall ${value}`);
+
+                        if (value > 0) {
+                            _this.addClass('bg-gradient-red');
+                            _this.html(`<i class="fa fa-user-tag fa-fw mr10"></i> Paywall (${value})`);
+                        } else {
+                            _this.removeClass('bg-gradient-red');
+                            _this.html(`<i class="fa fa-user-tag fa-fw mr10"></i> Paywall`);
+                        }
                     }
             }, 'json')
               .fail(function () {
