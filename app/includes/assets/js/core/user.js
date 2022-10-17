@@ -1690,7 +1690,9 @@ $(function () {
                 var _target = $(e.target);
                 button_status(_target, "loading");
 
-                var value = _target.closest('.modal-content').find('input#tokenInput').val();
+                var tokenInput = _target.closest('.modal-content').find('input#tokenInput').val();
+                var value = !Boolean(parseInt(tokenInput)) ? 0 : parseInt(tokenInput);
+
                 $.post(api['users/connect'], { 'do': 'paywall', id: id, value: value }, function (response) {
                     /* check the response */
                     if (response && response.paywall_set) {

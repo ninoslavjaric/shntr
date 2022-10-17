@@ -129,7 +129,7 @@
     <div class="modal-body">
         <div class="form-group">
             <label for="tokenInput">{literal}{{message}}{/literal}</label>
-            <input type="number" class="form-control" id="tokenInput" min="0" placeholder="0" pattern="/\d+/" value="{literal}{{price}}{/literal}">
+            <input type="number" class="form-control" id="tokenInput" min="0" pattern="/\d+/" value="{literal}{{price}}{/literal}">
         </div>
     </div>
     <div class="modal-footer">
