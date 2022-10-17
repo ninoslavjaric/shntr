@@ -260,12 +260,12 @@ class shntrToken
     }
 
     public static function noteTransaction(
-        float $amount, int $senderId, int $recipientId, ?string $basisName = null, ?int $basisId = null, ?string $note = null
+        float $amount, int $senderId, int $recipientId, ?string $basisName = null, ?int $basisId = null, ?string $note = null, ?string $senderMsg = null
     )
     {
         global $db;
         $columns = array_slice(
-            ['amount', 'sender_id', 'recipient_id', 'basis_name', 'basis_entity_id', 'note'], 0, func_num_args()
+            ['amount', 'sender_id', 'recipient_id', 'basis_name', 'basis_entity_id', 'note', 'sender_msg'], 0, func_num_args()
         );
 
         $db->query(self::transformInsertQuery(array_combine($columns, func_get_args())));
@@ -283,6 +283,7 @@ class shntrToken
                 if(sender_id = {$userId}, 'outgoing', 'incoming') as type, 
                 created_at, 
                 note, 
+                token_transactions.sender_msg,
                 if(sender_id = 0, 'TREASURE', snd.user_name) as sender_name,
                 if(recipient_id = 0, 'TREASURE', rcp.user_name) as recipient_name,
                 basis_name, 

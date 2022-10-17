@@ -1945,6 +1945,7 @@ $(function () {
         var _this = $(this);
 
         fund(__['Send tokens'], __['How many tokens to send?'], function (value) {
+            var senderMsg = $('#senderMsg').val() || null;
             button_status(_this, "loading");
 
             if (isNaN(value) || Number(value) <= 0) {
@@ -1960,7 +1961,7 @@ $(function () {
             var id = _this.data('uid') || _this.data('id');
 
             /* post the request */
-            $.post(api['users/connect'], { 'do': _do, 'uid': 0, 'id': id, 'value': value }, function (response) {
+            $.post(api['users/connect'], { 'do': _do, 'uid': 0, 'id': id, 'value': value, 'senderMsg': senderMsg }, function (response) {
                 window.onbeforeunload = null;
 
                 if (response && response.amount ) {

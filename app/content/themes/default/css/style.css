@@ -392,7 +392,7 @@ body.night-mode .modal-footer {
 }
 
 /* modal-fund */
-.modal-fund #tokenInput {
+.modal-fund #tokenInput, #senderMsg {
   max-width: 240px;
   background-color: #0193c5;
   border: none;
@@ -402,15 +402,19 @@ body.night-mode .modal-footer {
   outline: none;
 }
 
-.modal-fund #tokenInput::-webkit-input-placeholder { /* Edge */
+.modal-fund #senderMsg {
+  max-width: 100%;
+}
+
+.modal-fund #tokenInput::-webkit-input-placeholder, #senderMsg::-webkit-input-placeholder { /* Edge */
   color: #fff;
 }
 
-.modal-fund #tokenInput:-ms-input-placeholder { /* Internet Explorer 10-11 */
+.modal-fund #tokenInput:-ms-input-placeholder, #senderMsg:-ms-input-placeholder { /* Internet Explorer 10-11 */
   color: #fff;
 }
 
-.modal-fund #tokenInput::placeholder {
+.modal-fund #tokenInput::placeholder, #senderMsg::placeholder {
   color: #fff;
 }
 

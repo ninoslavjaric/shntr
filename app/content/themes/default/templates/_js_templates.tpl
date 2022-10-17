@@ -94,6 +94,10 @@
             <label for="tokenInput">{literal}{{message}}{/literal}</label>
             <input type="number" class="form-control" id="tokenInput" min="0" placeholder="0">
         </div>
+        <div class="form-group">
+            <label for="senderMsg">{__("Your message to receiver")}</label>
+            <textarea class="form-control" id="senderMsg" rows="3" placeholder="Your message to receiver"></textarea>
+        </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-sm btn-light" data-dismiss="modal">{__("Cancel")}</button>

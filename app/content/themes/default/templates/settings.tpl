@@ -2867,6 +2867,7 @@
                                                 <th>{__("Amount")}</th>
                                                 <th>{__("Created")}</th>
                                                 <th>{__("Note")}</th>
+                                                <th>{__("Message")}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -2895,6 +2896,13 @@
                                                         {/if}
                                                         {if $transaction['link']}
                                                             <a href="{$transaction['link']}" target="_blank">link</a>
+                                                        {/if}
+                                                    </td>
+                                                    <td>
+                                                        {if !empty($transaction['sender_msg'])}
+                                                            {$transaction['sender_msg']}
+                                                        {else}
+                                                            ---
                                                         {/if}
                                                     </td>
                                                 </tr>

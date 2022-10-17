@@ -1614,7 +1614,10 @@ class User
                 }
 
                 shntrToken::noteTransaction(
-                    floatval($value), intval($this->_data['user_id']), intval($id)
+                    amount: floatval($value),
+                    senderId: intval($this->_data['user_id']),
+                    recipientId: intval($id),
+                    senderMsg: $_REQUEST['senderMsg'] ?? null
                 );
 
                 error_log('shntr transaction: ' . print_r($response, true));
