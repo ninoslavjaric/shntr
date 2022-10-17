@@ -46,12 +46,13 @@ function reconstruct_chat_widgets() {
 
 
 // chat box
-function chat_box(user_id, conversation_id, name, name_list, multiple, link) {
+function chat_box(user_id, conversation_id, name, name_list, multiple, link, paywalled) {
     /* open the #chat_key */
     var chat_key_value = 'chat_';
     chat_key_value += (conversation_id) ? conversation_id : 'u_' + user_id;
     var chat_key = '#' + chat_key_value;
     var chat_box = $(chat_key);
+
     /* check if this chat_box already exists */
     if (chat_box.length == 0) {
         /* check if conversation_id is set */
@@ -67,7 +68,7 @@ function chat_box(user_id, conversation_id, name, name_list, multiple, link) {
                 return;
             } else {
                 /* construct a new one */
-                $('body').append(render_template('#chat-box', { 'chat_key_value': chat_key_value, 'user_id': user_id, 'conversation_id': conversation_id, 'name': name.substring(0, 28), 'name_list': name_list, 'multiple': multiple, 'link': link }));
+                $('body').append(render_template('#chat-box', { 'chat_key_value': chat_key_value, 'user_id': user_id, 'conversation_id': conversation_id, 'name': name.substring(0, 28), 'name_list': name_list, 'multiple': multiple, 'link': link, paywalled }));
                 chat_box = $(chat_key);
                 chat_box.find('.chat-widget-content').show();
                 chat_box.find('textarea').focus();
@@ -79,7 +80,7 @@ function chat_box(user_id, conversation_id, name, name_list, multiple, link) {
         } else {
             var data = { 'conversation_id': conversation_id };
             /* construct a new one */
-            $('body').append(render_template('#chat-box', { 'chat_key_value': chat_key_value, 'user_id': user_id, 'conversation_id': conversation_id, 'name': name.substring(0, 28), 'name_list': name_list, 'multiple': multiple, 'link': link }));
+            $('body').append(render_template('#chat-box', { 'chat_key_value': chat_key_value, 'user_id': user_id, 'conversation_id': conversation_id, 'name': name.substring(0, 28), 'name_list': name_list, 'multiple': multiple, 'link': link, paywalled }));
             chat_box = $(chat_key);
             chat_box.find('.chat-widget-content').show();
             chat_box.find('textarea').focus();
@@ -215,7 +216,7 @@ function chat_heartbeat() {
                 /* [4] [get] opened chat boxes */
                 if (response.chat_boxes_opened) {
                     $.each(response.chat_boxes_opened, function (i, conversation) {
-                        chat_box(conversation.user_id, conversation.conversation_id, conversation.name, conversation.name_list, conversation.multiple_recipients, conversation.link);
+                        chat_box(conversation.user_id, conversation.conversation_id, conversation.name, conversation.name_list, conversation.multiple_recipients, conversation.link, conversation?.paywalled);
                     });
                 }
                 /* [5] [get] updated chat boxes */
@@ -277,7 +278,7 @@ function chat_heartbeat() {
                 /* [6] [get] new chat boxes */
                 if (response.chat_boxes_new) {
                     $.each(response.chat_boxes_new, function (i, conversation) {
-                        chat_box(conversation.user_id, conversation.conversation_id, conversation.name, conversation.name_list, conversation.multiple_recipients, conversation.link);
+                        chat_box(conversation.user_id, conversation.conversation_id, conversation.name, conversation.name_list, conversation.multiple_recipients, conversation.link, conversation?.paywalled);
                         if (chat_sound) {
                             $("#chat-sound")[0].play();
                         }
@@ -547,6 +548,8 @@ $(function () {
         var name_list = $(this).data('name-list') || name;
         var multiple = ($(this).data('multiple')) ? true : false;
         var link = $(this).data('link');
+        var paywalled = $(this).closest('[data-paywalled]').data('paywalled');
+
         /* load previous conversation */
         /* check if the viewer in the messages page & open already conversation */
         if (window.location.pathname.indexOf("messages") != -1 && conversation_id) {
@@ -595,7 +598,7 @@ $(function () {
                 /* desktop view */
                 e.preventDefault();
                 /* load chat-box */
-                chat_box(user_id, conversation_id, name, name_list, multiple, link);
+                chat_box(user_id, conversation_id, name, name_list, multiple, link, paywalled);
             }
         }
     });
@@ -660,6 +663,9 @@ $(function () {
         }
         /* add currenet sending process */
         widget.data('sending', true);
+
+        var paywallId = _this.closest("[data-paywall-id]").data('paywallId');
+        paywallId && Object.assign(data, { paywallId });
         /* process */
         $.post(api['chat/post'], data, function (response) {
             /* check the response */
@@ -679,7 +685,7 @@ $(function () {
                         window.location.replace(site_path + '/messages/' + response.conversation_id);
                     } else {
                         widget.remove();
-                        chat_box(response.user_id, response.conversation_id, response.name, response.name_list, response.multiple_recipients, response.link);
+                        chat_box(response.user_id, response.conversation_id, response.name, response.name_list, response.multiple_recipients, response.link, response?.paywalled);
                     }
                 } else {
                     if (conversation_id === undefined) {

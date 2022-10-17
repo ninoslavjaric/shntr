@@ -2066,7 +2066,60 @@ function modal()
     }
 }
 
+/**
+ * bluemModal
+ *
+ * @return json
+ */
+function blueModal($modalId, $title, $message, $additionalReturn = null)
+{
+    $args = func_get_args();
+    $return = array();
 
+    switch ($modalId) {
+        case 'LOGIN':
+            $return["callback"] = "blueModal({ id: '#modal-login' })";
+            break;
+        case 'MESSAGE':
+            $return["callback"] = "blueModal({ id: '#modal-message', title: '" . $title . "', message: '" . addslashes($message) . "'})";
+            break;
+        case 'ERROR':
+            $return["callback"] = "blueModal({ id: '#modal-error', title: '" . $title . "', message: '" . addslashes($message) . "'})";
+            break;
+        case 'SUCCESS':
+            $return["callback"] = "blueModal({ id: '#modal-success', title: '" . $title . "', message: '" . addslashes($message) . "'})";
+            break;
+        default:
+            if (isset($title)) {
+                $return["callback"] = "blueModal({ id: '{$modalId}', title: '{$title}' })";
+            } else {
+                $return["callback"] = "blueModal({ id: '{$modalId}' })";
+            }
+            break;
+    }
+
+    if (is_array($additionalReturn)) {
+        foreach ($additionalReturn as $key => $value) {
+            $return[$key] = $value;
+        }
+    }
+
+    return_json($return);
+}
+
+/**
+ * modal
+ *
+ * @return json
+ */
+function paywallModal($price, $user)
+{
+    $title = __("Paywall was established");
+    $message = __("By paying the paywall of _AMOUNT_ token(s), you will again have the possibility to interact fully with _NAME_.");
+    $message = str_replace(["_AMOUNT_", "_NAME_"], [$price, $user["user_fullname"]], $message);
+
+    return_json(["callback" => "blueModal({ id: \"#modal-paywall-pay\", title: \"{$title}\", message: \"{$message}\", price: \"${price}\", user_id: \"${user["user_id"]}\" });"]);
+}
 
 /* ------------------------------- */
 /* Popover */

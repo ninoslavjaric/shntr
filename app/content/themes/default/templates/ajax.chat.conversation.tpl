@@ -1,4 +1,12 @@
-<div class="card panel-messages" data-cid="{$conversation['conversation_id']}" data-color="{$conversation['color']}" >
+<div
+    class="card panel-messages"
+    data-cid="{$conversation['conversation_id']}"
+    data-color="{$conversation['color']}"
+
+    data-paywalled="{$conversation['paywalled']}"
+    data-paywall-author-name="{$conversation['name']}"
+    data-paywall-author-id="{$conversation['user_id']}"
+>
     <div class="card-header with-icon pb10 bg-transparent">
         <div class="float-right">
             {if !$conversation['multiple_recipients']}

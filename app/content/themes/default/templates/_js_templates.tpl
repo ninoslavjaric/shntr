@@ -101,7 +101,7 @@
     </div>
 </script>
 
-<script id="modal-paywall" type="text/template">
+<script id="modal-paywall-pay" type="text/template">
     <div class="modal-header">
         <h6 class="modal-title">{literal}{{title}}{/literal}</h6>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -111,19 +111,30 @@
     <div class="modal-body">
         <div class="form-group">
             <p>{literal}{{message}}{/literal}</p>
-            <input
-                type="number"
-                class="form-control"
-                id="paywallTokenInput"
-                min="{literal}{{price}}{/literal}"
-                max="{literal}{{price}}{/literal}"
-                value="{literal}{{price}}{/literal}"
-            >
         </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-sm btn-light" data-dismiss="modal">{__("Cancel")}</button>
-        <button type="button" class="btn btn-sm btn-success" data-dismiss="modal" id="modal-paywall-ok">{__("Confirm")}</button>
+        <button type="button" class="btn btn-sm btn-success" id="modal-paywall-pay-confirm" data-price="{literal}{{price}}{/literal}" data-paywall-author-id="{literal}{{paywallAuthorId}}{/literal}">{__("Confirm")}</button>
+    </div>
+</script>
+
+<script id="modal-paywall-set" type="text/template">
+    <div class="modal-header">
+        <h6 class="modal-title">{literal}{{title}}{/literal}</h6>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+            <label for="tokenInput">{literal}{{message}}{/literal}</label>
+            <input type="number" class="form-control" id="tokenInput" min="0" placeholder="0" pattern="/\d+/" value="{literal}{{price}}{/literal}">
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-light" data-dismiss="modal">{__("Cancel")}</button>
+        <button type="button" class="btn btn-sm btn-success" id="modal-paywall-set-confirm">{__("Confirm")}</button>
     </div>
 </script>
 <!-- Modals -->
@@ -598,7 +609,16 @@
                     <ul>
                         {foreach $sidebar_friends as $_user}
                             <li class="feeds-item">
-                                <div class="data-container clickable small js_chat-start" data-uid="{$_user['user_id']}" data-name="{if $system['show_usernames_enabled']}{$_user['user_name']}{else}{$_user['user_firstname']} {$_user['user_lastname']}{/if}" data-link="{$_user['user_name']}">
+                                <div 
+                                    class="data-container clickable small js_chat-start"
+                                    data-uid="{$_user['user_id']}"
+                                    data-name="{if $system['show_usernames_enabled']}{$_user['user_name']}{else}{$_user['user_firstname']} {$_user['user_lastname']}{/if}"
+                                    data-link="{$_user['user_name']}"
+
+                                    data-paywalled="{$_user['paywalled']}"
+                                    data-paywall-author-name="{$_user['user_fullname']}"
+                                    data-paywall-author-id="{$_user['user_id']}"
+                                >
                                     <div class="data-avatar">
                                         <img src="{$_user['user_picture']}" alt="">
                                     </div>
@@ -726,9 +746,15 @@
     </script>
 
     <script id="chat-box" type="text/template">
-        <div class="chat-widget chat-box opened" id="{literal}{{chat_key_value}}{/literal}"
-        {literal}{{#conversation_id}}{/literal}data-cid="{literal}{{conversation_id}}{/literal}"{literal}{{/conversation_id}}{/literal}
-        {literal}{{#user_id}}{/literal}data-uid="{literal}{{user_id}}{/literal}"{literal}{{/user_id}}{/literal}>
+        <div 
+            class="chat-widget chat-box opened"
+            id="{literal}{{chat_key_value}}{/literal}"
+            {literal}{{#conversation_id}}{/literal}data-cid="{literal}{{conversation_id}}{/literal}"{literal}{{/conversation_id}}{/literal}
+            {literal}{{#user_id}}{/literal}data-uid="{literal}{{user_id}}{/literal}"{literal}{{/user_id}}{/literal}
+            {literal}{{#paywalled}}{/literal}data-paywalled="{literal}{{paywalled}}{/literal}"{literal}{{/paywalled}}{/literal}
+            {literal}{{#paywalled}}{/literal}data-paywall-author-name="{literal}{{name}}{/literal}"{literal}{{/paywalled}}{/literal}
+            {literal}{{#paywalled}}{/literal}data-paywall-author-id="{literal}{{user_id}}{/literal}"{literal}{{/paywalled}}{/literal}
+        >
             <!-- head -->
             <div class="chat-widget-head js_chat-color-me">
                 {literal}{{^multiple}}{/literal}

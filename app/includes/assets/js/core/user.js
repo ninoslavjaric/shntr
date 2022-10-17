@@ -11,6 +11,7 @@ api['data/live'] = ajax_path + "data/live.php";
 api['data/upload'] = ajax_path + "data/upload.php";
 api['data/reset'] = ajax_path + "data/reset.php";
 api['data/report'] = ajax_path + "data/report.php";
+
 /* users */
 api['users/image_delete'] = ajax_path + "users/image_delete.php";
 api['users/image_crop'] = ajax_path + "users/image_crop.php";
@@ -24,6 +25,8 @@ api['users/popover'] = ajax_path + "users/popover.php";
 api['users/mention'] = ajax_path + "users/mention.php";
 api['users/settings'] = ajax_path + "users/settings.php";
 api['users/autocomplete'] = ajax_path + "users/autocomplete.php";
+api['users/paywall'] = ajax_path + "users/paywall.php";
+
 /* pages_groups_events */
 api['pages_groups_events/delete'] = ajax_path + "pages_groups_events/delete.php";
 /* ads */
@@ -767,6 +770,17 @@ $(function () {
         var tag = '<li data-uid="' + uid + '">' + name + '<button type="button" class="close js_tag-remove" title="' + __['Remove'] + '"><span>&times;</span></button></li>'
         parent.find('.tags').append(tag);
         parent.find('input').val('').focus();
+
+        var paywalled = $(this).data('paywalled');
+
+        if (paywalled) {
+            $(this).closest('.chat-box').attr({
+                "data-paywalled": paywalled,
+                "data-paywall-author-name": $(this).data('paywall-author-name'),
+                "data-paywall-author-id": $(this).data('paywall-author-id'),
+            });
+        }
+    
         /* check if there is chat-form next to js_autocomplete-tags */
         if (parent.siblings('.chat-form').length > 0) {
             if (parent.find('ul.tags li').length == 0) {
@@ -782,6 +796,14 @@ $(function () {
     $('body').on('click', '.js_tag-remove', function () {
         var tag = $(this).parents('li');
         var parent = $(this).parents('.js_autocomplete-tags');
+
+        var recipient = $(this).parent().data('uid');
+        var paywalled = $(this).closest('.chat-box').data('paywalled');
+        var paywallAuthorId = $(this).closest('.chat-box').data('paywall-author-id');
+        if (paywalled && recipient === paywallAuthorId) {
+            $(this).closest('.chat-box').removeAttr('data-paywalled data-paywall-author-name data-paywall-author-id');
+        }
+
         tag.remove();
         /* check if there is chat-form next to js_autocomplete-tags */
         if (parent.siblings('.chat-form').length > 0) {
@@ -1651,41 +1673,83 @@ $(function () {
     /* paywall user */
     $('body').on('click', '.js_paywall', function (e) {
         e.preventDefault();
-        const id = $(this).data('id');
-        confirm(__['Paywall User'], __['Are you sure you want to paywall this user?'], function () {
-            const value = prompt("Set the wall break price, or set 0 to remove paywall?", "1");
+        var _this = $(this);
+        var id = _this.data('id');
+        var price = _this.data('paywalled');
+        var name = _this.data('name');
 
-            $.post(api['users/connect'], { 'do': 'paywall', id: id, value: value }, function (response) {
-                /* check the response */
-                if (response.callback) {
-                    eval(response.callback);
-                } else {
-                    window.location = site_path;
-                }
+        var title = __['Set paywall for _USERNAME_'].replace('_USERNAME_', name);
+        var message = __['Enter the amount of tokens as the paywall value'];
+
+        paywall_set_modal({ 
+            id: "#modal-paywall-set", 
+            title,
+            message,
+            price,
+            callback: function(e) {
+                var _target = $(e.target);
+                button_status(_target, "loading");
+
+                var value = _target.closest('.modal-content').find('input#tokenInput').val();
+                $.post(api['users/connect'], { 'do': 'paywall', id: id, value: value }, function (response) {
+                    /* check the response */
+                    if (response && response.paywall_set) {
+                        var title = __['Paywall set successful'];
+                        var message = __['You have successfully set up the paywall in amount of _AMOUNT_ tokens for _USERNAME_'];
+                        message = message.replace('_AMOUNT_', value).replace('_USERNAME_', name);
+                        
+                        button_status(_target, "reset");
+                        blueModal({id: "#modal-success", title, message });
+                        _this.attr('data-paywalled', value);
+                        _this.data('paywalled', value);
+                        _this.text(`Paywall ${value}`);
+                    }
             }, 'json')
               .fail(function () {
                   modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
               });
-
+            }
         });
     });
 
+    // $('body').on('click', '.js_paywall', function (e) {
+    //     e.preventDefault();
+
+    //     const id = $(this).data('id');
+    //     confirm(__['Paywall User'], __['Are you sure you want to paywall this user?'], function () {
+    //         const value = prompt("Set the wall break price, or set 0 to remove paywall?", "1");
+
+    //         $.post(api['users/connect'], { 'do': 'paywall', id: id, value: value }, function (response) {
+    //             /* check the response */
+    //             if (response.callback) {
+    //                 eval(response.callback);
+    //             } else {
+    //                 window.location = site_path;
+    //             }
+    //         }, 'json')
+    //           .fail(function () {
+    //               modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+    //           });
+
+    //     });
+    // });
+
     /* paywall intruder modal with notification, price to pay */
-    $( document ).ready(function() {
-        var paywallPriceForIntruder = $('.js_paywall').data('intruder');
-        var name = $('.js_paywall').data('name');
+    // $( document ).ready(function() {
+    //     var paywallPriceForIntruder = $('.js_paywall').data('intruder');
+    //     var name = $('.js_paywall').data('name');
 
-        if (paywallPriceForIntruder > 0) {
-            blueModal({ 
-                id: '#modal-error',
-                title: __['Paywall was established'],
-                message: __['By paying the paywall of  '] + paywallPriceForIntruder  + __[' token(s), you will again have the possibility to interact fully with '] + name,
-            });
+    //     if (paywallPriceForIntruder > 0) {
+    //         blueModal({
+    //             id: '#modal-error',
+    //             title: __['Paywall was established'],
+    //             message: __['By paying the paywall of  '] + paywallPriceForIntruder  + __[' token(s), you will again have the possibility to interact fully with '] + name,
+    //         });
 
-            //$('.mt20').after('<button type="button" class="btn btn-primary" id="modal-confirm-ok">Pay</button>');
-            $('.mt20').after('<button type="button" class="btn btn-light" onclick="history.go(-1);">Go back</button>');
-        }
-    });
+    //         //$('.mt20').after('<button type="button" class="btn btn-primary" id="modal-confirm-ok">Pay</button>');
+    //         $('.mt20').after('<button type="button" class="btn btn-light" onclick="history.go(-1);">Go back</button>');
+    //     }
+    // });
 
     /* block user */
     $('body').on('click', '.js_block-user', function (e) {

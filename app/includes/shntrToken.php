@@ -269,6 +269,7 @@ class shntrToken
         );
 
         $db->query(self::transformInsertQuery(array_combine($columns, func_get_args())));
+        return $db->insert_id;
     }
 
     public static function getEntireHistory()
@@ -301,37 +302,16 @@ class shntrToken
         )->fetch_all(MYSQLI_ASSOC);
     }
 
-    public static function getHistory(int $userId = 0)
+    public static function gatTokenTransactionById(int $id = 0)
     {
         global $db;
 
-        return $db->query(
-            "select 
-                amount, 
-                if(sender_id = {$userId}, 'outgoing', 'incoming') as type, 
-                created_at, 
-                note, 
-                if(sender_id = 0, 'TREASURE', snd.user_name) as sender_name,
-                if(recipient_id = 0, 'TREASURE', rcp.user_name) as recipient_name,
-                basis_name, 
-                basis_entity_id,
-                coalesce(
-                   concat('/events/', e.event_id),
-                   concat('/pages/', pg.page_name),
-                   concat('/groups/', g.group_name),
-                   concat('/posts/', pd.post_id),
-                   concat('/', u.user_name)
-                ) as link
-            from token_transactions
-                left join users as snd on snd.user_id = sender_id
-                left join users as rcp on rcp.user_id = recipient_id
-                left join events as e on e.event_id = basis_entity_id and basis_name = 'events'
-                left join pages as pg on pg.page_id = basis_entity_id and basis_name = 'pages'
-                left join `groups` as g on g.group_id = basis_entity_id and basis_name = 'groups'
-                left join posts_products as pd on (pd.post_id = basis_entity_id and basis_name = 'products') OR (pd.product_id = basis_entity_id and basis_name = 'post_products')
-                left join users as u on u.user_id = basis_entity_id and basis_name in ('users', 'paywalls')
-            where {$userId} in (sender_id, recipient_id)
-            order by created_at desc"
-        )->fetch_all(MYSQLI_ASSOC);
+        $get_transaction= $db->query(sprintf("SELECT id, amount, sender_id, recipient_id, basis_name, created_at FROM token_transactions WHERE id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        if ($get_transaction->num_rows == 0) {
+            _error(403);
+        }
+
+        $transaction = $get_transaction->fetch_assoc();
+        return $transaction;
     }
 }

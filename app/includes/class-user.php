@@ -918,6 +918,10 @@ class User
                     continue;
                 }
                 $user['user_picture'] = get_picture($user['user_picture'], $user['user_gender']);
+
+                $user['paywalled'] = $this->paywalled($user['user_id']);
+                $user['user_fullname'] = $this->get_user_fullname($user);
+
                 if ($mentioned) {
                     $mention_item['id'] = $user['user_id'];
                     $mention_item['img'] = $user['user_picture'];
@@ -1406,16 +1410,18 @@ class User
 
             case 'paywall':
                 if ($value == 0) {
-                    $db->query(
+                    $query = $db->query(
                         'delete from paywalls where paywall_owner_id = ' . secure(
                             $this->_data['user_id'],
                             'int'
                         ) . ' and paywall_invader_id = ' . secure($id, 'int'),
                     ) or _error("SQL_ERROR_THROWEN");
+
+                    $response['paywall_set'] = $query;
                     break;
                 }
 
-                $db->query(
+                $query = $db->query(
                     sprintf(
                         'INSERT INTO paywalls VALUES (%1$s, %2$s, %3$d) on duplicate key update paywall_price = %3$d',
                         secure($this->_data['user_id'], 'int'),
@@ -1423,6 +1429,7 @@ class User
                         secure($value, 'int', false)
                     ),
                 ) or _error("SQL_ERROR_THROWEN");
+                $response['paywall_set'] = $query;
                 break;
 
             case 'block':
@@ -2232,18 +2239,30 @@ class User
         return false;
     }
 
-    public function breach_paywall(int $user_id): void
+    public function breach_paywall(int $user_id)
     {
         global $db;
 
+        $paywallId = $_POST['paywallId'];
+
         if ($this->_logged_in) {
+
             $price = $this->paywalled($user_id);
+
+            // check if already paid
+            if (isset($paywallId) && !empty($paywallId) && is_numeric($paywallId)) {
+                $transaction = shntrToken::gatTokenTransactionById($paywallId);
+                if (intval($transaction["sender_id"]) === intval($this->_data['user_id']) && intval($transaction["recipient_id"]) === intval($user_id)) {
+                    return true;
+                }
+            }
 
             if (empty($this->_data['user_relysia_password'])) {
                 $this->register_to_relysia(
                     $this->_data['user_name'], $this->_data['user_id']
                 );
             }
+
             $balance = shntrToken::getRelysiaBalance();
             if ($balance < $price) {
                 modal("ERROR", __("Funds"), __("You're out of tokens"));
@@ -2258,22 +2277,28 @@ class User
                 _error(400, $response['message']);
             }
 
-            shntrToken::noteTransaction(
+            $transactionId = shntrToken::noteTransaction(
                 floatval($price), intval($this->_data['user_id']), $user_id, 'paywalls', $user_id, 'Paywall fee'
             );
+
+            return $transactionId;
         }
+
+        return false;
     }
 
-    public function paywalled(int $user_id): ?int
+    public function paywalled(int $paywallOwner, int $paywallInvader = null ): ?int
     {
         global $db;
 
         if ($this->_logged_in) {
+            $invader = $paywallInvader ? $paywallInvader : $this->_data['user_id'];
+
             $check = $db->query(
                 sprintf(
                     'SELECT paywall_price as price FROM paywalls WHERE paywall_owner_id = %1$s AND paywall_invader_id = %2$s',
-                    secure($user_id, 'int'),
-                    secure($this->_data['user_id'], 'int')
+                    secure($paywallOwner, 'int'),
+                    secure($invader, 'int')
                 )
             ) or _error("SQL_ERROR_THROWEN");
 
@@ -2486,6 +2511,45 @@ class User
             /* delete all user following connections */
             $db->query(sprintf('DELETE FROM followings WHERE user_id = %1$s OR following_id = %1$s', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
         }
+    }
+
+    /**
+     * get_user_by_id
+     *
+     * @param integer $user_id
+     * @return void
+     */
+    public function get_user_by_id($user_id)
+    {
+        global $db;
+        /* (check&get) user */
+        $get_user = $db->query(sprintf("SELECT user_id, user_firstname, user_lastname, user_name FROM users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        if ($get_user->num_rows == 0) {
+            _error(403);
+        }
+
+        $user = $get_user->fetch_assoc();
+        $user['user_fullname'] = $this->get_user_fullname($user);
+
+        return $user;
+    }
+
+    /**
+     * get_user_fullname
+     *
+     * @param array $user
+     * @return void
+     */
+    public function get_user_fullname($user)
+    {
+        // ensure username return if there is no first nad last name
+        $to_return = $user['user_name'] || '';
+
+        if (!empty($user["user_firstname"]) && !empty($user["user_lastname"])) {
+            $to_return = "{$user["user_firstname"]} {$user["user_lastname"]}";
+        }
+
+        return $to_return;
     }
 
 
@@ -3623,9 +3687,12 @@ class User
             while ($online_friend = $get_online_friends->fetch_assoc()) {
                 $online_friend['user_picture'] = get_picture($online_friend['user_picture'], $online_friend['user_gender']);
                 $online_friend['user_is_online'] = '1';
+                $online_friend['paywalled'] = $this->paywalled($online_friend['user_id']);
+                $online_friend['user_fullname'] = $this->get_user_fullname($online_friend);
                 $online_friends[] = $online_friend;
             }
         }
+
         return $online_friends;
     }
 
@@ -3645,9 +3712,12 @@ class User
             while ($offline_friend = $get_offline_friends->fetch_assoc()) {
                 $offline_friend['user_picture'] = get_picture($offline_friend['user_picture'], $offline_friend['user_gender']);
                 $offline_friend['user_is_online'] = '0';
+                $offline_friend['paywalled'] = $this->paywalled($offline_friend['user_id']);
+                $offline_friend['user_fullname'] = $this->get_user_fullname($offline_friend);
                 $offline_friends[] = $offline_friend;
             }
         }
+
         return $offline_friends;
     }
 
@@ -3784,6 +3854,21 @@ class User
         /* decode message text */
         $conversation['message_orginal'] = $this->decode_emoji($conversation['message']);
         $conversation['message'] = $this->_parse(["text" => $conversation['message'], "decode_mention" => false, "decode_hashtags" => false]);
+
+        if (!empty($conversation['user_id'])) {
+            $conversation['paywalled'] = $this->paywalled($conversation['user_id']);
+        }
+
+        if (!empty($conversation['recipients'])) {
+            $counter = 1;
+            foreach ($conversation['recipients'] as $key => $value) {
+                $conversation["paywalled-$counter"] = $this->paywalled($value['user_id']);
+                $conversation["paywalled-$counter-author-id"] = $value['user_id'];
+
+                $counter++;
+            }
+        }
+
         /* return */
         return $conversation;
     }
@@ -7694,6 +7779,7 @@ class User
         if ($this->paywalled($post['author_id'])) {
             $this->breach_paywall($post['author_id']);
         }
+
         /* react the post */
         if ($post['i_react']) {
             /* remove any previous reaction */

@@ -414,6 +414,29 @@ body.night-mode .modal-footer {
   color: #fff;
 }
 
+/* modal-paywall-set */
+.modal-paywall-set #tokenInput {
+  max-width: 240px;
+  background-color: #0193c5;
+  border: none;
+  border-bottom: 1px solid #ffffff5c;
+  color: #fff;
+  border-radius: 6px;
+  outline: none;
+}
+
+.modal-paywall-set #tokenInput::-webkit-input-placeholder { /* Edge */
+  color: #fff;
+}
+
+.modal-paywall-set #tokenInput:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: #fff;
+}
+
+.modal-paywall-set #tokenInput::placeholder {
+  color: #fff;
+}
+
 /* == */
 
 /* == Alert == */
@@ -5400,7 +5423,7 @@ body.night-mode .add-story .add {
   width: 210px;
   top: 70px;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
-  z-index: 1002;
+  z-index: 1000;
 }
 
 body.night-mode .chat-sidebar {
@@ -9079,6 +9102,18 @@ body.night-mode .movie-card-top {
   border-color: rgba(255, 153, 0, 0.21);
 }
 
+.blue-modal .big-icon.success {
+  border-color: rgb(255 255 255 / 42%)
+}
+
+.blue-modal .big-icon.error {
+  border-color: rgb(255 255 255 / 42%)
+}
+
+.blue-modal .big-icon.warning {
+  border-color: rgb(255 255 255 / 42%)
+}
+
 .big-icon .fa {
   padding-top: 17px;
   padding-left: 3px;
@@ -9092,6 +9127,7 @@ body.night-mode .movie-card-top {
 .big-icon.warning .fa {
   color: #d9954f;
 }
+
 /* -- */
 
 /* LOADER */

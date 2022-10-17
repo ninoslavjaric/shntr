@@ -30,9 +30,7 @@ try {
 	$profile = $get_profile->fetch_assoc();
 
     /* return amount of tokens or NULL */
-    $profile['paywallPrice'] = $user->paywalledPrice($profile['user_id']);
-
-    $profile['paywallPriceForIntruder'] = $user->paywalled($profile['user_id']);
+    $profile['paywalled'] = $user->paywalled($user->_data['user_id'], $profile['user_id']);
 
     /* check if banned by the system */
 	if ($user->banned($profile['user_id'])) {

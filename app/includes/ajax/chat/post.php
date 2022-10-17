@@ -24,9 +24,9 @@ if ($user->_data['user_demo']) {
 	modal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
 }
 
-if ($user->user_reached_daily_chat_limit()) {
-    modal('ERROR', __('Chat limitation'), __('You have been reached daily chat limit.'));
-}
+// if ($user->user_reached_daily_chat_limit()) {
+// 	modal('ERROR', __('Chat limitation'), __('You have been reached daily chat limit.'));
+// }
 
 // valid inputs
 /* if message not set */
@@ -63,20 +63,25 @@ if (isset($_POST['recipients'])) {
 			_error(403);
 		}
 
-		if (($price = $user->paywalled($recipient))) {
-            $user->breach_paywall($recipient);
-        }
+		$paywallPrice = $user->paywalled($recipient);
+
+		if ($paywallPrice) {
+			$paywallUser = $user->get_user_by_id($recipient);
+			$paywallUserName = $user->get_user_fullname($paywallUser);
+
+			paywallModal($paywallPrice, $paywallUserName);
+		}
 	}
 } else {
-    $interlocutors = $db->query(
-        "select user_id from conversations_users where conversation_id = {$_POST['conversation_id']} and user_id <> {$user->_data['user_id']}"
-    )->fetch_all(MYSQLI_ASSOC);
+	$interlocutors = $db->query(
+		"select user_id from conversations_users where conversation_id = {$_POST['conversation_id']} and user_id <> {$user->_data['user_id']}"
+	)->fetch_all(MYSQLI_ASSOC);
 
-    foreach (array_column($interlocutors, 'user_id') as $interlocutor_id) {
+	foreach (array_column($interlocutors, 'user_id') as $interlocutor_id) {
         if ($user->paywalled($interlocutor_id)) {
             $user->breach_paywall($interlocutor_id);
         }
-    }
+	}
 }
 
 try {

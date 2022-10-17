@@ -274,6 +274,47 @@ function blueModal({ id, size, title, message, ...others } = {}) {
     }
 }
 
+function paywall_pay_modal({ id, title, message, price, paywallAuthorId, callback } = {}) {
+    blueModal({ id, title, message, price, paywallAuthorId });
+
+    $("#modal-paywall-pay-confirm").on('click', function(e){
+        var button = $(e.target);
+        button_status(button, "loading");
+
+        $.post(api['users/paywall'], { 'do': 'pay', paywallAuthorId }, function (response) {
+            if (response.callback) {
+                eval(response.callback);
+            }
+
+            callback && callback(response);
+        }, 'json');
+    });
+}
+
+function paywall_set_modal({ id, title, message, price, callback } = {}) {
+    blueModal({ id, title, message, price });
+
+    $("#quantity").keypress(function (e) {
+        //if the letter is not digit then display error and don't type anything
+        if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+           //display error message
+           $("#errmsg").html("Digits Only").show().fadeOut("slow");
+                  return false;
+       }
+      });
+
+    $("#modal-paywall-set-confirm").closest('.modal-content').find('input#tokenInput').keypress(function (e) {
+        //if the letter is not digit don't type anything
+        if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+            return false;
+        }
+    });
+
+    $("#modal-paywall-set-confirm").on('click', function(e){
+        callback && callback(e);
+    });
+}
+
 
 // confirm
 function confirm(title, message, callback, password_check = false, extra_content = '') {

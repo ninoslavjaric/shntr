@@ -7,8 +7,8 @@
             "
             data-id="{$post['post_id']}"
             data-paywalled="{$post['paywalled']}"
-            data-paywall-price="{$post['paywallPrice']}"
-            data-author-name="{$post['post_author_name']}"
+            data-paywall-author-name="{$post['post_author_name']}"
+            data-paywall-author-id="{$post['author_id']}"
             >
 
         {if ($post['in_group'] && !$post['group_approved']) OR ($post['in_event'] && !$post['event_approved'])}

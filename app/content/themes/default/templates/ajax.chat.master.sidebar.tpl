@@ -1,7 +1,16 @@
 <ul>
     {foreach $sidebar_friends as $_user}
         <li class="feeds-item">
-            <div class="data-container clickable small js_chat-start" data-uid="{$_user['user_id']}" data-name="{if $system['show_usernames_enabled']}{$_user['user_name']}{else}{$_user['user_firstname']} {$_user['user_lastname']}{/if}" data-link="{$_user['user_name']}">
+            <div
+                class="data-container clickable small js_chat-start"
+                data-uid="{$_user['user_id']}"
+                data-name="{if $system['show_usernames_enabled']}{$_user['user_name']}{else}{$_user['user_firstname']} {$_user['user_lastname']}{/if}"
+                data-link="{$_user['user_name']}"
+
+                data-paywalled="{$_user['paywalled']}"
+                data-paywall-author-name="{$_user['user_fullname']}"
+                data-paywall-author-id="{$_user['user_id']}"
+            >
                 <div class="data-avatar">
                     <img src="{$_user['user_picture']}" alt="">
                 </div>

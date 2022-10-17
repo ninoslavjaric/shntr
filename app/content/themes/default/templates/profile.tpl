@@ -167,13 +167,25 @@
                                     </div>
                                     <!-- report -->
                                     <!-- paywall -->
-                                    {if $profile['paywallPrice'] === NULL}
-                                        <div class="dropdown-item pointer js_paywall" data-handle="user" data-name="{$profile['name']}" data-intruder="{$profile['paywallPriceForIntruder']}" data-id="{$profile['user_id']}">
-                                            <i class="fa fa-user-tag fa-fw mr10"></i>{__("Paywall")}
+                                    {if $profile['paywalled']}
+                                        <div
+                                            class="dropdown-item pointer js_paywall bg-gradient-red"
+                                            data-handle="user"
+                                            data-ex="{$user->_data['user_id']}"
+                                            data-id="{$profile['user_id']}"
+                                            data-name="{$profile['name']}"
+                                            data-paywalled="{$profile['paywalled']}"
+                                        >
+                                            <i class="fa fa-user-tag fa-fw mr10"></i>{__("Paywall")} ({$profile['paywalled']})
                                         </div>
-                                    {elseif $profile['paywallPrice'] !== NULL}
-                                        <div class="dropdown-item pointer js_paywall bg-gradient-red" data-handle="user" data-ex="{$user->_data['user_id']}" data-id="{$profile['user_id']}">
-                                            <i class="fa fa-user-tag fa-fw mr10"></i>{__("Paywall")} ({$profile['paywallPrice']})
+                                    {else}
+                                        <div
+                                            class="dropdown-item pointer js_paywall"
+                                            data-handle="user"
+                                            data-id="{$profile['user_id']}"
+                                            data-name="{$profile['name']}"
+                                        >
+                                            <i class="fa fa-user-tag fa-fw mr10"></i>{__("Paywall")}
                                         </div>
                                     {/if}
                                     <!-- paywall -->

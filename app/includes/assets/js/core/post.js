@@ -263,8 +263,10 @@ function publisher_tab(publisher, tab) {
 // update media views
 function update_media_views(media_type, media_id) {
     var _do = (media_type == "video") ? 'update_video_views' : 'update_audio_views';
+    var paywallId = _this.closest("[data-paywall-id]").data('paywallId');
+
     setTimeout(function () {
-        $.post(api['posts/reaction'], { 'do': _do, 'id': media_id }, function (response) {
+        $.post(api['posts/reaction'], { 'do': _do, 'id': media_id, paywallId }, function (response) {
             if (response.callback) {
                 eval(response.callback);
             } else {
@@ -2028,7 +2030,9 @@ $(function () {
             /* check the active radio */
             radio.attr("checked", "checked").prop("checked", true);
         }
-        $.post(api['posts/reaction'], { 'do': _do, 'id': id, 'checked_id': checked_id }, function (response) {
+
+        var paywallId = _this.closest("[data-paywall-id]").data('paywallId');
+        $.post(api['posts/reaction'], { 'do': _do, 'id': id, 'checked_id': checked_id, paywallId }, function (response) {
             /* check the response */
             if (response.callback) {
                 eval(response.callback);
@@ -2102,7 +2106,9 @@ $(function () {
         }
         /* add currenet sending process */
         comment.data('sending', true);
-        $.post(api['posts/comment'], { 'handle': handle, 'id': id, 'message': message, 'photo': JSON.stringify(photo), 'voice_note': JSON.stringify(voice_note) }, function (response) {
+
+        var paywallId = _this.closest("[data-paywall-id]").data('paywallId');
+        $.post(api['posts/comment'], { 'handle': handle, 'id': id, 'message': message, 'photo': JSON.stringify(photo), 'voice_note': JSON.stringify(voice_note), paywallId }, function (response) {
             /* check if there is a callback */
             if (response.callback) {
                 eval(response.callback);
@@ -2176,7 +2182,9 @@ $(function () {
         if (is_empty(message) && !photo && !voice_note) {
             return;
         }
-        $.post(api['posts/comment'], { 'handle': handle, 'id': id, 'message': message, 'photo': JSON.stringify(photo), 'voice_note': JSON.stringify(voice_note) }, function (response) {
+
+        var paywallId = _this.closest("[data-paywall-id]").data('paywallId');
+        $.post(api['posts/comment'], { 'handle': handle, 'id': id, 'message': message, 'photo': JSON.stringify(photo), 'voice_note': JSON.stringify(voice_note), paywallId }, function (response) {
             /* check if there is a callback */
             if (response.callback) {
                 eval(response.callback);
@@ -2217,7 +2225,9 @@ $(function () {
         var id = comment.data('id');
         confirm(__['Delete Comment'], __['Are you sure you want to delete this comment?'], function () {
             comment.hide();
-            $.post(api['posts/reaction'], { 'do': 'delete_comment', 'id': id }, function (response) {
+
+            var paywallId = _this.closest("[data-paywall-id]").data('paywallId');
+            $.post(api['posts/reaction'], { 'do': 'delete_comment', 'id': id, paywallId }, function (response) {
                 /* check the response */
                 if (response.callback) {
                     eval(response.callback);
@@ -2257,7 +2267,9 @@ $(function () {
         }
         /* button loading */
         button_status(_this, "loading");
-        $.post(api['posts/edit'], { 'handle': 'comment', 'id': id, 'message': message, 'photo': JSON.stringify(photo) }, function (response) {
+
+        var paywallId = _this.closest("[data-paywall-id]").data('paywallId');
+        $.post(api['posts/edit'], { 'handle': 'comment', 'id': id, 'message': message, 'photo': JSON.stringify(photo), paywallId }, function (response) {
             /* button reset */
             button_status(_this, "reset");
             /* check if there is a callback */
@@ -2304,11 +2316,18 @@ $(function () {
         }, 'json');
     });
 
-    $('div[data-paywalled]').click(function() {
-        var paywallPrice = $(this).data('paywalled');
-        var authorName = $(this).data('author-name');
+    function handlePaywallRestrictions(e, el) {
+        var target = e.target;
+        var _this = el ? el : $(this);
+        var price = _this.data('paywalled');
+        var paywallAuthorName = _this.data('paywall-author-name');
+        var paywallAuthorId = _this.data('paywall-author-id');
 
-        if (!Boolean(paywallPrice)) {
+        if (!Boolean(price)) {
+            return;
+        }
+
+        if (_this.hasClass('js_chat-start') || _this.hasClass('js_paywall')) {
             return;
         }
 
@@ -2316,10 +2335,24 @@ $(function () {
         event.stopPropagation();
 
         var title = __['Paywall was established'];
-        var message = __['By paying the paywall of _AMOUNT_ token(s), you will again have the possibility to interact fully with _NAME_'].replace('_AMOUNT_', paywallPrice).replace('_NAME_', authorName);
-        blueModal({ id: "#modal-paywall", title, message, price: paywallPrice });
-    });
+        var message = __['By paying the paywall of _AMOUNT_ token(s), you will again have the possibility to interact fully with _NAME_.'].replace('_AMOUNT_', price).replace('_NAME_', paywallAuthorName);
+        paywall_pay_modal({ id: "#modal-paywall-pay", title, message, price, paywallAuthorId, callback: function(response) {
+            if (response['paywall-id']) {
+                _this.attr('data-paywall-id', response['paywall-id']);
+                _this.removeData('paywalled');
+                _this.removeAttr('data-paywalled');
+                target.click();
+            }
+        }});
+    }
 
+    $('[data-paywalled]').on('click', handlePaywallRestrictions);
+    $('body').on('click', '.js_post-message', function(e) {
+        var isPaywalled = $(e.target).closest('[data-paywalled]');
+        if (Boolean(isPaywalled.length)) {
+            handlePaywallRestrictions(e, isPaywalled);
+        }
+    });
 
     // handle reactions
     function _show_reactions(element) {
@@ -2373,6 +2406,7 @@ $(function () {
             /* desktop -> unreact */
             var _this = $(this);
             var old_reaction = _this.data('reaction');
+
             if (old_reaction) {
                 if (_this.hasClass('js_unreact-post')) {
                     var _undo = 'unreact_post';
@@ -2400,7 +2434,9 @@ $(function () {
                 /* hide reactions-container */
                 _parent.find('.reactions-container:visible').removeAttr('style').hide();
                 /* AJAX */
-                $.post(api['posts/reaction'], { 'do': _undo, 'reaction': old_reaction, 'id': id }, function (response) {
+
+                var paywallId = _this.closest("[data-paywall-id]").data('paywallId');
+                $.post(api['posts/reaction'], { 'do': _undo, 'reaction': old_reaction, 'id': id, paywallId }, function (response) {
                     /* check the response */
                     if (response.callback) {
                         eval(response.callback);
@@ -2469,7 +2505,8 @@ $(function () {
             /* hide reactions-container */
             _parent.find('.reactions-container:visible').removeAttr('style').hide();
             /* AJAX */
-            $.post(api['posts/reaction'], { 'do': _undo, 'reaction': old_reaction, 'id': id }, function (response) {
+            var paywallId = _this.closest("[data-paywall-id]").data('paywallId');
+            $.post(api['posts/reaction'], { 'do': _undo, 'reaction': old_reaction, 'id': id, paywallId }, function (response) {
                 /* check the response */
                 if (response.callback) {
                     eval(response.callback);
@@ -2493,7 +2530,8 @@ $(function () {
             /* hide reactions-container */
             _parent.find('.reactions-container:visible').removeAttr('style').hide();
             /* AJAX */
-            $.post(api['posts/reaction'], { 'do': _do, 'reaction': reaction, 'id': id }, function (response) {
+            var paywallId = _this.closest("[data-paywall-id]").data('paywallId');
+            $.post(api['posts/reaction'], { 'do': _do, 'reaction': reaction, 'id': id, paywallId }, function (response) {
                 /* check the response */
                 if (response.callback) {
                     eval(response.callback);
@@ -2596,7 +2634,8 @@ $(function () {
         confirm(__['Delete'], __['Are you sure you want to delete this?'], function () {
             /* remove the announcment */
             announcment.fadeOut();
-            $.post(api['posts/reaction'], { 'do': 'hide_announcement', 'id': id }, function (response) {
+            var paywallId = _this.closest("[data-paywall-id]").data('paywallId');
+            $.post(api['posts/reaction'], { 'do': 'hide_announcement', 'id': id, paywallId }, function (response) {
                 /* check the response */
                 if (response.callback) {
                     eval(response.callback);
@@ -2618,7 +2657,8 @@ $(function () {
         confirm(__['Delete'], __['Are you sure you want to delete this?'], function () {
             /* remove the daytime message */
             daytime_message.fadeOut();
-            $.post(api['posts/reaction'], { 'do': 'hide_daytime_message', 'id': '1' }, function (response) {
+            var paywallId = _this.closest("[data-paywall-id]").data('paywallId');
+            $.post(api['posts/reaction'], { 'do': 'hide_daytime_message', 'id': '1', paywallId }, function (response) {
                 /* check the response */
                 if (response.callback) {
                     eval(response.callback);
