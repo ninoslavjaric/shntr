@@ -712,14 +712,6 @@
                                             </select>
                                         </div>
                                         <div class="form-group">
-                                            <label class="form-control-label" for="category">{__("Category")}</label>
-                                            <select class="form-control" name="category">
-                                                {foreach $categories as $category}
-                                                    {include file='__categories.recursive_options.tpl' data_category=$event['event_category']}
-                                                {/foreach}
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
                                             <label class="form-control-label" for="description">{__("About")}</label>
                                             <textarea class="form-control" name="description">{$event['event_description']}</textarea>
                                         </div>

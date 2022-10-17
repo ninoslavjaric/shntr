@@ -702,15 +702,6 @@
                                                 {__("Can only contain alphanumeric characters (A–Z, 0–9) and periods ('.')")}
                                             </span>
                                         </div>
-                                        <div class="form-group">
-                                            <label class="form-control-label" for="category">{__("Category")}</label>
-                                            <select class="form-control" name="category" id="category">
-                                                <option>{__("Select Category")}</option>
-                                                {foreach $categories as $category}
-                                                    {include file='__categories.recursive_options.tpl' data_category=$spage['page_category']}
-                                                {/foreach}
-                                            </select>
-                                        </div>
 
                                         <!-- error -->
                                         <div class="alert alert-danger mb0 x-hidden"></div>

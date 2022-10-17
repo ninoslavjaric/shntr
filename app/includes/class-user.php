@@ -9872,14 +9872,6 @@ class User
         if ($this->check_username($args['username'], 'page')) {
             throw new Exception(__("Sorry, it looks like this username") . " <strong>" . $args['username'] . "</strong> " . __("belongs to an existing page"));
         }
-        /* validate category */
-        if (is_empty($args['category'])) {
-            throw new Exception(__("You must select valid category for your page"));
-        }
-        $check = $db->query(sprintf("SELECT COUNT(*) as count FROM pages_categories WHERE category_id = %s", secure($args['category'], 'int'))) or _error("SQL_ERROR_THROWEN");
-        if ($check->fetch_assoc()['count'] == 0) {
-            throw new Exception(__("You must select valid category for your page"));
-        }
         /* set custom fields */
         $custom_fields = $this->set_custom_fields($args, "page");
 
@@ -10024,14 +10016,6 @@ class User
                     }
                     /* set new page name */
                     $page['page_name'] = $args['username'];
-                }
-                /* validate category */
-                if (is_empty($args['category'])) {
-                    throw new Exception(__("You must select valid category for your page"));
-                }
-                $check = $db->query(sprintf("SELECT COUNT(*) as count FROM pages_categories WHERE category_id = %s", secure($args['category'], 'int'))) or _error("SQL_ERROR_THROWEN");
-                if ($check->fetch_assoc()['count'] == 0) {
-                    throw new Exception(__("You must select valid category for your page"));
                 }
                 /* edit from admin panel */
                 $args['page_verified'] = ($this->_data['user_group'] == 1 && isset($args['page_verified'])) ? $args['page_verified'] : $page['page_verified'];
@@ -10454,14 +10438,6 @@ class User
         if ($this->check_username($args['username'], 'group')) {
             throw new Exception(__("Sorry, it looks like this web address") . " <strong>" . $args['username'] . "</strong> " . __("belongs to an existing group"));
         }
-        /* validate category */
-        if (is_empty($args['category'])) {
-            throw new Exception(__("You must select valid category for your group"));
-        }
-        $check = $db->query(sprintf("SELECT COUNT(*) as count FROM groups_categories WHERE category_id = %s", secure($args['category'], 'int'))) or _error("SQL_ERROR_THROWEN");
-        if ($check->fetch_assoc()['count'] == 0) {
-            throw new Exception(__("You must select valid category for your group"));
-        }
         /* validate privacy */
         if (!in_array($args['privacy'], array('secret', 'closed', 'public'))) {
             throw new Exception(__("You must select a valid privacy for your group"));
@@ -10479,17 +10455,15 @@ class User
                     group_privacy,
                     group_admin,
                     group_name,
-                    group_category,
                     group_title,
                     group_description,
                     group_date,
                     group_location,
                     group_location_id
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
                     secure($args['privacy']),
                     secure($this->_data['user_id'], 'int'),
                     secure($args['username']),
-                    secure($args['category']),
                     secure($args['title']),
                     secure($args['description']),
                     secure($date),
@@ -10597,14 +10571,6 @@ class User
         if (!in_array($args['privacy'], array('secret', 'closed', 'public'))) {
             throw new Exception(__("You must select a valid privacy for your group"));
         }
-        /* validate category */
-        if (is_empty($args['category'])) {
-            throw new Exception(__("You must select valid category for your group"));
-        }
-        $check = $db->query(sprintf("SELECT COUNT(*) as count FROM groups_categories WHERE category_id = %s", secure($args['category'], 'int'))) or _error("SQL_ERROR_THROWEN");
-        if ($check->fetch_assoc()['count'] == 0) {
-            throw new Exception(__("You must select valid category for your group"));
-        }
         /* set custom fields */
         $this->set_custom_fields($args, "group", "settings", $group_id);
         /* update the group */
@@ -10614,7 +10580,6 @@ class User
             sprintf(
                 "UPDATE `groups` SET 
                     group_privacy = %s,
-                    group_category = %s,
                     group_name = %s,
                     group_title = %s,
                     group_description = %s,
@@ -10624,7 +10589,6 @@ class User
                     group_location_id = %s 
                 WHERE group_id = %s",
                 secure($args['privacy']),
-                secure($args['category']),
                 secure($args['username']),
                 secure($args['title']),
                 secure($args['description']),
@@ -11073,14 +11037,6 @@ class User
         if (!in_array($args['privacy'], array('secret', 'closed', 'public'))) {
             throw new Exception(__("You must select a valid privacy for your event"));
         }
-        /* validate category */
-        if (is_empty($args['category'])) {
-            throw new Exception(__("You must select valid category for your event"));
-        }
-        $check = $db->query(sprintf("SELECT COUNT(*) as count FROM events_categories WHERE category_id = %s", secure($args['category'], 'int'))) or _error("SQL_ERROR_THROWEN");
-        if ($check->fetch_assoc()['count'] == 0) {
-            throw new Exception(__("You must select valid category for your event"));
-        }
         /* set custom fields */
         $custom_fields = $this->set_custom_fields($args, "event");
         $db->begin_transaction();
@@ -11235,14 +11191,6 @@ class User
         /* validate privacy */
         if (!in_array($args['privacy'], array('secret', 'closed', 'public'))) {
             throw new Exception(__("You must select a valid privacy for your event"));
-        }
-        /* validate category */
-        if (is_empty($args['category'])) {
-            throw new Exception(__("You must select valid category for your event"));
-        }
-        $check = $db->query(sprintf("SELECT COUNT(*) as count FROM events_categories WHERE category_id = %s", secure($args['category'], 'int'))) or _error("SQL_ERROR_THROWEN");
-        if ($check->fetch_assoc()['count'] == 0) {
-            throw new Exception(__("You must select valid category for your event"));
         }
         /* set custom fields */
         $this->set_custom_fields($args, "event", "settings", $event_id);

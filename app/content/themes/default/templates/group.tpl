@@ -761,14 +761,6 @@
                                             </span>
                                         </div>
                                         <div class="form-group">
-                                            <label class="form-control-label" for="title">{__("Category")}</label>
-                                            <select class="form-control" name="category" id="category">
-                                                {foreach $categories as $category}
-                                                    {include file='__categories.recursive_options.tpl' data_category=$group['group_category']}
-                                                {/foreach}
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
                                             <label class="form-control-label" for="description">{__("About")}</label>
                                             <textarea class="form-control" name="description" id="description">{$group['group_description']}</textarea>
                                         </div>

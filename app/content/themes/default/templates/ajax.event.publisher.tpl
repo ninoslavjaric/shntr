@@ -46,15 +46,6 @@
             </select>
         </div>
         <div class="form-group">
-            <label class="form-control-label" for="category">{__("Category")}</label>
-            <select class="form-control" name="category" id="category">
-                <option>{__("Select Category")}</option>
-                {foreach $categories as $category}
-                    {include file='__categories.recursive_options.tpl'}
-                {/foreach}
-            </select>
-        </div>
-        <div class="form-group">
             <label class="form-control-label" for="description">{__("About")}</label>
             <textarea class="form-control" name="description"></textarea>
         </div>
