@@ -5,6 +5,7 @@
  * @var $db mysqli
  */
 // fetch bootloader
+
 require('bootloader.php');
 
 if (!$system['creditcard_enabled'] && !$system['alipay_enabled']) {
@@ -153,6 +154,12 @@ try {
                         )
                     )->fetch_assoc();
 
+                    if ($transaction === null) {
+                        return_json([
+                            'success' => false,
+                            'msg' => "No transaction {$checkout_session->id} in db",
+                        ]);
+                    }
 
                     $response = shntrToken::payRelysia(
                         $transaction['qty'],
