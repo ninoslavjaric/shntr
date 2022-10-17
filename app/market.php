@@ -32,9 +32,9 @@ try {
 			$get_promoted = $db->query("SELECT posts.post_id FROM posts INNER JOIN posts_products ON posts.post_id = posts_products.post_id WHERE posts.post_type = 'product' AND posts_products.available = '1' AND posts.boosted = '1' ORDER BY RAND() LIMIT 3") or _error("SQL_ERROR");
 			while ($promoted_product = $get_promoted->fetch_assoc()) {
 				$promoted_product = $user->get_post($promoted_product['post_id']);
-				if ($promoted_product) {
+				// if ($promoted_product) {
 					$promoted_products[] = $promoted_product;
-				}
+				// }
 			}
 			/* assign variables */
 			$smarty->assign('promoted_products', $promoted_products);
@@ -177,9 +177,9 @@ try {
 	$get_rows = $db->query("SELECT posts.post_id " . $distance_clause . " FROM posts INNER JOIN posts_products ON posts.post_id = posts_products.post_id INNER JOIN users ON posts.user_id = users.user_id WHERE posts.post_type = 'product' AND posts_products.available = '1'" . $where_query . $distance_query . $order_query . $limit_query) or _error("SQL_ERROR");
 	while ($row = $get_rows->fetch_assoc()) {
 		$row = $user->get_post($row['post_id']);
-		if ($row) {
+		// if ($row) {
 			$rows[] = $row;
-		}
+		// }
 	}
 	/* assign variables */
 	$smarty->assign('sort', $_GET['sort']);
