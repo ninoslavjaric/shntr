@@ -1421,6 +1421,12 @@ class User
                     break;
                 }
 
+                error_log('debug paywall ' . sprintf(
+                        'INSERT INTO paywalls VALUES (%1$s, %2$s, %3$d) on duplicate key update paywall_price = %3$d',
+                        secure($this->_data['user_id'], 'int'),
+                        secure($id, 'int'),
+                        secure($value, 'int', false)
+                    ));
                 $query = $db->query(
                     sprintf(
                         'INSERT INTO paywalls VALUES (%1$s, %2$s, %3$d) on duplicate key update paywall_price = %3$d',
