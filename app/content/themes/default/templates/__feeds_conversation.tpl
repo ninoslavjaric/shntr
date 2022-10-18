@@ -1,4 +1,13 @@
-<li class="feeds-item {if !$conversation['seen']}unread{/if}" data-last-message="{$conversation['last_message_id']}">
+<li
+    class="feeds-item {if !$conversation['seen']}unread{/if}"
+    data-last-message="{$conversation['last_message_id']}"
+
+    {if $conversation['paywall']}
+        data-paywalled="{$conversation['paywall'][0]['paywall_price']}"
+        data-paywall-author-name="{$conversation['paywall'][0]['paywall_author_name']}"
+        data-paywall-author-id="{$conversation['paywall'][0]['paywall_author_id']}"
+    {/if}
+>
     {if $conversation['multiple_recipients']}
         <a class="data-container js_chat-start" data-cid="{$conversation['conversation_id']}" data-name="{$conversation['name']}" data-name-list="{$conversation['name_list']}" data-link="{$conversation['link']}" data-multiple="true" href="{$system['system_url']}/messages/{$conversation['conversation_id']}">
             <div class="data-avatar">

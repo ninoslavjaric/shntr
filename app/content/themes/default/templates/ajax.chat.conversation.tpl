@@ -3,9 +3,11 @@
     data-cid="{$conversation['conversation_id']}"
     data-color="{$conversation['color']}"
 
-    data-paywalled="{$conversation['paywalled']}"
-    data-paywall-author-name="{$conversation['name']}"
-    data-paywall-author-id="{$conversation['user_id']}"
+    {if $conversation['paywall']}
+        data-paywalled="{$conversation['paywall'][0]['paywall_price']}"
+        data-paywall-author-name="{$conversation['paywall'][0]['paywall_author_name']}"
+        data-paywall-author-id="{$conversation['paywall'][0]['paywall_author_id']}"
+    {/if}
 >
     <div class="card-header with-icon pb10 bg-transparent">
         <div class="float-right">

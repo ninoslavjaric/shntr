@@ -3875,17 +3875,18 @@ class User
         $conversation['message_orginal'] = $this->decode_emoji($conversation['message']);
         $conversation['message'] = $this->_parse(["text" => $conversation['message'], "decode_mention" => false, "decode_hashtags" => false]);
 
-        if (!empty($conversation['user_id'])) {
-            $conversation['paywalled'] = $this->paywalled($conversation['user_id']);
-        }
-
         if (!empty($conversation['recipients'])) {
-            $counter = 1;
+            $paywall = [];
             foreach ($conversation['recipients'] as $key => $value) {
-                $conversation["paywalled-$counter"] = $this->paywalled($value['user_id']);
-                $conversation["paywalled-$counter-author-id"] = $value['user_id'];
+                if ($paywall_price = $this->paywalled($value['user_id'])) {
+                    $paywall[$key]['paywall_price'] = $paywall_price;
+                    $paywall[$key]['paywall_author_id'] = $value['user_id'];
+                    $paywall[$key]['paywall_author_name'] = $this->get_user_fullname($value);
+                }
+            }
 
-                $counter++;
+            if (!empty($paywall)) {
+                $conversation['paywall'] = $paywall;
             }
         }
 
