@@ -1,4 +1,13 @@
-<li class="feeds-item {if !$notification['seen']}unread{/if}" data-id="{$notification['notification_id']}">
+<li
+    class="feeds-item {if !$notification['seen']}unread{/if}"
+    data-id="{$notification['notification_id']}"
+
+    {if $notification['paywall']}
+        data-paywalled="{$notification['paywall']['paywall_price']}"
+        data-paywall-author-name="{$notification['paywall']['paywall_author_name']}"
+        data-paywall-author-id="{$notification['paywall']['paywall_author_id']}"
+    {/if}
+>
     <a class="data-container" href="{$notification['url']}">
         <div class="data-avatar">
             <img src="{$notification['user_picture']}" alt="">

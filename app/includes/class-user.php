@@ -3078,6 +3078,14 @@ class User
                 }
                 /* prepare message */
                 $notification['full_message'] = html_entity_decode($notification['name'], ENT_QUOTES) . " " . html_entity_decode($notification['message'], ENT_QUOTES);
+
+                // ensure paywall data
+                if ($paywall_price = $this->paywalled($notification['from_user_id'])) {
+                    $notification['paywall']['paywall_price'] = $paywall_price;
+                    $notification['paywall']['paywall_author_id'] = $notification['from_user_id'];
+                    $notification['paywall']['paywall_author_name'] = $this->get_user_fullname($notification);
+                }
+
                 $notifications[] = $notification;
             }
         }
