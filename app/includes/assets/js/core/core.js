@@ -75,9 +75,58 @@ function get_parameter_by_name(name) {
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
+    function handlePaywallRestrictions(e, el) {
+        var _target = $(e.target);
+        var _this = el ? el : $(this);
+        var price = _this.data('paywalled');
+        var paywallAuthorName = _this.data('paywall-author-name');
+        var paywallAuthorId = _this.data('paywall-author-id');
+        var exclude = ['js_chat-start', 'js_paywall', 'js_chat-box-close'];
+
+        if (!Boolean(price)) {
+            return;
+        }
+
+        var checkForExclude = exclude.some(function(val) {
+            var classes = $(e.target).attr('class')?.split(/\s+/) || [];
+            return classes.indexOf(val) != -1;
+        });
+
+        if (checkForExclude) {
+            return;
+        }
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        var title = __['Paywall was established'];
+        var message = __['By paying the paywall of _AMOUNT_ token(s), you will again have the possibility to interact fully with _NAME_.'].replace('_AMOUNT_', price).replace('_NAME_', paywallAuthorName);
+        paywall_pay_modal({ id: "#modal-paywall-pay", title, message, price, paywallAuthorId, callback: function(response) {
+            if (response['paywall-id']) {
+                _this.attr('data-paywall-id', response['paywall-id']);
+                _this.removeData('paywalled');
+                _this.removeAttr('data-paywalled');
+                _target.click();
+            }
+        }});
+    }
 
 // initialize the plugins
 function initialize() {
+
+    // ensure paywall restriction clicks
+    $('[data-paywalled]').on('click', handlePaywallRestrictions);
+
+    // ensure paywall restriction clicks
+    $('body').on('click', function(e) {
+        var target = $(e.target);
+        var isPaywalled = target.closest('[data-paywalled]');
+        if (Boolean(isPaywalled.length)) {
+            handlePaywallRestrictions(e, isPaywalled);
+        }
+    });
+
+
     // run bootstrap tooltip
     $('body').tooltip({
         selector: '[data-toggle="tooltip"], [data-tooltip=tooltip]'
@@ -842,6 +891,8 @@ $(function () {
                 $('#search-results .dropdown-widget-body').html(render_template('#search-for', { 'query': query, 'hashtag': true }));
             } else {
                 $.post(api['data/search'], { 'query': query }, function (response) {
+
+
                     if (response.callback) {
                         eval(response.callback);
                     } else if (response.results) {
@@ -855,6 +906,8 @@ $(function () {
                         $('#search-results .dropdown-widget-body').html(render_template('#search-for', { 'query': query }));
                     }
                 }, 'json');
+
+
             }
         }
     });

@@ -1036,6 +1036,10 @@ class User
                         $user['user_picture'] = get_picture($user['user_picture'], $user['user_gender']);
                         /* get the connection between the viewer & the target */
                         $user['connection'] = $this->connection($user['user_id']);
+
+                        // ensure paywall data
+                        $user['paywalled'] = $this->paywalled($user['user_id']);
+                        $user['user_fullname'] = $this->get_user_fullname($user);
                         $results[] = $user;
                     }
                 }
@@ -1109,6 +1113,9 @@ class User
                 $user['connection'] = $this->connection($user['user_id']);
                 $user['sort'] = ($system['show_usernames_enabled']) ? $user['user_name'] : $user['user_firstname'];
                 $user['type'] = 'user';
+                $user['paywalled'] = $this->paywalled($user['user_id']);
+                $user['user_fullname'] = $this->get_user_fullname($user);
+
                 $results[] = $user;
             }
         }
@@ -1302,6 +1309,10 @@ class User
                         $result['user_picture'] = get_picture($result['user_picture'], $result['user_gender']);
                         /* get the connection between the viewer & the target */
                         $result['connection'] = $this->connection($result['user_id']);
+
+                        // ensure paywall data
+                        $result['paywalled'] = $this->paywalled($result['user_id']);
+                        $result['user_fullname'] = $this->get_user_fullname($result);
                         break;
 
                     case 'page':
@@ -4866,6 +4877,11 @@ class User
                 $profile['i_like'] = $this->check_page_membership($this->_data['user_id'], $id);
             }
         }
+
+        // ensure paywall data
+        $profile['paywalled'] = $this->paywalled($profile['user_id']);
+        $profile['user_fullname'] = $this->get_user_fullname($profile);
+
         return $profile;
     }
 
@@ -6409,9 +6425,15 @@ class User
                 $_user['connection'] = $this->connection($_user['user_id']);
                 /* get mutual friends count */
                 $_user['mutual_friends_count'] = $this->get_mutual_friends_count($_user['user_id']);
+
+                // ensure paywall data
+                $_user['paywalled'] = $this->paywalled($_user['user_id']);
+                $_user['user_fullname'] = $this->get_user_fullname($_user);
+
                 $users[] = $_user;
             }
         }
+
         return $users;
     }
 
@@ -6458,6 +6480,11 @@ class User
             $donor['user_picture'] = get_picture($donor['user_picture'], $donor['user_gender']);
             /* get the connection between the viewer & the target */
             $donor['connection'] = $this->connection($donor['user_id']);
+
+            // ensure paywall data
+            $donor['paywalled'] = $this->paywalled($donor['user_id']);
+            $donor['user_fullname'] = $this->get_user_fullname($donor);
+
             $donors[] = $donor;
         }
         return $donors;
@@ -6481,6 +6508,11 @@ class User
             $voter['user_picture'] = get_picture($voter['user_picture'], $voter['user_gender']);
             /* get the connection between the viewer & the target */
             $voter['connection'] = $this->connection($voter['user_id']);
+
+            // ensure paywall data
+            $voter['paywalled'] = $this->paywalled($voter['user_id']);
+            $voter['user_fullname'] = $this->get_user_fullname($voter);
+
             $voters[] = $voter;
         }
         return $voters;

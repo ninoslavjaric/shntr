@@ -112,7 +112,15 @@
         </div>
     </div>
 {elseif $_tpl == "list"}
-    <li class="feeds-item" {if $_user['id']}data-id="{$_user['id']}"{/if}>
+    <li
+        class="feeds-item" {if $_user['id']}data-id="{$_user['id']}"{/if}
+
+        {if $_user['paywalled'] > 0}
+            data-paywalled="{$_user['paywalled']}"
+            data-paywall-author-name="{$_user['user_fullname']}"
+            data-paywall-author-id="{$_user['user_id']}"
+        {/if}
+    >
         <div class="data-container {if $_small}small{/if}">
             <a class="data-avatar" href="{$system['system_url']}/{$_user['user_name']}{if $_search}?ref=qs{/if}">
                 <img src="{$_user['user_picture']}" alt="">

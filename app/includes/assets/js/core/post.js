@@ -2316,44 +2316,6 @@ $(function () {
         }, 'json');
     });
 
-    function handlePaywallRestrictions(e, el) {
-        var target = e.target;
-        var _this = el ? el : $(this);
-        var price = _this.data('paywalled');
-        var paywallAuthorName = _this.data('paywall-author-name');
-        var paywallAuthorId = _this.data('paywall-author-id');
-
-        if (!Boolean(price)) {
-            return;
-        }
-
-        if (_this.hasClass('js_chat-start') || _this.hasClass('js_paywall')) {
-            return;
-        }
-
-        event.preventDefault();
-        event.stopPropagation();
-
-        var title = __['Paywall was established'];
-        var message = __['By paying the paywall of _AMOUNT_ token(s), you will again have the possibility to interact fully with _NAME_.'].replace('_AMOUNT_', price).replace('_NAME_', paywallAuthorName);
-        paywall_pay_modal({ id: "#modal-paywall-pay", title, message, price, paywallAuthorId, callback: function(response) {
-            if (response['paywall-id']) {
-                _this.attr('data-paywall-id', response['paywall-id']);
-                _this.removeData('paywalled');
-                _this.removeAttr('data-paywalled');
-                target.click();
-            }
-        }});
-    }
-
-    $('[data-paywalled]').on('click', handlePaywallRestrictions);
-    $('body').on('click', '.js_post-message', function(e) {
-        var isPaywalled = $(e.target).closest('[data-paywalled]');
-        if (Boolean(isPaywalled.length)) {
-            handlePaywallRestrictions(e, isPaywalled);
-        }
-    });
-
     // handle reactions
     function _show_reactions(element) {
         var _this = $(element);
