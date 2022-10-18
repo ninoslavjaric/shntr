@@ -912,11 +912,7 @@ function _email($email, $subject, $body_html, $body_plain, $is_html = true, $onl
 
 function webmail_register(string $username): void
 {
-    if (
-        getenv('AWS_ACCESS_KEY_ID') === 'nokey'
-        || getenv('AWS_SECRET_ACCESS_KEY') === 'nosecret'
-        || getenv('AWS_DEFAULT_REGION') === 'noregion'
-    ) {
+    if ($_SERVER['SERVER_NAME'] !== 'shntr.com') {
         return;
     }
 
