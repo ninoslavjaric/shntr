@@ -6,9 +6,11 @@
             data-uid="{$_user['user_id']}"
             data-name="{if $system['show_usernames_enabled']}{$_user['user_name']}{else}{$_user['user_firstname']} {$_user['user_lastname']}{/if}"
 
-            data-paywalled="{$_user['paywalled']}"
-            data-paywall-author-name="{$_user['user_fullname']}"
-            data-paywall-author-id="{$_user['user_id']}"
+            {if $_user['paywalled']}
+                data-paywalled="{$_user['paywalled']['paywall_price']}"
+                data-paywall-author-name="{$_user['paywalled']['paywall_author_name']}"
+                data-paywall-author-id="{$_user['paywalled']['paywall_author_id']}"
+            {/if}
         >
             <div class="data-avatar">
                 <img class="data-avatar" src="{$_user['user_picture']}" alt="">

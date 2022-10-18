@@ -50,6 +50,7 @@ try {
                 $_POST['current_place_id'],
                 $_POST['religion']
             );
+			
 			$smarty->assign('people', $people);
 			break;
 

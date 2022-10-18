@@ -737,6 +737,13 @@ class User
             while ($request = $get_requests->fetch_assoc()) {
                 $request['user_picture'] = get_picture($request['user_picture'], $request['user_gender']);
                 $request['mutual_friends_count'] = $this->get_mutual_friends_count($request['user_id']);
+
+                if ($paywall_price = $this->paywalled($request['user_id'])) {
+                    $request['paywall']['paywall_price'] = $paywall_price;
+                    $request['paywall']['paywall_author_id'] = $request['user_id'];
+                    $request['paywall']['paywall_author_name'] = $this->get_user_fullname($request);
+                }
+
                 $requests[] = $request;
             }
         }
@@ -860,6 +867,14 @@ class User
                 }
                 $user['user_picture'] = get_picture($user['user_picture'], $user['user_gender']);
                 $user['mutual_friends_count'] = $this->get_mutual_friends_count($user['user_id']);
+
+                // ensure paywall data
+                if ($paywall_price = $this->paywalled($user['user_id'])) {
+                    $user['paywalled']['paywall_price'] = $paywall_price;
+                    $user['paywalled']['paywall_author_id'] = $user['user_id'];
+                    $user['paywalled']['paywall_author_name'] = $this->get_user_fullname($user);
+                }
+
                 $results[] = $user;
             }
         }
@@ -919,8 +934,12 @@ class User
                 }
                 $user['user_picture'] = get_picture($user['user_picture'], $user['user_gender']);
 
-                $user['paywalled'] = $this->paywalled($user['user_id']);
-                $user['user_fullname'] = $this->get_user_fullname($user);
+                // ensure paywall data
+                if ($paywall_price = $this->paywalled($user['user_id'])) {
+                    $user['paywalled']['paywall_price'] = $paywall_price;
+                    $user['paywalled']['paywall_author_id'] = $user['user_id'];
+                    $user['paywalled']['paywall_author_name'] = $this->get_user_fullname($user);
+                }
 
                 if ($mentioned) {
                     $mention_item['id'] = $user['user_id'];
@@ -950,7 +969,16 @@ class User
         if ($get_user->num_rows == 0) {
             return false;
         }
-        return $get_user->fetch_assoc();
+
+        $user = $get_user->fetch_assoc();
+
+        if (!empty($user) && $paywall_price = $this->paywalled($user['user_id'])) {
+            $user['paywall']['paywall_price'] = $paywall_price;
+            $user['paywall']['paywall_author_id'] = $user['user_id'];
+            $user['paywall']['paywall_author_name'] = $this->get_user_fullname($user);
+        }
+
+        return $user;
     }
 
 
@@ -1038,8 +1066,12 @@ class User
                         $user['connection'] = $this->connection($user['user_id']);
 
                         // ensure paywall data
-                        $user['paywalled'] = $this->paywalled($user['user_id']);
-                        $user['user_fullname'] = $this->get_user_fullname($user);
+                        if ($paywall_price = $this->paywalled($user['user_id'])) {
+                            $user['paywalled']['paywall_price'] = $paywall_price;
+                            $user['paywalled']['paywall_author_id'] = $user['user_id'];
+                            $user['paywalled']['paywall_author_name'] = $this->get_user_fullname($user);
+                        }
+
                         $results[] = $user;
                     }
                 }
@@ -1113,8 +1145,13 @@ class User
                 $user['connection'] = $this->connection($user['user_id']);
                 $user['sort'] = ($system['show_usernames_enabled']) ? $user['user_name'] : $user['user_firstname'];
                 $user['type'] = 'user';
-                $user['paywalled'] = $this->paywalled($user['user_id']);
-                $user['user_fullname'] = $this->get_user_fullname($user);
+
+                // ensure paywall data
+                if ($paywall_price = $this->paywalled($user['user_id'])) {
+                    $user['paywalled']['paywall_price'] = $paywall_price;
+                    $user['paywalled']['paywall_author_id'] = $user['user_id'];
+                    $user['paywalled']['paywall_author_name'] = $this->get_user_fullname($user);
+                }
 
                 $results[] = $user;
             }
@@ -1285,6 +1322,14 @@ class User
                 $user['user_picture'] = get_picture($user['user_picture'], $user['user_gender']);
                 /* get the connection between the viewer & the target */
                 $user['connection'] = $this->connection($user['user_id']);
+
+                // ensure paywall data
+                if ($paywall_price = $this->paywalled($user['user_id'])) {
+                    $user['paywalled']['paywall_price'] = $paywall_price;
+                    $user['paywalled']['paywall_author_id'] = $user['from_user_id'];
+                    $user['paywalled']['paywall_author_name'] = $this->get_user_fullname($user);
+                }
+
                 $results[] = $user;
             }
         }
@@ -1311,8 +1356,12 @@ class User
                         $result['connection'] = $this->connection($result['user_id']);
 
                         // ensure paywall data
-                        $result['paywalled'] = $this->paywalled($result['user_id']);
-                        $result['user_fullname'] = $this->get_user_fullname($result);
+                        if ($paywall_price = $this->paywalled($result['user_id'])) {
+                            $result['paywalled']['paywall_price'] = $paywall_price;
+                            $result['paywalled']['paywall_author_id'] = $result['user_id'];
+                            $result['paywalled']['paywall_author_name'] = $this->get_user_fullname($result);
+                        }
+
                         break;
 
                     case 'page':
@@ -3715,8 +3764,14 @@ class User
             while ($online_friend = $get_online_friends->fetch_assoc()) {
                 $online_friend['user_picture'] = get_picture($online_friend['user_picture'], $online_friend['user_gender']);
                 $online_friend['user_is_online'] = '1';
-                $online_friend['paywalled'] = $this->paywalled($online_friend['user_id']);
-                $online_friend['user_fullname'] = $this->get_user_fullname($online_friend);
+
+                // ensure paywall data
+                if ($paywall_price = $this->paywalled($online_friend['user_id'])) {
+                    $online_friend['paywalled']['paywall_price'] = $paywall_price;
+                    $online_friend['paywalled']['paywall_author_id'] = $online_friend['user_id'];
+                    $online_friend['paywalled']['paywall_author_name'] = $this->get_user_fullname($online_friend);
+                }
+
                 $online_friends[] = $online_friend;
             }
         }
@@ -3740,8 +3795,14 @@ class User
             while ($offline_friend = $get_offline_friends->fetch_assoc()) {
                 $offline_friend['user_picture'] = get_picture($offline_friend['user_picture'], $offline_friend['user_gender']);
                 $offline_friend['user_is_online'] = '0';
-                $offline_friend['paywalled'] = $this->paywalled($offline_friend['user_id']);
-                $offline_friend['user_fullname'] = $this->get_user_fullname($offline_friend);
+
+                // ensure paywall data
+                if ($paywall_price = $this->paywalled($offline_friend['user_id'])) {
+                    $offline_friend['paywalled']['paywall_price'] = $paywall_price;
+                    $offline_friend['paywalled']['paywall_author_id'] = $offline_friend['user_id'];
+                    $offline_friend['paywalled']['paywall_author_name'] = $this->get_user_fullname($offline_friend);
+                }
+
                 $offline_friends[] = $offline_friend;
             }
         }
@@ -4888,8 +4949,11 @@ class User
         }
 
         // ensure paywall data
-        $profile['paywalled'] = $this->paywalled($profile['user_id']);
-        $profile['user_fullname'] = $this->get_user_fullname($profile);
+        if ($paywall_price = $this->paywalled($profile['user_id'])) {
+            $profile['paywalled']['paywall_price'] = $paywall_price;
+            $profile['paywalled']['paywall_author_id'] = $profile['user_id'];
+            $profile['paywalled']['paywall_author_name'] = $this->get_user_fullname($profile);
+        }
 
         return $profile;
     }
@@ -6358,8 +6422,12 @@ class User
             }
         }
 
-        $post['paywalled'] = $this->paywalled($post['author_id']);
-        $post['paywallPrice'] = $this->paywalledPrice($post['author_id']);
+        // ensure paywall data
+        if ($paywall_price = $this->paywalled($post['user_id'])) {
+            $post['paywalled']['paywall_price'] = $paywall_price;
+            $post['paywalled']['paywall_author_id'] = $post['user_id'];
+            $post['paywalled']['paywall_author_name'] = $this->get_user_fullname($post);
+        }
 
         return $post;
     }
@@ -6436,8 +6504,11 @@ class User
                 $_user['mutual_friends_count'] = $this->get_mutual_friends_count($_user['user_id']);
 
                 // ensure paywall data
-                $_user['paywalled'] = $this->paywalled($_user['user_id']);
-                $_user['user_fullname'] = $this->get_user_fullname($_user);
+                if ($paywall_price = $this->paywalled($_user['user_id'])) {
+                    $_user['paywalled']['paywall_price'] = $paywall_price;
+                    $_user['paywalled']['paywall_author_id'] = $_user['user_id'];
+                    $_user['paywalled']['paywall_author_name'] = $this->get_user_fullname($_user);
+                }
 
                 $users[] = $_user;
             }
@@ -6491,8 +6562,11 @@ class User
             $donor['connection'] = $this->connection($donor['user_id']);
 
             // ensure paywall data
-            $donor['paywalled'] = $this->paywalled($donor['user_id']);
-            $donor['user_fullname'] = $this->get_user_fullname($donor);
+            if ($paywall_price = $this->paywalled($donor['user_id'])) {
+                $donor['paywalled']['paywall_price'] = $paywall_price;
+                $donor['paywalled']['paywall_author_id'] = $donor['user_id'];
+                $donor['paywalled']['paywall_author_name'] = $this->get_user_fullname($donor);
+            }
 
             $donors[] = $donor;
         }
@@ -6519,8 +6593,11 @@ class User
             $voter['connection'] = $this->connection($voter['user_id']);
 
             // ensure paywall data
-            $voter['paywalled'] = $this->paywalled($voter['user_id']);
-            $voter['user_fullname'] = $this->get_user_fullname($voter);
+            if ($paywall_price = $this->paywalled($voter['user_id'])) {
+                $voter['paywalled']['paywall_price'] = $paywall_price;
+                $voter['paywalled']['paywall_author_id'] = $voter['user_id'];
+                $voter['paywalled']['paywall_author_name'] = $this->get_user_fullname($voter);
+            }
 
             $voters[] = $voter;
         }

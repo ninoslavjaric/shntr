@@ -197,9 +197,11 @@
                                 class="dropdown-item pointer js_hide-author"
                                 data-author-id="{$_post['user_id']}"
 
-                                data-paywalled="{$_post['paywalled']}"
-                                data-paywall-author-name="{$_post['post_author_name']}"
-                                data-paywall-author-id={$_post['user_id']}"
+                                {if $_post['paywalled']}
+                                    data-paywalled="{$_post['paywalled']['paywall_price']}"
+                                    data-paywall-author-name="{$_post['paywalled']['paywall_author_name']}"
+                                    data-paywall-author-id="{$_post['paywalled']['paywall_author_id']}"
+                                {/if}
                             >
                                 <div class="action">
                                     <i class="fa fa-minus-circle fa-fw"></i> {__("Unfollow")} {if $system['show_usernames_enabled']}{$_post['user_name']}{else}{$_post['user_firstname']}{/if}
