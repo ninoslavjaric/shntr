@@ -75,53 +75,63 @@ function get_parameter_by_name(name) {
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
-    function handlePaywallRestrictions(e, el) {
-        var _target = $(e.target);
-        var _this = el ? el : $(this);
-        var price = _this.data('paywalled');
-        var paywallAuthorName = _this.data('paywall-author-name');
-        var paywallAuthorId = _this.data('paywall-author-id');
-        var exclude = ['js_chat-start', 'js_paywall', 'js_chat-box-close'];
+function handlePaywallRestrictions(e, el) {
+    var _target = $(e.target);
+    var _this = el ? el : $(this);
 
-        if (!Boolean(price)) {
-            return;
-        }
+    var price = _this.data('paywalled');
+    var paywallAuthorName = _this.data('paywall-author-name');
+    var paywallAuthorId = _this.data('paywall-author-id');
+    var exclude = ['js_chat-start', 'js_paywall', 'js_chat-box-close', 'js_tag-add'];
 
-        var checkForExclude = exclude.some(function(val) {
-            var classes = $(e.target).attr('class')?.split(/\s+/) || [];
-            return classes.indexOf(val) != -1;
-        });
-
-        if (checkForExclude) {
-            return;
-        }
-
-        e.preventDefault();
-        e.stopPropagation();
-
-        var title = __['Paywall was established'];
-        var message = __['By paying the paywall of _AMOUNT_ token(s), you will again have the possibility to interact fully with _NAME_.'].replace('_AMOUNT_', price).replace('_NAME_', paywallAuthorName);
-        paywall_pay_modal({ id: "#modal-paywall-pay", title, message, price, paywallAuthorId, callback: function(response) {
-            if (response['paywall-id']) {
-                _this.attr('data-paywall-id', response['paywall-id']);
-                _this.removeData('paywalled');
-                _this.removeAttr('data-paywalled');
-                _target.click();
-            }
-        }});
+    if (!Boolean(price)) {
+        return;
     }
+
+    var checkForExclude = exclude.some(function(val) {
+        var classes = $(e.target).attr('class')?.split(/\s+/) || [];
+        return classes.indexOf(val) != -1;
+    });
+
+    if (checkForExclude) {
+        return;
+    }
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    var title = __['Paywall was established'];
+    var message = __['By paying the paywall of _AMOUNT_ token(s), you will again have the possibility to interact fully with _NAME_.'].replace('_AMOUNT_', price).replace('_NAME_', paywallAuthorName);
+    paywall_pay_modal({ id: "#modal-paywall-pay", title, message, price, paywallAuthorId, callback: function(response) {
+        if (response['paywall-id']) {
+            _this.attr('data-paywall-id', response['paywall-id']);
+        }
+    }});
+}
+
+function resetPaywall() {
+    $('[data-paywall-id]').each(function() {
+        $(this).removeData('paywallId');
+        $(this).removeAttr('data-paywall-id');
+    });
+}
 
 // initialize the plugins
 function initialize() {
 
     // ensure paywall restriction clicks
-    $('[data-paywalled]').on('click', handlePaywallRestrictions);
+    $('[data-paywalled]').on('click', function(e) {
+        if (!$(this).data('paywallId')) {
+            handlePaywallRestrictions(e, $(this));
+        }
+    });
 
     // ensure paywall restriction clicks
     $('body').on('click', function(e) {
         var target = $(e.target);
         var isPaywalled = target.closest('[data-paywalled]');
-        if (Boolean(isPaywalled.length)) {
+
+        if (Boolean(isPaywalled.length) && !isPaywalled.data('paywallId')) {
             handlePaywallRestrictions(e, isPaywalled);
         }
     });
@@ -529,7 +539,16 @@ $(function () {
 
     // init plugins
     initialize();
-    $(document).ajaxComplete(function () {
+    $(document).ajaxComplete(function (event, xhr, settings) {
+
+        var requestType = settings.type;
+        var data = new URLSearchParams(settings.data);
+
+        if (requestType === 'POST' && (data.get('reaction') || data.get('message'))) {
+            resetPaywall();
+        }
+
+        console.log(settings);
         initialize();
     });
 
