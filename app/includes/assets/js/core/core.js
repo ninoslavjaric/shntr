@@ -548,7 +548,6 @@ $(function () {
             resetPaywall();
         }
 
-        console.log(settings);
         initialize();
     });
 
