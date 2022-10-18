@@ -16536,17 +16536,19 @@ class User
 
             case 'started':
                 /* validate country */
-                if ($args['country'] == "none") {
-                    throw new Exception(__("You must select valid country"));
-                } else {
+                // if ($args['country'] == "none") {
+                //     throw new Exception(__("You must select valid country"));
+                // } else {
                     if (!$this->check_country($args['country'])) {
-                        throw new Exception(__("You must select valid country"));
+                        $args['country'] = 'null';
+                        // throw new Exception(__("You must select valid country"));
                     }
-                }
+                // }
                 /* validate work website */
                 if (!is_empty($args['work_url'])) {
                     if (!valid_url($args['work_url'])) {
-                        throw new Exception(__("Please enter a valid work website"));
+                        // throw new Exception(__("Please enter a valid work website"));
+                        $args['work_url'] = 'null';
                     }
                 } else {
                     $args['work_url'] = 'null';
@@ -16558,7 +16560,8 @@ class User
                         'single', 'relationship', 'married', "complicated", 'separated', 'divorced', 'widowed'
                     );
                     if (!in_array($args['relationship'], $relationships)) {
-                        throw new Exception(__("Please select a valid relationship"));
+                        // throw new Exception(__("Please select a valid relationship"));
+                        $args['relationship'] = 'null';
                     }
                 }
 
@@ -16615,7 +16618,8 @@ class User
                 ) or _error("SQL_ERROR_THROWEN");
 
                 if (empty($args['interests']) || !valid_array_of_positive_ints($args['interests'])) {
-                    throw new Exception(__("Please enter a valid array of interests"));
+                    // throw new Exception(__("Please enter a valid array of interests"));
+                    $args['interests'] = 'null';
                 }
 
                 $this->update_interests($args['interests']);
