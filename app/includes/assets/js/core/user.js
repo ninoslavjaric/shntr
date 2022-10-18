@@ -595,6 +595,15 @@ $(function () {
         }
     }
 
+    function remove_params_from_url()
+    {
+        var uri = window.location.toString();
+        if (uri.indexOf("?") > 0) {
+            var clean_uri = uri.substring(0, uri.indexOf("?"));
+            window.history.replaceState({}, document.title, clean_uri);
+        }
+    }
+
     function checkTokenPurchaseParams() {
         var purchase = getURLParameter('purchase');
         var amount = getURLParameter('amount');
@@ -605,6 +614,7 @@ $(function () {
             message = __['You have successfully bought _AMOUNT_ tokens'].replace('_AMOUNT_', amount);
 
             blueModal({ id: '#modal-success', title, message });
+            remove_params_from_url();
         }
 
         if (purchase === 'fail') {
@@ -612,6 +622,7 @@ $(function () {
             message = __['There is something that went wrong!'];
 
             blueModal({ id: '#modal-error', title, message });
+            remove_params_from_url();
         }
     }
 
