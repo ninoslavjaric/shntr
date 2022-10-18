@@ -6,10 +6,13 @@
                 {if ($post['in_group'] && !$post['group_approved']) OR ($post['in_event'] && !$post['event_approved'])}pending{/if}
             "
             data-id="{$post['post_id']}"
-            data-paywalled="{$post['paywalled']}"
-            data-paywall-author-name="{$post['post_author_name']}"
-            data-paywall-author-id="{$post['author_id']}"
-            >
+
+            {if $post['paywalled']}
+                data-paywalled="{$post['paywalled']['paywall_price']}"
+                data-paywall-author-name="{$post['paywalled']['paywall_author_name']}"
+                data-paywall-author-id="{$post['paywalled']['paywall_author_id']}"
+            {/if}
+    >
 
         {if ($post['in_group'] && !$post['group_approved']) OR ($post['in_event'] && !$post['event_approved'])}
             <div class="pending-icon" data-toggle="tooltip" title="{__("Pending Post")}">
