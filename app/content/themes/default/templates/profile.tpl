@@ -1419,6 +1419,13 @@
 </div>
 <!-- page content -->
 
+<div style="display: none" class="profile-page-paywall-identificaiton"
+    {if $profile['paywalled']}
+        data-paywalled="{$profile['paywalled']['paywall_price']}"
+        data-paywall-author-name="{$profile['paywalled']['paywall_author_name']}"
+        data-paywall-author-id="{$profile['paywalled']['paywall_author_id']}"
+    {/if}
+</div>
 {include file='_footer.tpl'}
 
 {if $gift}
@@ -1433,15 +1440,14 @@
     <script>
         $(document).ready(function(e) {
             if (!localStorage.getItem('paywallId')) {
-                var isPaywalled = $('.js_chat-start').closest('[data-paywalled]');
+                var isPaywalled = $('.profile-page-paywall-identificaiton');
                 if (Boolean(isPaywalled.length) && !isPaywalled.data('paywallId')) {
                     handlePaywallRestrictions(null, isPaywalled);
                 }
-
             }
-
-            setTimeout(() => localStorage.removeItem('paywallId'), 1000);
         });
+        
+        window.onbeforeunload = function(e) { localStorage.removeItem('paywallId')}
     </script>
 {/if}
 
