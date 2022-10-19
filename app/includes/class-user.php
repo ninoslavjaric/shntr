@@ -5219,9 +5219,7 @@ class User
                 $post['paywalled']['paywall_author_id'] = $_user['user_id'];
                 $post['paywalled']['paywall_author_name'] = $this->get_user_fullname($_user);
             }
-            
-            var_dump($post);
-            die();
+
         } elseif ($args['handle'] == "page") {
             /* check if the page is valid */
             $check_page = $db->query(sprintf("SELECT * FROM pages WHERE page_id = %s", secure($args['id'], 'int'))) or _error("SQL_ERROR_THROWEN");
