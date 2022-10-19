@@ -105,6 +105,27 @@
     </div>
 </script>
 
+<script id="modal-buy-tokens" type="text/template">
+    <div class="modal-header">
+        <h6 class="modal-title">{literal}{{title}}{/literal}</h6>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+            <form id="buyTokensForm" action="/buy-tokens/checkout" method="POST">
+                <label for="tokenInput">{literal}{{message}}{/literal}</label>
+                <input name="qty" type="number" class="form-control" id="tokenInput" min="5" placeholder="5">
+            </form>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-light" data-dismiss="modal">{__("Cancel")}</button>
+        <button type="submit" class="btn btn-sm btn-success" data-dismiss="modal" id="modal-buy-ok">{__("Confirm")}</button>
+    </div>
+</script>
+
 <script id="modal-paywall-pay" type="text/template">
     <div class="modal-header">
         <h6 class="modal-title">{literal}{{title}}{/literal}</h6>

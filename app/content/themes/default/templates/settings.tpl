@@ -2828,10 +2828,7 @@
                                     </div>
                                 </div>
                                 {if $system['creditcard_enabled'] || $system['alipay_enabled']}
-                                    <form action="/buy-tokens/checkout" method="POST">
-                                        <input type="number" name="qty" class="form-control mb10" value="5" min="5" step="5">
-                                        <button type="submit" class="btn btn-block btn-warning mb20">Buy tokens</button>
-                                    </form>
+                                        <button type="submit" id="buyTokensBtn" class="btn btn-block btn-warning mb20">Buy tokens</button>
                                 {/if}
                             </div>
                             <!-- money balance -->
