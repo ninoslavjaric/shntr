@@ -1425,6 +1425,7 @@
         data-paywall-author-name="{$profile['paywalled']['paywall_author_name']}"
         data-paywall-author-id="{$profile['paywalled']['paywall_author_id']}"
     {/if}
+>
 </div>
 {include file='_footer.tpl'}
 
