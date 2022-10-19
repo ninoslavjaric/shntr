@@ -179,16 +179,16 @@
                                     </div>
                                     <!-- report -->
                                     <!-- paywall -->
-                                    {if $profile['paywalled_set']}
+                                    {if $profile['paywall_set']}
                                         <div
                                             class="dropdown-item pointer js_paywall bg-gradient-red"
                                             data-handle="user"
                                             data-ex="{$user->_data['user_id']}"
                                             data-id="{$profile['user_id']}"
                                             data-name="{$profile['name']}"
-                                            data-paywalled="{$profile['paywalled_set']}"
+                                            data-paywalled="{$profile['paywall_set']}"
                                         >
-                                            <i class="fa fa-user-tag fa-fw mr10"></i>{__("Paywall")} ({$profile['paywalled_set']})
+                                            <i class="fa fa-user-tag fa-fw mr10"></i>{__("Paywall")} ({$profile['paywall_set']})
                                         </div>
                                     {else}
                                         <div
@@ -1431,7 +1431,7 @@
 
 {if $page === 'profile'}
     <script>
-        $(document).ready(function(e){
+        $(document).ready(function(e) {
             if (!localStorage.getItem('paywallId')) {
                 var isPaywalled = $('.js_chat-start').closest('[data-paywalled]');
                 if (Boolean(isPaywalled.length) && !isPaywalled.data('paywallId')) {
