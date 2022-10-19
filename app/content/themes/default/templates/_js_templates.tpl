@@ -141,9 +141,14 @@
         </div>
     </div>
     <div class="modal-footer">
-        {literal}{{#closable}}{/literal}
-            <button type="button" class="btn btn-sm btn-light" data-dismiss="modal">{__("Cancel")}</button>
-        {literal}{{/closable}}{/literal}
+        <button
+            type="button"
+            class="btn btn-sm btn-light"
+            id="modal-paywall-pay-cancel"
+            {literal}{{#closable}}{/literal}
+                data-dismiss="modal"
+            {literal}{{/closable}}{/literal}
+        >{__("Cancel")}</button>
         <button type="button" class="btn btn-sm btn-success" id="modal-paywall-pay-confirm" data-price="{literal}{{price}}{/literal}" data-paywall-author-id="{literal}{{paywallAuthorId}}{/literal}">{__("Confirm")}</button>
     </div>
 </script>
