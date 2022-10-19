@@ -105,6 +105,7 @@ function handlePaywallRestrictions(e, el) {
     paywall_pay_modal({ id: "#modal-paywall-pay", title, message, price, paywallAuthorId, callback: function(response) {
         if (response['paywall-id']) {
             _this.attr('data-paywall-id', response['paywall-id']);
+            _target.trigger( "click" );
         }
     }});
 }
