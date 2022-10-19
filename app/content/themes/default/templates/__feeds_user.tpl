@@ -115,10 +115,10 @@
     <li
         class="feeds-item" {if $_user['id']}data-id="{$_user['id']}"{/if}
 
-        {if $_user['paywalled']}
-            data-paywalled="{$_user['paywalled']['paywall_price']}"
-            data-paywall-author-name="{$_user['paywalled']['paywall_author_name']}"
-            data-paywall-author-id="{$_user['paywalled']['paywall_author_id']}"
+        {if $_user['paywall']}
+            data-paywalled="{$_user['paywall']['paywall_price']}"
+            data-paywall-author-name="{$_user['paywall']['paywall_author_name']}"
+            data-paywall-author-id="{$_user['paywall']['paywall_author_id']}"
         {/if}
     >
 
