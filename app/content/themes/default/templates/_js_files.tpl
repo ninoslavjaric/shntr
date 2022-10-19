@@ -84,9 +84,7 @@
     __['Remove'] = "{__('Remove')}";
     __['Error'] = "{__('Error')}";
     __['Paywall was established'] = "{__('Paywall was established')}";
-    __['By paying the paywall of  '] = "{__('By paying the paywall of ')}";
-    __[' token(s), you will again have the possibility to interact fully with '] = "{__(' token(s), you will again have the possibility to interact fully with ')}";
-    __['By paying the paywall of _AMOUNT_ token(s), you will again have the possibility to interact fully with _NAME_.'] = "{__('By paying the paywall of _AMOUNT_ token(s), you will again have the possibility to interact fully with _NAME_.')}";
+    __['By paying the paywall of _AMOUNT_ token(s), you will be able to carry out the planned action.'] = "{__('By paying the paywall of _AMOUNT_ token(s), you will be able to carry out the planned action.')}";
     __['Success'] = "{__('Success')}";
     __['Warning'] = "{__('Warning')}";
     __['Loading'] = "{__('Loading')}";

@@ -101,7 +101,7 @@ function handlePaywallRestrictions(e, el) {
     e && e.stopPropagation();
 
     var title = __['Paywall was established'];
-    var message = __['By paying the paywall of _AMOUNT_ token(s), you will again have the possibility to interact fully with _NAME_.'].replace('_AMOUNT_', price).replace('_NAME_', paywallAuthorName);
+    var message = __['By paying the paywall of _AMOUNT_ token(s), you will be able to carry out the planned action.'].replace('_AMOUNT_', price);
     var closable = e ? true : false;
 
     paywall_pay_modal({ id: "#modal-paywall-pay", title, message, price, paywallAuthorId, closable,  callback: function(response) {
