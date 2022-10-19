@@ -25,6 +25,7 @@ try {
 
 	// get results
 	$results = $user->search_quick($_POST['query']);
+
 	if ($results) {
 		/* assign variables */
 		if ($_POST['people']) {

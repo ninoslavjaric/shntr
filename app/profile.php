@@ -30,7 +30,14 @@ try {
 	$profile = $get_profile->fetch_assoc();
 
     /* return amount of tokens or NULL */
-    $profile['paywalled'] = $user->paywalled($user->_data['user_id'], $profile['user_id']);
+    $profile['paywall_set'] = $user->paywalled($user->_data['user_id'], $profile['user_id']);
+
+	// ensure paywall data
+	if ($paywall_price = $user->paywalled($profile['user_id'])) {
+		$profile['paywalled']['paywall_price'] = $paywall_price;
+		$profile['paywalled']['paywall_author_id'] = $profile['user_id'];
+		$profile['paywalled']['paywall_author_name'] = $user->get_user_fullname($profile);
+	}
 
     /* check if banned by the system */
 	if ($user->banned($profile['user_id'])) {

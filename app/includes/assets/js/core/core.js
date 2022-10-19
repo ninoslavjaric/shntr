@@ -75,9 +75,87 @@ function get_parameter_by_name(name) {
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
+function handlePaywallRestrictions(e, el) {
+    var _target = e ? $(e.target) : null;
+    var _this = el ? el : $(this);
+
+    var price = _this.data('paywalled');
+    var paywallAuthorName = _this.data('paywall-author-name');
+    var paywallAuthorId = _this.data('paywall-author-id');
+    var exclude = ['js_chat-start', 'js_paywall', 'js_chat-box-close', 'js_tag-add'];
+
+    if (!Boolean(price)) {
+        return;
+    }
+
+    var checkForExclude = exclude.some(function(val) {
+        var classes = e && $(e.target).attr('class')?.split(/\s+/) || [];
+        return classes.indexOf(val) != -1;
+    });
+
+    if (e && checkForExclude) {
+        return;
+    }
+
+    e && e.preventDefault();
+    e && e.stopPropagation();
+
+    var title = __['Paywall was established'];
+    var message = __['By paying the paywall of _AMOUNT_ token(s), you will be able to carry out the planned action.'].replace('_AMOUNT_', price);
+    var closable = e ? true : false;
+
+    paywall_pay_modal({ id: "#modal-paywall-pay", title, message, price, paywallAuthorId, closable,  callback: function(response) {
+        if (response['paywall-id']) {
+            _this.attr('data-paywall-id', response['paywall-id']);
+            _target && _target.trigger( "click" );
+            localStorage.setItem('paywallId', response['paywall-id']);
+
+            setTimeout(() => {
+                $('#modal').modal('toggle');
+            }, 1000);
+        }
+    }});
+}
+
+function resetPaywall() {
+    $('[data-paywall-id]').each(function() {
+        $(this).removeData('paywallId');
+        $(this).removeAttr('data-paywall-id');
+        localStorage.removeItem('paywallId');
+    });
+}
 
 // initialize the plugins
 function initialize() {
+
+    // ensure paywall restriction clicks
+    $('[data-paywalled]').on('click', function(e) {
+        if (!$(this).data('paywallId')) {
+            handlePaywallRestrictions(e, $(this));
+        }
+    });
+
+    // ensure paywall restriction clicks
+    $('body').on('click', function(e) {
+        var target = $(e.target);
+        var isPaywalled = target.closest('[data-paywalled]');
+
+        if (Boolean(isPaywalled.length) && !isPaywalled.data('paywallId')) {
+            handlePaywallRestrictions(e, isPaywalled);
+        }
+    });
+
+    // ensure paywall restriction clicks
+    $('body').on('keyup paste change input propertychange', 'textarea.js_post-message', function (e) {
+        var target = $(e.target);
+        var isPaywalled = target.closest('[data-paywalled]');
+
+        if (Boolean(isPaywalled.length) && !isPaywalled.data('paywallId')) {
+            handlePaywallRestrictions(e, isPaywalled);
+        }
+    });
+
+
     // run bootstrap tooltip
     $('body').tooltip({
         selector: '[data-toggle="tooltip"], [data-tooltip=tooltip]'
@@ -224,7 +302,7 @@ function modal() {
     }
 }
 
-function blueModal({ id, size, title, message, ...others } = {}) {
+function blueModal({ id, size, title, message, closable = true, ...others } = {}) {
     var className = id.replace('#', '');
     if (id == "#modal-login" || id == "#chat-calling" || id == "#chat-ringing") {
         /* disable the backdrop (don't close modal when click outside) */
@@ -233,6 +311,10 @@ function blueModal({ id, size, title, message, ...others } = {}) {
         } else {
             $('#modal').modal({ backdrop: 'static', keyboard: false });
         }
+    }
+
+    if (!closable) {
+        $('#modal').modal({backdrop: 'static', keyboard: false})
     }
 
     $('#modal').addClass(className);
@@ -267,15 +349,15 @@ function blueModal({ id, size, title, message, ...others } = {}) {
     }
 
     /* update the modal-content with the rendered template */
-    $('.modal-content:last').html(render_template(id, { title, message, ...others }));
+    $('.modal-content:last').html(render_template(id, { title, message, closable, ...others }));
     /* initialize modal if the function defined (user logged in) */
     if (typeof initialize_modal === "function") {
         initialize_modal();
     }
 }
 
-function paywall_pay_modal({ id, title, message, price, paywallAuthorId, callback } = {}) {
-    blueModal({ id, title, message, price, paywallAuthorId });
+function paywall_pay_modal({ id, title, message, price, paywallAuthorId, closable, callback } = {}) {
+    blueModal({ id, title, message, price, paywallAuthorId, closable });
 
     $("#modal-paywall-pay-confirm").on('click', function(e){
         var button = $(e.target);
@@ -480,7 +562,15 @@ $(function () {
 
     // init plugins
     initialize();
-    $(document).ajaxComplete(function () {
+    $(document).ajaxComplete(function (event, xhr, settings) {
+
+        var requestType = settings.type;
+        var data = new URLSearchParams(settings.data);
+
+        if (requestType === 'POST' && (data.get('reaction') || data.get('message'))) {
+            resetPaywall();
+        }
+
         initialize();
     });
 
@@ -842,6 +932,8 @@ $(function () {
                 $('#search-results .dropdown-widget-body').html(render_template('#search-for', { 'query': query, 'hashtag': true }));
             } else {
                 $.post(api['data/search'], { 'query': query }, function (response) {
+
+
                     if (response.callback) {
                         eval(response.callback);
                     } else if (response.results) {
@@ -855,6 +947,8 @@ $(function () {
                         $('#search-results .dropdown-widget-body').html(render_template('#search-for', { 'query': query }));
                     }
                 }, 'json');
+
+
             }
         }
     });

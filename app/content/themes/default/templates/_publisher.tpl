@@ -1,5 +1,15 @@
 <div class="publisher-overlay"></div>
-<div class="x-form publisher" data-handle="{$_handle}" {if $_id}data-id="{$_id}"{/if}>
+<div
+    class="x-form publisher"
+    data-handle="{$_handle}"
+    {if $_id}data-id="{$_id}"{/if}
+
+    {if $profile['paywalled']}
+        data-paywalled="{$profile['paywalled']['paywall_price']}"
+        data-paywall-author-name="{$profile['paywalled']['paywall_author_name']}"
+        data-paywall-author-id="{$profile['paywalled']['paywall_author_id']}"
+    {/if}
+>
 
     <!-- publisher loader -->
     <div class="publisher-loader">

@@ -11135,3 +11135,7 @@ input:checked + .dash_slider:before {
 .dash_slider.round:before {
   border-radius: 50%;
 }
+
+.js_chat-start *, .js_tag-add * {
+  pointer-events: none;
+}

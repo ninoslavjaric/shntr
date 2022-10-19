@@ -141,7 +141,19 @@
                             <!-- follow -->
 
                             <!-- message -->
-                            <button type="button" class="btn btn-icon btn-rounded btn-primary mlr5 js_chat-start" data-uid="{$profile['user_id']}" data-name="{$profile['name']}" data-link="{$profile['user_name']}">
+                            <button
+                                type="button"
+                                class="btn btn-icon btn-rounded btn-primary mlr5 js_chat-start"
+                                data-uid="{$profile['user_id']}"
+                                data-name="{$profile['name']}"
+                                data-link="{$profile['user_name']}"
+
+                                {if $profile['paywalled']}
+                                    data-paywalled="{$profile['paywalled']['paywall_price']}"
+                                    data-paywall-author-name="{$profile['paywalled']['paywall_author_name']}"
+                                    data-paywall-author-id="{$profile['paywalled']['paywall_author_id']}"
+                                {/if}
+                            >
                                 <i class="fa fa-comments fa-fw fa-lg"></i>
                             </button>
                             <!-- message -->
@@ -167,16 +179,16 @@
                                     </div>
                                     <!-- report -->
                                     <!-- paywall -->
-                                    {if $profile['paywalled']}
+                                    {if $profile['paywall_set']}
                                         <div
                                             class="dropdown-item pointer js_paywall bg-gradient-red"
                                             data-handle="user"
                                             data-ex="{$user->_data['user_id']}"
                                             data-id="{$profile['user_id']}"
                                             data-name="{$profile['name']}"
-                                            data-paywalled="{$profile['paywalled']}"
+                                            data-paywalled="{$profile['paywall_set']}"
                                         >
-                                            <i class="fa fa-user-tag fa-fw mr10"></i>{__("Paywall")} ({$profile['paywalled']})
+                                            <i class="fa fa-user-tag fa-fw mr10"></i>{__("Paywall")} ({$profile['paywall_set']})
                                         </div>
                                     {else}
                                         <div
@@ -1407,6 +1419,14 @@
 </div>
 <!-- page content -->
 
+<div style="display: none" class="profile-page-paywall-identificaiton"
+    {if $profile['paywalled']}
+        data-paywalled="{$profile['paywalled']['paywall_price']}"
+        data-paywall-author-name="{$profile['paywalled']['paywall_author_name']}"
+        data-paywall-author-id="{$profile['paywalled']['paywall_author_id']}"
+    {/if}
+>
+</div>
 {include file='_footer.tpl'}
 
 {if $gift}
@@ -1416,3 +1436,19 @@
         });
     </script>
 {/if}
+
+{if $page === 'profile'}
+    <script>
+        $(document).ready(function(e) {
+            if (!localStorage.getItem('paywallId')) {
+                var isPaywalled = $('.profile-page-paywall-identificaiton');
+                if (Boolean(isPaywalled.length) && !isPaywalled.data('paywallId')) {
+                    handlePaywallRestrictions(null, isPaywalled);
+                }
+            }
+        });
+        
+        window.onbeforeunload = function(e) { localStorage.removeItem('paywallId')}
+    </script>
+{/if}
+

@@ -129,9 +129,11 @@
 <script id="modal-paywall-pay" type="text/template">
     <div class="modal-header">
         <h6 class="modal-title">{literal}{{title}}{/literal}</h6>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
+        {literal}{{#closable}}{/literal}
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        {literal}{{/closable}}{/literal}
     </div>
     <div class="modal-body">
         <div class="form-group">
@@ -139,7 +141,9 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-sm btn-light" data-dismiss="modal">{__("Cancel")}</button>
+        {literal}{{#closable}}{/literal}
+            <button type="button" class="btn btn-sm btn-light" data-dismiss="modal">{__("Cancel")}</button>
+        {literal}{{/closable}}{/literal}
         <button type="button" class="btn btn-sm btn-success" id="modal-paywall-pay-confirm" data-price="{literal}{{price}}{/literal}" data-paywall-author-id="{literal}{{paywallAuthorId}}{/literal}">{__("Confirm")}</button>
     </div>
 </script>
@@ -640,9 +644,11 @@
                                     data-name="{if $system['show_usernames_enabled']}{$_user['user_name']}{else}{$_user['user_firstname']} {$_user['user_lastname']}{/if}"
                                     data-link="{$_user['user_name']}"
 
-                                    data-paywalled="{$_user['paywalled']}"
-                                    data-paywall-author-name="{$_user['user_fullname']}"
-                                    data-paywall-author-id="{$_user['user_id']}"
+                                    {if $_user['paywalled']}
+                                        data-paywalled="{$_user['paywalled']['paywall_price']}"
+                                        data-paywall-author-name="{$_user['paywalled']['paywall_author_name']}"
+                                        data-paywall-author-id="{$_user['paywalled']['paywall_author_id']}"
+                                    {/if}
                                 >
                                     <div class="data-avatar">
                                         <img src="{$_user['user_picture']}" alt="">

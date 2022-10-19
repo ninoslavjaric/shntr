@@ -840,7 +840,6 @@ $(function () {
         });
     });
 
-
     // run user-popover
     $('body').on('mouseenter', '.js_user-popover', function () {
         /* do not run if window size < 768px */
@@ -848,6 +847,8 @@ $(function () {
             return;
         }
         var _this = $(this);
+        var paywalled = _this.closest('[data-paywalled]');
+
         var uid = _this.data('uid');
         var type = _this.data('type') || 'user';
         var _timeout = setTimeout(function () {
@@ -860,15 +861,15 @@ $(function () {
                     $('body').append('<div class="user-popover-wrapper" style="position: fixed; top: ' + posY + 'px; left:' + posX + 'px"><div class="user-popover-content ptb10 plr10"><div class="loader loader_small"></div></div></div>');
                 } else {
                     var right = $(window).width() - available;
-                    $('body').append('<div class="user-popover-wrapper" style="position: fixed; top: ' + posY + 'px; right:' + right + 'px"><div class="user-popover-content ptb10 plr10"><div class="loader loader_small"></div></div></div>');
+                    $('body').append('<div class="user-popover-wrapper" data-paywalled="'+ paywalled.data('paywalled') +'" style="position: fixed; top: ' + posY + 'px; right:' + right + 'px"><div class="user-popover-content ptb10 plr10"><div class="loader loader_small"></div></div></div>');
                 }
             } else {
                 var available = $(window).width() - posX;
                 if (available < 400) {
                     var right = available - _this.width();
-                    $('body').append('<div class="user-popover-wrapper" style="position: fixed; top: ' + posY + 'px; right:' + right + 'px"><div class="user-popover-content ptb10 plr10"><div class="loader loader_small"></div></div></div>');
+                    $('body').append('<div class="user-popover-wrapper" data-paywalled="'+ paywalled.data('paywalled') +'" style="position: fixed; top: ' + posY + 'px; right:' + right + 'px"><div class="user-popover-content ptb10 plr10"><div class="loader loader_small"></div></div></div>');
                 } else {
-                    $('body').append('<div class="user-popover-wrapper" style="position: fixed; top: ' + posY + 'px; left:' + posX + 'px"><div class="user-popover-content ptb10 plr10"><div class="loader loader_small"></div></div></div>');
+                    $('body').append('<div class="user-popover-wrapper" data-paywalled="'+ paywalled.data('paywalled') +'" style="position: fixed; top: ' + posY + 'px; left:' + posX + 'px"><div class="user-popover-content ptb10 plr10"><div class="loader loader_small"></div></div></div>');
                 }
             }
             $.getJSON(api['users/popover'], { 'type': type, 'uid': uid }, function (response) {

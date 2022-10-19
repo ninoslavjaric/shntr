@@ -282,18 +282,18 @@
                             {/if}
 
                             <!-- success -->
-                            <div class="alert alert-success x-hidden"></div>
+                            {* <div class="alert alert-success x-hidden"></div> *}
                             <!-- success -->
 
                             <!-- error -->
-                            <div class="alert alert-danger x-hidden"></div>
+                            {* <div class="alert alert-danger x-hidden"></div> *}
                             <!-- error -->
 
                             <!-- buttons -->
                             <div class="clearfix mt20">
                                 <div class="float-right">
-                                    <button type="submit" class="btn btn-success"><i class="fas fa-check-circle mr5"></i>{__("Save Changes")}</button>
-                                    <button type="button" class="btn btn-primary" id="activate-step-3">{__("Next Step")}<i class="fas fa-arrow-circle-right ml5"></i></button>
+                                    {* <button type="submit" class="btn btn-success"><i class="fas fa-check-circle mr5"></i>{__("Save Changes")}</button> *}
+                                    <button type="submit" class="btn btn-primary" id="activate-step-3">{__("Next Step")}<i class="fas fa-arrow-circle-right ml5"></i></button>
                                 </div>
                             </div>
                             <!-- buttons -->

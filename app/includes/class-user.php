@@ -737,6 +737,13 @@ class User
             while ($request = $get_requests->fetch_assoc()) {
                 $request['user_picture'] = get_picture($request['user_picture'], $request['user_gender']);
                 $request['mutual_friends_count'] = $this->get_mutual_friends_count($request['user_id']);
+
+                if ($paywall_price = $this->paywalled($request['user_id'])) {
+                    $request['paywall']['paywall_price'] = $paywall_price;
+                    $request['paywall']['paywall_author_id'] = $request['user_id'];
+                    $request['paywall']['paywall_author_name'] = $this->get_user_fullname($request);
+                }
+
                 $requests[] = $request;
             }
         }
@@ -860,6 +867,14 @@ class User
                 }
                 $user['user_picture'] = get_picture($user['user_picture'], $user['user_gender']);
                 $user['mutual_friends_count'] = $this->get_mutual_friends_count($user['user_id']);
+
+                // ensure paywall data
+                if ($paywall_price = $this->paywalled($user['user_id'])) {
+                    $user['paywalled']['paywall_price'] = $paywall_price;
+                    $user['paywalled']['paywall_author_id'] = $user['user_id'];
+                    $user['paywalled']['paywall_author_name'] = $this->get_user_fullname($user);
+                }
+
                 $results[] = $user;
             }
         }
@@ -919,8 +934,12 @@ class User
                 }
                 $user['user_picture'] = get_picture($user['user_picture'], $user['user_gender']);
 
-                $user['paywalled'] = $this->paywalled($user['user_id']);
-                $user['user_fullname'] = $this->get_user_fullname($user);
+                // ensure paywall data
+                if ($paywall_price = $this->paywalled($user['user_id'])) {
+                    $user['paywalled']['paywall_price'] = $paywall_price;
+                    $user['paywalled']['paywall_author_id'] = $user['user_id'];
+                    $user['paywalled']['paywall_author_name'] = $this->get_user_fullname($user);
+                }
 
                 if ($mentioned) {
                     $mention_item['id'] = $user['user_id'];
@@ -950,7 +969,16 @@ class User
         if ($get_user->num_rows == 0) {
             return false;
         }
-        return $get_user->fetch_assoc();
+
+        $user = $get_user->fetch_assoc();
+
+        if (!empty($user) && $paywall_price = $this->paywalled($user['user_id'])) {
+            $user['paywall']['paywall_price'] = $paywall_price;
+            $user['paywall']['paywall_author_id'] = $user['user_id'];
+            $user['paywall']['paywall_author_name'] = $this->get_user_fullname($user);
+        }
+
+        return $user;
     }
 
 
@@ -1036,6 +1064,14 @@ class User
                         $user['user_picture'] = get_picture($user['user_picture'], $user['user_gender']);
                         /* get the connection between the viewer & the target */
                         $user['connection'] = $this->connection($user['user_id']);
+
+                        // ensure paywall data
+                        if ($paywall_price = $this->paywalled($user['user_id'])) {
+                            $user['paywalled']['paywall_price'] = $paywall_price;
+                            $user['paywalled']['paywall_author_id'] = $user['user_id'];
+                            $user['paywalled']['paywall_author_name'] = $this->get_user_fullname($user);
+                        }
+
                         $results[] = $user;
                     }
                 }
@@ -1109,6 +1145,14 @@ class User
                 $user['connection'] = $this->connection($user['user_id']);
                 $user['sort'] = ($system['show_usernames_enabled']) ? $user['user_name'] : $user['user_firstname'];
                 $user['type'] = 'user';
+
+                // ensure paywall data
+                if ($paywall_price = $this->paywalled($user['user_id'])) {
+                    $user['paywalled']['paywall_price'] = $paywall_price;
+                    $user['paywalled']['paywall_author_id'] = $user['user_id'];
+                    $user['paywalled']['paywall_author_name'] = $this->get_user_fullname($user);
+                }
+
                 $results[] = $user;
             }
         }
@@ -1278,6 +1322,14 @@ class User
                 $user['user_picture'] = get_picture($user['user_picture'], $user['user_gender']);
                 /* get the connection between the viewer & the target */
                 $user['connection'] = $this->connection($user['user_id']);
+
+                // ensure paywall data
+                if ($paywall_price = $this->paywalled($user['user_id'])) {
+                    $user['paywalled']['paywall_price'] = $paywall_price;
+                    $user['paywalled']['paywall_author_id'] = $user['from_user_id'];
+                    $user['paywalled']['paywall_author_name'] = $this->get_user_fullname($user);
+                }
+
                 $results[] = $user;
             }
         }
@@ -1302,6 +1354,14 @@ class User
                         $result['user_picture'] = get_picture($result['user_picture'], $result['user_gender']);
                         /* get the connection between the viewer & the target */
                         $result['connection'] = $this->connection($result['user_id']);
+
+                        // ensure paywall data
+                        if ($paywall_price = $this->paywalled($result['user_id'])) {
+                            $result['paywalled']['paywall_price'] = $paywall_price;
+                            $result['paywalled']['paywall_author_id'] = $result['user_id'];
+                            $result['paywalled']['paywall_author_name'] = $this->get_user_fullname($result);
+                        }
+
                         break;
 
                     case 'page':
@@ -1461,7 +1521,7 @@ class User
             case 'friend-accept':
                 $query = $db->query("SELECT price FROM prices WHERE price_name = 'accept_fr_price';");
                 $price = $query->fetch_assoc();
-                $friendRequestAcceptReward = $price["price"];
+                $friendRequestAcceptReward = isset($price["price"]) && !empty($price["price"]) ?  $price["price"] : 0;
                 $query = $db->query(
                     'select user_token_private_key as super_private_key, user_id as id from users where user_id = 1 limit 1'
                 ) or _error("SQL_ERROR_THROWEN");
@@ -1521,23 +1581,25 @@ class User
                         $this->_data['user_name'], $this->_data['user_id']
                     );
                 }
+
                 $balance = shntrToken::getRelysiaBalance();
                 $query = $db->query("SELECT price FROM prices WHERE price_name = 'send_fr_price';");
                 $price = $query->fetch_assoc();
-                $friendRequestAcceptReward = $price["price"];
+                $friendRequestAcceptReward = isset($price["price"]) && !empty($price["price"]) ?  $price["price"] : 0;
 
                 if ($balance < $friendRequestAcceptReward) {
                     modal("ERROR", __("Funds"), __("You're out of tokens"));
                 }
 
-                $query = $db->query(
-                    'select user_relysia_paymail as address, user_id as id from users where user_id = 1 limit 1'
-                ) or _error("SQL_ERROR_THROWEN");
+                $query = $db->query('select user_relysia_paymail as address, user_id as id from users where user_id = 1 limit 1') or _error("SQL_ERROR_THROWEN");
                 $superUser = $query->fetch_assoc();
-                $response = shntrToken::payRelysia($friendRequestAcceptReward, $superUser['address'], $this->_data['user_id']);
+
+                $response = shntrToken::payRelysia(0, $superUser['address'], $this->_data['user_id']);
+
                 if (!str_contains($response['message'], 'sent successfully')) {
                     _error(400, $response['message']);
                 }
+
                 shntrToken::noteTransaction(
                     $friendRequestAcceptReward,
                     intval($this->_data['user_id']),
@@ -3067,6 +3129,14 @@ class User
                 }
                 /* prepare message */
                 $notification['full_message'] = html_entity_decode($notification['name'], ENT_QUOTES) . " " . html_entity_decode($notification['message'], ENT_QUOTES);
+
+                // ensure paywall data
+                if ($paywall_price = $this->paywalled($notification['from_user_id'])) {
+                    $notification['paywall']['paywall_price'] = $paywall_price;
+                    $notification['paywall']['paywall_author_id'] = $notification['from_user_id'];
+                    $notification['paywall']['paywall_author_name'] = $this->get_user_fullname($notification);
+                }
+
                 $notifications[] = $notification;
             }
         }
@@ -3696,8 +3766,14 @@ class User
             while ($online_friend = $get_online_friends->fetch_assoc()) {
                 $online_friend['user_picture'] = get_picture($online_friend['user_picture'], $online_friend['user_gender']);
                 $online_friend['user_is_online'] = '1';
-                $online_friend['paywalled'] = $this->paywalled($online_friend['user_id']);
-                $online_friend['user_fullname'] = $this->get_user_fullname($online_friend);
+
+                // ensure paywall data
+                if ($paywall_price = $this->paywalled($online_friend['user_id'])) {
+                    $online_friend['paywalled']['paywall_price'] = $paywall_price;
+                    $online_friend['paywalled']['paywall_author_id'] = $online_friend['user_id'];
+                    $online_friend['paywalled']['paywall_author_name'] = $this->get_user_fullname($online_friend);
+                }
+
                 $online_friends[] = $online_friend;
             }
         }
@@ -3721,8 +3797,14 @@ class User
             while ($offline_friend = $get_offline_friends->fetch_assoc()) {
                 $offline_friend['user_picture'] = get_picture($offline_friend['user_picture'], $offline_friend['user_gender']);
                 $offline_friend['user_is_online'] = '0';
-                $offline_friend['paywalled'] = $this->paywalled($offline_friend['user_id']);
-                $offline_friend['user_fullname'] = $this->get_user_fullname($offline_friend);
+
+                // ensure paywall data
+                if ($paywall_price = $this->paywalled($offline_friend['user_id'])) {
+                    $offline_friend['paywalled']['paywall_price'] = $paywall_price;
+                    $offline_friend['paywalled']['paywall_author_id'] = $offline_friend['user_id'];
+                    $offline_friend['paywalled']['paywall_author_name'] = $this->get_user_fullname($offline_friend);
+                }
+
                 $offline_friends[] = $offline_friend;
             }
         }
@@ -3864,17 +3946,18 @@ class User
         $conversation['message_orginal'] = $this->decode_emoji($conversation['message']);
         $conversation['message'] = $this->_parse(["text" => $conversation['message'], "decode_mention" => false, "decode_hashtags" => false]);
 
-        if (!empty($conversation['user_id'])) {
-            $conversation['paywalled'] = $this->paywalled($conversation['user_id']);
-        }
-
         if (!empty($conversation['recipients'])) {
-            $counter = 1;
+            $paywall = [];
             foreach ($conversation['recipients'] as $key => $value) {
-                $conversation["paywalled-$counter"] = $this->paywalled($value['user_id']);
-                $conversation["paywalled-$counter-author-id"] = $value['user_id'];
+                if ($paywall_price = $this->paywalled($value['user_id'])) {
+                    $paywall[$key]['paywall_price'] = $paywall_price;
+                    $paywall[$key]['paywall_author_id'] = $value['user_id'];
+                    $paywall[$key]['paywall_author_name'] = $this->get_user_fullname($value);
+                }
+            }
 
-                $counter++;
+            if (!empty($paywall)) {
+                $conversation['paywall'] = $paywall;
             }
         }
 
@@ -4866,6 +4949,14 @@ class User
                 $profile['i_like'] = $this->check_page_membership($this->_data['user_id'], $id);
             }
         }
+
+        // ensure paywall data
+        if ($paywall_price = $this->paywalled($profile['user_id'])) {
+            $profile['paywalled']['paywall_price'] = $paywall_price;
+            $profile['paywalled']['paywall_author_id'] = $profile['user_id'];
+            $profile['paywalled']['paywall_author_name'] = $this->get_user_fullname($profile);
+        }
+
         return $profile;
     }
 
@@ -5121,6 +5212,14 @@ class User
             $post['wall_id'] = $args['id'];
             $post['wall_username'] = $_user['user_name'];
             $post['wall_fullname'] = ($system['show_usernames_enabled']) ? $_user['user_name'] : $_user['user_firstname'] . " " . $_user['user_lastname'];
+
+            // ensure paywall data
+            if ($paywall_price = $this->paywalled($_user['user_id'])) {
+                $post['paywalled']['paywall_price'] = $paywall_price;
+                $post['paywalled']['paywall_author_id'] = $_user['user_id'];
+                $post['paywalled']['paywall_author_name'] = $this->get_user_fullname($_user);
+            }
+
         } elseif ($args['handle'] == "page") {
             /* check if the page is valid */
             $check_page = $db->query(sprintf("SELECT * FROM pages WHERE page_id = %s", secure($args['id'], 'int'))) or _error("SQL_ERROR_THROWEN");
@@ -6333,8 +6432,12 @@ class User
             }
         }
 
-        $post['paywalled'] = $this->paywalled($post['author_id']);
-        $post['paywallPrice'] = $this->paywalledPrice($post['author_id']);
+        // ensure paywall data
+        if ($paywall_price = $this->paywalled($post['user_id'])) {
+            $post['paywalled']['paywall_price'] = $paywall_price;
+            $post['paywalled']['paywall_author_id'] = $post['user_id'];
+            $post['paywalled']['paywall_author_name'] = $this->get_user_fullname($post);
+        }
 
         return $post;
     }
@@ -6409,9 +6512,18 @@ class User
                 $_user['connection'] = $this->connection($_user['user_id']);
                 /* get mutual friends count */
                 $_user['mutual_friends_count'] = $this->get_mutual_friends_count($_user['user_id']);
+
+                // ensure paywall data
+                if ($paywall_price = $this->paywalled($_user['user_id'])) {
+                    $_user['paywalled']['paywall_price'] = $paywall_price;
+                    $_user['paywalled']['paywall_author_id'] = $_user['user_id'];
+                    $_user['paywalled']['paywall_author_name'] = $this->get_user_fullname($_user);
+                }
+
                 $users[] = $_user;
             }
         }
+
         return $users;
     }
 
@@ -6458,6 +6570,14 @@ class User
             $donor['user_picture'] = get_picture($donor['user_picture'], $donor['user_gender']);
             /* get the connection between the viewer & the target */
             $donor['connection'] = $this->connection($donor['user_id']);
+
+            // ensure paywall data
+            if ($paywall_price = $this->paywalled($donor['user_id'])) {
+                $donor['paywalled']['paywall_price'] = $paywall_price;
+                $donor['paywalled']['paywall_author_id'] = $donor['user_id'];
+                $donor['paywalled']['paywall_author_name'] = $this->get_user_fullname($donor);
+            }
+
             $donors[] = $donor;
         }
         return $donors;
@@ -6481,6 +6601,14 @@ class User
             $voter['user_picture'] = get_picture($voter['user_picture'], $voter['user_gender']);
             /* get the connection between the viewer & the target */
             $voter['connection'] = $this->connection($voter['user_id']);
+
+            // ensure paywall data
+            if ($paywall_price = $this->paywalled($voter['user_id'])) {
+                $voter['paywalled']['paywall_price'] = $paywall_price;
+                $voter['paywalled']['paywall_author_id'] = $voter['user_id'];
+                $voter['paywalled']['paywall_author_name'] = $this->get_user_fullname($voter);
+            }
+
             $voters[] = $voter;
         }
         return $voters;
@@ -6639,13 +6767,20 @@ class User
         if ($full_details) {
             /* check if wall post */
             if ($post['in_wall']) {
-                $get_wall_user = $db->query(sprintf("SELECT user_firstname, user_lastname, user_name FROM users WHERE user_id = %s", secure($post['wall_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_wall_user = $db->query(sprintf("SELECT user_id, user_firstname, user_lastname, user_name FROM users WHERE user_id = %s", secure($post['wall_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
                 if ($get_wall_user->num_rows == 0) {
                     return false;
                 }
+
                 $wall_user = $get_wall_user->fetch_assoc();
                 $post['wall_username'] = $wall_user['user_name'];
                 $post['wall_fullname'] = ($system['show_usernames_enabled']) ? $wall_user['user_name'] : $wall_user['user_firstname'] . " " . $wall_user['user_lastname'];
+
+                if ($paywall_price = $this->paywalled($wall_user['user_id'])) {
+                    $post['paywalled']['paywall_price'] = $paywall_price;
+                    $post['paywalled']['paywall_author_id'] = $wall_user['user_id'];
+                    $post['paywalled']['paywall_author_name'] = $this->get_user_fullname($wall_user);
+                }
             }
 
             /* check if viewer [reacted|saved] this post */
@@ -16495,17 +16630,19 @@ class User
 
             case 'started':
                 /* validate country */
-                if ($args['country'] == "none") {
-                    throw new Exception(__("You must select valid country"));
-                } else {
+                // if ($args['country'] == "none") {
+                //     throw new Exception(__("You must select valid country"));
+                // } else {
                     if (!$this->check_country($args['country'])) {
-                        throw new Exception(__("You must select valid country"));
+                        $args['country'] = 'null';
+                        // throw new Exception(__("You must select valid country"));
                     }
-                }
+                // }
                 /* validate work website */
                 if (!is_empty($args['work_url'])) {
                     if (!valid_url($args['work_url'])) {
-                        throw new Exception(__("Please enter a valid work website"));
+                        // throw new Exception(__("Please enter a valid work website"));
+                        $args['work_url'] = 'null';
                     }
                 } else {
                     $args['work_url'] = 'null';
@@ -16517,7 +16654,8 @@ class User
                         'single', 'relationship', 'married', "complicated", 'separated', 'divorced', 'widowed'
                     );
                     if (!in_array($args['relationship'], $relationships)) {
-                        throw new Exception(__("Please select a valid relationship"));
+                        // throw new Exception(__("Please select a valid relationship"));
+                        $args['relationship'] = 'null';
                     }
                 }
 
@@ -16574,7 +16712,8 @@ class User
                 ) or _error("SQL_ERROR_THROWEN");
 
                 if (empty($args['interests']) || !valid_array_of_positive_ints($args['interests'])) {
-                    throw new Exception(__("Please enter a valid array of interests"));
+                    // throw new Exception(__("Please enter a valid array of interests"));
+                    $args['interests'] = 'null';
                 }
 
                 $this->update_interests($args['interests']);
