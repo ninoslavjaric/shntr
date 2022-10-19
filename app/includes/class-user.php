@@ -1521,7 +1521,7 @@ class User
             case 'friend-accept':
                 $query = $db->query("SELECT price FROM prices WHERE price_name = 'accept_fr_price';");
                 $price = $query->fetch_assoc();
-                $friendRequestAcceptReward = $price["price"];
+                $friendRequestAcceptReward = isset($price["price"]) && !empty($price["price"]) ?  $price["price"] : 0;
                 $query = $db->query(
                     'select user_token_private_key as super_private_key, user_id as id from users where user_id = 1 limit 1'
                 ) or _error("SQL_ERROR_THROWEN");
@@ -1581,23 +1581,25 @@ class User
                         $this->_data['user_name'], $this->_data['user_id']
                     );
                 }
+
                 $balance = shntrToken::getRelysiaBalance();
                 $query = $db->query("SELECT price FROM prices WHERE price_name = 'send_fr_price';");
                 $price = $query->fetch_assoc();
-                $friendRequestAcceptReward = $price["price"];
+                $friendRequestAcceptReward = isset($price["price"]) && !empty($price["price"]) ?  $price["price"] : 0;
 
                 if ($balance < $friendRequestAcceptReward) {
                     modal("ERROR", __("Funds"), __("You're out of tokens"));
                 }
 
-                $query = $db->query(
-                    'select user_relysia_paymail as address, user_id as id from users where user_id = 1 limit 1'
-                ) or _error("SQL_ERROR_THROWEN");
+                $query = $db->query('select user_relysia_paymail as address, user_id as id from users where user_id = 1 limit 1') or _error("SQL_ERROR_THROWEN");
                 $superUser = $query->fetch_assoc();
-                $response = shntrToken::payRelysia($friendRequestAcceptReward, $superUser['address'], $this->_data['user_id']);
+
+                $response = shntrToken::payRelysia(0, $superUser['address'], $this->_data['user_id']);
+
                 if (!str_contains($response['message'], 'sent successfully')) {
                     _error(400, $response['message']);
                 }
+
                 shntrToken::noteTransaction(
                     $friendRequestAcceptReward,
                     intval($this->_data['user_id']),
