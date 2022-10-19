@@ -5212,6 +5212,16 @@ class User
             $post['wall_id'] = $args['id'];
             $post['wall_username'] = $_user['user_name'];
             $post['wall_fullname'] = ($system['show_usernames_enabled']) ? $_user['user_name'] : $_user['user_firstname'] . " " . $_user['user_lastname'];
+
+            // ensure paywall data
+            if ($paywall_price = $this->paywalled($_user['user_id'])) {
+                $post['paywalled']['paywall_price'] = $paywall_price;
+                $post['paywalled']['paywall_author_id'] = $_user['user_id'];
+                $post['paywalled']['paywall_author_name'] = $this->get_user_fullname($_user);
+            }
+            
+            var_dump($post);
+            die();
         } elseif ($args['handle'] == "page") {
             /* check if the page is valid */
             $check_page = $db->query(sprintf("SELECT * FROM pages WHERE page_id = %s", secure($args['id'], 'int'))) or _error("SQL_ERROR_THROWEN");
@@ -6759,13 +6769,20 @@ class User
         if ($full_details) {
             /* check if wall post */
             if ($post['in_wall']) {
-                $get_wall_user = $db->query(sprintf("SELECT user_firstname, user_lastname, user_name FROM users WHERE user_id = %s", secure($post['wall_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_wall_user = $db->query(sprintf("SELECT user_id, user_firstname, user_lastname, user_name FROM users WHERE user_id = %s", secure($post['wall_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
                 if ($get_wall_user->num_rows == 0) {
                     return false;
                 }
+
                 $wall_user = $get_wall_user->fetch_assoc();
                 $post['wall_username'] = $wall_user['user_name'];
                 $post['wall_fullname'] = ($system['show_usernames_enabled']) ? $wall_user['user_name'] : $wall_user['user_firstname'] . " " . $wall_user['user_lastname'];
+
+                if ($paywall_price = $this->paywalled($wall_user['user_id'])) {
+                    $post['paywalled']['paywall_price'] = $paywall_price;
+                    $post['paywalled']['paywall_author_id'] = $wall_user['user_id'];
+                    $post['paywalled']['paywall_author_name'] = $this->get_user_fullname($wall_user);
+                }
             }
 
             /* check if viewer [reacted|saved] this post */
