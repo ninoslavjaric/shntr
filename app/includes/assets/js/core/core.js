@@ -145,6 +145,16 @@ function initialize() {
         }
     });
 
+    // ensure paywall restriction clicks
+    $('body').on('keyup paste change input propertychange', 'textarea.js_post-message', function (e) {
+        var target = $(e.target);
+        var isPaywalled = target.closest('[data-paywalled]');
+
+        if (Boolean(isPaywalled.length) && !isPaywalled.data('paywallId')) {
+            handlePaywallRestrictions(e, isPaywalled);
+        }
+    });
+
 
     // run bootstrap tooltip
     $('body').tooltip({
