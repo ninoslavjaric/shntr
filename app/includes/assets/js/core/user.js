@@ -2023,18 +2023,17 @@ $(function () {
         $('#modal-buy-ok').on('click', function () {
 
             var qty = $('#tokenInput').val();
-            console.log(qty);
 
-            if (isNaN(qty) || Number(qty) < 5) {
+            if (isNaN(qty) || Number(qty) < 20) {
                 var eventType = event.type;
                 var _this = $(this);
 
                 _this.tooltip({
-                    title: __['Amount of tokens must be 5 or more'],
+                    title: __['Amount of tokens must be 20 or more'],
                     trigger: 'manual',
                 });
 
-                if (qty < 5) {
+                if (qty < 20) {
                     _this.tooltip('show');
                     eventType === 'focusout' && _this.tooltip('hide');
                     event.stopPropagation();

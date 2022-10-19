@@ -92,7 +92,7 @@
     <div class="modal-body">
         <div class="form-group">
             <label for="tokenInput">{literal}{{message}}{/literal}</label>
-            <input type="number" class="form-control" id="tokenInput" min="0" placeholder="0">
+            <input type="number" class="form-control" id="tokenInput" min="0" placeholder="0" onkeypress="return isNumber(event)">
         </div>
         <div class="form-group">
             <label for="senderMsg">{__("Your message to receiver")}</label>
@@ -116,7 +116,7 @@
         <div class="form-group">
             <form id="buyTokensForm" action="/buy-tokens/checkout" method="POST">
                 <label for="tokenInput">{literal}{{message}}{/literal}</label>
-                <input name="qty" type="number" class="form-control" id="tokenInput" min="5" placeholder="5">
+                <input name="qty" type="number" class="form-control" id="tokenInput" min="20" placeholder="20" onkeypress="return isNumber(event)">
             </form>
         </div>
     </div>
@@ -158,7 +158,7 @@
     <div class="modal-body">
         <div class="form-group">
             <label for="tokenInput">{literal}{{message}}{/literal}</label>
-            <input type="number" class="form-control" id="tokenInput" min="0" pattern="/\d+/" value="{literal}{{price}}{/literal}">
+            <input type="number" class="form-control" id="tokenInput" min="0" pattern="/\d+/" value="{literal}{{price}}{/literal}" onkeypress="return isNumber(event)">
         </div>
     </div>
     <div class="modal-footer">

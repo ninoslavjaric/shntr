@@ -266,7 +266,7 @@
     __['How many tokens do you want to buy?'] = "{__('How many tokens do you want to buy?')}";
     __['How many tokens to send?'] = "{__('How many tokens to send?')}";
     __['It is impossible to confirm a zero amount of tokens'] = "{__('It is impossible to confirm a zero amount of tokens')}";
-    __['Amount of tokens must be 5 or more'] = "{__('Amount of tokens must be 5 or more')}";
+    __['Amount of tokens must be 20 or more'] = "{__('Amount of tokens must be 20 or more')}";
     __['Tokens sent successfully'] = "{__('Tokens sent successfully')}";
     __['You have successfully sent'] = "{__('You have successfully sent')}";
     __['You have successfully bought _AMOUNT_ tokens'] = "{__('You have successfully bought _AMOUNT_ tokens')}";
