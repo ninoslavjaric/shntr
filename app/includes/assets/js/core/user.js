@@ -2012,6 +2012,40 @@ $(function () {
         });
     });
 
+    /* buy Tokens modal */
+    $('body').on('click', '#buyTokensBtn', function () {
+        blueModal({
+            id: "#modal-buy-tokens",
+            title: __['Buy tokens'],
+            message: __['How many tokens do you want to buy?']
+        });
+
+        $('#modal-buy-ok').on('click', function () {
+
+            var qty = $('#tokenInput').val();
+            console.log(qty);
+
+            if (isNaN(qty) || Number(qty) < 5) {
+                var eventType = event.type;
+                var _this = $(this);
+
+                _this.tooltip({
+                    title: __['Amount of tokens must be 5 or more'],
+                    trigger: 'manual',
+                });
+
+                if (qty < 5) {
+                    _this.tooltip('show');
+                    eventType === 'focusout' && _this.tooltip('hide');
+                    event.stopPropagation();
+                    return;
+                }
+            }
+            $('form#buyTokensForm').submit();
+        });
+    });
+
+
     $('body').on('click', '.js_join-group, .js_leave-group', function () {
         var _this = $(this);
         var id = _this.data('id');
