@@ -1428,3 +1428,20 @@
         });
     </script>
 {/if}
+
+{if $page === 'profile'}
+    <script>
+        $(document).ready(function(e){
+            if (!localStorage.getItem('paywallId')) {
+                var isPaywalled = $('.js_chat-start').closest('[data-paywalled]');
+                if (Boolean(isPaywalled.length) && !isPaywalled.data('paywallId')) {
+                    handlePaywallRestrictions(null, isPaywalled);
+                }
+
+            }
+
+            setTimeout(() => localStorage.removeItem('paywallId'), 1000);
+        });
+    </script>
+{/if}
+

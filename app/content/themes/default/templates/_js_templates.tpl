@@ -108,9 +108,11 @@
 <script id="modal-paywall-pay" type="text/template">
     <div class="modal-header">
         <h6 class="modal-title">{literal}{{title}}{/literal}</h6>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
+        {literal}{{#closable}}{/literal}
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        {literal}{{/closable}}{/literal}
     </div>
     <div class="modal-body">
         <div class="form-group">
@@ -118,7 +120,9 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-sm btn-light" data-dismiss="modal">{__("Cancel")}</button>
+        {literal}{{#closable}}{/literal}
+            <button type="button" class="btn btn-sm btn-light" data-dismiss="modal">{__("Cancel")}</button>
+        {literal}{{/closable}}{/literal}
         <button type="button" class="btn btn-sm btn-success" id="modal-paywall-pay-confirm" data-price="{literal}{{price}}{/literal}" data-paywall-author-id="{literal}{{paywallAuthorId}}{/literal}">{__("Confirm")}</button>
     </div>
 </script>
