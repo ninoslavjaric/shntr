@@ -18,7 +18,7 @@ user_access(true, true);
 
 // check if 2Checkout enabled
 if (!$system['2checkout_enabled']) {
-	modal("MESSAGE", __("Error"), __("This feature has been disabled by the admin"));
+    blueModal("MESSAGE", __("Error"), __("This feature has been disabled by the admin"));
 }
 
 try {
@@ -40,7 +40,7 @@ try {
 			}
 			/* check if user already subscribed to this package */
 			if ($user->_data['user_subscribed'] && $user->_data['user_package'] == $package['package_id']) {
-				modal("SUCCESS", __("Subscribed"), __("You already subscribed to this package, Please select different package"));
+				blueModal("SUCCESS", __("Subscribed"), __("You already subscribed to this package, Please select different package"));
 			}
 
 			// process

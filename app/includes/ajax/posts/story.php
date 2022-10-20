@@ -18,12 +18,12 @@ user_access(true);
 
 // check demo account
 if ($user->_data['user_demo']) {
-	modal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
+    blueModal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
 }
 
 // check if stories enabled
 if (!$system['stories_enabled']) {
-	modal("MESSAGE", __("Error"), __("This feature has been disabled by the admin"));
+    blueModal("MESSAGE", __("Error"), __("This feature has been disabled by the admin"));
 }
 
 try {
@@ -89,5 +89,5 @@ try {
 	// return & exit
 	return_json($return);
 } catch (Exception $e) {
-	modal("ERROR", __("Error"), $e->getMessage());
+    blueModal("ERROR", __("Error"), $e->getMessage());
 }

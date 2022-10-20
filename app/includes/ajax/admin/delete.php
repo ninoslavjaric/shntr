@@ -22,7 +22,7 @@ if ($_POST['handle'] != "reports" && $_POST['handle'] != "user_points_reset") {
 
 // check demo account
 if ($user->_data['user_demo']) {
-	modal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
+    blueModal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
 }
 
 // handle delete
@@ -33,7 +33,7 @@ try {
 		case 'theme':
 			// check admin|moderator permission
 			if (!$user->_is_admin) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			/* check if this theme is the default one */
 			$check_themes = $db->query(sprintf("SELECT COUNT(*) as count FROM system_themes WHERE system_themes.default = '1' and theme_id = %s", secure($_POST['id'], 'int'))) or _error("SQL_ERROR_THROWEN");
@@ -46,7 +46,7 @@ try {
 		case 'language':
 			// check admin|moderator permission
 			if (!$user->_is_admin) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			$db->query(sprintf("DELETE FROM system_languages WHERE language_id = %s", secure($_POST['id'], 'int'))) or _error("SQL_ERROR_THROWEN");
 			break;
@@ -54,7 +54,7 @@ try {
 		case 'country':
 			// check admin|moderator permission
 			if (!$user->_is_admin) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			$db->query(sprintf("DELETE FROM system_countries WHERE country_id = %s", secure($_POST['id'], 'int'))) or _error("SQL_ERROR_THROWEN");
 			break;
@@ -62,7 +62,7 @@ try {
 		case 'currency':
 			// check admin|moderator permission
 			if (!$user->_is_admin) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			$db->query(sprintf("DELETE FROM system_currencies WHERE currency_id = %s", secure($_POST['id'], 'int'))) or _error("SQL_ERROR_THROWEN");
 			break;
@@ -70,7 +70,7 @@ try {
 		case 'gender':
 			// check admin|moderator permission
 			if (!$user->_is_admin) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			$db->query(sprintf("DELETE FROM system_genders WHERE gender_id = %s", secure($_POST['id'], 'int'))) or _error("SQL_ERROR_THROWEN");
 			break;
@@ -78,11 +78,11 @@ try {
 		case 'user':
 			// check admin|moderator permission
 			if (!$user->_is_admin) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			// check if changing the super admin user
 			if ($user->_data['user_id'] != '1' && $_POST['id'] == '1') {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to edit this user"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to edit this user"));
 			}
 			// [BACKGROUND PROCESS]
 			/* return async */
@@ -98,11 +98,11 @@ try {
 		case 'user_posts':
 			// check admin|moderator permission
 			if (!$user->_is_admin) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			// check if changing the super admin user
 			if ($user->_data['user_id'] != '1' && $_POST['id'] == '1') {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to edit this user"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to edit this user"));
 			}
 			// [BACKGROUND PROCESS]
 			/* return async */
@@ -114,7 +114,7 @@ try {
 		case 'session':
 			// check admin|moderator permission
 			if (!$user->_is_admin) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			$db->query(sprintf("DELETE FROM users_sessions WHERE session_id = %s", secure($_POST['id'], 'int'))) or _error("SQL_ERROR_THROWEN");
 			break;
@@ -122,7 +122,7 @@ try {
 		case 'user_package':
 			// check admin|moderator permission
 			if (!$user->_is_admin) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			$db->query(sprintf("UPDATE users SET user_subscribed = '0', user_package = null, user_subscription_date = null, user_boosted_posts = '0', user_boosted_pages = '0' WHERE user_id = %s", secure($_POST['id'], 'int'))) or _error("SQL_ERROR_THROWEN");
 			break;
@@ -130,7 +130,7 @@ try {
 		case 'page':
 			// check admin|moderator permission
 			if (!$user->_is_admin && !$user->_is_moderator) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			// [BACKGROUND PROCESS]
 			/* return async */
@@ -146,7 +146,7 @@ try {
 		case 'page_posts':
 			// check admin|moderator permission
 			if (!$user->_is_admin && !$user->_is_moderator) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			// [BACKGROUND PROCESS]
 			/* return async */
@@ -158,7 +158,7 @@ try {
 		case 'page_category':
 			// check admin|moderator permission
 			if (!$user->_is_admin && !$user->_is_moderator) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			$user->delete_category("pages_categories", $_POST['id']);
 			break;
@@ -166,7 +166,7 @@ try {
 		case 'group':
 			// check admin|moderator permission
 			if (!$user->_is_admin && !$user->_is_moderator) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			// [BACKGROUND PROCESS]
 			/* return async */
@@ -182,7 +182,7 @@ try {
 		case 'group_posts':
 			// check admin|moderator permission
 			if (!$user->_is_admin && !$user->_is_moderator) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			// [BACKGROUND PROCESS]
 			/* return async */
@@ -194,7 +194,7 @@ try {
 		case 'group_category':
 			// check admin|moderator permission
 			if (!$user->_is_admin && !$user->_is_moderator) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			$user->delete_category("groups_categories", $_POST['id']);
 			break;
@@ -202,7 +202,7 @@ try {
 		case 'event':
 			// check admin|moderator permission
 			if (!$user->_is_admin && !$user->_is_moderator) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			// [BACKGROUND PROCESS]
 			/* return async */
@@ -218,7 +218,7 @@ try {
 		case 'event_posts':
 			// check admin|moderator permission
 			if (!$user->_is_admin && !$user->_is_moderator) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			// [BACKGROUND PROCESS]
 			/* return async */
@@ -230,7 +230,7 @@ try {
 		case 'event_category':
 			// check admin|moderator permission
 			if (!$user->_is_admin && !$user->_is_moderator) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			$user->delete_category("events_categories", $_POST['id']);
 			break;
@@ -238,7 +238,7 @@ try {
 		case 'blogs_category':
 			// check admin|moderator permission
 			if (!$user->_is_admin && !$user->_is_moderator) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			$user->delete_category("blogs_categories", $_POST['id']);
 			break;
@@ -246,7 +246,7 @@ try {
 		case 'market_category':
 			// check admin|moderator permission
 			if (!$user->_is_admin && !$user->_is_moderator) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			$user->delete_category("market_categories", $_POST['id']);
 			break;
@@ -254,7 +254,7 @@ try {
 		case 'offers_category':
 			// check admin|moderator permission
 			if (!$user->_is_admin && !$user->_is_moderator) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			$user->delete_category("offers_categories", $_POST['id']);
 			break;
@@ -262,7 +262,7 @@ try {
 		case 'jobs_category':
 			// check admin|moderator permission
 			if (!$user->_is_admin && !$user->_is_moderator) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			$user->delete_category("jobs_categories", $_POST['id']);
 			break;
@@ -270,7 +270,7 @@ try {
 		case 'forum':
 			// check admin|moderator permission
 			if (!$user->_is_admin && !$user->_is_moderator) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			// [BACKGROUND PROCESS]
 			/* return async */
@@ -286,7 +286,7 @@ try {
 		case 'forum_thread':
 			// check admin|moderator permission
 			if (!$user->_is_admin && !$user->_is_moderator) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			// [BACKGROUND PROCESS]
 			/* return async */
@@ -302,7 +302,7 @@ try {
 		case 'forum_reply':
 			// check admin|moderator permission
 			if (!$user->_is_admin && !$user->_is_moderator) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			// [BACKGROUND PROCESS]
 			/* return async */
@@ -318,7 +318,7 @@ try {
 		case 'movie':
 			// check admin|moderator permission
 			if (!$user->_is_admin && !$user->_is_moderator) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			$db->query(sprintf("DELETE FROM movies WHERE movie_id = %s", secure($_POST['id'], 'int'))) or _error("SQL_ERROR_THROWEN");
 			break;
@@ -326,7 +326,7 @@ try {
 		case 'movie_genre':
 			// check admin|moderator permission
 			if (!$user->_is_admin && !$user->_is_moderator) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			$db->query(sprintf("DELETE FROM movies_genres WHERE genre_id = %s", secure($_POST['id'], 'int'))) or _error("SQL_ERROR_THROWEN");
 			break;
@@ -334,7 +334,7 @@ try {
 		case 'game':
 			// check admin|moderator permission
 			if (!$user->_is_admin && !$user->_is_moderator) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			$db->query(sprintf("DELETE FROM games WHERE game_id = %s", secure($_POST['id'], 'int'))) or _error("SQL_ERROR_THROWEN");
 			break;
@@ -342,7 +342,7 @@ try {
 		case 'ads_system':
 			// check admin|moderator permission
 			if (!$user->_is_admin) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			$db->query(sprintf("DELETE FROM ads_system WHERE ads_id = %s", secure($_POST['id'], 'int'))) or _error("SQL_ERROR_THROWEN");
 			break;
@@ -350,7 +350,7 @@ try {
 		case 'package':
 			// check admin|moderator permission
 			if (!$user->_is_admin) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			$db->query(sprintf("DELETE FROM packages WHERE package_id = %s", secure($_POST['id'], 'int'))) or _error("SQL_ERROR_THROWEN");
 			break;
@@ -358,7 +358,7 @@ try {
 		case 'apps_category':
 			// check admin|moderator permission
 			if (!$user->_is_admin) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			$user->delete_category("developers_apps_categories", $_POST['id']);
 			break;
@@ -366,7 +366,7 @@ try {
 		case 'report':
 			// check admin|moderator permission
 			if (!$user->_is_admin && !$user->_is_moderator) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			$db->query(sprintf("DELETE FROM reports WHERE report_id = %s", secure($_POST['id'], 'int'))) or _error("SQL_ERROR_THROWEN");
 			break;
@@ -374,7 +374,7 @@ try {
 		case 'reports':
 			// check admin|moderator permission
 			if (!$user->_is_admin && !$user->_is_moderator) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			$db->query("DELETE FROM reports") or _error("SQL_ERROR_THROWEN");
 			break;
@@ -382,7 +382,7 @@ try {
 		case 'post':
 			// check admin|moderator permission
 			if (!$user->_is_admin && !$user->_is_moderator) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			// [BACKGROUND PROCESS]
 			/* return async */
@@ -398,7 +398,7 @@ try {
 		case 'comment':
 			// check admin|moderator permission
 			if (!$user->_is_admin && !$user->_is_moderator) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			// [BACKGROUND PROCESS]
 			/* return async */
@@ -414,7 +414,7 @@ try {
 		case 'blacklist_node':
 			// check admin|moderator permission
 			if (!$user->_is_admin) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			$db->query(sprintf("DELETE FROM blacklist WHERE node_id = %s", secure($_POST['id'], 'int'))) or _error("SQL_ERROR_THROWEN");
 			break;
@@ -422,7 +422,7 @@ try {
 		case 'custom_field':
 			// check admin|moderator permission
 			if (!$user->_is_admin) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			$db->query(sprintf("DELETE FROM custom_fields WHERE field_id = %s", secure($_POST['id'], 'int'))) or _error("SQL_ERROR_THROWEN");
 			$db->query(sprintf("DELETE FROM custom_fields_values WHERE field_id = %s", secure($_POST['id'], 'int'))) or _error("SQL_ERROR_THROWEN");
@@ -431,7 +431,7 @@ try {
 		case 'static_page':
 			// check admin|moderator permission
 			if (!$user->_is_admin) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			$db->query(sprintf("DELETE FROM static_pages WHERE page_id = %s", secure($_POST['id'], 'int'))) or _error("SQL_ERROR_THROWEN");
 			break;
@@ -439,7 +439,7 @@ try {
 		case 'pattern':
 			// check admin|moderator permission
 			if (!$user->_is_admin) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			$db->query(sprintf("DELETE FROM posts_colored_patterns WHERE pattern_id = %s", secure($_POST['id'], 'int'))) or _error("SQL_ERROR_THROWEN");
 			break;
@@ -447,7 +447,7 @@ try {
 		case 'widget':
 			// check admin|moderator permission
 			if (!$user->_is_admin) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			$db->query(sprintf("DELETE FROM widgets WHERE widget_id = %s", secure($_POST['id'], 'int'))) or _error("SQL_ERROR_THROWEN");
 			break;
@@ -455,7 +455,7 @@ try {
 		case 'emoji':
 			// check admin|moderator permission
 			if (!$user->_is_admin) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			$db->query(sprintf("DELETE FROM emojis WHERE emoji_id = %s", secure($_POST['id'], 'int'))) or _error("SQL_ERROR_THROWEN");
 			break;
@@ -463,7 +463,7 @@ try {
 		case 'sticker':
 			// check admin|moderator permission
 			if (!$user->_is_admin) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			$db->query(sprintf("DELETE FROM stickers WHERE sticker_id = %s", secure($_POST['id'], 'int'))) or _error("SQL_ERROR_THROWEN");
 			break;
@@ -471,7 +471,7 @@ try {
 		case 'gift':
 			// check admin|moderator permission
 			if (!$user->_is_admin) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			$db->query(sprintf("DELETE FROM gifts WHERE gift_id = %s", secure($_POST['id'], 'int'))) or _error("SQL_ERROR_THROWEN");
 			break;
@@ -479,7 +479,7 @@ try {
 		case 'announcement':
 			// check admin|moderator permission
 			if (!$user->_is_admin) {
-				modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+                blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 			}
 			$db->query(sprintf("DELETE FROM announcements WHERE announcement_id = %s", secure($_POST['id'], 'int'))) or _error("SQL_ERROR_THROWEN");
 			break;
@@ -492,5 +492,5 @@ try {
 	// return & exist
 	return_json();
 } catch (Exception $e) {
-	modal("ERROR", __("Error"), $e->getMessage());
+    blueModal("ERROR", __("Error"), $e->getMessage());
 }

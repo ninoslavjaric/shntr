@@ -18,12 +18,12 @@ user_access(true);
 
 // check demo account
 if ($user->_data['user_demo']) {
-	modal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
+	blueModal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
 }
 
 // check if gifts enabled
 if (!$system['gifts_enabled']) {
-	modal("MESSAGE", __("Error"), __("This feature has been disabled by the admin"));
+	blueModal("MESSAGE", __("Error"), __("This feature has been disabled by the admin"));
 }
 
 try {
@@ -43,7 +43,7 @@ try {
 			$user->send_gift($_GET['uid'], $_POST['gift']);
 
 			// return
-			modal("SUCCESS", __("Success"),  __("Your gift has been sent successfully"));
+			blueModal("SUCCESS", __("Success"),  __("Your gift has been sent successfully"));
 			break;
 
 		default:

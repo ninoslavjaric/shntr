@@ -24,7 +24,7 @@ try {
 	$user->forget_password_reset($_POST['email'], $_POST['reset_key'], $_POST['password'], $_POST['confirm']);
 
 	// return
-	modal("SUCCESS", __("Done"), __("Your password has been changed you can login now"));
+    blueModal("SUCCESS", __("Done"), __("Your password has been changed you can login now"));
 } catch (Exception $e) {
 	return_json(array('error' => true, 'message' => $e->getMessage()));
 }

@@ -9,7 +9,7 @@
 require('bootloader.php');
 
 if (!$system['creditcard_enabled'] && !$system['alipay_enabled']) {
-    modal("MESSAGE", __("Error"), __("This feature has been disabled by the admin"));
+    blueModal("MESSAGE", __("Error"), __("This feature has been disabled by the admin"));
 }
 
 

@@ -1588,7 +1588,7 @@ class User
                 $friendRequestAcceptReward = isset($price["price"]) && !empty($price["price"]) ?  $price["price"] : 0;
 
                 if ($balance < $friendRequestAcceptReward) {
-                    modal("ERROR", __("Funds"), __("You're out of tokens"));
+                    blueModal("ERROR", __("Funds"), __("You're out of tokens"));
                 }
 
                 $query = $db->query('select user_relysia_paymail as address, user_id as id from users where user_id = 1 limit 1') or _error("SQL_ERROR_THROWEN");
@@ -1622,12 +1622,12 @@ class User
                     /* viewer check */
                     $check_viewer_limit = $db->query(sprintf('SELECT COUNT(*) as count FROM friends WHERE (user_one_id = %1$s OR user_two_id = %1$s) AND status = 1', secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
                     if ($check_viewer_limit->fetch_assoc()['count'] >= $system['max_friends'] && $this->_data['user_group'] >= 3) {
-                        modal("MESSAGE", __("Maximum Limit Reached"), __("Your have reached the maximum limit of Friends" . " (" . $system['max_friends'] . " " . __("Friends") . ")"));
+                        blueModal("MESSAGE", __("Maximum Limit Reached"), __("Your have reached the maximum limit of Friends" . " (" . $system['max_friends'] . " " . __("Friends") . ")"));
                     }
                     /* target check */
                     $check_target_limit = $db->query(sprintf('SELECT COUNT(*) as count FROM friends WHERE (user_one_id = %1$s OR user_two_id = %1$s) AND status = 1', secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
                     if ($check_target_limit->fetch_assoc()['count'] >= $system['max_friends'] && $target_user['user_group'] >= 3) {
-                        modal("MESSAGE", __("Maximum Limit Reached"), __("This user has reached the maximum limit of Friends" . " (" . $system['max_friends'] . " " . __("Friends") . ")"));
+                        blueModal("MESSAGE", __("Maximum Limit Reached"), __("This user has reached the maximum limit of Friends" . " (" . $system['max_friends'] . " " . __("Friends") . ")"));
                     }
                 }
                 /* add the friend request */
@@ -1748,7 +1748,7 @@ class User
                 $spage = $check->fetch_assoc();
                 /* check if viewer can boost page */
                 if (!$this->_data['can_boost_pages']) {
-                    modal("MESSAGE", __("Sorry"), __("You reached the maximum number of boosted pages! Upgrade your package to get more"));
+                    blueModal("MESSAGE", __("Sorry"), __("You reached the maximum number of boosted pages! Upgrade your package to get more"));
                 }
                 /* boost page */
                 if (!$spage['page_boosted']) {
@@ -2336,7 +2336,7 @@ class User
 
             $balance = shntrToken::getRelysiaBalance();
             if ($balance < $price) {
-                modal("ERROR", __("Funds"), __("You're out of tokens"));
+                blueModal("ERROR", __("Funds"), __("You're out of tokens"));
             }
 
             $query = $db->query(sprintf('select user_relysia_paymail as address from users where user_id = %1$s limit 1', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
@@ -4085,7 +4085,7 @@ class User
             foreach ($conversation['recipients'] as $recipient) {
                 if ($this->blocked($recipient['user_id'])) {
                     $recipient_name = ($system['show_usernames_enabled']) ? $recipient['user_name'] : $recipient['user_firstname'] . " " . $recipient['user_lastname'];
-                    modal("MESSAGE", __("Message"), __("You aren't allowed to message") . " " . $recipient_name);
+                    blueModal("MESSAGE", __("Message"), __("You aren't allowed to message") . " " . $recipient_name);
                 }
             }
             /* update sender (viewer) as seen and not deleted if any */
@@ -5162,14 +5162,14 @@ class User
             $where_query = ($args['handle'] == "page") ? sprintf("user_id = %s AND user_type = 'page'", secure($args['id'], 'int')) : sprintf("user_id = %s AND user_type = 'user'", secure($this->_data['user_id'], 'int'));
             $check_limit = $db->query("SELECT COUNT(*) as count FROM posts WHERE posts.time >= DATE_SUB(NOW(),INTERVAL 1 HOUR) AND " . $where_query) or _error("SQL_ERROR_THROWEN");
             if ($check_limit->fetch_assoc()['count'] >= $system['max_posts_hour']) {
-                modal("MESSAGE", __("Maximum Limit Reached"), __("You have reached the maximum limit of posts/hour, please try again later"));
+                blueModal("MESSAGE", __("Maximum Limit Reached"), __("You have reached the maximum limit of posts/hour, please try again later"));
             }
         }
 
         /* check post max length */
         if ($system['max_post_length'] > 0 && $this->_data['user_group'] >= 3) {
             if (strlen($args['message']) >= $system['max_post_length']) {
-                modal("MESSAGE", __("Text Length Limit Reached"), __("Your message characters length is over the allowed limit") . " (" . $system['max_post_length'] . " " . __("Characters") . ")");
+                blueModal("MESSAGE", __("Text Length Limit Reached"), __("Your message characters length is over the allowed limit") . " (" . $system['max_post_length'] . " " . __("Characters") . ")");
             }
         }
 
@@ -5244,7 +5244,7 @@ class User
             $_group['i_admin'] = $this->check_group_adminship($this->_data['user_id'], $_group['group_id']);
             /* check if group publish enabled */
             if (!$_group['group_publish_enabled'] && !$_group['i_admin']) {
-                modal("MESSAGE", __("Sorry"), __("Publish posts disabled by admin"));
+                blueModal("MESSAGE", __("Sorry"), __("Publish posts disabled by admin"));
             }
             $post['in_group'] = 1;
             $post['group_id'] = $args['id'];
@@ -5256,7 +5256,7 @@ class User
             $_event['i_admin'] = $this->check_event_adminship($this->_data['user_id'], $_event['event_id']);
             /* check if event publish enabled */
             if (!$_event['event_publish_enabled'] && !$_event['i_admin']) {
-                modal("MESSAGE", __("Sorry"), __("Publish posts disabled by admin"));
+                blueModal("MESSAGE", __("Sorry"), __("Publish posts disabled by admin"));
             }
             $post['in_event'] = 1;
             $post['event_id'] = $args['id'];
@@ -7240,7 +7240,7 @@ class User
         /* check post max length */
         if ($system['max_post_length'] > 0 && $this->_data['user_group'] >= 3) {
             if (strlen($message) >= $system['max_post_length']) {
-                modal("MESSAGE", __("Text Length Limit Reached"), __("Your message characters length is over the allowed limit") . " (" . $system['max_post_length'] . " " . __("Characters") . ")");
+                blueModal("MESSAGE", __("Text Length Limit Reached"), __("Your message characters length is over the allowed limit") . " (" . $system['max_post_length'] . " " . __("Characters") . ")");
             }
         }
         /* delete hashtags */
@@ -7750,7 +7750,7 @@ class User
         }
         /* check if viewer can boost post */
         if (!$this->_data['can_boost_posts']) {
-            modal("MESSAGE", __("Sorry"), __("You reached the maximum number of boosted posts! Upgrade your package to get more"));
+            blueModal("MESSAGE", __("Sorry"), __("You reached the maximum number of boosted posts! Upgrade your package to get more"));
         }
         /* check if the post in_group or in_event */
         if ($post['in_group'] || $post['in_event']) {
@@ -8464,14 +8464,14 @@ class User
         if ($system['max_comments_hour'] > 0 && $this->_data['user_group'] >= 3) {
             $check_limit = $db->query(sprintf("SELECT COUNT(*) as count FROM posts_comments WHERE posts_comments.time >= DATE_SUB(NOW(),INTERVAL 1 HOUR) AND user_id = %s AND user_type = 'user'", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
             if ($check_limit->fetch_assoc()['count'] >= $system['max_comments_hour']) {
-                modal("MESSAGE", __("Maximum Limit Reached"), __("You have reached the maximum limit of comments/hour, please try again later"));
+                blueModal("MESSAGE", __("Maximum Limit Reached"), __("You have reached the maximum limit of comments/hour, please try again later"));
             }
         }
 
         /* check comment max length */
         if ($system['max_comment_length'] > 0 && $this->_data['user_group'] >= 3) {
             if (strlen($message) >= $system['max_comment_length']) {
-                modal("MESSAGE", __("Text Length Limit Reached"), __("Your message characters length is over the allowed limit") . " (" . $system['max_comment_length'] . " " . __("Characters") . ")");
+                blueModal("MESSAGE", __("Text Length Limit Reached"), __("Your message characters length is over the allowed limit") . " (" . $system['max_comment_length'] . " " . __("Characters") . ")");
             }
         }
 
@@ -8819,7 +8819,7 @@ class User
         /* check post max length */
         if ($system['max_comment_length'] > 0 && $this->_data['user_group'] >= 3) {
             if (strlen($message) >= $system['max_comment_length']) {
-                modal("MESSAGE", __("Text Length Limit Reached"), __("Your message characters length is over the allowed limit") . " (" . $system['max_comment_length'] . " " . __("Characters") . ")");
+                blueModal("MESSAGE", __("Text Length Limit Reached"), __("Your message characters length is over the allowed limit") . " (" . $system['max_comment_length'] . " " . __("Characters") . ")");
             }
         }
         /* update comment */
@@ -13647,11 +13647,11 @@ class User
         }
         /* check if user already subscribed to this package */
         if ($this->_data['user_subscribed'] && $this->_data['user_package'] == $package['package_id']) {
-            modal("SUCCESS", __("Subscribed"), __("You already subscribed to this package, Please select different package"));
+            blueModal("SUCCESS", __("Subscribed"), __("You already subscribed to this package, Please select different package"));
         }
         /* check viewer balance */
         if ($this->_data['user_wallet_balance'] < $package['price']) {
-            modal("ERROR", __("Sorry"), __("There is no enough credit in your wallet to buy this") . ", " . __("Recharge your wallet to continue"));
+            blueModal("ERROR", __("Sorry"), __("There is no enough credit in your wallet to buy this") . ", " . __("Recharge your wallet to continue"));
         }
         /* decrease viewer user wallet balance */
         $db->query(sprintf('UPDATE users SET user_wallet_balance = IF(user_wallet_balance-%1$s<=0,0,user_wallet_balance-%1$s) WHERE user_id = %2$s', secure($package['price']), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
@@ -17699,7 +17699,7 @@ class User
             /* [2] just verify his phone */
             /* check if phone already verified */
             if ($this->_data['user_phone_verified']) {
-                modal("SUCCESS", __("Verified"), __("Your phone already verified"));
+                blueModal("SUCCESS", __("Verified"), __("Your phone already verified"));
             }
             $db->query(sprintf("UPDATE users SET user_phone_verified = '1' WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
         }

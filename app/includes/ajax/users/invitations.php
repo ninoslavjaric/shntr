@@ -18,7 +18,7 @@ user_access(true);
 
 // check demo account
 if ($user->_data['user_demo']) {
-	modal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
+	blueModal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
 }
 
 // handle invitation
@@ -40,7 +40,7 @@ switch ($_GET['do']) {
 			// return & exit
 			return_json($return);
 		} catch (Exception $e) {
-			modal("ERROR", __("Error"), $e->getMessage());
+			blueModal("ERROR", __("Error"), $e->getMessage());
 		}
 		break;
 
@@ -60,7 +60,7 @@ switch ($_GET['do']) {
 			// return & exit
 			return_json($return);
 		} catch (Exception $e) {
-			modal("ERROR", __("Error"), $e->getMessage());
+			blueModal("ERROR", __("Error"), $e->getMessage());
 		}
 		break;
 

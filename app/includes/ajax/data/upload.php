@@ -29,7 +29,7 @@ user_access(true, true);
 
 // check demo account
 if ($user->_data['user_demo']) {
-    modal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
+    blueModal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
 }
 
 // check type
@@ -53,13 +53,13 @@ try {
         case 'photos':
             // check photo upload enabled
             if ($_POST['handle'] == 'publisher' && !$system['photos_enabled']) {
-                modal("ERROR", __("Not Allowed"), __("This feature has been disabled"));
+                blueModal("ERROR", __("Not Allowed"), __("This feature has been disabled"));
             }
             if ($_POST['handle'] == 'comment' && !$system['comments_photos_enabled']) {
-                modal("ERROR", __("Not Allowed"), __("This feature has been disabled"));
+                blueModal("ERROR", __("Not Allowed"), __("This feature has been disabled"));
             }
             if ($_POST['handle'] == 'chat' && !$system['chat_photos_enabled']) {
-                modal("ERROR", __("Not Allowed"), __("This feature has been disabled"));
+                blueModal("ERROR", __("Not Allowed"), __("This feature has been disabled"));
             }
             if ($_POST['handle'] == 'tinymce' && !$system['tinymce_photos_enabled']) {
                 return_json(array("error" => __("This feature has been disabled")));
@@ -94,7 +94,7 @@ try {
                         if ($files_num > 1) {
                             continue;
                         } else {
-                            modal("ERROR", __("Upload Error"), __("Something wrong with upload! Is 'upload_max_filesize' set correctly?"));
+                            blueModal("ERROR", __("Upload Error"), __("Something wrong with upload! Is 'upload_max_filesize' set correctly?"));
                         }
                     }
 
@@ -103,7 +103,7 @@ try {
                         if ($files_num > 1) {
                             continue;
                         } else {
-                            modal("ERROR", __("Upload Error"), __("The file size is so big") . ", " . __("The allowed file size is:") . " " . ($max_allowed_size / 1024 / 1024) . __("MB"));
+                            blueModal("ERROR", __("Upload Error"), __("The file size is so big") . ", " . __("The allowed file size is:") . " " . ($max_allowed_size / 1024 / 1024) . __("MB"));
                         }
                     }
 
@@ -114,7 +114,7 @@ try {
                         if ($files_num > 1) {
                             continue;
                         } else {
-                            modal("ERROR", __("Upload Error"), __("Sorry, can not upload the file"));
+                            blueModal("ERROR", __("Upload Error"), __("Sorry, can not upload the file"));
                         }
                     }
                     $prefix = $system['uploads_prefix'] . '_' . get_hash_token();
@@ -129,7 +129,7 @@ try {
                                 if ($files_num > 1) {
                                     continue;
                                 } else {
-                                    modal("ERROR", __("Upload Error"), __("Sorry, can not upload the file for adult content"));
+                                    blueModal("ERROR", __("Upload Error"), __("Sorry, can not upload the file for adult content"));
                                 }
                             } else {
                                 $image_blured = 1;
@@ -174,7 +174,7 @@ try {
                         /* save the new image */
                         if (in_array($image->_img_type, ["image/gif", "image/webp"]) && !in_array($_POST['handle'], ['cover-user', 'picture-user', 'cover-page', 'picture-page', 'cover-group', 'picture-group', 'cover-event'])) {
                             if (!@move_uploaded_file($file["tmp_name"], $path)) {
-                                modal("ERROR", __("Upload Error"), __("Sorry, can not upload the file"));
+                                blueModal("ERROR", __("Upload Error"), __("Sorry, can not upload the file"));
                             }
                         } else {
                             if ($image_watermarked) {
@@ -194,12 +194,12 @@ try {
 
                 // valid inputs
                 if (!isset($_FILES["file"]) || $_FILES["file"]["error"] != UPLOAD_ERR_OK) {
-                    modal("ERROR", __("Upload Error"), __("Something wrong with upload! Is 'upload_max_filesize' set correctly?"));
+                    blueModal("ERROR", __("Upload Error"), __("Something wrong with upload! Is 'upload_max_filesize' set correctly?"));
                 }
 
                 // check file size
                 if ($_FILES["file"]["size"] > $max_allowed_size) {
-                    modal("ERROR", __("Upload Error"), __("The file size is so big") . ", " . __("The allowed file size is:") . " " . ($max_allowed_size / 1024 / 1024) . __("MB"));
+                    blueModal("ERROR", __("Upload Error"), __("The file size is so big") . ", " . __("The allowed file size is:") . " " . ($max_allowed_size / 1024 / 1024) . __("MB"));
                 }
 
                 // init image & prepare image name & path
@@ -213,18 +213,18 @@ try {
 
                 // check if animated webp
                 if ($image->isWebpAnimated($_FILES["file"]["tmp_name"]) && in_array($_POST['handle'], ['cover-user', 'picture-user', 'cover-page', 'picture-page', 'cover-group', 'picture-group', 'cover-event'])) {
-                    modal("MESSAGE", __("Photo Animated"), __("You can't use animated webp image here"));
+                    blueModal("MESSAGE", __("Photo Animated"), __("You can't use animated webp image here"));
                 }
 
                 // check image resolution
                 if ($_POST['handle'] == 'picture-user' || $_POST['handle'] == 'picture-page' || $_POST['handle'] == 'picture-group') {
                     if ($image->getWidth() < 150 || $image->getHeight() < 150) {
-                        modal("MESSAGE", __("Photo Too Small"), __("Please choose an image that's at least 150 pixels wide and at least 150 pixels tall"));
+                        blueModal("MESSAGE", __("Photo Too Small"), __("Please choose an image that's at least 150 pixels wide and at least 150 pixels tall"));
                     }
                 } elseif ($_POST['handle'] == 'cover-user' || $_POST['handle'] == 'cover-page' || $_POST['handle'] == 'cover-group') {
                     if ($system['limit_cover_photo']) {
                         if ($image->getWidth() < 1108 || $image->getHeight() < 360) {
-                            modal("MESSAGE", __("Photo Too Small"), __("Please choose an image that's at least 1108 pixels wide and at least 360 pixels tall"));
+                            blueModal("MESSAGE", __("Photo Too Small"), __("Please choose an image that's at least 1108 pixels wide and at least 360 pixels tall"));
                         }
                     }
                 }
@@ -233,7 +233,7 @@ try {
                 if ($system['adult_images_enabled']) {
                     if ($_POST['handle'] != "x-image" && google_vision_check($_FILES['file']['tmp_name'])) {
                         if ($system['adult_images_action'] == "delete") {
-                            modal("ERROR", __("Upload Error"), __("Sorry, can not upload the file for adult content"));
+                            blueModal("ERROR", __("Upload Error"), __("Sorry, can not upload the file for adult content"));
                         } else {
                             $image_blured = 1;
                         }
@@ -268,7 +268,7 @@ try {
                     /* save the new image */
                     if (in_array($image->_img_type, ["image/gif", "image/webp"]) && !in_array($_POST['handle'], ['cover-user', 'picture-user', 'cover-page', 'picture-page', 'cover-group', 'picture-group', 'cover-event'])) {
                         if (!@move_uploaded_file($_FILES['file']['tmp_name'], $path)) {
-                            modal("ERROR", __("Upload Error"), __("Sorry, can not upload the file"));
+                            blueModal("ERROR", __("Upload Error"), __("Sorry, can not upload the file"));
                         }
                     } else {
                         $image->save($path, $system['uploads_quality']);
@@ -525,7 +525,7 @@ try {
         case 'video':
             // check video upload enabled
             if (!$system['videos_enabled']) {
-                modal("ERROR", __("Not Allowed"), __("This feature has been disabled"));
+                blueModal("ERROR", __("Not Allowed"), __("This feature has been disabled"));
             }
 
             // get allowed file size
@@ -555,7 +555,7 @@ try {
                         if ($files_num > 1) {
                             continue;
                         } else {
-                            modal("ERROR", __("Upload Error"), __("Something wrong with upload! Is 'upload_max_filesize' set correctly?"));
+                            blueModal("ERROR", __("Upload Error"), __("Something wrong with upload! Is 'upload_max_filesize' set correctly?"));
                         }
                     }
 
@@ -564,7 +564,7 @@ try {
                         if ($files_num > 1) {
                             continue;
                         } else {
-                            modal("ERROR", __("Upload Error"), __("The file size is so big") . ", " . __("The allowed file size is:") . " " . ($max_allowed_size / 1024 / 1024) . __("MB"));
+                            blueModal("ERROR", __("Upload Error"), __("The file size is so big") . ", " . __("The allowed file size is:") . " " . ($max_allowed_size / 1024 / 1024) . __("MB"));
                         }
                     }
 
@@ -574,7 +574,7 @@ try {
                         if ($files_num > 1) {
                             continue;
                         } else {
-                            modal("ERROR", __("Upload Error"), __("The file type is not valid or not supported"));
+                            blueModal("ERROR", __("Upload Error"), __("The file type is not valid or not supported"));
                         }
                     }
 
@@ -610,7 +610,7 @@ try {
                         }
                         /* check if the file uploaded successfully */
                         if (!@move_uploaded_file($file["tmp_name"], $path)) {
-                            modal("ERROR", __("Upload Error"), __("Sorry, can not upload the file"));
+                            blueModal("ERROR", __("Upload Error"), __("Sorry, can not upload the file"));
                         }
                     }
 
@@ -624,18 +624,18 @@ try {
 
                 // valid inputs
                 if (!isset($_FILES["file"]) || $_FILES["file"]["error"] != UPLOAD_ERR_OK) {
-                    modal("ERROR", __("Upload Error"), __("Something wrong with upload! Is 'upload_max_filesize' set correctly?"));
+                    blueModal("ERROR", __("Upload Error"), __("Something wrong with upload! Is 'upload_max_filesize' set correctly?"));
                 }
 
                 // check file size
                 if ($_FILES["file"]["size"] > $max_allowed_size) {
-                    modal("ERROR", __("Upload Error"), __("The file size is so big") . ", " . __("The allowed file size is:") . " " . ($max_allowed_size / 1024 / 1024) . __("MB"));
+                    blueModal("ERROR", __("Upload Error"), __("The file size is so big") . ", " . __("The allowed file size is:") . " " . ($max_allowed_size / 1024 / 1024) . __("MB"));
                 }
 
                 // check file extesnion
                 $extension = get_extension($_FILES['file']['name']);
                 if (!valid_extension($extension, $system['video_extensions'])) {
-                    modal("ERROR", __("Upload Error"), __("The file type is not valid or not supported"));
+                    blueModal("ERROR", __("Upload Error"), __("The file type is not valid or not supported"));
                 }
 
                 // prepare file name & path
@@ -670,7 +670,7 @@ try {
                     }
                     /* check if the file uploaded successfully */
                     if (!@move_uploaded_file($_FILES['file']['tmp_name'], $path)) {
-                        modal("ERROR", __("Upload Error"), __("Sorry, can not upload the file"));
+                        blueModal("ERROR", __("Upload Error"), __("Sorry, can not upload the file"));
                     }
                 }
 
@@ -682,7 +682,7 @@ try {
         case 'audio':
             // check audio upload enabled
             if (!$system['audio_enabled']) {
-                modal("ERROR", __("Not Allowed"), __("This feature has been disabled"));
+                blueModal("ERROR", __("Not Allowed"), __("This feature has been disabled"));
             }
 
             // get allowed file size
@@ -694,18 +694,18 @@ try {
 
             // valid inputs
             if (!isset($_FILES["file"]) || $_FILES["file"]["error"] != UPLOAD_ERR_OK) {
-                modal("ERROR", __("Upload Error"), __("Something wrong with upload! Is 'upload_max_filesize' set correctly?"));
+                blueModal("ERROR", __("Upload Error"), __("Something wrong with upload! Is 'upload_max_filesize' set correctly?"));
             }
 
             // check file size
             if ($_FILES["file"]["size"] > $max_allowed_size) {
-                modal("ERROR", __("Upload Error"), __("The file size is so big") . ", " . __("The allowed file size is:") . " " . ($max_allowed_size / 1024 / 1024) . __("MB"));
+                blueModal("ERROR", __("Upload Error"), __("The file size is so big") . ", " . __("The allowed file size is:") . " " . ($max_allowed_size / 1024 / 1024) . __("MB"));
             }
 
             // check file extesnion
             $extension = get_extension($_FILES['file']['name']);
             if (!valid_extension($extension, $system['audio_extensions'])) {
-                modal("ERROR", __("Upload Error"), __("The file type is not valid or not supported"));
+                blueModal("ERROR", __("Upload Error"), __("The file type is not valid or not supported"));
             }
 
             // prepare file name & path
@@ -740,7 +740,7 @@ try {
                 }
                 /* check if the file uploaded successfully */
                 if (!@move_uploaded_file($_FILES['file']['tmp_name'], $path)) {
-                    modal("ERROR", __("Upload Error"), __("Sorry, can not upload the file"));
+                    blueModal("ERROR", __("Upload Error"), __("Sorry, can not upload the file"));
                 }
             }
 
@@ -751,7 +751,7 @@ try {
         case 'file':
             // check file upload enabled
             if (!$system['file_enabled']) {
-                modal("ERROR", __("Not Allowed"), __("This feature has been disabled"));
+                blueModal("ERROR", __("Not Allowed"), __("This feature has been disabled"));
             }
 
             // get allowed file size
@@ -779,18 +779,18 @@ try {
             foreach ($files as $file) {
                 // valid inputs
                 if (!isset($file) || $file["error"] != UPLOAD_ERR_OK) {
-                    modal("ERROR", __("Upload Error"), __("Something wrong with upload! Is 'upload_max_filesize' set correctly?"));
+                    blueModal("ERROR", __("Upload Error"), __("Something wrong with upload! Is 'upload_max_filesize' set correctly?"));
                 }
 
                 // check file size
                 if ($file["size"] > $max_allowed_size) {
-                    modal("ERROR", __("Upload Error"), __("The file size is so big") . ", " . __("The allowed file size is:") . " " . ($max_allowed_size / 1024 / 1024) . __("MB"));
+                    blueModal("ERROR", __("Upload Error"), __("The file size is so big") . ", " . __("The allowed file size is:") . " " . ($max_allowed_size / 1024 / 1024) . __("MB"));
                 }
 
                 // check file extesnion
                 $extension = get_extension($file['name']);
                 if (!valid_extension($extension, $system['file_extensions'])) {
-                    modal("ERROR", __("Upload Error"), __("The file type is not valid or not supported"));
+                    blueModal("ERROR", __("Upload Error"), __("The file type is not valid or not supported"));
                 }
 
                 // prepare file name & path
@@ -829,7 +829,7 @@ try {
                     }
                     /* check if the file uploaded successfully */
                     if (!@move_uploaded_file($file['tmp_name'], $path)) {
-                        modal("ERROR", __("Upload Error"), __("Sorry, can not upload the file"));
+                        blueModal("ERROR", __("Upload Error"), __("Sorry, can not upload the file"));
                     }
                 }
 
@@ -848,5 +848,5 @@ try {
             break;
     }
 } catch (Exception $e) {
-    modal("ERROR", __("Error"), $e->getMessage());
+    blueModal("ERROR", __("Error"), $e->getMessage());
 }

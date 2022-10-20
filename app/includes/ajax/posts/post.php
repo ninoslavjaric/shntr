@@ -18,7 +18,7 @@ user_access(true);
 
 // check demo account
 if ($user->_data['user_demo']) {
-	modal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
+    blueModal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
 }
 
 // valid inputs
@@ -65,10 +65,10 @@ if (isset($_POST['poll_options'])) {
 	$options = array();
 	foreach ($_POST['poll_options'] as $option) {
 		if (strlen($option) > 255) {
-			modal("MESSAGE", __("Poll option too long"), __("The poll option you provided is too long. Please try again"));
+            blueModal("MESSAGE", __("Poll option too long"), __("The poll option you provided is too long. Please try again"));
 		}
 		if (in_array($option, $options)) {
-			modal("MESSAGE", __("Poll Option Already Added"), __("This option was already added to the poll"));
+            blueModal("MESSAGE", __("Poll Option Already Added"), __("This option was already added to the poll"));
 		}
 		if (!is_empty($option)) {
 			$options[] = $option;
@@ -76,7 +76,7 @@ if (isset($_POST['poll_options'])) {
 	}
 	/* check the question */
 	if (is_empty($_POST['message'])) {
-		modal("MESSAGE", __("Poll Text Needed"), __("Ask a question so people know what your poll is about"));
+        blueModal("MESSAGE", __("Poll Text Needed"), __("Ask a question so people know what your poll is about"));
 	}
 }
 /* filter video */
@@ -186,5 +186,5 @@ try {
 	// return & exit
 	return_json($return);
 } catch (Exception $e) {
-	modal("ERROR", __("Error"), $e->getMessage());
+    blueModal("ERROR", __("Error"), $e->getMessage());
 }

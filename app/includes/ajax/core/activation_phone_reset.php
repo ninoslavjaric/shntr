@@ -20,7 +20,7 @@ if (!$user->_logged_in) {
 
 // check user activated
 if (!$system['activation_enabled'] || $user->_data['user_activated']) {
-	modal("SUCCESS", __("Activated"), __("Your account already activated!"));
+    blueModal("SUCCESS", __("Activated"), __("Your account already activated!"));
 }
 
 // check activation type
@@ -33,7 +33,7 @@ try {
 	// activation phone reset
 	$user->activation_phone_reset($_POST['phone']);
 	if ($user->_data['user_phone']) {
-		modal("SUCCESS", __("Your phone has been changed"), __("Please check your phone and copy the verification code to complete the verification process"));
+        blueModal("SUCCESS", __("Your phone has been changed"), __("Please check your phone and copy the verification code to complete the verification process"));
 	} else {
 		return_json(array('callback' => 'window.location.reload();'));
 	}

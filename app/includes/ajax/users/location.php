@@ -24,5 +24,5 @@ try {
 	// return
 	return_json();
 } catch (Exception $e) {
-	modal("ERROR", __("Error"), $e->getMessage());
+	blueModal("ERROR", __("Error"), $e->getMessage());
 }

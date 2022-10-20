@@ -24,7 +24,7 @@ try {
 	$user->activation_phone_resend();
 
 	// return
-	modal("SUCCESS", __("Another SMS has been sent"), __("Please check your phone and copy the verification code to complete the verification process"));
+    blueModal("SUCCESS", __("Another SMS has been sent"), __("Please check your phone and copy the verification code to complete the verification process"));
 } catch (Exception $e) {
-	modal("ERROR", __("Error"), $e->getMessage());
+    blueModal("ERROR", __("Error"), $e->getMessage());
 }
