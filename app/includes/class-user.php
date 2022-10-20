@@ -5479,6 +5479,11 @@ class User
                     break;
 
                 case 'product':
+                    $product = &$args['product'];
+                    if ($product->location && empty($product->location_id)) {
+                        $product->location = htmlspecialchars_decode($product->location);
+                        $product->location_id = self::guess_place_id(...explode(' > ', $product->location));
+                    }
                     /* insert product details */
                     /* Note: no need to return any data as publisher will redirect to post link */
                     $db->query(
@@ -5494,13 +5499,13 @@ class User
                                 rent
                             ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
                             secure($post['post_id'], 'int'),
-                            secure($args['product']->name),
-                            secure($args['product']->price),
-                            secure($args['product']->category, 'int'),
-                            secure($args['product']->status),
-                            secure($args['product']->location),
-                            secure($args['product']->location_id, 'int'),
-                            secure($args['product']->rent, 'int')
+                            secure($product->name),
+                            secure($product->price),
+                            secure($product->category, 'int'),
+                            secure($product->status),
+                            secure($product->location),
+                            empty($product->location_id) ? 'NULL' : secure($product->location_id, 'int'),
+                            secure($product->rent, 'int')
                         )
                     ) or _error("SQL_ERROR_THROWEN");
                     /* insert product photos */
@@ -7298,14 +7303,19 @@ class User
         /* update post */
         $db->query(sprintf("UPDATE posts SET text = %s WHERE post_id = %s", secure($message), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
         /* update product */
+        if ($args['location'] && empty($args['location_id'])) {
+            $args['location'] = htmlspecialchars_decode($args['location']);
+            $args['location_id'] = self::guess_place_id(...explode(' > ', $args['location']));
+        }
         $db->query(
             sprintf(
-                "UPDATE posts_products SET name = %s, price = %s, category_id = %s, status = %s, location = %s, buying_candidate_id = %s, rent = %s WHERE post_id = %s",
+                "UPDATE posts_products SET name = %s, price = %s, category_id = %s, status = %s, location = %s, location_id = %s, buying_candidate_id = %s, rent = %s WHERE post_id = %s",
                 secure($args['name']),
                 secure($args['price']),
                 secure($args['category'], 'int'),
                 secure($args['status']),
                 secure($args['location']),
+                empty($args['location_id']) ? 'NULL' : secure($args['location_id'], 'int'),
                 secure($args['buying_candidate_id'], 'int'),
                 secure($args['rent'], 'int'),
                 secure($post_id, 'int'))
@@ -10019,6 +10029,11 @@ class User
         /* set custom fields */
         $custom_fields = $this->set_custom_fields($args, "page");
 
+        if ($args['location'] && empty($args['location_id'])) {
+            $args['location'] = htmlspecialchars_decode($args['location']);
+            $args['location_id'] = self::guess_place_id(...explode(' > ', $args['location']));
+        }
+
         $db->begin_transaction();
 
         try {
@@ -10041,7 +10056,7 @@ class User
                     secure($args['title']),
                     secure($args['description']),
                     secure($args['location']),
-                    secure($args['location_id'], 'int'),
+                    empty($args['location_id']) ? 'NULL' : secure($args['location_id'], 'int'),
                     secure($date)
                 )
             ) or _error("SQL_ERROR_THROWEN");
@@ -10174,6 +10189,12 @@ class User
                 }
                 /* set custom fields */
                 $this->set_custom_fields($args, "page", "settings", $page_id);
+
+                if ($args['location'] && empty($args['location_id'])) {
+                    $args['location'] = htmlspecialchars_decode($args['location']);
+                    $args['location_id'] = self::guess_place_id(...explode(' > ', $args['location']));
+                }
+
                 /* update page */
                 $db->query(
                     sprintf(
@@ -10189,7 +10210,7 @@ class User
                         secure($args['phone']),
                         secure($args['website']),
                         secure($args['location']),
-                        secure($args['location_id'], 'int'),
+                        empty($args['location_id']) ? 'NULL' : secure($args['location_id'], 'int'),
                         secure($args['description']),
                         secure($page_id, 'int')
                     )
@@ -10589,6 +10610,11 @@ class User
         /* set custom fields */
         $custom_fields = $this->set_custom_fields($args, "group");
 
+        if ($args['location'] && empty($args['location_id'])) {
+            $args['location'] = htmlspecialchars_decode($args['location']);
+            $args['location_id'] = self::guess_place_id(...explode(' > ', $args['location']));
+        }
+
         $db->begin_transaction();
         try {
 
@@ -10612,7 +10638,7 @@ class User
                     secure($args['description']),
                     secure($date),
                     secure($args['location']),
-                    secure($args['location_id'], 'int')
+                    empty($args['location_id']) ? 'NULL' : secure($args['location_id'], 'int')
                 )
             ) or _error("SQL_ERROR_THROWEN");
             /* get group_id */
@@ -10715,6 +10741,12 @@ class User
         if (!in_array($args['privacy'], array('secret', 'closed', 'public'))) {
             throw new Exception(__("You must select a valid privacy for your group"));
         }
+
+        if ($args['location'] && empty($args['location_id'])) {
+            $args['location'] = htmlspecialchars_decode($args['location']);
+            $args['location_id'] = self::guess_place_id(...explode(' > ', $args['location']));
+        }
+
         /* set custom fields */
         $this->set_custom_fields($args, "group", "settings", $group_id);
         /* update the group */
@@ -10739,7 +10771,7 @@ class User
                 secure($args['group_publish_enabled']),
                 secure($args['group_publish_approval_enabled']),
                 secure($args['location']),
-                secure($args['location_id'], 'int'),
+                empty($args['location_id']) ? 'NULL' : secure($args['location_id'], 'int'),
                 secure($group_id, 'int')
             )
         ) or _error("SQL_ERROR_THROWEN");
@@ -11183,6 +11215,12 @@ class User
         }
         /* set custom fields */
         $custom_fields = $this->set_custom_fields($args, "event");
+
+        if ($args['location'] && empty($args['location_id'])) {
+            $args['location'] = htmlspecialchars_decode($args['location']);
+            $args['location_id'] = self::guess_place_id(...explode(' > ', $args['location']));
+        }
+
         $db->begin_transaction();
 
         try {
@@ -11206,7 +11244,7 @@ class User
                     secure($args['category'], 'int'),
                     secure($args['title']),
                     secure($args['location']),
-                    secure($args['location_id'], 'int'),
+                    empty($args['location_id']) ? 'NULL' : secure($args['location_id'], 'int'),
                     secure($args['description']),
                     secure($args['start_date'], 'datetime'),
                     secure($args['end_date'], 'datetime'),
@@ -11342,7 +11380,38 @@ class User
         /* update the group */
         $args['event_publish_enabled'] = (isset($args['event_publish_enabled'])) ? '1' : '0';
         $args['event_publish_approval_enabled'] = (isset($args['event_publish_approval_enabled'])) ? '1' : '0';
-        $db->query(sprintf("UPDATE `events` SET event_privacy = %s, event_category = %s, event_title = %s, event_location = %s, event_description = %s, event_start_date = %s, event_end_date = %s, event_publish_enabled = %s, event_publish_approval_enabled = %s WHERE event_id = %s", secure($args['privacy']), secure($args['category'], 'int'), secure($args['title']), secure($args['location']), secure($args['description']), secure($args['start_date'], 'datetime'), secure($args['end_date'], 'datetime'), secure($args['event_publish_enabled']), secure($args['event_publish_approval_enabled']), secure($event_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+
+        if ($args['location'] && empty($args['location_id'])) {
+            $args['location'] = htmlspecialchars_decode($args['location']);
+            $args['location_id'] = self::guess_place_id(...explode(' > ', $args['location']));
+        }
+
+        $db->query(sprintf("UPDATE 
+                `events` 
+            SET 
+                event_privacy = %s, 
+                event_category = %s, 
+                event_title = %s, 
+                event_location = %s, 
+                event_location_id = %s, 
+                event_description = %s, 
+                event_start_date = %s, 
+                event_end_date = %s, 
+                event_publish_enabled = %s, 
+                event_publish_approval_enabled = %s 
+            WHERE event_id = %s",
+            secure($args['privacy']),
+            secure($args['category'], 'int'),
+            secure($args['title']),
+            secure($args['location']),
+            empty($args['location_id']) ? 'NULL' : secure($args['location_id'], 'int'),
+            secure($args['description']),
+            secure($args['start_date'], 'datetime'),
+            secure($args['end_date'], 'datetime'),
+            secure($args['event_publish_enabled']),
+            secure($args['event_publish_approval_enabled']),
+            secure($event_id, 'int'))
+        ) or _error("SQL_ERROR_THROWEN");
         /* check if post approval disabled */
         if (!$args['event_publish_approval_enabled']) {
             /* approve any pending posts */
@@ -16331,61 +16400,15 @@ class User
             case 'location':
                 /* set custom fields */
                 $this->set_custom_fields($args, "user", "settings", $this->_data['user_id']);
-                if ($args['city']) {
-                    if (str_contains($args['city'], ">")) {
-                        $splite = " > ";
-                    }else if (str_contains($args['city'], "&")) {
-                        $splite = " &gt; ";
-                    }
-                    $array = explode($splite, $args['city']);
-                    $fetchData = $db->query(sprintf(
-                        "SELECT id FROM countries WHERE name = %s",
-                        secure(($array[0]), 'string'),
-                    ));
-                    $row = $fetchData->fetch_assoc();
-                    $co_num = $row['id'];
-                    $fetchData = $db->query(sprintf(
-                        "SELECT id FROM states WHERE name = %s",
-                        secure(($array[1]), 'string'),
-                    ));
-                    $row = $fetchData->fetch_assoc();
-                    $st_num = $row['id'];
-                    $fetchData = $db->query(sprintf(
-                        "SELECT id FROM places WHERE country_id = %s and state_id = %s and name = %s",
-                        secure($co_num, 'int'),
-                        secure($st_num, 'int'),
-                        secure($array[2], 'string'),
-                    ));
-                    $row = $fetchData->fetch_assoc();
-                    $ct_num = $row['id'];
+
+                if ($args['city'] && empty($city_id = $args['city_id'])) {
+                    $args['city'] = htmlspecialchars_decode($args['city']);
+                    $city_id = self::guess_place_id(...explode(' > ', $args['city']));
                 }
-                if ($args['hometown']) {
-                    if (str_contains($args['hometown'], ">")) {
-                        $splite = " > ";
-                    }else if (str_contains($args['hometown'], "&")) {
-                        $splite = " &gt; ";
-                    }
-                    $array = explode($splite, $args['hometown']);
-                    $fetchData = $db->query(sprintf(
-                        "SELECT id FROM countries WHERE name = %s",
-                        secure(($array[0]), 'string'),
-                    ));
-                    $row = $fetchData->fetch_assoc();
-                    $co_num = $row['id'];
-                    $fetchData = $db->query(sprintf(
-                        "SELECT id FROM states WHERE name = %s",
-                        secure(($array[1]), 'string'),
-                    ));
-                    $row = $fetchData->fetch_assoc();
-                    $st_num = $row['id'];
-                    $fetchData = $db->query(sprintf(
-                        "SELECT id FROM places WHERE country_id = %s and state_id = %s and name = %s",
-                        secure($co_num, 'int'),
-                        secure($st_num, 'int'),
-                        secure($array[2], 'string'),
-                    ));
-                    $row = $fetchData->fetch_assoc();
-                    $ht_num = $row['id'];
+
+                if ($args['hometown'] && empty($hometown_id = $args['hometown_id'])) {
+                    $args['hometown'] = htmlspecialchars_decode($args['hometown']);
+                    $hometown_id = self::guess_place_id(...explode(' > ', $args['hometown']));
                 }
                 /* update user */
                 $db->query(
@@ -16393,8 +16416,8 @@ class User
                         "UPDATE users SET user_current_city = %s, user_hometown = %s, user_current_place_id = %s, user_hometown_place_id = %s WHERE user_id = %s",
                         secure($args['city'], 'string'),
                         secure($args['hometown'], 'string'),
-                        secure($ct_num, 'int'),
-                        secure($ht_num, 'int'),
+                        empty($city_id) ? 'NULL' :  secure($city_id, 'int'),
+                        empty($hometown_id) ? 'NULL' :  secure($hometown_id, 'int'),
                         secure($this->_data['user_id'], 'int')
                     )
                 ) or _error("SQL_ERROR_THROWEN");
@@ -16671,6 +16694,16 @@ class User
                     $args['is_jewish'] = false;
                 }
 
+                if ($args['city'] && empty($args['city_id'])) {
+                    $args['city'] = htmlspecialchars_decode($args['city']);
+                    $args['city_id'] = self::guess_place_id(...explode(' > ', $args['city']));
+                }
+
+                if ($args['hometown'] && empty($args['hometown_id'])) {
+                    $args['hometown'] = htmlspecialchars_decode($args['hometown']);
+                    $args['hometown_id'] = self::guess_place_id(...explode(' > ', $args['hometown']));
+                }
+
                 /* update user */
                 $db->query(
                     sprintf(
@@ -16702,8 +16735,8 @@ class User
                         secure($args['edu_major']),
                         secure($args['edu_school']),
                         secure($args['edu_class']),
-                        secure($args['city_id'], 'int'),
-                        secure($args['hometown_id'], 'int'),
+                        empty($args['city_id']) ? 'NULL' : secure($args['city_id'], 'int'),
+                        empty($args['hometown_id']) ? 'NULL' : secure($args['hometown_id'], 'int'),
                         secure($args['biography']),
                         secure($args['birthdate']),
                         secure($args['political']),
@@ -16711,7 +16744,7 @@ class User
                         secure($args['is_jewish'], 'bool'),
                         secure($this->_data['user_id'], 'int')
                     )
-                ) or _error("SQL_ERROR_THROWEN");
+                ) or _error("SQL_ERROR_THROWEN", $db->error);
 
                 if (empty($args['interests']) || !valid_array_of_positive_ints($args['interests'])) {
                     // throw new Exception(__("Please enter a valid array of interests"));
@@ -17859,6 +17892,28 @@ class User
             )->fetch_all(MYSQLI_ASSOC),
             'user_religion'
         );
+    }
+
+    public static function guess_place_id(string $country, string $state = null, string $place = null): ?int
+    {
+        global $db;
+
+        if (empty($country) || empty($state) || empty($place)) {
+            return null;
+        }
+
+        $data = $db->query(
+            sprintf('select p.id from states s
+                                    inner join places p on s.id = p.state_id
+                                    inner join countries c on s.country_id = c.id
+                                where c.name = %s and s.name = %s and p.name = %s',
+                secure($country),
+                secure($state),
+                secure($place)
+            )
+        )->fetch_assoc();
+
+        return $data['id'] ?? null;
     }
 }
 
