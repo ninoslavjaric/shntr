@@ -57,6 +57,15 @@ function is_empty(value) {
     }
 }
 
+// is number
+function isNumber(evt) {
+    evt = (evt) ? evt : window.event;
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        return false;
+    }
+    return true;
+}
 
 // is empty
 function is_iPad() {
@@ -104,17 +113,34 @@ function handlePaywallRestrictions(e, el) {
     var message = __['By paying the paywall of _AMOUNT_ token(s), you will be able to carry out the planned action.'].replace('_AMOUNT_', price);
     var closable = e ? true : false;
 
-    paywall_pay_modal({ id: "#modal-paywall-pay", title, message, price, paywallAuthorId, closable,  callback: function(response) {
-        if (response['paywall-id']) {
-            _this.attr('data-paywall-id', response['paywall-id']);
-            _target && _target.trigger( "click" );
-            localStorage.setItem('paywallId', response['paywall-id']);
+    paywall_pay_modal({ 
+        id: "#modal-paywall-pay",
+        title,
+        message,
+        price,
+        paywallAuthorId,
+        closable,
+        confirmCallback: function(response) {
+            if (response.callback) {
+                eval(response.callback);
+            }
 
-            setTimeout(() => {
-                $('#modal').modal('toggle');
-            }, 1000);
+            if (response['paywall-id']) {
+                _this.attr('data-paywall-id', response['paywall-id']);
+                _target && _target.trigger( "click" );
+                localStorage.setItem('paywallId', response['paywall-id']);
+
+                setTimeout(() => {
+                    $('#modal').modal('toggle');
+                }, 1000);
+            }
+        },
+        cancelCallback: function() {
+            if (!closable) {
+                window.location = site_path;
+            }
         }
-    }});
+    });
 }
 
 function resetPaywall() {
@@ -356,7 +382,7 @@ function blueModal({ id, size, title, message, closable = true, ...others } = {}
     }
 }
 
-function paywall_pay_modal({ id, title, message, price, paywallAuthorId, closable, callback } = {}) {
+function paywall_pay_modal({ id, title, message, price, paywallAuthorId, closable, confirmCallback, cancelCallback = () => {} } = {}) {
     blueModal({ id, title, message, price, paywallAuthorId, closable });
 
     $("#modal-paywall-pay-confirm").on('click', function(e){
@@ -364,13 +390,11 @@ function paywall_pay_modal({ id, title, message, price, paywallAuthorId, closabl
         button_status(button, "loading");
 
         $.post(api['users/paywall'], { 'do': 'pay', paywallAuthorId }, function (response) {
-            if (response.callback) {
-                eval(response.callback);
-            }
-
-            callback && callback(response);
+            confirmCallback && confirmCallback(response);
         }, 'json');
     });
+
+    $("#modal-paywall-pay-cancel").on('click', cancelCallback);
 }
 
 function paywall_set_modal({ id, title, message, price, callback } = {}) {
