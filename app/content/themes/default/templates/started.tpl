@@ -247,28 +247,33 @@
                                 <div class="divider"></div>
 
                                 <div class="heading-small mb20">
-                                    {__("Interests")}
+                                    {__("Political interest")}
                                 </div>
                                 <div class="form-group">
-                                    {__("Political interest")}
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="political" id="flexRadioDefault1" value="liberal" {if $user->_data['user_political_interest']=="liberal"}checked{/if}>
+                                        <input class="form-check-input" type="checkbox" name="political" id="flexRadioDefault1" value="liberal" {if $user->_data['user_political_interest']=="liberal"}checked{/if}>
                                         <label class="form-check-label" for="flexRadioDefault1">
                                             Liberal
                                         </label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="political" id="flexRadioDefault2" value="moderate" {if $user->_data['user_political_interest']=="moderate"}checked{/if}>
+                                        <input class="form-check-input" type="checkbox" name="political" id="flexRadioDefault2" value="moderate" {if $user->_data['user_political_interest']=="moderate"}checked{/if}>
                                         <label class="form-check-label" for="flexRadioDefault2">
                                             Moderate
                                         </label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="political" id="flexRadioDefault3" value="conservative" {if $user->_data['user_political_interest']=="conservative"}checked{/if}>
+                                        <input class="form-check-input" type="checkbox" name="political" id="flexRadioDefault3" value="conservative" {if $user->_data['user_political_interest']=="conservative"}checked{/if}>
                                         <label class="form-check-label" for="flexRadioDefault3">
                                             Conservative
                                         </label>
                                     </div>
+                                </div>
+
+                                <div class="divider"></div>
+
+                                <div class="heading-small mb20">
+                                    {__("Interests")}
                                 </div>
                                 <div class="form-group">
                                     <select class="form-control" name="interests" id="interests">
