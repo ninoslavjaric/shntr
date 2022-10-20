@@ -81,6 +81,8 @@ class User
                         $this->_data['can_boost_pages'] = true;
                     }
                 }
+                /* check token amount */
+                $this->_data['shntr_token_amount'] = shntrToken::getRelysiaBalance();
                 /* check pages permission */
                 if ($system['pages_enabled']) {
                     $this->_data['can_create_pages'] = $this->check_module_permission($system['pages_permission']);

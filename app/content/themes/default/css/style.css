@@ -1751,6 +1751,19 @@ body.night-mode .bootstrap-datetimepicker-widget table td.new {
   height: 70px;
 }
 
+.header-token_show {
+  text-align: right;
+}
+
+.header-token_text {
+  color: rgb(196, 153, 34);
+  display: inline-block;
+}
+
+.header-token_amount {
+  display: inline-block;
+}
+
 body.night-mode:not(.visitor) .main-header {
   background: var(--header-bg-color-dark);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
@@ -5432,7 +5445,7 @@ body.night-mode .add-story .add {
   top: 0;
   bottom: 0;
   width: 210px;
-  top: 70px;
+  top: 94px;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
   z-index: 1000;
 }
