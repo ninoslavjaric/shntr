@@ -1381,7 +1381,7 @@ class User
                         $result['connection'] = $this->connection($result['user_id']);
 
                         // ensure paywall data
-                        if ($paywall_price = $this->paywalled($result['user_id'])) {
+                        if (!empty($result['user_id']) && ($paywall_price = $this->paywalled($result['user_id']))) {
                             $result['paywalled']['paywall_price'] = $paywall_price;
                             $result['paywalled']['paywall_author_id'] = $result['user_id'];
                             $result['paywalled']['paywall_author_name'] = $this->get_user_fullname($result);
