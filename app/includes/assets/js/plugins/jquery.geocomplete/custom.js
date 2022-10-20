@@ -36,11 +36,7 @@ window.geocompletionSetup = () => {
       }
 
       getSuggestion(_target.val(), _target, function(result) {
-        if (result.length === 0) {
-          return _target.next().val(null);
-        }
-        const firstItem = result.shift();
-        _target.val(firstItem.label).next().val(firstItem.value);
+        return _target.next().val(null);
       });
     },
     create: function(evt, ui) {
