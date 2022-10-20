@@ -116,7 +116,7 @@
         <div class="form-group">
             <form id="buyTokensForm" action="/buy-tokens/checkout" method="POST">
                 <label for="tokenInput">{literal}{{message}}{/literal}</label>
-                <input name="qty" type="number" class="form-control" id="tokenInput" min="20" placeholder="20" onkeypress="return isNumber(event)">
+                <input name="qty" type="number" class="form-control" id="tokenInput" min="20" onkeypress="return isNumber(event)">
             </form>
         </div>
     </div>
