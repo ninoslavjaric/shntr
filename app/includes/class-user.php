@@ -10005,7 +10005,7 @@ class User
             throw new Exception(__("You don't have the permission to do this"));
         }
         // validate location
-        if (is_empty($args['location']) || is_empty($args['location_id'])) {
+        if (is_empty($args['location'])) {
             throw new Exception(__("You must enter a proper location"));
         }
         /* validate title */
@@ -10582,7 +10582,7 @@ class User
             throw new Exception(__("You don't have the permission to do this"));
         }
         // validate location
-        if (is_empty($args['location']) || is_empty($args['location_id'])) {
+        if (is_empty($args['location'])) {
             throw new Exception(__("You must enter a proper location"));
         }
         /* validate title */
@@ -11191,7 +11191,7 @@ class User
             throw new Exception(__("You don't have the permission to do this"));
         }
         // validate location
-        if (is_empty($args['location']) || is_empty($args['location_id'])) {
+        if (is_empty($args['location'])) {
             throw new Exception(__("You must enter a proper location"));
         }
         /* validate title */
