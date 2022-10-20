@@ -82,7 +82,7 @@ class User
                     }
                 }
                 /* check token amount */
-                // $this->_data['shntr_token_amount'] = shntrToken::getRelysiaBalance();
+                $this->_data['shntr_token_amount'] = shntrToken::getRelysiaBalance($this->_data['user_name'], $this->_data['user_relysia_password']);
                 /* check pages permission */
                 if ($system['pages_enabled']) {
                     $this->_data['can_create_pages'] = $this->check_module_permission($system['pages_permission']);
