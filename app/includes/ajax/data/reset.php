@@ -15,7 +15,7 @@ is_ajax();
 
 // check user logged in
 if (!$user->_logged_in) {
-	modal('LOGIN');
+    modal('LOGIN');
 }
 
 // valid inputs
@@ -31,5 +31,5 @@ try {
 	// return & exist
 	return_json();
 } catch (Exception $e) {
-	modal("ERROR", __("Error"), $e->getMessage());
+    blueModal("ERROR", __("Error"), $e->getMessage());
 }

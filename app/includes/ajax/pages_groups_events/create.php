@@ -18,7 +18,7 @@ user_access(true);
 
 // check demo account
 if ($user->_data['user_demo']) {
-	modal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
+	blueModal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
 }
 
 // valid inputs
@@ -44,7 +44,7 @@ try {
         $query = $db->query("SELECT price FROM prices WHERE price_name = 'page_price';");
 				$price = $query->fetch_assoc();
         if ($balance < $price['price']) {
-            modal("ERROR", __("Funds"), __("You're out of tokens"));
+            blueModal("ERROR", __("Funds"), __("You're out of tokens"));
         }
 
 				// page create
@@ -82,7 +82,7 @@ try {
 				$query = $db->query("SELECT price FROM prices WHERE price_name = 'group_price';");
 				$price = $query->fetch_assoc();
         if ($balance < $price['price']) {
-            modal("ERROR", __("Funds"), __("You're out of tokens"));
+            blueModal("ERROR", __("Funds"), __("You're out of tokens"));
         }
 
 				// group create
@@ -140,7 +140,7 @@ try {
 				$query = $db->query("SELECT price FROM prices WHERE price_name = 'event_price';");
 				$price = $query->fetch_assoc();
         if ($balance < $price['price']) {
-            modal("ERROR", __("Funds"), __("You're out of tokens"));
+            blueModal("ERROR", __("Funds"), __("You're out of tokens"));
         }
 
 				// event create

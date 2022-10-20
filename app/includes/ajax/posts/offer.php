@@ -18,12 +18,12 @@ user_access(true);
 
 // check demo account
 if ($user->_data['user_demo']) {
-	modal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
+    blueModal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
 }
 
 // check if offers enabled
 if (!$system['pages_enabled'] || !$system['offers_enabled']) {
-	modal("MESSAGE", __("Error"), __("This feature has been disabled by the admin"));
+    blueModal("MESSAGE", __("Error"), __("This feature has been disabled by the admin"));
 }
 
 try {
@@ -40,7 +40,7 @@ try {
 
 			// check page adminship
 			if (!$user->check_page_adminship($user->_data['user_id'], $_GET['page_id'])) {
-				modal("MESSAGE", __("Error"), __("You are not authorized to do this"));
+                blueModal("MESSAGE", __("Error"), __("You are not authorized to do this"));
 			}
 
 			// assign variables
@@ -189,5 +189,5 @@ try {
 	// return & exit
 	return_json($return);
 } catch (Exception $e) {
-	modal("ERROR", __("Error"), $e->getMessage());
+    blueModal("ERROR", __("Error"), $e->getMessage());
 }

@@ -29,7 +29,7 @@ require_once(ABSPATH . 'includes/config.php');
 // enviroment settings
 if (DEBUGGING) {
     ini_set("display_errors", true);
-    error_reporting(E_ALL ^ E_NOTICE);
+    error_reporting(E_ERROR | E_PARSE);
 } else {
     ini_set("display_errors", false);
     error_reporting(0);

@@ -18,7 +18,7 @@ user_access(true);
 
 // valid inputs
 if (!isset($_POST['id']) || !is_numeric($_POST['id']) || !isset($_POST['note'])) {
-    modal("ERROR", __("Error"), __('Params not valid'));
+    blueModal("ERROR", __("Error"), __('Params not valid'));
 }
 
 try {
@@ -26,7 +26,7 @@ try {
 	$user->report($_POST['id'], $_POST['handle'], $_POST['note']);
 
 	// return & exit
-	modal("SUCCESS", __("Thanks"), __("Your report has been submitted"));
+    blueModal("SUCCESS", __("Thanks"), __("Your report has been submitted"));
 } catch (Exception $e) {
-	modal("ERROR", __("Error"), $e->getMessage());
+    blueModal("ERROR", __("Error"), $e->getMessage());
 }

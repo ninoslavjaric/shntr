@@ -18,17 +18,17 @@ user_access(true);
 
 // check demo account
 if ($user->_data['user_demo']) {
-	modal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
+    blueModal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
 }
 
 // check if market enabled
 if (!$system['market_enabled']) {
-	modal("MESSAGE", __("Error"), __("This feature has been disabled by the admin"));
+    blueModal("MESSAGE", __("Error"), __("This feature has been disabled by the admin"));
 }
 
 // check market permission
 if (!$user->_data['can_sell_products']) {
-	modal("MESSAGE", __("Error"), __("You don't have the permission to do this"));
+    blueModal("MESSAGE", __("Error"), __("You don't have the permission to do this"));
 }
 
 try {
@@ -65,17 +65,17 @@ try {
 				_error(400);
 			}
 
-      if (empty($user->_data['user_relysia_password'])) {
-          $user->register_to_relysia(
-              $user->_data['user_name'], $user->_data['user_id']
-          );
-      }
-      $balance = shntrToken::getRelysiaBalance();
-      $query = $db->query("SELECT price FROM prices WHERE price_name = 'product_price';");
-      $price = $query->fetch_assoc();
-      if ($balance < $price['price']) {
-          modal("ERROR", __("Funds"), __("You're out of tokens {$balance}"));
-      }
+            if (empty($user->_data['user_relysia_password'])) {
+                $user->register_to_relysia(
+                    $user->_data['user_name'], $user->_data['user_id']
+                );
+            }
+            $balance = shntrToken::getRelysiaBalance();
+            $query = $db->query("SELECT price FROM prices WHERE price_name = 'product_price';");
+            $price = $query->fetch_assoc();
+            if ($balance < $price['price']) {
+                blueModal("ERROR", __("Funds"), __("You're out of tokens {$balance}"));
+            }
 
 			/* check product name */
 			if (is_empty($_POST['product']->name)) {
@@ -184,5 +184,5 @@ try {
 	// return & exit
 	return_json($return);
 } catch (Exception $e) {
-	modal("ERROR", __("Error"), $e->getMessage());
+    blueModal("ERROR", __("Error"), $e->getMessage());
 }

@@ -18,7 +18,7 @@ user_access(true, true);
 
 // check if bank transfers enabled
 if (!$system['bank_transfers_enabled']) {
-	modal("MESSAGE", __("Error"), __("This feature has been disabled by the admin"));
+	blueModal("MESSAGE", __("Error"), __("This feature has been disabled by the admin"));
 }
 
 try {
@@ -40,7 +40,7 @@ try {
 			}
 			/* check if user already subscribed to this package */
 			if ($user->_data['user_subscribed'] && $user->_data['user_package'] == $package['package_id']) {
-				modal("SUCCESS", __("Subscribed"), __("You already subscribed to this package, Please select different package"));
+				blueModal("SUCCESS", __("Subscribed"), __("You already subscribed to this package, Please select different package"));
 			}
 
 			// process
@@ -50,7 +50,7 @@ try {
 			$user->notify_system_admins("bank_transfer");
 
 			// return
-			modal("SUCCESS", __("Thanks"), __("Your request has been successfully sent, we will notify you once it's approved"));
+			blueModal("SUCCESS", __("Thanks"), __("Your request has been successfully sent, we will notify you once it's approved"));
 			break;
 
 		case 'wallet':
@@ -69,7 +69,7 @@ try {
 			$user->notify_system_admins("bank_transfer");
 
 			// return
-			modal("SUCCESS", __("Thanks"), __("Your request has been successfully sent, we will notify you once it's approved"));
+			blueModal("SUCCESS", __("Thanks"), __("Your request has been successfully sent, we will notify you once it's approved"));
 			break;
 
 		case 'donate':
@@ -91,7 +91,7 @@ try {
 			$user->notify_system_admins("bank_transfer");
 
 			// return
-			modal("SUCCESS", __("Thanks"), __("Your request has been successfully sent, we will notify you once it's approved"));
+			blueModal("SUCCESS", __("Thanks"), __("Your request has been successfully sent, we will notify you once it's approved"));
 			break;
 
 		default:

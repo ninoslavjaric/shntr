@@ -14,12 +14,12 @@ is_ajax();
 
 // check admin|moderator permission
 if (!$user->_is_admin) {
-	modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+	blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 }
 
 // check demo account
 if ($user->_data['user_demo']) {
-	modal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
+	blueModal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
 }
 
 try {
@@ -27,5 +27,5 @@ try {
     $state = $_POST['state'];
     $db->query(sprintf("UPDATE info_sell_token SET state = '".$state."' WHERE id = '".$id."'")) or _error("SQL_ERROR_THROWEN");
 } catch (Exception $e) {
-	modal("ERROR", __("Error"), $e->getMessage());
+	blueModal("ERROR", __("Error"), $e->getMessage());
 }

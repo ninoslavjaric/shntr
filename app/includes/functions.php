@@ -1987,11 +1987,11 @@ function user_access($is_ajax = false, $bypass_subscription = false)
         }
         /* check user activated */
         if ($system['activation_enabled'] && !$user->_data['user_activated']) {
-            modal("MESSAGE", __("Not Activated"), __("Before you can interact with other users, you need to confirm your email address"));
+            blueModal("MESSAGE", __("Not Activated"), __("Before you can interact with other users, you need to confirm your email address"));
         }
         /* check registration type */
         if ($system['registration_type'] == "paid" && $user->_data['user_group'] > '1' && !$user->_data['user_subscribed'] && !$bypass_subscription) {
-            modal("MESSAGE", __("Subscription Needed"), __("Before you can interact with other users, you need to buy subscription package"));
+            blueModal("MESSAGE", __("Subscription Needed"), __("Before you can interact with other users, you need to buy subscription package"));
         }
     } else {
         if (!$user->_logged_in) {

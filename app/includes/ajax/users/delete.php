@@ -18,7 +18,7 @@ user_access(true);
 
 // check demo account
 if ($user->_data['user_demo']) {
-	modal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
+    blueModal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
 }
 
 try {
@@ -32,5 +32,5 @@ try {
 	// return & exit
 	return_json();
 } catch (Exception $e) {
-	modal("ERROR", __("Error"), $e->getMessage());
+	blueModal("ERROR", __("Error"), $e->getMessage());
 }

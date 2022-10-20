@@ -18,7 +18,7 @@ user_access(true);
 
 // check demo account
 if ($user->_data['user_demo']) {
-	modal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
+    blueModal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
 }
 
 // valid inputs
@@ -37,7 +37,7 @@ try {
 			$user->share($_GET['post_id'], $_POST);
 
 			// return
-			modal("SUCCESS", __("Success"),  __("This has been shared Successfully"));
+            blueModal("SUCCESS", __("Success"),  __("This has been shared Successfully"));
 			break;
 
 		case 'create':
@@ -71,5 +71,5 @@ try {
 	// return & exit
 	return_json($return);
 } catch (Exception $e) {
-	modal("ERROR", __("Error"), $e->getMessage());
+    blueModal("ERROR", __("Error"), $e->getMessage());
 }

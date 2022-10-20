@@ -18,12 +18,12 @@ user_access(true);
 
 // check demo account
 if ($user->_data['user_demo']) {
-	modal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
+    blueModal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
 }
 
 // check if jobs enabled
 if (!$system['pages_enabled'] || !$system['jobs_enabled']) {
-	modal("MESSAGE", __("Error"), __("This feature has been disabled by the admin"));
+    blueModal("MESSAGE", __("Error"), __("This feature has been disabled by the admin"));
 }
 
 try {
@@ -40,7 +40,7 @@ try {
 
 			// check page adminship
 			if (!$user->check_page_adminship($user->_data['user_id'], $_GET['page_id'])) {
-				modal("MESSAGE", __("Error"), __("You are not authorized to do this"));
+                blueModal("MESSAGE", __("Error"), __("You are not authorized to do this"));
 			}
 
 			// assign variables
@@ -170,7 +170,7 @@ try {
 			// get post
 			$post = $user->get_post($_GET['post_id']);
 			if (!$post) {
-				modal("MESSAGE", __("Error"), __("This content is no longer exist"));
+                blueModal("MESSAGE", __("Error"), __("This content is no longer exist"));
 			}
 			/* assign variables */
 			$smarty->assign('post', $post);
@@ -190,13 +190,13 @@ try {
 
 			// check if user applied before
 			if ($user->check_user_job_application($_GET['post_id'])) {
-				modal("ERROR", __("Sorry"), __("You already applied for this job before"));
+                blueModal("ERROR", __("Sorry"), __("You already applied for this job before"));
 			}
 
 			// get post
 			$post = $user->get_post($_GET['post_id'], false);
 			if (!$post) {
-				modal("MESSAGE", __("Error"), __("This content is no longer exist"));
+                blueModal("MESSAGE", __("Error"), __("This content is no longer exist"));
 			}
 			/* assign variables */
 			$smarty->assign('post', $post);
@@ -214,13 +214,13 @@ try {
 
 			// check if user applied before
 			if ($user->check_user_job_application($_GET['post_id'])) {
-				modal("ERROR", __("Sorry"), __("You already applied for this job before"));
+                blueModal("ERROR", __("Sorry"), __("You already applied for this job before"));
 			}
 
 			// get post
 			$post = $user->get_post($_GET['post_id'], false);
 			if (!$post) {
-				modal("MESSAGE", __("Error"), __("This content is no longer exist"));
+                blueModal("MESSAGE", __("Error"), __("This content is no longer exist"));
 			}
 
 			// valid inputs
@@ -258,7 +258,7 @@ try {
 			$user->send_job_application($post, $_POST);
 
 			// return
-			modal("SUCCESS", __("Done"), __("Your application has been submitted successfully"));
+            blueModal("SUCCESS", __("Done"), __("Your application has been submitted successfully"));
 			break;
 
 		case 'candidates':
@@ -287,5 +287,5 @@ try {
 	// return & exit
 	return_json($return);
 } catch (Exception $e) {
-	modal("ERROR", __("Error"), $e->getMessage());
+    blueModal("ERROR", __("Error"), $e->getMessage());
 }

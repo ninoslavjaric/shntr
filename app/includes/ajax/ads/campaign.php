@@ -18,7 +18,7 @@ user_access(true);
 
 // check demo account
 if ($user->_data['user_demo']) {
-	modal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
+    blueModal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
 }
 
 try {
@@ -100,6 +100,6 @@ try {
 	if ($_REQUEST['do'] == "create" || $_REQUEST['do'] == "edit") {
 		return_json(array('error' => true, 'message' => $e->getMessage()));
 	} else {
-		modal("ERROR", __("Error"), $e->getMessage());
+        blueModal("ERROR", __("Error"), $e->getMessage());
 	}
 }

@@ -18,17 +18,17 @@ is_ajax();
 
 // check admin|moderator permission
 if (!$user->_is_admin) {
-	modal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
+    blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to access this"));
 }
 
 // check demo account
 if ($user->_data['user_demo']) {
-	modal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
+    blueModal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
 }
 
 // check if changing the super admin user
 if ($user->_data['user_id'] != '1' && $_GET['id'] == '1') {
-	modal("MESSAGE", __("System Message"), __("You don't have the right permission to edit this user"));
+    blueModal("MESSAGE", __("System Message"), __("You don't have the right permission to edit this user"));
 }
 
 // handle users
@@ -107,7 +107,7 @@ try {
 			$_POST['user_phone_verified'] = (isset($_POST['user_phone_verified'])) ? '1' : '0';
 			/* check if ban super admin user */
 			if ($_POST['user_banned'] && $_GET['id'] == '1') {
-				modal("MESSAGE", __("System Message"), __("You can't ban this user"));
+                blueModal("MESSAGE", __("System Message"), __("You can't ban this user"));
 			}
 			/* update */
 			$db->query(sprintf("UPDATE users SET user_verified = %s, user_banned = %s, user_banned_message = %s, user_activated = %s, user_demo = %s, user_group = %s, user_name = %s, user_email = %s, user_email_verified = %s, user_phone = %s, user_phone_verified = %s, user_password = %s WHERE user_id = %s", secure($_POST['user_verified']), secure($_POST['user_banned']), secure($_POST['user_banned_message']), secure($_POST['user_activated']), secure($_POST['user_demo']), secure($_POST['user_group'], 'int'), secure($_POST['user_name']), secure($_POST['user_email']), secure($_POST['user_email_verified']), ($_POST['user_phone'] == null) ? 'null' : secure($_POST['user_phone']), secure($_POST['user_phone_verified']), secure($_POST['user_password']), secure($_GET['id'], 'int'))) or _error("SQL_ERROR_THROWEN");
