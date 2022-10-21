@@ -2067,30 +2067,40 @@ function modal()
  *
  * @return json
  */
-function blueModal($modalId, $title, $message, $additionalReturn = null)
+function blueModal($modalId, $title, $message, $additionalReturn = null, $closable = true, $isOverModal = false,)
 {
     $args = func_get_args();
     $return = array();
+    $params = [
+        "title" => $title,
+        "message" => addslashes($message),
+        "closable" => $closable,
+        "isOverModal" => $isOverModal,
+    ];
+
+    function prepareModalParams($params) {
+        return "blueModal(". json_encode($params) .")";
+    }
 
     switch ($modalId) {
         case 'LOGIN':
             $return["callback"] = "blueModal({ id: '#modal-login' })";
             break;
         case 'MESSAGE':
-            $return["callback"] = "blueModal({ id: '#modal-message', title: '" . $title . "', message: '" . addslashes($message) . "'})";
+            $params["id"] = "#modal-message";
+            $return["callback"] = prepareModalParams($params);
             break;
         case 'ERROR':
-            $return["callback"] = "blueModal({ id: '#modal-error', title: '" . $title . "', message: '" . addslashes($message) . "'})";
+            $params["id"] = "#modal-error";
+            $return["callback"] = prepareModalParams($params);
             break;
         case 'SUCCESS':
-            $return["callback"] = "blueModal({ id: '#modal-success', title: '" . $title . "', message: '" . addslashes($message) . "'})";
+            $params["id"] = "#modal-success";
+            $return["callback"] = prepareModalParams($params);
             break;
         default:
-            if (isset($title)) {
-                $return["callback"] = "blueModal({ id: '{$modalId}', title: '{$title}' })";
-            } else {
-                $return["callback"] = "blueModal({ id: '{$modalId}' })";
-            }
+            $params["id"] = $modalId;
+            $return["callback"] = prepareModalParams($params);
             break;
     }
 

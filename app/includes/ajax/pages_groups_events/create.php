@@ -35,17 +35,20 @@ try {
 	switch ($_GET['type']) {
 		case 'page':
 			if ($_GET['do'] == "create") {
-        if (empty($user->_data['user_relysia_password'])) {
-            $user->register_to_relysia(
-                $user->_data['user_name'], $user->_data['user_id']
-            );
-        }
-        $balance = shntrToken::getRelysiaBalance();
-        $query = $db->query("SELECT price FROM prices WHERE price_name = 'page_price';");
+				if (empty($user->_data['user_relysia_password'])) {
+					$user->register_to_relysia(
+						$user->_data['user_name'], $user->_data['user_id']
+					);
+				}
+
+				$balance = shntrToken::getRelysiaBalance();
+
+				$query = $db->query("SELECT price FROM prices WHERE price_name = 'page_price';");
 				$price = $query->fetch_assoc();
-        if ($balance < $price['price']) {
-            blueModal("ERROR", __("Funds"), __("You're out of tokens"));
-        }
+		
+				if ($balance < $price['price']) {
+					blueModal("ERROR", __("Funds"), __("You're out of tokens"), null, true, true);
+				}
 
 				// page create
 				$user->create_page($_POST);

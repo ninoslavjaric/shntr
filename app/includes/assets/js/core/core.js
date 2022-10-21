@@ -336,7 +336,7 @@ function removeOverModalSkeleton(modal_id) {
     $(`#${modal_id}`).remove();
 }
 
-function blueModal({ id, size, title, message, closable = true, isOverModal = true, ...others } = {}) {
+function blueModal({ id, size, title, message, closable = true, isOverModal = false, ...others } = {}) {
     var modalId = "modal";
 
     if (isOverModal) {
