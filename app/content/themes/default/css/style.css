@@ -1753,6 +1753,7 @@ body.night-mode .bootstrap-datetimepicker-widget table td.new {
 
 .header-token_show {
   text-align: right;
+  font-weight: 900;
 }
 
 .header-token_text {
