@@ -610,8 +610,8 @@ $(function () {
         var title, message = '';
 
         if (purchase === 'success' && amount) {
-            title = __['Tokens bought successfully'];
-            message = __['You have successfully bought _AMOUNT_ tokens'].replace('_AMOUNT_', amount);
+            title = __['Request to buy tokens sent successfully'];
+            message = __['Thanks for the request to buy _AMOUNT_ tokens. As soon as the transaction is fully finished, you will receive the bought tokens, which will be visible in your balance and a new row in the transaction history will appear.'].replace('_AMOUNT_', amount);
 
             blueModal({ id: '#modal-success', title, message });
             remove_params_from_url();
@@ -791,7 +791,7 @@ $(function () {
                 "data-paywall-author-id": $(this).data('paywall-author-id'),
             });
         }
-    
+
         /* check if there is chat-form next to js_autocomplete-tags */
         if (parent.siblings('.chat-form').length > 0) {
             if (parent.find('ul.tags li').length == 0) {
@@ -1693,8 +1693,8 @@ $(function () {
         var title = __['Set paywall for _USERNAME_'].replace('_USERNAME_', name);
         var message = __['Enter the amount of tokens as the paywall value'];
 
-        paywall_set_modal({ 
-            id: "#modal-paywall-set", 
+        paywall_set_modal({
+            id: "#modal-paywall-set",
             title,
             message,
             price,
@@ -1711,7 +1711,7 @@ $(function () {
                         var title = __['Paywall set successful'];
                         var message = __['You have successfully set up the paywall in amount of _AMOUNT_ tokens for _USERNAME_'];
                         message = message.replace('_AMOUNT_', value).replace('_USERNAME_', name);
-                        
+
                         button_status(_target, "reset");
                         blueModal({id: "#modal-success", title, message });
                         _this.attr('data-paywalled', value);
