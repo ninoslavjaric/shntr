@@ -1756,12 +1756,13 @@ body.night-mode .bootstrap-datetimepicker-widget table td.new {
 }
 
 .header-token_text {
-  color: rgb(196, 153, 34);
+  color: rgb(0, 142, 199);
   display: inline-block;
 }
 
 .header-token_amount {
   display: inline-block;
+  margin-right: 10px;
 }
 
 body.night-mode:not(.visitor) .main-header {
