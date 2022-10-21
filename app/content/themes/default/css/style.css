@@ -1753,9 +1753,14 @@ body.night-mode .bootstrap-datetimepicker-widget table td.new {
 
 .header-token_show {
   text-align: right;
-  font-weight: 900;
+  font-weight: 600;
 }
-
+@media (max-width: 768px) {
+  .header-token_show {
+    height: 20px !important;
+    background-color: white !important;
+  }
+}
 .header-token_text {
   color: rgb(0, 142, 199);
   display: inline-block;
