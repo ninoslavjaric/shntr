@@ -11,6 +11,19 @@
     </div>
 </div>
 
+
+<script id="modal-skeleton" type="text/template">
+    <div id="{literal}{{modal_id}}{/literal}" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="loader pt10 pb10"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
 <script id="modal-login" type="text/template">
     <div class="modal-header">
         <h6 class="modal-title">{__("Not Logged In")}</h6>

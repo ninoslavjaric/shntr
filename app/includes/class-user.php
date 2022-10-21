@@ -10004,10 +10004,6 @@ class User
         if (!$this->_data['can_create_pages']) {
             throw new Exception(__("You don't have the permission to do this"));
         }
-        // validate location
-        if (is_empty($args['location'])) {
-            throw new Exception(__("You must enter a proper location"));
-        }
         /* validate title */
         if (is_empty($args['title'])) {
             throw new Exception(__("You must enter a title for your page"));
@@ -10027,6 +10023,10 @@ class User
         }
         if ($this->check_username($args['username'], 'page')) {
             throw new Exception(__("Sorry, it looks like this username") . " <strong>" . $args['username'] . "</strong> " . __("belongs to an existing page"));
+        }
+        // validate location
+        if (is_empty($args['location'])) {
+            throw new Exception(__("You must enter a proper location"));
         }
         /* set custom fields */
         $custom_fields = $this->set_custom_fields($args, "page");

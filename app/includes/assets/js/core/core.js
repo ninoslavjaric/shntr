@@ -297,85 +297,109 @@ function modal() {
 
     $('#modal').on('hidden.bs.modal', function (e) {
         $('#modal').removeClass(className);
-        $('.modal-dialog').removeClass('modal-dialog-centered');
+        $('#modal .modal-dialog').removeClass('modal-dialog-centered');
     })
 
     /* check if the modal not visible, show it */
     if (!$('#modal').is(":visible")) $('#modal').modal('show');
     /* prepare modal size */
-    $('.modal-dialog').removeClass('modal-sm');
-    $('.modal-dialog').removeClass('modal-lg');
-    $('.modal-dialog').removeClass('modal-xlg');
+    $('#modal .modal-dialog').removeClass('modal-sm');
+    $('#modal .modal-dialog').removeClass('modal-lg');
+    $('#modal .modal-dialog').removeClass('modal-xlg');
     switch (arguments[2]) {
         case 'small':
-            $('.modal-dialog').addClass('modal-sm');
+            $('#modal .modal-dialog').addClass('modal-sm');
             break;
         case 'large':
-            $('.modal-dialog').addClass('modal-lg');
+            $('#modal .modal-dialog').addClass('modal-lg');
             break;
         case 'extra-large':
-            $('.modal-dialog').addClass('modal-xl');
+            $('#modal .modal-dialog').addClass('modal-xl');
             break;
         case 'modal-dialog-centered':
-            $('.modal-dialog').addClass('modal-dialog-centered');
+            $('#modal .modal-dialog').addClass('modal-dialog-centered');
             break;
     }
     /* update the modal-content with the rendered template */
-    $('.modal-content:last').html(render_template(arguments[0], arguments[1]));
+    $('#modal .modal-content:last').html(render_template(arguments[0], arguments[1]));
     /* initialize modal if the function defined (user logged in) */
     if (typeof initialize_modal === "function") {
         initialize_modal();
     }
 }
 
-function blueModal({ id, size, title, message, closable = true, ...others } = {}) {
+function appendOverModalSkeleton(modal_id) {
+    $("body").append(render_template("#modal-skeleton", { modal_id }));
+}
+
+function removeOverModalSkeleton(modal_id) {
+    $(`#${modal_id}`).remove();
+}
+
+function blueModal({ id, size, title, message, closable = true, isOverModal = true, ...others } = {}) {
+    var modalId = "modal";
+
+    if (isOverModal) {
+        modalId = Date.now().toString();
+        appendOverModalSkeleton(modalId);
+    }
+
     var className = id.replace('#', '');
     if (id == "#modal-login" || id == "#chat-calling" || id == "#chat-ringing") {
         /* disable the backdrop (don't close modal when click outside) */
-        if ($('#modal').data('bs.modal')) {
-            $('#modal').data('bs.modal').options = { backdrop: 'static', keyboard: false };
+        if ($(`#${modalId}`).data('bs.modal')) {
+            $(`#${modalId}`).data('bs.modal').options = { backdrop: 'static', keyboard: false };
         } else {
-            $('#modal').modal({ backdrop: 'static', keyboard: false });
+            $(`#${modalId}`).modal({ backdrop: 'static', keyboard: false });
         }
     }
 
     if (!closable) {
-        $('#modal').modal({backdrop: 'static', keyboard: false})
+        $(`#${modalId}`).modal({backdrop: 'static', keyboard: false});
+    } else {
+        $(`#${modalId}`).modal({backdrop: true, keyboard: true});
     }
 
-    $('#modal').addClass(className);
-    $('#modal').addClass('blue-modal');
-    $('.modal-dialog').addClass('modal-dialog-centered');
+    $(`#${modalId}`).addClass(className);
+    $(`#${modalId}`).addClass('blue-modal');
+    $(`#${modalId} .modal-dialog`).addClass('modal-dialog-centered');
 
-    $('#modal').on('hidden.bs.modal', function (e) {
-        $('#modal').removeClass(className);
-        $('#modal').removeClass('blue-modal');
-        $('.modal-dialog').removeClass('modal-dialog-centered');
+    $(`#${modalId}`).on('hidden.bs.modal', function (e) {
+        $(`#${modalId}`).removeClass(className);
+        $(`#${modalId}`).removeClass('blue-modal');
+        $(`#${modalId} .modal-dialog`).removeClass('modal-dialog-centered');
+        if ($('.modal').is(":visible")) {
+            $('body').addClass('modal-open');
+        }
+
+        if (isOverModal) {
+            removeOverModalSkeleton(modalId);
+        }
     })
 
     /* check if the modal not visible, show it */
-    if (!$('#modal').is(":visible")) $('#modal').modal('show');
+    if (!$(`#${modalId}`).is(":visible")) $(`#${modalId}`).modal('show');
     /* prepare modal size */
-    $('.modal-dialog').removeClass('modal-sm');
-    $('.modal-dialog').removeClass('modal-lg');
-    $('.modal-dialog').removeClass('modal-xlg');
+    $(`#${modalId} .modal-dialog`).removeClass('modal-sm');
+    $(`#${modalId} .modal-dialog`).removeClass('modal-lg');
+    $(`#${modalId} .modal-dialog`).removeClass('modal-xlg');
     switch (size) {
         case 'small':
-            $('.modal-dialog').addClass('modal-sm');
+            $(`#${modalId} .modal-dialog`).addClass('modal-sm');
             break;
         case 'large':
-            $('.modal-dialog').addClass('modal-lg');
+            $(`#${modalId} .modal-dialog`).addClass('modal-lg');
             break;
         case 'extra-large':
-            $('.modal-dialog').addClass('modal-xl');
+            $(`#${modalId} .modal-dialog`).addClass('modal-xl');
             break;
         case 'modal-dialog-centered':
-            $('.modal-dialog').addClass('modal-dialog-centered');
+            $(`#${modalId} .modal-dialog`).addClass('modal-dialog-centered');
             break;
     }
 
     /* update the modal-content with the rendered template */
-    $('.modal-content:last').html(render_template(id, { title, message, closable, ...others }));
+    $(`#${modalId} .modal-content:last`).html(render_template(id, { title, message, closable, ...others }));
     /* initialize modal if the function defined (user logged in) */
     if (typeof initialize_modal === "function") {
         initialize_modal();

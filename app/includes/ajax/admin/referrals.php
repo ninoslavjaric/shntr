@@ -42,7 +42,7 @@ try {
 	$smarty->assign('id', $id);
 	/* return */
 	$return['template'] = $smarty->fetch("ajax.who_referred.tpl");
-	$return['callback'] = "$('#modal').modal('show'); $('.modal-content:last').html(response.template);";
+	$return['callback'] = "$('#modal').modal('show'); $('#modal .modal-content:last').html(response.template);";
 
 	// return & exit
 	return_json($return);

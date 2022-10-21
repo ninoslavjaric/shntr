@@ -33,7 +33,7 @@ try {
 	$smarty->assign('mutual_friends', $mutual_friends);
 	/* return */
 	$return['mutual_friends'] = $smarty->fetch("ajax.mutual_friends.tpl");
-	$return['callback'] = "$('#modal').modal('show'); $('.modal-content:last').html(response.mutual_friends);";
+	$return['callback'] = "$('#modal').modal('show'); $('#modal .modal-content:last').html(response.mutual_friends);";
 
 	// return & exit
 	return_json($return);

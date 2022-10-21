@@ -51,7 +51,7 @@ try {
 
 			// return
 			$return['template'] = $smarty->fetch("ajax.product.publisher.tpl");
-			$return['callback'] = "$('#modal').modal('show'); $('.modal-content:last').html(response.template); initialize_modal();";
+			$return['callback'] = "$('#modal').modal('show'); $('#modal .modal-content:last').html(response.template); initialize_modal();";
 			break;
 
 		case 'publish':
@@ -173,7 +173,7 @@ try {
 
             // return
 			$return['template'] = $smarty->fetch("ajax.product.editor.tpl");
-			$return['callback'] = "$('#modal').modal('show'); $('.modal-content:last').html(response.template); initialize_modal();";
+			$return['callback'] = "$('#modal').modal('show'); $('#modal .modal-content:last').html(response.template); initialize_modal();";
 			break;
 
 		default:
