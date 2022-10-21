@@ -269,8 +269,8 @@
     __['Amount of tokens must be 20 or more'] = "{__('Amount of tokens must be 20 or more')}";
     __['Tokens sent successfully'] = "{__('Tokens sent successfully')}";
     __['You have successfully sent'] = "{__('You have successfully sent')}";
-    __['You have successfully bought _AMOUNT_ tokens'] = "{__('You have successfully bought _AMOUNT_ tokens')}";
-    __['Tokens bought successfully'] = "{__('Tokens bought successfully')}";
+    __['Thanks for the request to buy _AMOUNT_ tokens. As soon as the transaction is fully finished, you will receive the bought tokens, which will be visible in your balance and a new row in the transaction history will appear.'] = "{__('Thanks for the request to buy _AMOUNT_ tokens. As soon as the transaction is fully finished, you will receive the bought tokens, which will be visible in your balance and a new row in the transaction history will appear.')}";
+    __['Request to buy tokens sent successfully'] = "{__('Request to buy tokens sent successfully')}";
     __['Tokens bought failed'] = "{__('Tokens bought failed')}";
     __['Set paywall for _USERNAME_'] = "{__('Set paywall for _USERNAME_')}";
     __['Enter the amount of tokens as the paywall value'] = "{__('Enter the amount of tokens as the paywall value')}";
