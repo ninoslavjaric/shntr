@@ -2067,16 +2067,22 @@ function modal()
  *
  * @return json
  */
-function blueModal($modalId, $title, $message, $additionalReturn = null, $closable = true, $isOverModal = false,)
+function blueModal($modalId, $title, $message, $additionalReturn = null, $closable = true, $isOverModal = false, $other = [])
 {
     $args = func_get_args();
     $return = array();
     $params = [
         "title" => $title,
-        "message" => addslashes($message),
+        "message" => $message,
         "closable" => $closable,
         "isOverModal" => $isOverModal,
     ];
+
+    if (!empty($other) && is_array($other)) {
+        foreach ($other as $key => $value) {
+            $params[$key] = $value;
+        }
+    }
 
     function prepareModalParams($params) {
         return "blueModal(". json_encode($params) .")";

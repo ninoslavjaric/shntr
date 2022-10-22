@@ -84,7 +84,7 @@
         {literal}{{/password_check}}{/literal}
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-light" data-dismiss="modal">{__("Cancel")}</button>
+        <button type="button" class="btn btn-light" data-dismiss="modal" id="modal-confirm-cancel">{__("Cancel")}</button>
         <button type="button" class="btn btn-primary" id="modal-confirm-ok">{__("Confirm")}</button>
     </div>
 </script>

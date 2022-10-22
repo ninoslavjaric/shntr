@@ -9996,6 +9996,11 @@ class User
     public function create_page($args = [])
     {
         global $db, $system, $date;
+
+        if (!$system['interests_enabled']) {
+            _error(404);
+        }
+
         /* check if pages enabled */
         if (!$system['pages_enabled']) {
             throw new Exception(__("This feature has been disabled by the admin"));
@@ -10028,13 +10033,42 @@ class User
         if (is_empty($args['location'])) {
             throw new Exception(__("You must enter a proper location"));
         }
-        /* set custom fields */
-        $custom_fields = $this->set_custom_fields($args, "page");
 
         if ($args['location'] && empty($args['location_id'])) {
             $args['location'] = htmlspecialchars_decode($args['location']);
             $args['location_id'] = self::guess_place_id(...explode(' > ', $args['location']));
         }
+
+        /* validate interests */
+        if (empty($args['interests']) || !is_array($args['interests'])) {
+            throw new Exception(__("Please select at least one category of interest"));
+        }
+
+        if (!valid_array_of_positive_ints($args['interests'])) {
+            throw new Exception(__("Please enter a valid array of interests"));
+        }
+
+        $balance = shntrToken::getRelysiaBalance();
+        $query = $db->query("SELECT price FROM prices WHERE price_name = 'page_price';");
+        $price = $query->fetch_assoc();
+
+        // validate cost_confirmation
+        if (is_empty($args['cost_confirmation'])) {
+            $modal_id = "#modal-confirm";
+            $modal_title = __("Costs for creating page");
+            $modal_message = str_replace("_PRICE_", $price['price'], __("By paying the fee of _PRICE_ tokens, the page will be published."));
+            $modal_callback = ["confirm_ok_callback" => "create_pages_groups_events_payment_confirm()"];
+
+            blueModal($modal_id, $modal_title, $modal_message, null, true, true, $modal_callback);
+        }
+
+        if ($balance < $price['price']) {
+            blueModal("ERROR", __("Funds"), __("You're out of tokens"), null, true, true);
+        }
+
+        /* set custom fields without cost_confirmation */
+        unset($args['cost_confirmation']);
+        $custom_fields = $this->set_custom_fields($args, "page");
 
         $db->begin_transaction();
 
@@ -10099,15 +10133,6 @@ class User
         } catch (Exception $e) {
             $db->rollback();
             throw new Exception(__("Event failed to be created"));
-        }
-
-        if (!$system['interests_enabled']) {
-            _error(404);
-        }
-
-        /* validate interests */
-        if (empty($args['interests']) || !valid_array_of_positive_ints($args['interests'])) {
-            throw new Exception(__("Please enter a valid array of interests"));
         }
 
         $this->edit_page_interests($args['interests'], $page_id);

@@ -113,7 +113,7 @@ function handlePaywallRestrictions(e, el) {
     var message = __['By paying the paywall of _AMOUNT_ token(s), you will be able to carry out the planned action.'].replace('_AMOUNT_', price);
     var closable = e ? true : false;
 
-    paywall_pay_modal({ 
+    paywall_pay_modal({
         id: "#modal-paywall-pay",
         title,
         message,
@@ -404,6 +404,20 @@ function blueModal({ id, size, title, message, closable = true, isOverModal = fa
     if (typeof initialize_modal === "function") {
         initialize_modal();
     }
+
+    if (id === "#modal-confirm" && others.confirm_ok_callback) {
+        $("#modal-confirm-ok").click(function () {
+            typeof others.confirm_ok_callback === 'string' && eval(others.confirm_ok_callback);
+            typeof others.confirm_ok_callback === 'function' && others.confirm_ok_callback();
+        });
+    }
+
+    if (id === "#modal-confirm" && others.confirm_cancel_callback) {
+        $("#modal-confirm-ok").click(function () {
+            typeof others.confirm_cancel_callback === 'string' && eval(others.confirm_cancel_callback);
+            typeof others.confirm_cancel_callback === 'function' && others.confirm_cancel_callback();
+        });
+    }
 }
 
 function paywall_pay_modal({ id, title, message, price, paywallAuthorId, closable, confirmCallback, cancelCallback = () => {} } = {}) {
@@ -445,6 +459,17 @@ function paywall_set_modal({ id, title, message, price, callback } = {}) {
     });
 }
 
+function create_pages_groups_events_payment_confirm() {
+    var form = $('.js_ajax-forms');
+    var current_modal = event.target.closest('.modal');
+
+    $(current_modal).modal('hide');
+
+    if (form.is(":visible")) {
+        form.find('#cost_confirmation').prop('checked', true);
+        form.submit();
+    }
+}
 
 // confirm
 function confirm(title, message, callback, password_check = false, extra_content = '') {

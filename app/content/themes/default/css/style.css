@@ -391,6 +391,10 @@ body.night-mode .modal-footer {
   color: #fff;
 }
 
+.modal-confirm .modal-body h6 {
+  line-height: 1.4;
+}
+
 /* modal-fund */
 .modal-fund #tokenInput, .modal-buy-tokens #tokenInput, #senderMsg {
   max-width: 240px;
