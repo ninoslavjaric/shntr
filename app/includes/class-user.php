@@ -11244,18 +11244,21 @@ class User
     public function create_event($args = [])
     {
         global $db, $system, $date;
+
+        if (!$system['interests_enabled']) {
+            _error(404);
+        }
+
         /* check if events enabled */
         if (!$system['events_enabled']) {
             throw new Exception(__("This feature has been disabled by the admin"));
         }
+
         /* check events permission */
         if (!$this->_data['can_create_events']) {
             throw new Exception(__("You don't have the permission to do this"));
         }
-        // validate location
-        if (is_empty($args['location'])) {
-            throw new Exception(__("You must enter a proper location"));
-        }
+
         /* validate title */
         if (is_empty($args['title'])) {
             throw new Exception(__("You must enter a name for your event"));
@@ -11263,6 +11266,12 @@ class User
         if (strlen($args['title']) < 3) {
             throw new Exception(__("Event name must be at least 3 characters long. Please try another"));
         }
+
+        // validate location
+        if (is_empty($args['location'])) {
+            throw new Exception(__("You must enter a proper location"));
+        }
+
         /* validate start & end dates */
         if (is_empty($args['start_date'])) {
             throw new Exception(__("You have to enter the event start date"));
@@ -11273,11 +11282,40 @@ class User
         if (strtotime(set_datetime($args['start_date'])) > strtotime(set_datetime($args['end_date']))) {
             throw new Exception(__("Event end date must be after the start date"));
         }
+
         /* validate privacy */
         if (!in_array($args['privacy'], array('secret', 'closed', 'public'))) {
             throw new Exception(__("You must select a valid privacy for your event"));
         }
-        /* set custom fields */
+
+        /* validate interests */
+        if (empty($args['interests']) || !is_array($args['interests'])) {
+            throw new Exception(__("Please select at least one category of interest"));
+        }
+        if (!valid_array_of_positive_ints($args['interests'])) {
+            throw new Exception(__("Please enter a valid array of interests"));
+        }
+
+        // validate cost_confirmation
+        $balance = shntrToken::getRelysiaBalance();
+        $query = $db->query("SELECT price FROM prices WHERE price_name = 'event_price';");
+        $price = $query->fetch_assoc();
+
+        if (is_empty($args['cost_confirmation'])) {
+            $modal_id = "#modal-confirm";
+            $modal_title = __("Costs for creating page");
+            $modal_message = str_replace("_PRICE_", $price['price'], __("By paying the fee of _PRICE_ tokens, the event will be published."));
+            $modal_callback = ["confirm_ok_callback" => "create_pages_groups_events_payment_confirm()"];
+
+            blueModal($modal_id, $modal_title, $modal_message, null, true, true, $modal_callback);
+        }
+
+        if ($balance < $price['price']) {
+            blueModal("ERROR", __("Funds"), __("You're out of tokens"), null, true, true);
+        }
+
+        /* set custom fields without cost_confirmation */
+        unset($args['cost_confirmation']);
         $custom_fields = $this->set_custom_fields($args, "event");
 
         if ($args['location'] && empty($args['location_id'])) {
@@ -11351,8 +11389,8 @@ class User
             $db->rollback();
             throw new Exception(__("Event failed to be created"));
         }
-        /* return event id */
-        return $event_id;
+
+        $this->edit_event_interests($args['interests'], $event_id);
     }
 
 

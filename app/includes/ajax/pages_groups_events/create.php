@@ -100,25 +100,7 @@ try {
 
 		case 'event':
 			if ($_GET['do'] == "create") {
-        if (empty($user->_data['user_relysia_password'])) {
-            $user->register_to_relysia(
-                $user->_data['user_name'], $user->_data['user_id']
-            );
-        }
-        $balance = shntrToken::getRelysiaBalance();
-
-				$query = $db->query("SELECT price FROM prices WHERE price_name = 'event_price';");
-				$price = $query->fetch_assoc();
-        if ($balance < $price['price']) {
-            blueModal("ERROR", __("Funds"), __("You're out of tokens"));
-        }
-
-				// event create
-				$event_id = $user->create_event($_POST);
-
-                $user->edit_event_interests($_POST['interests'], $event_id);
-
-				// return
+				$user->create_event($_POST);
 				$return['path'] = $system['system_url'] . '/events/' . $event_id;
 			} elseif ($_GET['do'] == "edit") {
 
