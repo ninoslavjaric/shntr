@@ -468,6 +468,22 @@ function create_pages_groups_events_payment_confirm() {
     if (form.is(":visible")) {
         form.find('#cost_confirmation').prop('checked', true);
         form.submit();
+    } else {
+        error.log('Form is not visible');
+    }
+}
+
+function publish_product_payment_confirm() {
+    var form = $('.product-publish');
+    var current_modal = event.target.closest('.modal');
+
+    $(current_modal).modal('hide');
+
+    if (form.is(":visible")) {
+        form.find('#cost_confirmation').prop('checked', true);
+        form.find('.js_publisher-btn').trigger('click');
+    } else {
+        error.log('Form is not visible');
     }
 }
 
