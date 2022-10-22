@@ -103,31 +103,32 @@ try {
 				$user->create_event($_POST);
 				$return['path'] = $system['system_url'] . '/events/' . $event_id;
 			} elseif ($_GET['do'] == "edit") {
-
-				// valid inputs
 				if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 					_error(400);
 				}
 
 				switch ($_GET['edit']) {
-                    case 'interests':
-                        /* check if interests enabled */
-                        if (!$system['interests_enabled']) {
-                            _error(404);
-                        }
+					case 'interests':
+						/* check if interests enabled */
+						if (!$system['interests_enabled']) {
+							_error(404);
+						}
 
-                        /* validate interests */
-                        if (empty($_POST['interests']) || !valid_array_of_positive_ints($_POST['interests'])) {
-                            throw new Exception(__("Please enter a valid array of interests"));
-                        }
+						/* validate interests */
+						if (empty($_POST['interests']) || !is_array($_POST['interests'])) {
+							throw new Exception(__("Please select at least one category of interest"));
+						}
 
-                        $user->edit_event_interests($_POST['interests'], $_GET['id']);
-                        break;
+						if (!valid_array_of_positive_ints($_POST['interests'])) {
+							throw new Exception(__("Please enter a valid array of interests"));
+						}
 
-                    default:
-                        // event edit
-                        $user->edit_event($_GET['id'], $_POST);
-                }
+						$user->edit_event_interests($_POST['interests'], $_GET['id']);
+						break;
+					default:
+						// event edit
+						$user->edit_event($_GET['id'], $_POST);
+				}
 
 				// return
 				$return['path'] = $system['system_url'] . '/events/' . $_GET['id'];
