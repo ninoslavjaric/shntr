@@ -11,7 +11,7 @@
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
-<form class="publisher-mini">
+<form class="publisher-mini product-publish">
     <div class="modal-body">
         <div class="row">
             <div class="form-group col-md-8">
@@ -101,11 +101,21 @@
                 </div>
             </div>
         </div>
+
+        <!-- costs confirmation checkbox -->
+        <div class="form-group">
+            <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="cost_confirmation" name="cost_confirmation">
+                <label class="custom-control-label" for="cost_confirmation">Costs confirmation</label>
+            </div>
+        </div>
+        <!-- costs confirmation checkbox -->
+
         <!-- error -->
         <div class="alert alert-danger mb0 x-hidden"></div>
         <!-- error -->
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-primary js_publisher-btn js_publisher-product">{__("Publish")}<span class="badge">for {$price} tokens</span></button>
+        <button type="button" class="btn btn-primary js_publisher-btn js_publisher-product">{__("Publish")}</button>
     </div>
 </form>

@@ -973,6 +973,10 @@ $(function () {
             if ($(this).attr('type') === 'radio' && !$(this).is(':checked')) {
                 return;
             }
+            if ($(this).is('#cost_confirmation')) {
+                return;
+            }
+
             product[$(this).attr('name')] = $(this).val();
         });
         if (!$.isEmptyObject(product)) {
@@ -986,9 +990,16 @@ $(function () {
         /* get photos */
         var photos = publisher.data('photos');
         var files = publisher.data('file');
+        var cost_confirmation = Boolean(publisher.find('#cost_confirmation').is(':checked'));
+        var data = { 'do': 'publish', 'product': JSON.stringify(product), 'message': textarea.val(), 'photos': JSON.stringify(photos), 'files': JSON.stringify(files) };
+
+        if (cost_confirmation) {
+            data.cost_confirmation = cost_confirmation;
+        }
+
         /* button loading */
         button_status(_this, "loading");
-        $.post(api['posts/product'], { 'do': 'publish', 'product': JSON.stringify(product), 'message': textarea.val(), 'photos': JSON.stringify(photos), 'files': JSON.stringify(files) }, function (response) {
+        $.post(api['posts/product'], data, function (response) {
             /* button reset */
             button_status(_this, "reset");
             if (response.error) {

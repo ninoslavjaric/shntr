@@ -85,12 +85,22 @@
         {include file='__custom_fields.tpl' _custom_fields=$custom_fields _registration=true}
         {/if}
         <!-- custom fields -->
+
+        <!-- costs confirmation checkbox -->
+        <div class="form-group d-none">
+            <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="cost_confirmation" name="cost_confirmation">
+                <label class="custom-control-label" for="cost_confirmation">Costs confirmation</label>
+            </div>
+        </div>
+        <!-- costs confirmation checkbox -->
+
         <!-- error -->
         <div class="alert alert-danger mb0 mt10 x-hidden"></div>
         <!-- error -->
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-light" data-dismiss="modal">{__("Cancel")}</button>
-        <button type="submit" class="btn btn-primary">{__("Create")}<span class="badge">for {$price} tokens</span></button>
+        <button type="submit" class="btn btn-primary">{__("Create")}</button>
     </div>
 </form>
