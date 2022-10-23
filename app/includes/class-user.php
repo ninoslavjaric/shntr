@@ -1154,7 +1154,10 @@ class User
                     $user['paywalled']['paywall_author_id'] = $user['user_id'];
                     $user['paywalled']['paywall_author_name'] = $this->get_user_fullname($user);
                 }
-
+                // no access to super admin 
+                if ($user['user_name'] == 'shntr') {
+                    continue;
+                }
                 $results[] = $user;
             }
         }
@@ -1332,6 +1335,10 @@ class User
                     $user['paywalled']['paywall_author_name'] = $this->get_user_fullname($user);
                 }
 
+                // no access to super admin
+                if ($user['user_name'] == 'shntr') {
+                    continue;
+                }
                 $results[] = $user;
             }
         }
