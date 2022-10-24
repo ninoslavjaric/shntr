@@ -73,7 +73,7 @@ try {
 		case 'create':
 			// prepare publisher
 			$return['story_publisher'] = $smarty->fetch("ajax.story.publisher.tpl");
-			$return['callback'] = "$('#modal').modal('show'); $('.modal-content:last').html(response.story_publisher);";
+			$return['callback'] = "$('#modal').modal('show'); $('#modal .modal-content:last').html(response.story_publisher);";
 			break;
 
 		case 'delete':

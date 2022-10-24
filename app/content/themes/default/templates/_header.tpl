@@ -351,6 +351,10 @@
 
                 </div>
             </div>
+            <div class="header-token_show">
+                <p class="header-token_text">shntr Tokens:</p>
+                <p class="header-token_amount">{$user->_data['shntr_token_amount']}</p>
+            </div>
         </div>
         <!-- main-header -->
         {/if}

@@ -391,6 +391,10 @@ body.night-mode .modal-footer {
   color: #fff;
 }
 
+.modal-confirm .modal-body h6 {
+  line-height: 1.4;
+}
+
 /* modal-fund */
 .modal-fund #tokenInput, .modal-buy-tokens #tokenInput, #senderMsg {
   max-width: 240px;
@@ -1749,6 +1753,26 @@ body.night-mode .bootstrap-datetimepicker-widget table td.new {
 .main-header .menu-bar {
   background-color: #000;
   height: 70px;
+}
+
+.header-token_show {
+  text-align: right;
+  font-weight: 600;
+}
+@media (max-width: 768px) {
+  .header-token_show {
+    height: 20px !important;
+    background-color: white !important;
+  }
+}
+.header-token_text {
+  color: rgb(0, 142, 199);
+  display: inline-block;
+}
+
+.header-token_amount {
+  display: inline-block;
+  margin-right: 10px;
 }
 
 body.night-mode:not(.visitor) .main-header {
@@ -5432,7 +5456,7 @@ body.night-mode .add-story .add {
   top: 0;
   bottom: 0;
   width: 210px;
-  top: 70px;
+  top: 94px;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
   z-index: 1000;
 }

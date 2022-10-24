@@ -60,7 +60,7 @@ try {
 
 			// return
 			$return['share_publisher'] = $smarty->fetch("ajax.share.publisher.tpl");
-			$return['callback'] = "$('#modal').modal('show'); $('.modal-content:last').html(response.share_publisher); initialize_modal();";
+			$return['callback'] = "$('#modal').modal('show'); $('#modal .modal-content:last').html(response.share_publisher); initialize_modal();";
 			break;
 
 		default:

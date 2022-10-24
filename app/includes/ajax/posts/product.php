@@ -51,7 +51,7 @@ try {
 
 			// return
 			$return['template'] = $smarty->fetch("ajax.product.publisher.tpl");
-			$return['callback'] = "$('#modal').modal('show'); $('.modal-content:last').html(response.template); initialize_modal();";
+			$return['callback'] = "$('#modal').modal('show'); $('#modal .modal-content:last').html(response.template); initialize_modal();";
 			break;
 
 		case 'publish':
@@ -60,22 +60,17 @@ try {
 			if (!isset($_POST['product'])) {
 				_error(400);
 			}
+
 			$_POST['product'] = json_decode($_POST['product']);
 			if (!is_object($_POST['product'])) {
 				_error(400);
 			}
 
-      if (empty($user->_data['user_relysia_password'])) {
-          $user->register_to_relysia(
-              $user->_data['user_name'], $user->_data['user_id']
-          );
-      }
-      $balance = shntrToken::getRelysiaBalance();
-      $query = $db->query("SELECT price FROM prices WHERE price_name = 'product_price';");
-      $price = $query->fetch_assoc();
-      if ($balance < $price['price']) {
-          blueModal("ERROR", __("Funds"), __("You're out of tokens {$balance}"));
-      }
+			if (empty($user->_data['user_relysia_password'])) {
+				$user->register_to_relysia(
+					$user->_data['user_name'], $user->_data['user_id']
+				);
+			}
 
 			/* check product name */
 			if (is_empty($_POST['product']->name)) {
@@ -88,14 +83,17 @@ try {
 			if (!is_numeric($_POST['product']->price) || $_POST['product']->price < 0) {
 				return_json(array('error' => true, 'message' => __("Please add valid product price (0 for free or more)")));
 			}
+
 			/* check product category */
 			if (!$user->get_category("market_categories", $_POST['product']->category)) {
 				return_json(array('error' => true, 'message' => __("Please select valid product category")));
 			}
+
 			/* check product status */
 			if (!in_array($_POST['product']->status, array('new', 'old'))) {
 				return_json(array('error' => true, 'message' => __("Please select valid product status")));
 			}
+
 			/* filter photos */
 			$photos = array();
 			if (isset($_POST['photos'])) {
@@ -128,6 +126,7 @@ try {
 					_error(400);
 				}
 			}
+
 			/* set custom fields */
 			try {
 				$inputs['custom_fields'] = $user->set_custom_fields($_POST['product'], 'product');
@@ -144,10 +143,26 @@ try {
 			$inputs['photos'] = $photos;
 			$inputs['files'] = $files;
 
-			// publish
-			$post = $user->publisher($inputs);
+			$balance = shntrToken::getRelysiaBalance();
 
-			// return
+			$query = $db->query("SELECT price FROM prices WHERE price_name = 'product_price';");
+			$price = $query->fetch_assoc();
+
+			// validate cost_confirmation
+			if (is_empty($_POST['cost_confirmation'])) {
+				$modal_id = "#modal-confirm";
+				$modal_title = __("Costs for creating page");
+				$modal_message = str_replace("_PRICE_", $price['price'], __("By paying the fee of _PRICE_ tokens, the product will be published."));
+				$modal_callback = ["confirm_ok_callback" => "publish_product_payment_confirm()"];
+	
+				blueModal($modal_id, $modal_title, $modal_message, null, true, true, $modal_callback);
+			}
+	
+			if ($balance < $price['price']) {
+				blueModal("ERROR", __("Funds"), __("You're out of tokens"), null, true, true);
+			}
+
+			$post = $user->publisher($inputs);
 			$return['callback'] = "window.location = '" . $system['system_url'] . "/posts/" . $post['post_id'] . "';";
 			break;
 
@@ -173,7 +188,7 @@ try {
 
             // return
 			$return['template'] = $smarty->fetch("ajax.product.editor.tpl");
-			$return['callback'] = "$('#modal').modal('show'); $('.modal-content:last').html(response.template); initialize_modal();";
+			$return['callback'] = "$('#modal').modal('show'); $('#modal .modal-content:last').html(response.template); initialize_modal();";
 			break;
 
 		default:

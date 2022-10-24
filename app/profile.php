@@ -29,6 +29,16 @@ try {
 	}
 	$profile = $get_profile->fetch_assoc();
 
+	// not access admin
+	// if ($user->_data['user_group'] > 1 && $profile['user_group'] == 1) {
+	// 	_error(404);
+	// }
+	
+	// not access super admin
+	if ($user->_data['user_name'] != 'shntr' && $profile['user_name'] == 'shntr') {
+		_error(404);
+	}
+
     /* return amount of tokens or NULL */
     $profile['paywall_set'] = $user->paywalled($user->_data['user_id'], $profile['user_id']);
 
