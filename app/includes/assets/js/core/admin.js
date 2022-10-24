@@ -1,11 +1,12 @@
 /**
  * admin js
- * 
+ *
  * @package Sngine
  * @author Zamblek
  */
 
 // initialize API URLs
+api['admin/users'] = ajax_path + "admin/users.php";
 api['admin/delete'] = ajax_path + "admin/delete.php";
 api['admin/test'] = ajax_path + "admin/test.php";
 api['admin/ads'] = ajax_path + "admin/ads.php";
@@ -52,6 +53,25 @@ $(function () {
     // treegrid
     $('.js_treegrid').treegrid();
 
+
+    // admin deleter
+    $('body').on('click', '.js_admin-sync-wallet', function () {
+        const id = $(this).data('id');
+        const element = $(this);
+
+        const preLoader = element.html();
+        element.html('<span class="spinner-grow spinner-grow-sm mr10"></span>' + __['Loading']);
+
+        $.post(api['admin/users'], { 'do': 'sync-wallet', 'id': id }, function (response) {
+            modal('#modal-message', { title: __['Success'], message: response.message });
+            element.html(preLoader);
+        }, 'json')
+          .fail(function () {
+              modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+              element.html(preLoader);
+          }
+      );
+    });
 
     // admin deleter
     $('body').on('click', '.js_admin-deleter', function () {

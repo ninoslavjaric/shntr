@@ -111,11 +111,43 @@ class shntrToken
             ]
         );
 
-        if (($response['statusCode'] ?? null) !== 200 ||  !isset($response['data']['token'])) {
+        if (($response['statusCode'] ?? null) !== 200 || !isset($response['data']['token'])) {
             return false;
         }
 
         return $response['data']['token'];
+    }
+
+    public static function sync(int $user_id): array
+    {
+        global $db;
+
+        if (in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES) || str_contains(SYS_URL, 'ngrok')) {
+            return [
+                "statusCode" => 200,
+                "data" => [
+                    "status" => "success",
+                    "msg" => "migration started successfully"
+                ]
+            ];
+        }
+
+        [$senderUsername, $senderPassword] = $db->query(
+            sprintf(
+                'select user_name, user_relysia_password from users where user_id = %s', secure($user_id)
+            )
+        )->fetch_row();
+
+        $token = static::auth($senderUsername, $senderPassword);
+
+        return http_call(self::API_BASE_URL . '/tokenMetrics',
+            'GET',
+            [],
+            [
+                "authToken: {$token}",
+                "serviceID: 9ab1b69e-92ae-4612-9a4f-c5a102a6c068",
+            ]
+        );
     }
 
     /**
@@ -161,11 +193,11 @@ class shntrToken
             ]
         );
 
-        if (($response['statusCode'] ?? null) !== 200 ||  !isset($response['data']['coins'])) {
+        if (($response['statusCode'] ?? null) !== 200 || !isset($response['data']['coins'])) {
             return 0;
         }
 
-        $tokens = array_filter($response['data']['coins'], function($coin) {
+        $tokens = array_filter($response['data']['coins'], function ($coin) {
             if (!array_key_exists('amount', $coin) || !array_key_exists('tokenId', $coin)) {
                 return false;
             }
@@ -248,7 +280,7 @@ class shntrToken
     {
         global $db;
 
-        $values = array_map(function($value) use ($db) {
+        $values = array_map(function ($value) use ($db) {
             return is_null($value) ? 'NULL' : ("'" . $db->escape_string($value) . "'");
         }, array_values($params));
 
@@ -342,7 +374,7 @@ class shntrToken
     {
         global $db;
 
-        $get_transaction= $db->query(sprintf("SELECT id, amount, sender_id, recipient_id, basis_name, created_at FROM token_transactions WHERE id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_transaction = $db->query(sprintf("SELECT id, amount, sender_id, recipient_id, basis_name, created_at FROM token_transactions WHERE id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
         if ($get_transaction->num_rows == 0) {
             _error(403);
         }
