@@ -10055,7 +10055,6 @@ class User
             throw new Exception(__("Please enter a valid array of interests"));
         }
 
-        $balance = shntrToken::getRelysiaBalance();
         $query = $db->query("SELECT price FROM prices WHERE price_name = 'page_price';");
         $price = $query->fetch_assoc();
 
@@ -10069,6 +10068,7 @@ class User
             blueModal($modal_id, $modal_title, $modal_message, null, true, true, $modal_callback);
         }
 
+        $balance = shntrToken::getRelysiaBalance();
         if ($balance < $price['price']) {
             blueModal("ERROR", __("Funds"), __("You're out of tokens"), null, true, true);
         }
@@ -10664,7 +10664,6 @@ class User
             throw new Exception(__("Please enter a valid array of interests"));
         }
 
-        $balance = shntrToken::getRelysiaBalance();
         $query = $db->query("SELECT price FROM prices WHERE price_name = 'group_price';");
         $price = $query->fetch_assoc();
 
@@ -10678,6 +10677,7 @@ class User
             blueModal($modal_id, $modal_title, $modal_message, null, true, true, $modal_callback);
         }
 
+        $balance = shntrToken::getRelysiaBalance();
         if ($balance < $price['price']) {
             blueModal("ERROR", __("Funds"), __("You're out of tokens"), null, true, true);
         }
@@ -11304,7 +11304,6 @@ class User
         }
 
         // validate cost_confirmation
-        $balance = shntrToken::getRelysiaBalance();
         $query = $db->query("SELECT price FROM prices WHERE price_name = 'event_price';");
         $price = $query->fetch_assoc();
 
@@ -11317,6 +11316,7 @@ class User
             blueModal($modal_id, $modal_title, $modal_message, null, true, true, $modal_callback);
         }
 
+        $balance = shntrToken::getRelysiaBalance();
         if ($balance < $price['price']) {
             blueModal("ERROR", __("Funds"), __("You're out of tokens"), null, true, true);
         }
