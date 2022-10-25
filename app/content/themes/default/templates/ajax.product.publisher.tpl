@@ -103,7 +103,7 @@
         </div>
 
         <!-- costs confirmation checkbox -->
-        <div class="form-group">
+        <div class="form-group d-none">
             <div class="custom-control custom-checkbox">
                 <input type="checkbox" class="custom-control-input" id="cost_confirmation" name="cost_confirmation">
                 <label class="custom-control-label" for="cost_confirmation">Costs confirmation</label>
