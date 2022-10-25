@@ -15176,8 +15176,8 @@ class User
             )
         );
 
-        shntrToken::payRelysia(1000, $paymail, 0);
-        shntrToken::noteTransaction(1000, 0, $user_id, null, null, 'INIT');
+//        shntrToken::payRelysia(1000, $paymail, 0);
+//        shntrToken::noteTransaction(1000, 0, $user_id, null, null, 'INIT');
     }
 
 
@@ -17783,9 +17783,15 @@ class User
             $db->query(sprintf("UPDATE users SET user_activated = '1', user_email_verified = '1' WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
             /* affiliates system */
             $this->process_affiliates("registration", $this->_data['user_id'], $this->_data['user_referrer_id']);
+
+            shntrToken::payRelysia(1000, $this->_data['user_relysia_paymail'], 0);
+            shntrToken::noteTransaction(1000, 0, $this->_data['user_id'], null, null, 'INIT');
         } else {
             /* [2] just verify his email */
             $db->query(sprintf("UPDATE users SET user_email_verified = '1' WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+
+            shntrToken::payRelysia(1000, $this->_data['user_relysia_paymail'], 0);
+            shntrToken::noteTransaction(1000, 0, $this->_data['user_id'], null, null, 'INIT');
         }
         /* redirect */
         redirect();
