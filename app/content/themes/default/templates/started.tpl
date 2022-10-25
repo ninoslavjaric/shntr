@@ -34,12 +34,12 @@
                                 <p class="mb0">{__("Update your info")}</p>
                             </a>
                         </li>
-                        <li class="nav-item">
+                        {* <li class="nav-item">
                             <a class="nav-link disabled" href="#step-3">
                                 <h4 class="mb5">{__("Step 3")}</h4>
                                 <p class="mb0">{__("Add Friends")}</p>
                             </a>
-                        </li>
+                        </li> *}
                     </ul>
                     <!-- nav -->
 
@@ -312,21 +312,21 @@
                             <!-- success -->
 
                             <!-- error -->
-                            <div class="alert alert-danger x-hidden"></div>
+                            {* <div class="alert alert-danger x-hidden"></div> *}
                             <!-- error -->
 
                             <!-- buttons -->
                             <div class="clearfix mt20">
                                 <div class="float-right">
                                     {* <button type="submit" class="btn btn-success"><i class="fas fa-check-circle mr5"></i>{__("Save Changes")}</button> *}
-                                    <button type="submit" class="btn btn-primary" id="activate-step-3">{__("Next Step")}<i class="fas fa-arrow-circle-right ml5"></i></button>
+                                    <button type="submit" class="btn btn-danger" id="activate-step-3"><i class="fas fa-check-circle mr5"></i>{__("Finish")}</button>
                                 </div>
                             </div>
                             <!-- buttons -->
                         </form>
                     </div>
 
-                    <div class="js_wizard-content x-hidden" id="step-3">
+                    {* <div class="js_wizard-content x-hidden" id="step-3">
                         <div class="text-center">
                             <h3 class="mb5">{__("Add Friends")}</h3>
                             <p class="mb20">{__("Get latest activities from our popular users")}</p>
@@ -347,7 +347,7 @@
                             <a href="{$system['system_url']}/started/finished" class="btn btn-danger float-right"><i class="fas fa-check-circle mr5"></i>{__("Finish")}</a>
                         </div>
                         <!-- buttons -->
-                    </div>
+                    </div> *}
                     <!-- tabs -->
 
                 </div>
@@ -388,7 +388,8 @@
         $('#activate-step-3').on('click', function(e) {
             $('.js_ajax-forms').submit();
             $('.js_wizard-steps li:eq(2) a').removeClass('disabled');
-            $('.js_wizard-steps li a[href="#step-3"]').trigger('click');
+            window.location.href = '{$system['system_url']}/started/finished';
+            // $('.js_wizard-steps li a[href="#step-3"]').trigger('click');
         });
 
     });

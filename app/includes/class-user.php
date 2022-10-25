@@ -877,6 +877,11 @@ class User
                     $user['paywalled']['paywall_author_name'] = $this->get_user_fullname($user);
                 }
 
+                // no access to super admin 
+                if ($user['user_name'] == 'shntr') {
+                    continue;
+                }
+
                 $results[] = $user;
             }
         }
@@ -948,8 +953,16 @@ class User
                     $mention_item['img'] = $user['user_picture'];
                     $mention_item['label'] = ($system['show_usernames_enabled']) ? $user['user_name'] : $user['user_firstname'] . " " . $user['user_lastname'];
                     $mention_item['value'] = "[" . $user['user_name'] . "]";
+                    // no access to super admin 
+                    if ($mention_item['user_name'] == 'shntr') {
+                        continue;
+                    }
                     $users[] = $mention_item;
                 } else {
+                    // no access to super admin 
+                    if ($user['user_name'] == 'shntr') {
+                        continue;
+                    }
                     $users[] = $user;
                 }
             }
@@ -1073,7 +1086,10 @@ class User
                             $user['paywalled']['paywall_author_id'] = $user['user_id'];
                             $user['paywalled']['paywall_author_name'] = $this->get_user_fullname($user);
                         }
-
+                        // no access to super admin 
+                        if ($user['user_name'] == 'shntr') {
+                            continue;
+                        }
                         $results[] = $user;
                     }
                 }
@@ -6066,6 +6082,9 @@ class User
             while ($post = $get_posts->fetch_assoc()) {
                 $post = $this->get_post($post['post_id'], true, true); /* $full_details = true, $pass_privacy_check = true */
                 if ($post) {
+                    if ($post['user_id'] != 1 && $this->_data['user_name'] != 'shntr') {
+                        continue;
+                    }
                     $posts[] = $post;
                 }
             }
@@ -12776,6 +12795,10 @@ class User
         if ($get_users->num_rows > 0) {
             while ($user = $get_users->fetch_assoc()) {
                 $user['user_picture'] = get_picture($user['user_picture'], $user['user_gender']);
+                // no access to super admin 
+                if ($user['user_name'] == 'shntr') {
+                    continue;
+                }
                 $users[] = $user;
             }
         }
