@@ -33,7 +33,7 @@ try {
 	$smarty->assign('id', $_GET['post_id']);
 	/* return */
 	$return['template'] = $smarty->fetch("ajax.who_donates.tpl");
-	$return['callback'] = "$('#modal').modal('show'); $('#modal .modal-content:last').html(response.template);";
+	$return['callback'] = "$('#modal').modal('show'); $('#modal').removeClass('blue-modal'); $('#modal .modal-content:last').html(response.template);";
 
 	// return & exit
 	return_json($return);

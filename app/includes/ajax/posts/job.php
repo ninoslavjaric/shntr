@@ -50,7 +50,7 @@ try {
 
 			// return
 			$return['template'] = $smarty->fetch("ajax.job.publisher.tpl");
-			$return['callback'] = "$('#modal').modal('show'); $('#modal .modal-content:last').html(response.template); initialize_modal();";
+			$return['callback'] = "$('#modal').modal('show'); $('#modal').removeClass('blue-modal'); $('#modal .modal-content:last').html(response.template); initialize_modal();";
 			break;
 
 		case 'publish':
@@ -179,7 +179,7 @@ try {
 
 			// return
 			$return['template'] = $smarty->fetch("ajax.job.editor.tpl");
-			$return['callback'] = "$('#modal').modal('show'); $('#modal .modal-content:last').html(response.template); initialize_modal();";
+			$return['callback'] = "$('#modal').modal('show'); $('#modal').removeClass('blue-modal'); $('#modal .modal-content:last').html(response.template); initialize_modal();";
 			break;
 
 		case 'application':
@@ -203,7 +203,7 @@ try {
 
 			// return
 			$return['template'] = $smarty->fetch("ajax.job.apply.tpl");
-			$return['callback'] = "$('#modal').modal('show'); $('#modal .modal-content:last').html(response.template); initialize_modal();";
+			$return['callback'] = "$('#modal').modal('show'); $('#modal').removeClass('blue-modal'); $('#modal .modal-content:last').html(response.template); initialize_modal();";
 			break;
 
 		case 'apply':
@@ -276,7 +276,7 @@ try {
 
 			// return
 			$return['template'] = $smarty->fetch("ajax.job.candidates.tpl");
-			$return['callback'] = "$('#modal').modal('show'); $('#modal .modal-content:last').html(response.template); initialize_modal();";
+			$return['callback'] = "$('#modal').modal('show'); $('#modal').removeClass('blue-modal'); $('#modal .modal-content:last').html(response.template); initialize_modal();";
 			break;
 
 		default:
