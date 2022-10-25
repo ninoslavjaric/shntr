@@ -1,8 +1,8 @@
 {strip}
 
 <!-- Modals -->
-<div id="modal" class="modal fade">
-    <div class="modal-dialog">
+<div id="modal" class="modal blue-modal fade">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body">
                 <div class="loader pt10 pb10"></div>

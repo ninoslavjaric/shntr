@@ -2,7 +2,7 @@
 
 /**
  * ajax -> admin -> users
- * 
+ *
  * @package Sngine
  * @author Zamblek
  */
@@ -34,7 +34,7 @@ if ($user->_data['user_id'] != '1' && $_GET['id'] == '1') {
 // handle users
 try {
 
-	switch ($_GET['do']) {
+	switch ($_REQUEST['do']) {
 		case 'edit_account':
 			/* valid inputs */
 			if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
@@ -362,6 +362,13 @@ try {
 			$generated = $user->fake_users_generator($_POST['users_num'], $_POST['default_password'], $_POST['random_Avatar'], $_POST['language']);
 			/* return */
 			return_json(array('success' => true, 'message' => $generated . " " . __("fake users accounts generated successfully")));
+			break;
+
+		case 'sync-wallet':
+		    $resp = shntrToken::sync($_POST['id']);
+
+			/* return */
+			return_json(array('success' => isset($resp['data']['msg']), 'message' => $resp['data']['msg'] ?? 'fail'));
 			break;
 
 		default:

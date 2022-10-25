@@ -1535,18 +1535,25 @@ class User
                     'select user_token_private_key as super_private_key, user_id as id from users where user_id = 1 limit 1'
                 ) or _error("SQL_ERROR_THROWEN");
                 $superUser = $query->fetch_assoc();
-                $response = shntrToken::payRelysia($friendRequestAcceptReward, $this->_data['user_relysia_paymail'], 0);
-                if (!str_contains($response['message'], 'sent successfully')) {
-                    _error(400, $response['message']);
+
+                if ($friendRequestAcceptReward !== '0.00') {
+                    $response = shntrToken::payRelysia(
+                        $friendRequestAcceptReward,
+                        $this->_data['user_relysia_paymail'],
+                        0
+                    );
+                    if (!str_contains($response['message'], 'sent successfully')) {
+                        _error(400, $response['message']);
+                    }
+                    shntrToken::noteTransaction(
+                        $friendRequestAcceptReward,
+                        0,
+                        intval($this->_data['user_id']),
+                        'users',
+                        $id,
+                        'Friend request accept reward'
+                    );
                 }
-                shntrToken::noteTransaction(
-                    $friendRequestAcceptReward,
-                    0,
-                    intval($this->_data['user_id']),
-                    'users',
-                    $id,
-                    'Friend request accept reward'
-                );
 
                 /* check if there is a friend request from the target to the viewer */
                 $check = $db->query(sprintf("SELECT COUNT(*) as count FROM friends WHERE user_one_id = %s AND user_two_id = %s AND status = 0", secure($id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
@@ -1595,28 +1602,31 @@ class User
                 $query = $db->query("SELECT price FROM prices WHERE price_name = 'send_fr_price';");
                 $price = $query->fetch_assoc();
                 $friendRequestAcceptReward = isset($price["price"]) && !empty($price["price"]) ?  $price["price"] : 0;
+                //var_dump((int) $friendRequestAcceptReward);
 
-                if ($balance < $friendRequestAcceptReward) {
-                    blueModal("ERROR", __("Funds"), __("You're out of tokens"));
+                if ($friendRequestAcceptReward !== '0.00') {
+                    if ($balance < $friendRequestAcceptReward) {
+                        blueModal("ERROR", __("Funds"), __("You're out of tokens"));
+                    }
+
+                    $query = $db->query('select user_relysia_paymail as address, user_id as id from users where user_id = 1 limit 1') or _error("SQL_ERROR_THROWEN");
+                    $superUser = $query->fetch_assoc();
+
+                    $response = shntrToken::payRelysia(0, $superUser['address'], $this->_data['user_id']);
+
+                    if (!str_contains($response['message'], 'sent successfully')) {
+                        _error(400, $response['message']);
+                    }
+
+                    shntrToken::noteTransaction(
+                        $friendRequestAcceptReward,
+                        intval($this->_data['user_id']),
+                        intval($superUser['id']),
+                        'users',
+                        $id,
+                        'Friend request fee'
+                    );
                 }
-
-                $query = $db->query('select user_relysia_paymail as address, user_id as id from users where user_id = 1 limit 1') or _error("SQL_ERROR_THROWEN");
-                $superUser = $query->fetch_assoc();
-
-                $response = shntrToken::payRelysia(0, $superUser['address'], $this->_data['user_id']);
-
-                if (!str_contains($response['message'], 'sent successfully')) {
-                    _error(400, $response['message']);
-                }
-
-                shntrToken::noteTransaction(
-                    $friendRequestAcceptReward,
-                    intval($this->_data['user_id']),
-                    intval($superUser['id']),
-                    'users',
-                    $id,
-                    'Friend request fee'
-                );
 
                 /* check if there is any relation between the viewer & the target */
                 $check_relation = $db->query(sprintf('SELECT COUNT(*) as count FROM friends WHERE (user_one_id = %1$s AND user_two_id = %2$s) OR (user_one_id = %2$s AND user_two_id = %1$s)', secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
@@ -5629,18 +5639,24 @@ class User
             if ($post['post_type'] == 'product') {
                 $query = $db->query("SELECT price FROM prices WHERE price_name = 'product_price';");
                 $price = $query->fetch_assoc();
-                $response = shntrToken::payRelysia($price["price"], shntrToken::getshntrTreasure('paymail'), $this->_data['user_id']);
-                if (!str_contains($response['message'], 'sent successfully')) {
-                    _error(400, $response['message']);
+                if ($price["price"] !== '0.00') {
+                    $response = shntrToken::payRelysia(
+                        $price["price"],
+                        shntrToken::getshntrTreasure('paymail'),
+                        $this->_data['user_id']
+                    );
+                    if (!str_contains($response['message'], 'sent successfully')) {
+                        _error(400, $response['message']);
+                    }
+                    shntrToken::noteTransaction(
+                        $price["price"],
+                        intval($this->_data['user_id']),
+                        0,
+                        'products',
+                        $post['post_id'],
+                        'Product creation charges'
+                    );
                 }
-                shntrToken::noteTransaction(
-                    $price["price"],
-                    intval($this->_data['user_id']),
-                    0,
-                    'products',
-                    $post['post_id'],
-                    'Product creation charges'
-                );
             }
 
             $db->commit();
@@ -10055,7 +10071,6 @@ class User
             throw new Exception(__("Please enter a valid array of interests"));
         }
 
-        $balance = shntrToken::getRelysiaBalance();
         $query = $db->query("SELECT price FROM prices WHERE price_name = 'page_price';");
         $price = $query->fetch_assoc();
 
@@ -10069,6 +10084,7 @@ class User
             blueModal($modal_id, $modal_title, $modal_message, null, true, true, $modal_callback);
         }
 
+        $balance = shntrToken::getRelysiaBalance();
         if ($balance < $price['price']) {
             blueModal("ERROR", __("Funds"), __("You're out of tokens"), null, true, true);
         }
@@ -10123,18 +10139,25 @@ class User
             $superUser = $query->fetch_assoc();
             $query = $db->query("SELECT price FROM prices WHERE price_name = 'page_price';");
             $price = $query->fetch_assoc();
-            $response = shntrToken::payRelysia($price['price'], shntrToken::getshntrTreasure('paymail'), $this->_data['user_id']);
-            if (!str_contains($response['message'], 'sent successfully')) {
-                _error(400, $response['message']);
+
+            if ($price["price"] !== '0.00') {
+                $response = shntrToken::payRelysia(
+                    $price['price'],
+                    shntrToken::getshntrTreasure('paymail'),
+                    $this->_data['user_id']
+                );
+                if (!str_contains($response['message'], 'sent successfully')) {
+                    _error(400, $response['message']);
+                }
+                shntrToken::noteTransaction(
+                    $price['price'],
+                    intval($this->_data['user_id']),
+                    0,
+                    'pages',
+                    $page_id,
+                    'Page creation charges'
+                );
             }
-            shntrToken::noteTransaction(
-                $price['price'],
-                intval($this->_data['user_id']),
-                0,
-                'pages',
-                $page_id,
-                'Page creation charges'
-            );
 
             $db->commit();
         } catch (Exception $e) {
@@ -10664,7 +10687,6 @@ class User
             throw new Exception(__("Please enter a valid array of interests"));
         }
 
-        $balance = shntrToken::getRelysiaBalance();
         $query = $db->query("SELECT price FROM prices WHERE price_name = 'group_price';");
         $price = $query->fetch_assoc();
 
@@ -10678,6 +10700,7 @@ class User
             blueModal($modal_id, $modal_title, $modal_message, null, true, true, $modal_callback);
         }
 
+        $balance = shntrToken::getRelysiaBalance();
         if ($balance < $price['price']) {
             blueModal("ERROR", __("Funds"), __("You're out of tokens"), null, true, true);
         }
@@ -10727,18 +10750,25 @@ class User
 
             $query = $db->query("SELECT price FROM prices WHERE price_name = 'group_price';");
             $price = $query->fetch_assoc();
-            $response = shntrToken::payRelysia($price["price"], shntrToken::getshntrTreasure('paymail'), $this->_data['user_id']);
-            if (!str_contains($response['message'], 'sent successfully')) {
-                _error(400, $response['message']);
+
+            if ($price["price"] !== '0.00') {
+                $response = shntrToken::payRelysia(
+                    $price["price"],
+                    shntrToken::getshntrTreasure('paymail'),
+                    $this->_data['user_id']
+                );
+                if (!str_contains($response['message'], 'sent successfully')) {
+                    _error(400, $response['message']);
+                }
+                shntrToken::noteTransaction(
+                    $price["price"],
+                    intval($this->_data['user_id']),
+                    0,
+                    'groups',
+                    $group_id,
+                    'Group creation charges'
+                );
             }
-            shntrToken::noteTransaction(
-                $price["price"],
-                intval($this->_data['user_id']),
-                0,
-                'groups',
-                $group_id,
-                'Group creation charges'
-            );
 
             $db->commit();
         } catch (Exception $e) {
@@ -11304,7 +11334,6 @@ class User
         }
 
         // validate cost_confirmation
-        $balance = shntrToken::getRelysiaBalance();
         $query = $db->query("SELECT price FROM prices WHERE price_name = 'event_price';");
         $price = $query->fetch_assoc();
 
@@ -11317,6 +11346,7 @@ class User
             blueModal($modal_id, $modal_title, $modal_message, null, true, true, $modal_callback);
         }
 
+        $balance = shntrToken::getRelysiaBalance();
         if ($balance < $price['price']) {
             blueModal("ERROR", __("Funds"), __("You're out of tokens"), null, true, true);
         }
@@ -11378,18 +11408,25 @@ class User
             $superUser = $query->fetch_assoc();
             $query = $db->query("SELECT price FROM prices WHERE price_name = 'event_price';");
             $price = $query->fetch_assoc();
-            $response = shntrToken::payRelysia($price["price"], shntrToken::getshntrTreasure('paymail'), $this->_data['user_id']);
-            if (!str_contains($response['message'], 'sent successfully')) {
-                _error(400, $response['message']);
+
+            if ($price["price"] !== '0.00') {
+                $response = shntrToken::payRelysia(
+                    $price["price"],
+                    shntrToken::getshntrTreasure('paymail'),
+                    $this->_data['user_id']
+                );
+                if (!str_contains($response['message'], 'sent successfully')) {
+                    _error(400, $response['message']);
+                }
+                shntrToken::noteTransaction(
+                    $price["price"],
+                    intval($this->_data['user_id']),
+                    0,
+                    'events',
+                    $event_id,
+                    'Event creation charges'
+                );
             }
-            shntrToken::noteTransaction(
-                $price["price"],
-                intval($this->_data['user_id']),
-                0,
-                'events',
-                $event_id,
-                'Event creation charges'
-            );
 
             $db->commit();
         } catch (Exception $e) {

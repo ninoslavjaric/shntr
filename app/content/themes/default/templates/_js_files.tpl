@@ -97,6 +97,8 @@
     __['Going'] = "{__('Going')}";
     __['Interested'] = "{__('Interested')}";
     __['Delete'] = "{__('Delete')}";
+    __['Are you sure you want to delete your account?'] = "{__('Are you sure you want to delete your account?')}";
+    __['Are you sure you want to delete this?'] = "{__('Are you sure you want to delete this?')}";
     __['Change'] = "{__('Change')}";
     __['Request'] = "{__('Request')}";
     __['Delete Cover'] = "{__('Delete Cover')}";

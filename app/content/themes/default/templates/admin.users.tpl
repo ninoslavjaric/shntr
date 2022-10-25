@@ -28,7 +28,7 @@
     </div>
 
     {if $sub_view == "" || $sub_view == "admins" || $sub_view == "moderators" || $sub_view == "online" || $sub_view == "banned" || $sub_view == "find"}
-        
+
         <div class="card-body">
 
             {if $sub_view == ""}
@@ -91,6 +91,7 @@
                             <th>{__("Joined")}</th>
                             <th>{__("Activated")}</th>
                             <th>{__("Actions")}</th>
+                            <th>{__("Sync wallet")}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -125,6 +126,11 @@
                                             <i class="fa fa-trash-alt"></i>
                                         </button>
                                     </td>
+                                    <td>
+                                        <button data-toggle="tooltip" data-placement="top" title='{__("Sync")}' class="btn btn-sm btn-icon btn-rounded btn-primary js_admin-sync-wallet" data-id="{$row['user_id']}">
+                                            <i class="fa fa-sync"></i>
+                                        </button>
+                                    </td>
                                 </tr>
                             {/foreach}
                         {else}
@@ -141,7 +147,7 @@
         </div>
 
     {elseif $sub_view == "edit"}
-        
+
         <div class="card-body">
             <div class="row">
                 <div class="col-12 col-md-2 text-center mb20">
@@ -660,7 +666,7 @@
                                         <input type="text" class="form-control" name="youtube" value="{$data['user_social_youtube']}">
                                     </div>
                                 </div>
-                            
+
                                 <div class="form-group col-md-6">
                                     <label class="form-control-label">{__("Instagram Profile URL")}</label>
                                     <div class="input-group">
@@ -680,7 +686,7 @@
                                         <input type="text" class="form-control" name="linkedin" value="{$data['user_social_linkedin']}">
                                     </div>
                                 </div>
-                                
+
                                 <div class="form-group col-md-6">
                                     <label class="form-control-label">{__("Vkontakte Profile URL")}</label>
                                     <div class="input-group">
@@ -714,7 +720,7 @@
                         <!-- error -->
                         <div class="alert alert-danger x-hidden"></div>
                         <!-- error -->
-                        
+
                         <div class="card-footer-fake text-right">
                             <button type="submit" class="btn btn-primary">{__("Save Changes")}</button>
                         </div>
@@ -803,7 +809,7 @@
                                     </div>
                                 </div>
                             {/if}
-                            
+
                             {if $system['wall_posts_enabled']}
                                 <div class="form-group col-md-6">
                                     <label class="form-control-label">{__("Who can post on your wall")}</label>
@@ -1177,7 +1183,7 @@
                                     </label>
                                     <div class="col-md-9">
                                         <p class="form-control-plaintext">
-                                            {$data['name']} ({print_money($data['price'])} 
+                                            {$data['name']} ({print_money($data['price'])}
                                             {if $data['period'] == "life"}{__("Life Time")}{else}{__("per")} {if $data['period_num'] != '1'}{$data['period_num']}{/if} {__($data['period']|ucfirst)}{/if})
                                         </p>
                                     </div>
@@ -1217,7 +1223,7 @@
                                         <p class="form-control-plaintext">
                                             {$data['user_boosted_posts']}/{$data['boost_posts']}
                                         </p>
-                                        
+
                                         <div class="progress mb5">
                                             <div class="progress-bar progress-bar-info progress-bar-striped" role="progressbar" aria-valuenow="{if $data['boost_posts'] == 0}0{else}{($data['user_boosted_posts']/$data['boost_posts'])*100}{/if}" aria-valuemin="0" aria-valuemax="100" style="width: {if $data['boost_posts'] == 0}0{else}{($data['user_boosted_posts']/$data['boost_posts'])*100}{/if}%"></div>
                                         </div>
@@ -1232,7 +1238,7 @@
                                         <p class="form-control-plaintext">
                                             {$data['user_boosted_pages']}/{$data['boost_pages']}
                                         </p>
-                                        
+
                                         <div class="progress mb5">
                                             <div class="progress-bar progress-bar-warning progress-bar-striped" role="progressbar" aria-valuenow="{if $data['boost_pages'] == 0}0{else}{($data['user_boosted_pages']/$data['boost_pages'])*100}{/if}" aria-valuemin="0" aria-valuemax="100" style="width: {if $data['boost_pages'] == 0}0{else}{($data['user_boosted_pages']/$data['boost_pages'])*100}{/if}%"></div>
                                         </div>
@@ -1265,7 +1271,7 @@
                                     <select class="form-control" name="package">
                                         {foreach $packages as $package}
                                             <option value="{$package['package_id']}" {if $data['user_package'] == $package['package_id']}selected{/if}>
-                                                {$package['name']} ({print_money($package['price'])} 
+                                                {$package['name']} ({print_money($package['price'])}
                                                 {if $package['period'] == "life"}{__("Life Time")}{else}{__("per")} {if $package['period_num'] != '1'}{$package['period_num']}{/if} {__($package['period']|ucfirst)}{/if})
                                             </option>
                                         {/foreach}
