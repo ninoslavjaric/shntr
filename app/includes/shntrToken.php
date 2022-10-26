@@ -134,22 +134,26 @@ class shntrToken
 
         @[$token] = $db->query(
             sprintf(
-                'select access_token from users_relysia where user_name = %s and access_token_expiration_date > CURRENT_TIMESTAMP + INTERVAL 10 MINUTE', secure($username)
+                'select access_token from users_relysia where user_name = %s and access_token_expiration_date < CURRENT_TIMESTAMP + INTERVAL 10 MINUTE', secure($username)
             )
         )->fetch_row();
 
-        if (!$token && ($token = static::auth($username, $password))) {
-            $db->query(
-                sprintf(
-                    'INSERT INTO users_relysia (user_name, access_token) VALUES (%1$s, %2$s) ON DUPLICATE KEY UPDATE access_token = %2$s, access_token_expiration_date = CURRENT_TIMESTAMP',
-                    secure($username), secure($token)
-                )
-            );
-
+        if ($token) {
             return $token;
         }
 
-        _error(403);
+        if (!($token = static::auth($username, $password))) {
+            _error(403);
+        }
+
+        $db->query(
+            sprintf(
+                'INSERT INTO users_relysia (user_name, access_token) VALUES (%1$s, %2$s) ON DUPLICATE KEY UPDATE access_token = %2$s, access_token_expiration_date = CURRENT_TIMESTAMP',
+                secure($username), secure($token)
+            )
+        );
+
+        return $token;
     }
 
     public static function sync(int $user_id): array
