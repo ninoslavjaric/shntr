@@ -2598,6 +2598,8 @@ class User
         }
         /* delete the user */
         if ($can_delete) {
+            /* delete the user interests */
+            $db->query(sprintf("DELETE FROM interests_users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
             /* delete the user */
             $db->query(sprintf("DELETE FROM users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
             /* delete user posts */
