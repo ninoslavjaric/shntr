@@ -149,7 +149,7 @@ try {
 			$price = $query->fetch_assoc();
 
 			// validate cost_confirmation
-			if (is_empty($_POST['cost_confirmation'])) {
+			if (is_empty($_POST['cost_confirmation']) && $price['price'] !== '0.00') {
 				$modal_id = "#modal-confirm";
 				$modal_title = __("Costs for creating page");
 				$modal_message = str_replace("_PRICE_", $price['price'], __("By paying the fee of _PRICE_ tokens, the product will be published."));

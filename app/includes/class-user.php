@@ -10094,7 +10094,7 @@ class User
         $price = $query->fetch_assoc();
 
         // validate cost_confirmation
-        if (is_empty($args['cost_confirmation'])) {
+        if (is_empty($args['cost_confirmation']) && $price['price'] !== '0.00') {
             $modal_id = "#modal-confirm";
             $modal_title = __("Costs for creating page");
             $modal_message = str_replace("_PRICE_", $price['price'], __("By paying the fee of _PRICE_ tokens, the page will be published."));
@@ -10710,7 +10710,7 @@ class User
         $price = $query->fetch_assoc();
 
         // validate cost_confirmation
-        if (is_empty($args['cost_confirmation'])) {
+        if (is_empty($args['cost_confirmation']) && $price['price'] !== '0.00') {
             $modal_id = "#modal-confirm";
             $modal_title = __("Costs for creating page");
             $modal_message = str_replace("_PRICE_", $price['price'], __("By paying the fee of _PRICE_ tokens, the group will be published."));
@@ -11356,7 +11356,7 @@ class User
         $query = $db->query("SELECT price FROM prices WHERE price_name = 'event_price';");
         $price = $query->fetch_assoc();
 
-        if (is_empty($args['cost_confirmation'])) {
+        if (is_empty($args['cost_confirmation']) && $price['price'] !== '0.00') {
             $modal_id = "#modal-confirm";
             $modal_title = __("Costs for creating page");
             $modal_message = str_replace("_PRICE_", $price['price'], __("By paying the fee of _PRICE_ tokens, the event will be published."));
