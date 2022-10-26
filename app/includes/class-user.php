@@ -6083,10 +6083,7 @@ class User
         if ($get_posts->num_rows > 0) {
             while ($post = $get_posts->fetch_assoc()) {
                 $post = $this->get_post($post['post_id'], true, true); /* $full_details = true, $pass_privacy_check = true */
-                if ($post) {
-                    if ($post['user_id'] != 1 && $this->_data['user_name'] != 'shntr') {
-                        continue;
-                    }
+                if ($post && $post['user_id'] != 1 && $this->_data['user_name'] != 'shntr') {
                     $posts[] = $post;
                 }
             }
