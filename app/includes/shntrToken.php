@@ -7,8 +7,18 @@
  */
 class shntrToken
 {
+    /*
+     * every wrong token
+ {
+  "statusCode": 401,
+  "data": {
+    "status": "error",
+    "msg": "Invalid authToken provided"
+  }
+}
+     */
     private const AVOIDABLES = [
-        'design.shntr.com', 'localhost'
+        'design.shntr.com', 'localhost', 'host.docker.internal'
     ];
     private const ENCRYPTION_ALGO = 'bf-cbc';
     private const TOKEN_ID = '9a0e862be07d8aa56311e5b211a4fdf9ddf03b2f-BNAF';
@@ -95,7 +105,7 @@ class shntrToken
 
     public static function auth(string $username, string $password): false|string
     {
-        $host = $_SERVER['SERVER_NAME'] === 'localhost' ? "local.shntr.com" : $_SERVER['SERVER_NAME'];
+        $host = in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES) ? "locale.shntr.com" : $_SERVER['SERVER_NAME'];
         $email = $username === 'relysia@shntr.com' ? 'relysia@shntr.com' : strtolower($username) . '@' . $host;
         $password = self::decrypt($password);
 
@@ -118,6 +128,30 @@ class shntrToken
         return $response['data']['token'];
     }
 
+    public static function getAccessToken(string $username, string $password): string
+    {
+        global $db;
+
+        @[$token] = $db->query(
+            sprintf(
+                'select access_token from users_relysia where user_name = %s and access_token_expiration_date > CURRENT_TIMESTAMP + INTERVAL 10 MINUTE', secure($username)
+            )
+        )->fetch_row();
+
+        if (!$token && ($token = static::auth($username, $password))) {
+            $db->query(
+                sprintf(
+                    'INSERT INTO users_relysia (user_name, access_token) VALUES (%1$s, %2$s) ON DUPLICATE KEY UPDATE access_token = %2$s, access_token_expiration_date = CURRENT_TIMESTAMP',
+                    secure($username), secure($token)
+                )
+            );
+
+            return $token;
+        }
+
+        _error(403);
+    }
+
     public static function sync(int $user_id): array
     {
         global $db;
@@ -138,7 +172,7 @@ class shntrToken
             )
         )->fetch_row();
 
-        $token = static::auth($senderUsername, $senderPassword);
+        $token = static::getAccessToken($senderUsername, $senderPassword);
 
         return http_call(self::API_BASE_URL . '/tokenMetrics',
             'GET',
@@ -175,7 +209,7 @@ class shntrToken
             $password = null;
         }
 
-        $token = static::auth(
+        $token = static::getAccessToken(
             $user_name ?? $user->_data['user_name'],
             $password ?? $user->_data['user_relysia_password']
         );
@@ -233,7 +267,7 @@ class shntrToken
             )->fetch_row();
         }
 
-        $senderToken = static::auth($senderUsername, $senderPassword);
+        $senderToken = static::getAccessToken($senderUsername, $senderPassword);
 
         $balance = static::getRelysiaBalance($senderUsername, $senderPassword);
 
