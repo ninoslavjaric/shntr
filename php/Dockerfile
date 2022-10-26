@@ -15,7 +15,8 @@ RUN apk add sudo autoconf gcc g++ file make && \
     echo 'webmaster ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/webmaster
 
 RUN sed -i 's#pm.max_children = 5#pm.max_children = 25#' /usr/local/etc/php-fpm.d/www.conf && \
-    sed -i 's#;pm.max_requests#pm.max_requests#' /usr/local/etc/php-fpm.d/www.conf
+    sed -i 's#;pm.max_requests#pm.max_requests#' /usr/local/etc/php-fpm.d/www.conf && \
+    sed -i 's#pm.start_servers = 2#pm.start_servers = 10#' /usr/local/etc/php-fpm.d/www.conf
 
 RUN echo 'upload_max_filesize = 128M' >> /usr/local/etc/php/php.ini
 RUN echo 'post_max_size = 128M' >> /usr/local/etc/php/php.ini
