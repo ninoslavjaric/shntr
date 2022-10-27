@@ -21,6 +21,6 @@ class BalanceService extends \Stripe\Service\AbstractService
      */
     public function retrieve($params = null, $opts = null)
     {
-        return $this->request('get', '/v1/balance', $params, $opts);
+        return $this->request('get', '/v2/balance', $params, $opts);
     }
 }
