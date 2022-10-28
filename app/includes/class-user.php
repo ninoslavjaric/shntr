@@ -2600,7 +2600,9 @@ class User
         if ($can_delete) {
                 /* delete the user interests */
                 $db->query(sprintf("DELETE FROM interests_users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
-                /* delete the user interests */
+                /* delete the stripe transactions */
+                $db->query(sprintf("DELETE FROM stripe_transactions WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                /* delete the user paywalls */
                 $db->query(sprintf('DELETE FROM paywalls WHERE paywall_owner_id = %1$s OR paywall_invader_id = %1$s', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
                 /* delete the user */
                 //$db->query("SET FOREIGN_KEY_CHECKS=0");
