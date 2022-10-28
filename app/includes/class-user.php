@@ -2598,26 +2598,31 @@ class User
         }
         /* delete the user */
         if ($can_delete) {
-            /* delete the user interests */
-            $db->query(sprintf("DELETE FROM interests_users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
-            /* delete the user */
-            $db->query(sprintf("DELETE FROM users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
-            /* delete user posts */
-            $this->delete_posts($user_id);
-            /* delete all user pages */
-            $db->query(sprintf("DELETE FROM pages WHERE page_admin = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
-            /* delete all user groups */
-            $db->query(sprintf("DELETE FROM `groups` WHERE group_admin = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
-            /* delete the user from all joined groups */
-            $db->query(sprintf("DELETE FROM groups_members WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
-            /* delete all user events */
-            $db->query(sprintf("DELETE FROM `events` WHERE event_admin = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
-            /* delete the user from all joined events */
-            $db->query(sprintf("DELETE FROM events_members WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
-            /* delete all user friends connections */
-            $db->query(sprintf('DELETE FROM friends WHERE user_one_id = %1$s OR user_two_id = %1$s', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
-            /* delete all user following connections */
-            $db->query(sprintf('DELETE FROM followings WHERE user_id = %1$s OR following_id = %1$s', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                /* delete the user interests */
+                $db->query(sprintf("DELETE FROM interests_users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                /* delete the user interests */
+                $db->query(sprintf('DELETE FROM paywalls WHERE paywall_owner_id = %1$s OR paywall_invader_id = %1$s', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                /* delete the user */
+                //$db->query("SET FOREIGN_KEY_CHECKS=0");
+                $db->query(sprintf("DELETE FROM users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                //$db->query("SET FOREIGN_KEY_CHECKS=1");
+
+                /* delete user posts */
+                $this->delete_posts($user_id);
+                /* delete all user pages */
+                $db->query(sprintf("DELETE FROM pages WHERE page_admin = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                /* delete all user groups */
+                $db->query(sprintf("DELETE FROM `groups` WHERE group_admin = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                /* delete the user from all joined groups */
+                $db->query(sprintf("DELETE FROM groups_members WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                /* delete all user events */
+                $db->query(sprintf("DELETE FROM `events` WHERE event_admin = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                /* delete the user from all joined events */
+                $db->query(sprintf("DELETE FROM events_members WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                /* delete all user friends connections */
+                $db->query(sprintf('DELETE FROM friends WHERE user_one_id = %1$s OR user_two_id = %1$s', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                /* delete all user following connections */
+                $db->query(sprintf('DELETE FROM followings WHERE user_id = %1$s OR following_id = %1$s', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
         }
     }
 
