@@ -122,6 +122,7 @@ class shntrToken
         );
 
         if (($response['statusCode'] ?? null) !== 200 || !isset($response['data']['token'])) {
+            error_log('Auth failed ' . json_encode([$response, $username]));
             return false;
         }
 
@@ -134,7 +135,7 @@ class shntrToken
 
         @[$token] = $db->query(
             sprintf(
-                'select access_token from users_relysia where user_name = %s and access_token_expiration_date > CURRENT_TIMESTAMP + INTERVAL 10 MINUTE', secure($username)
+                'select access_token from users_relysia where user_name = %s and access_token_expiration_date + INTERVAL 30 MINUTE > CURRENT_TIMESTAMP', secure($username)
             )
         )->fetch_row();
 
