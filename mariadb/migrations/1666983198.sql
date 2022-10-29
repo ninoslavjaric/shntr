@@ -25,8 +25,14 @@ begin
 
         alter table users_relysia add transaction_in_progress tinyint default 0 not null;
         alter table users_relysia modify user_name varchar(255) null;
+
+
+        create temporary table rel_tmp like users_relysia;
+        insert into rel_tmp select * from users_relysia;
+        truncate table users_relysia;
         alter table users_relysia add user_id int zerofill unique not null first;
-        update users_relysia inner join users using(user_name) set users_relysia.user_id = users.user_id where users_relysia.user_id is null;
+        insert into users_relysia select users.user_id, rel_tmp.* from rel_tmp inner join users using(user_name);
+
         alter table users_relysia modify access_token_expiration_date datetime default NOW() not null;
 
         insert into migrations values (@migration_name);
