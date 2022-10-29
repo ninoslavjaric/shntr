@@ -21,7 +21,7 @@ class shntrToken
         'design.shntr.com', 'localhost', 'host.docker.internal'
     ];
     private const ENCRYPTION_ALGO = 'bf-cbc';
-    private const TOKEN_ID = '9a0e862be07d8aa56311e5b211a4fdf9ddf03b2f';
+    private const TOKEN_ID = '9a0e862be07d8aa56311e5b211a4fdf9ddf03b2f-SHNATST';
     private const API_BASE_URL = 'https://api.relysia.com/v1';
 
     public static function getshntrTreasure($key): ?string
