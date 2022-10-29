@@ -208,6 +208,10 @@ function reload()
 function secure($value, $type = "", $quoted = true)
 {
     global $db;
+
+    if (is_null($value)) {
+        $value = 'null';
+    }
     if ($value !== 'null') {
         // [1] Sanitize
         /* Convert all applicable characters to HTML entities */
@@ -539,23 +543,23 @@ function return_json($response = [])
  */
 function return_json_async($response = [])
 {
-    if (!empty(ob_get_status())) {
-        ob_end_clean();
-        header("Content-Encoding: none");
-        header("Connection: close");
-        ignore_user_abort();
-        ob_start();
-        header('Content-Type: application/json');
-        echo json_encode($response);
-        $size = ob_get_length();
-        header("Content-Length: $size");
-        ob_end_flush();
-        flush();
-        session_write_close();
-        if (is_callable('fastcgi_finish_request')) {
-            fastcgi_finish_request();
-        }
+//    if (!empty(ob_get_status())) {
+    ob_end_clean();
+    header("Content-Encoding: none");
+    header("Connection: close");
+    ignore_user_abort();
+    ob_start();
+    header('Content-Type: application/json');
+    echo json_encode($response);
+    $size = ob_get_length();
+    header("Content-Length: $size");
+    ob_end_flush();
+    flush();
+    session_write_close();
+    if (is_callable('fastcgi_finish_request')) {
+        fastcgi_finish_request();
     }
+//    }
 }
 
 

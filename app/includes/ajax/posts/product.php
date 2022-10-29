@@ -143,7 +143,7 @@ try {
 			$inputs['photos'] = $photos;
 			$inputs['files'] = $files;
 
-			$balance = shntrToken::getRelysiaBalance();
+			$balance = shntrToken::getRelysiaBalance($user->_data['user_id']);
 
 			$query = $db->query("SELECT price FROM prices WHERE price_name = 'product_price';");
 			$price = $query->fetch_assoc();
@@ -154,10 +154,10 @@ try {
 				$modal_title = __("Costs for creating page");
 				$modal_message = str_replace("_PRICE_", $price['price'], __("By paying the fee of _PRICE_ tokens, the product will be published."));
 				$modal_callback = ["confirm_ok_callback" => "publish_product_payment_confirm()"];
-	
+
 				blueModal($modal_id, $modal_title, $modal_message, null, true, true, $modal_callback);
 			}
-	
+
 			if ($balance < $price['price']) {
 				blueModal("ERROR", __("Funds"), __("You're out of tokens"), null, true, true);
 			}

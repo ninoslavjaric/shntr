@@ -371,6 +371,18 @@ try {
 			return_json(array('success' => isset($resp['data']['msg']), 'message' => $resp['data']['msg'] ?? 'fail'));
 			break;
 
+		case 'sync-transactions':
+		    $resp = shntrToken::syncTransactions($_POST['id'] ?: 0, false);
+
+            return_json_async([
+                'success' => array_key_exists('callback', $resp), 'message' => $resp['message']
+            ]);
+
+            if (array_key_exists('callback', $resp)) {
+                $resp['callback']();
+            }
+			break;
+
 		default:
 			_error(400);
 			break;

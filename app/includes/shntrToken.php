@@ -21,8 +21,10 @@ class shntrToken
         'design.shntr.com', 'localhost', 'host.docker.internal'
     ];
     private const ENCRYPTION_ALGO = 'bf-cbc';
+    private const TREASURY_USER = 'relysia@shntr.com';
     private const TOKEN_ID = '9a0e862be07d8aa56311e5b211a4fdf9ddf03b2f-SHNATST';
-    private const API_BASE_URL = 'https://api.relysia.com/v1';
+    private const API_BASE_URL_V1 = 'https://api.relysia.com/v1';
+    private const API_BASE_URL_V2 = 'https://api.relysia.com/v2';
 
     public static function getshntrTreasure($key): ?string
     {
@@ -53,7 +55,7 @@ class shntrToken
         $host = $_SERVER['SERVER_NAME'] === 'localhost' ? "local.shntr.com" : $_SERVER['SERVER_NAME'];
         $email = strtolower($username) . '@' . $host;
 
-        $response = http_call(self::API_BASE_URL . '/signUp',
+        $response = http_call(self::API_BASE_URL_V1 . '/signUp',
             'POST',
             [
                 'email' => $email,
@@ -66,10 +68,11 @@ class shntrToken
         );
 
         if (($response['statusCode'] ?? null) !== 200 || !isset($response['data']['token'])) {
+            error_log('Signup fail: ' . json_encode($response));
             return false;
         }
 
-        $response = http_call(self::API_BASE_URL . '/createWallet',
+        $response = http_call(self::API_BASE_URL_V1 . '/createWallet',
             'GET',
             [],
             [
@@ -85,7 +88,7 @@ class shntrToken
 
     public static function paymail(string $token): false|array
     {
-        $response = http_call(self::API_BASE_URL . '/address',
+        $response = http_call(self::API_BASE_URL_V1 . '/address',
             'GET',
             [],
             [
@@ -95,6 +98,7 @@ class shntrToken
         );
 
         if (($response['statusCode'] ?? null) !== 200 || !isset($response['data']['paymail'])) {
+            error_log('Paymail fail: ' . json_encode($response));
             return false;
         }
 
@@ -105,11 +109,11 @@ class shntrToken
 
     public static function auth(string $username, string $password): false|string
     {
-        $host = in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES) ? "locale.shntr.com" : $_SERVER['SERVER_NAME'];
+        $host = in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES) ? "local.shntr.com" : $_SERVER['SERVER_NAME'];
         $email = $username === 'relysia@shntr.com' ? 'relysia@shntr.com' : strtolower($username) . '@' . $host;
         $password = self::decrypt($password);
 
-        $response = http_call(self::API_BASE_URL . '/auth',
+        $response = http_call(self::API_BASE_URL_V1 . '/auth',
             'POST',
             [
                 'email' => $email,
@@ -122,20 +126,20 @@ class shntrToken
         );
 
         if (($response['statusCode'] ?? null) !== 200 || !isset($response['data']['token'])) {
-            error_log('Auth failed ' . json_encode([$response, $username]));
+            error_log('Auth fail ' . json_encode([$response, $username]));
             return false;
         }
 
         return $response['data']['token'];
     }
 
-    public static function getAccessToken(string $username, string $password): string
+    public static function getAccessToken(?int $user_id): string
     {
         global $db;
 
         @[$token] = $db->query(
             sprintf(
-                'select access_token from users_relysia where user_name = %s and access_token_expiration_date + INTERVAL 30 MINUTE > CURRENT_TIMESTAMP', secure($username)
+                'select access_token from users_relysia where user_id = %s and access_token_expiration_date + INTERVAL 30 MINUTE > NOW()', secure($user_id ?? 0)
             )
         )->fetch_row();
 
@@ -143,16 +147,25 @@ class shntrToken
             return $token;
         }
 
-        if (!($token = static::auth($username, $password))) {
+        @[$relysiaUser, $password] = $user_id
+            ? $db->query(
+                sprintf(
+                    'select user_relysia_username, user_relysia_password from users where user_id = %s', secure($user_id)
+                )
+            )->fetch_row()
+        : [static::getshntrTreasure('username'), static::getshntrTreasure('password')];
+
+        if (!($token = static::auth($relysiaUser, $password))) {
+            error_log('GetAccessToken fail: ' . json_encode([$relysiaUser, $password]));
             _error(403);
         }
 
         $db->query(
             sprintf(
-                'INSERT INTO users_relysia (user_name, access_token) VALUES (%1$s, %2$s) ON DUPLICATE KEY UPDATE access_token = %2$s, access_token_expiration_date = CURRENT_TIMESTAMP',
-                secure($username), secure($token)
+                'INSERT INTO users_relysia (user_id, access_token) VALUES (%1$s, %2$s) ON DUPLICATE KEY UPDATE access_token = %2$s, access_token_expiration_date = NOW()',
+                secure($user_id ?? 0), secure($token)
             )
-        );
+        ) or _error(400, $db->error);
 
         return $token;
     }
@@ -171,15 +184,9 @@ class shntrToken
             ];
         }
 
-        [$senderUsername, $senderPassword] = $db->query(
-            sprintf(
-                'select user_name, user_relysia_password from users where user_id = %s', secure($user_id)
-            )
-        )->fetch_row();
+        $token = static::getAccessToken($user_id);
 
-        $token = static::getAccessToken($senderUsername, $senderPassword);
-
-        return http_call(self::API_BASE_URL . '/tokenMetrics',
+        return http_call(self::API_BASE_URL_V1 . '/tokenMetrics',
             'GET',
             [],
             [
@@ -187,6 +194,124 @@ class shntrToken
                 "serviceID: 9ab1b69e-92ae-4612-9a4f-c5a102a6c068",
             ]
         );
+    }
+
+    private static function syncTransactionGenerator(string $token, int $user_id): Generator
+    {
+        $historyMapper = function($item) use ($user_id) {
+            $ajtems = [];
+            foreach ($item['to'] as $recipient) {
+                if ($recipient['tokenId'] !== self::TOKEN_ID) {
+                    continue;
+                }
+                $ajtems[] = [
+                    'user_id' => $user_id,
+                    'to' => $recipient['to'],
+                    'txId' => $recipient['txId'],
+                    'from' => $item['from'],
+                    'timestamp' => $item['timestamp'],
+                    'balance_change' => $recipient['amount'],
+                    'docId' => $item['docId'],
+                    'notes' => $item['notes'] ?? '',
+                    'type' => $item['type'],
+                    'protocol' => $recipient['protocol'],
+                ];
+            }
+            return $ajtems;
+        };
+
+        $headers = [
+            "authToken: {$token}",
+            "serviceID: 9ab1b69e-92ae-4612-9a4f-c5a102a6c068",
+            'version: 1.1.0',
+        ];
+        $response = http_call(self::API_BASE_URL_V1 . '/history',
+            'GET',
+            [],
+            $headers
+        );
+
+        if (!isset($response['data']['histories'])) {
+            throw new Exception('Transaction history fail: ' . json_encode($response));
+        }
+
+        $nextPageTokenId = $response['data']['meta']['nextPageToken'];
+
+        yield array_merge(...array_map($historyMapper, $response['data']['histories']));
+
+        while ($nextPageTokenId) {
+            $response = http_call(self::API_BASE_URL_V1 . '/history?nextPageToken=' . $nextPageTokenId,
+                'GET',
+                [],
+                $headers
+            );
+
+            if (!isset($response['data']['histories'])) {
+                error_log('Transaction history fail: ' . json_encode($response));
+            }
+
+            $nextPageTokenId = $response['data']['meta']['nextPageToken'];
+            yield array_merge(...array_map($historyMapper, $response['data']['histories']));
+        }
+    }
+
+    public static function syncTransactions(?int $user_id, bool $increment = true): array
+    {
+        global $db;
+
+        if (in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES) || str_contains(SYS_URL, 'ngrok')) {
+            return [
+                'message' => 'Sync have just started',
+            ];
+        }
+
+        @[$syncInProgress] = $db->query(
+            sprintf(
+                'select transaction_in_progress from users_relysia where user_id = %s', secure($user_id)
+            )
+        )->fetch_row();
+
+        if ($syncInProgress) {
+            return [
+                'message' => 'Sync is still in progress'
+            ];
+        }
+
+        $token = static::getAccessToken($user_id);
+
+        $db->query(
+            sprintf('update users_relysia set transaction_in_progress = 1 where user_id = %s', secure($user_id))
+        );
+
+        return [
+            'message' => 'Sync have just started',
+            'callback' => function() use ($token, $user_id, $db, $increment) {
+                try {
+                    if (!$increment) {
+                        $db->query("delete from users_relysia_transactions where user_id = {$user_id}") or error_log('Transaction insert fail: ' . $db->error);
+                    }
+                    [$maxDate] = $db->query("select max(timestamp) from users_relysia_transactions where user_id = {$user_id}")->fetch_row();
+                    $maxDate = $maxDate ? new DateTime($maxDate) : (new DateTime())->setTimestamp(0);
+                    foreach (self::syncTransactionGenerator($token, $user_id) as $histories) {
+                        foreach ($histories as $history) {
+                            if (new DateTime($history['timestamp']) <= $maxDate) {
+                                goto finish_iteration;
+                            }
+
+                            $history['user_id'] = $user_id;
+                            $sql = self::transformInsertQuery($history, 'users_relysia_transactions', true);
+                            $db->query($sql) or error_log('Transaction insert fail: ' . $db->error);
+                        }
+                    }
+                } catch (Exception $e) {
+                    error_log($e->getMessage());
+                }
+                finish_iteration:
+                $db->query(
+                    sprintf('update users_relysia set transaction_in_progress = 0 where user_id = %s', secure($user_id))
+                );
+            }
+        ];
     }
 
     /**
@@ -201,29 +326,32 @@ class shntrToken
         ];
     }
 
-    public static function getRelysiaBalance(string $user_name = null, string $password = null): float
+    public static function getRelysiaBalance(?int $user_id): float
     {
-        global $user;
+        global $db;
 
         if (in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES) || str_contains(SYS_URL, 'ngrok')) {
             return 1000;
         }
 
-        if (in_array(null, [$user_name, $password])) {
-            $user_name = null;
-            $password = null;
+        @[$balance] = $db->query(
+            sprintf(
+                "select sum(if(type = 'credit', balance_change, -1 * balance_change)) from users_relysia_transactions where user_id  = %s",
+                $user_id ?? 0
+            )
+        )->fetch_row();
+
+        if ($balance) {
+            return $balance;
         }
 
-        $token = static::getAccessToken(
-            $user_name ?? $user->_data['user_name'],
-            $password ?? $user->_data['user_relysia_password']
-        );
+        $token = static::getAccessToken($user_id);
 
         if (!$token) {
             return 0;
         }
 
-        $response = http_call(self::API_BASE_URL . '/balance',
+        $response = http_call(self::API_BASE_URL_V2 . '/balance',
             'GET',
             [],
             [
@@ -232,11 +360,12 @@ class shntrToken
             ]
         );
 
-        if (($response['statusCode'] ?? null) !== 200 || !isset($response['data']['coins'])) {
+        if (($response['status'] ?? null) !== 'success' || !isset($response['coins'])) {
+            error_log('Balance fail: ' . json_encode($response));
             return 0;
         }
 
-        $tokens = array_filter($response['data']['coins'], function ($coin) {
+        $tokens = array_filter($response['coins'], function ($coin) {
             if (!array_key_exists('amount', $coin) || !array_key_exists('tokenId', $coin)) {
                 return false;
             }
@@ -259,9 +388,11 @@ class shntrToken
         }
 
         if ($senderId === null) {
+            $senderId = $user->_data['user_id'];
             $senderUsername = $user->_data['user_name'];
             $senderPassword = $user->_data['user_relysia_password'];
         } elseif ($senderId === 0) {
+            $senderId = null;
             $senderUsername = static::getshntrTreasure('username');
             $senderPassword = static::getshntrTreasure('password');
         } else {
@@ -272,9 +403,9 @@ class shntrToken
             )->fetch_row();
         }
 
-        $senderToken = static::getAccessToken($senderUsername, $senderPassword);
+        $senderToken = static::getAccessToken($senderId);
 
-        $balance = static::getRelysiaBalance($senderUsername, $senderPassword);
+        $balance = static::getRelysiaBalance($senderId);
 
         if ($balance < $amount) {
             return [
@@ -283,7 +414,7 @@ class shntrToken
             ];
         }
 
-        $response = http_call(self::API_BASE_URL . '/send',
+        $response = http_call(self::API_BASE_URL_V1 . '/send',
             'POST',
             [
                 'dataArray' => [
@@ -315,7 +446,9 @@ class shntrToken
         ];
     }
 
-    private static function transformInsertQuery(array $params): string
+    private static function transformInsertQuery(
+        array $params, string $tableName = 'token_transactions', $insertIgnore = false
+    ): string
     {
         global $db;
 
@@ -324,8 +457,10 @@ class shntrToken
         }, array_values($params));
 
         return sprintf(
-            'insert into token_transactions (%s) values (%s)',
-            implode(', ', array_keys($params)),
+            'insert%s into %s (%s) values (%s)',
+            $insertIgnore ? ' ignore' : '',
+            $tableName,
+            '`' . implode('`, `', array_keys($params)) . '`',
             implode(', ', $values)
         );
     }

@@ -188,7 +188,7 @@ try {
                         $user->_data['user_name'], $user->_data['user_id']
                     );
                 }
-            	$balance = shntrToken::getRelysiaBalance();
+            	$balance = shntrToken::getRelysiaBalance($user->_data['user_id']);
 				//not enough balance
 				// if ($amount) {
 				// 	$return['callback'] = 'no_enough_balance';

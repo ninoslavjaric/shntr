@@ -75,10 +75,7 @@ try {
 			$insights['notifications'] = $get_notifications->fetch_assoc()['count'];
 
             // get shntr token purse balance
-            $insights['purse'] = shntrToken::getRelysiaBalance(
-                shntrToken::getshntrTreasure('username'),
-                shntrToken::getshntrTreasure('password')
-            );
+            $insights['purse'] = shntrToken::getRelysiaBalance(null);
 
 
             // get chart data

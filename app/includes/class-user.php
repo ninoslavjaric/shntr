@@ -82,7 +82,7 @@ class User
                     }
                 }
                 /* check token amount */
-                $this->_data['shntr_token_amount'] = shntrToken::getRelysiaBalance($this->_data['user_name'], $this->_data['user_relysia_password']);
+                $this->_data['shntr_token_amount'] = shntrToken::getRelysiaBalance($this->_data['user_id']);
                 /* check pages permission */
                 if ($system['pages_enabled']) {
                     $this->_data['can_create_pages'] = $this->check_module_permission($system['pages_permission']);
@@ -1614,7 +1614,7 @@ class User
                     );
                 }
 
-                $balance = shntrToken::getRelysiaBalance();
+                $balance = shntrToken::getRelysiaBalance($this->_data['user_id']);
                 $query = $db->query("SELECT price FROM prices WHERE price_name = 'send_fr_price';");
                 $price = $query->fetch_assoc();
                 $friendRequestAcceptReward = isset($price["price"]) && !empty($price["price"]) ?  $price["price"] : 0;
@@ -2369,7 +2369,7 @@ class User
                 );
             }
 
-            $balance = shntrToken::getRelysiaBalance();
+            $balance = shntrToken::getRelysiaBalance($this->_data['user_id']);
             if ($balance < $price) {
                 blueModal("ERROR", __("Funds"), __("You're out of tokens"));
             }
@@ -10109,7 +10109,7 @@ class User
             blueModal($modal_id, $modal_title, $modal_message, null, true, true, $modal_callback);
         }
 
-        $balance = shntrToken::getRelysiaBalance();
+        $balance = shntrToken::getRelysiaBalance($this->_data['user_id']);
         if ($balance < $price['price']) {
             blueModal("ERROR", __("Funds"), __("You're out of tokens"), null, true, true);
         }
@@ -10725,7 +10725,7 @@ class User
             blueModal($modal_id, $modal_title, $modal_message, null, true, true, $modal_callback);
         }
 
-        $balance = shntrToken::getRelysiaBalance();
+        $balance = shntrToken::getRelysiaBalance($this->_data['user_id']);
         if ($balance < $price['price']) {
             blueModal("ERROR", __("Funds"), __("You're out of tokens"), null, true, true);
         }
@@ -11371,7 +11371,7 @@ class User
             blueModal($modal_id, $modal_title, $modal_message, null, true, true, $modal_callback);
         }
 
-        $balance = shntrToken::getRelysiaBalance();
+        $balance = shntrToken::getRelysiaBalance($this->_data['user_id']);
         if ($balance < $price['price']) {
             blueModal("ERROR", __("Funds"), __("You're out of tokens"), null, true, true);
         }
@@ -15181,19 +15181,25 @@ class User
     {
         global $db;
 
-        $password = shntrToken::register($username);
+        do {
+            $userRelysia = $username . '.relysia' . ($i ?? '');
+            $password = shntrToken::register($userRelysia);
+            $i = isset($i) ? $i+1 : 1;
+        } while(!$password);
+
         if ($password !== false) {
             $db->query(
                 sprintf(
-                    "UPDATE users SET user_relysia_password = %s WHERE user_id = %s",
+                    "UPDATE users SET user_relysia_password = %s, user_relysia_username = %s WHERE user_id = %s",
                     secure($password),
+                    secure($userRelysia),
                     secure(strval($user_id), 'int')
                 )
             );
         }
 
 
-        $token = shntrToken::getAccessToken($username, $password);
+        $token = shntrToken::getAccessToken($user_id);
         [$paymail, $address] = shntrToken::paymail($token);
 
         $db->query(

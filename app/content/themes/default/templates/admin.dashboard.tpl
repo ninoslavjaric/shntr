@@ -133,6 +133,9 @@
                             <i class="fa fa-bitcoin bg-icon"></i>
                             <span class="text-xxlg">{$insights['purse']}</span>
                             <span class="text-lg">{__("Treasure balance")}</span>
+                            <button data-toggle="tooltip" data-placement="top" title='{__("Sync transactions")}' class="btn btn-sm btn-icon btn-rounded btn-primary js_admin-sync-transactions" data-id="0">
+                                <i class="fa fa-sync"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
