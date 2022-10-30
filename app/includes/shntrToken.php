@@ -112,7 +112,7 @@ class shntrToken
         ];
     }
 
-    public static function auth(string $username, string $password): false|string
+    private static function auth(string $username, string $password): false|string
     {
         $host = in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES) ? "local.shntr.com" : $_SERVER['SERVER_NAME'];
         $email = $username === 'relysia@shntr.com' ? 'relysia@shntr.com' : strtolower($username) . '@' . $host;
@@ -160,9 +160,14 @@ class shntrToken
             )->fetch_row()
         : [static::getshntrTreasure('username'), static::getshntrTreasure('password')];
 
-        if (!($token = static::auth($relysiaUser, $password))) {
+        if (!($token = static::auth(strval($relysiaUser), strval($password)))) {
             error_log('GetAccessToken fail: ' . json_encode([$relysiaUser, $password]));
-            _error(403);
+
+            if (php_sapi_name() != 'cli') {
+                _error(403);
+            } else {
+                throw new Exception('GetAccessToken fail: ' . json_encode($relysiaUser));
+            }
         }
 
         $db->query(
