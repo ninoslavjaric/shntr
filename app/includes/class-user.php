@@ -15176,22 +15176,25 @@ class User
      * @todo need to refactor the relysia registration logic
      * @param string $username
      * @param int $user_id
+     * @throws Exception
      */
     public function register_to_relysia(string $username, int $user_id): void
     {
         global $db;
 
-        do {
-            $userRelysia = $username . '.relysia' . ($i ?? '');
-            $password = shntrToken::register($userRelysia);
-            $i = isset($i) ? $i+1 : 1;
-        } while(!$password);
+            $userRelysia = $username . '.relysia';
+            $response = shntrToken::register($userRelysia);
 
-        if ($password !== false) {
+        if ($response == 'EMAIL_EXISTS'){
+            $this->delete_user($user_id);
+            throw new Exception(__("Sorry, it looks like") . " <strong>" . $username . "</strong> " . __("belongs to an existing account"));
+        }
+
+        if ($response !== false) { // is password at this moment
             $db->query(
                 sprintf(
                     "UPDATE users SET user_relysia_password = %s, user_relysia_username = %s WHERE user_id = %s",
-                    secure($password),
+                    secure($response), // is password at this moment
                     secure($userRelysia),
                     secure(strval($user_id), 'int')
                 )
@@ -17173,7 +17176,7 @@ class User
 
 //        shntrToken::noteTransaction(1000, 1, $user_id, null, null, 'INIT');
 
-        error_log('shntr transaction: ' . print_r($response, true));
+//        error_log('shntr transaction: ' . print_r($response, true));
     }
 
 

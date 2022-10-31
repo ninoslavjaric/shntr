@@ -67,6 +67,11 @@ class shntrToken
             ]
         );
 
+        if ($response['statusCode'] === 400 && $response['data']['msg'] === 'EMAIL_EXISTS') {
+            error_log('Signup fail, email on relysia taken: ' . json_encode($response));
+            return $response['data']['msg'];
+        }
+
         if (($response['statusCode'] ?? null) !== 200 || !isset($response['data']['token'])) {
             error_log('Signup fail: ' . json_encode($response));
             return false;
