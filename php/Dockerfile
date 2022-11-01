@@ -40,3 +40,7 @@ RUN rm -f composer-setup.php
 
 RUN mkdir ~/bin && mv composer.phar ~/bin/composer
 ENV PATH="/home/webmaster/bin:${PATH}"
+
+COPY ./cron.init.sh /tmp/cron.init.sh
+
+CMD ["sh", "/tmp/cron.init.sh"]
