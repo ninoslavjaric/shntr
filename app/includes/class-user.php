@@ -1614,13 +1614,13 @@ class User
                     );
                 }
 
-                $balance = shntrToken::getRelysiaBalance($this->_data['user_id']);
                 $query = $db->query("SELECT price FROM prices WHERE price_name = 'send_fr_price';");
                 $price = $query->fetch_assoc();
                 $friendRequestAcceptReward = isset($price["price"]) && !empty($price["price"]) ?  $price["price"] : 0;
                 //var_dump((int) $friendRequestAcceptReward);
 
                 if ($friendRequestAcceptReward !== '0.00') {
+                    $balance = shntrToken::getRelysiaBalance($this->_data['user_id']);
                     if ($balance < $friendRequestAcceptReward) {
                         blueModal("ERROR", __("Funds"), __("You're out of tokens"));
                     }
