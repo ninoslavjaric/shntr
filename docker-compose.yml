@@ -23,7 +23,7 @@ services:
       - ./app:/var/www/html/
 #      - ./php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
       - ./php/crontab:/var/spool/cron/crontabs/root
-      - ./php/periodic/5min:/etc/periodic/1min
+      - ./php/periodic/1min:/etc/periodic/1min
   apache-shntr:
     build: './apache/'
     depends_on:
