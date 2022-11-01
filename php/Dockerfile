@@ -7,6 +7,10 @@ RUN apk add jpeg libpng-dev openjpeg jpeg-dev libjpeg-turbo-dev
 RUN docker-php-ext-configure gd --with-jpeg
 RUN docker-php-ext-install -j$(nproc) gd
 
+#RUN apk add --no-cache $PHPIZE_DEPS \
+#    && pecl install xdebug-3.1.3 \
+#    && docker-php-ext-enable xdebug
+
 RUN docker-php-ext-install mysqli pdo pdo_mysql
 
 RUN apk add sudo autoconf gcc g++ file make && \
@@ -20,13 +24,14 @@ RUN sed -i 's#pm.max_children = 5#pm.max_children = 25#' /usr/local/etc/php-fpm.
     sed -i 's#pm.min_spare_servers = 1#pm.min_spare_servers = 5#' /usr/local/etc/php-fpm.d/www.conf && \
     sed -i 's#pm.max_spare_servers = 3#pm.max_spare_servers = 20#' /usr/local/etc/php-fpm.d/www.conf
 
+RUN sed -i 's#www-data#webmaster#' /usr/local/etc/php-fpm.d/www.conf
+
 RUN echo 'upload_max_filesize = 128M' >> /usr/local/etc/php/php.ini
 RUN echo 'post_max_size = 128M' >> /usr/local/etc/php/php.ini
 RUN echo 'extension=mailparse.so' >> /usr/local/etc/php/php.ini
 
 RUN adduser -u 1000 -D webmaster
 
-USER webmaster
 WORKDIR .
 
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
