@@ -1547,27 +1547,27 @@ class User
                 $query = $db->query("SELECT price FROM prices WHERE price_name = 'accept_fr_price';");
                 $price = $query->fetch_assoc();
                 $friendRequestAcceptReward = isset($price["price"]) && !empty($price["price"]) ?  $price["price"] : 0;
-                $query = $db->query(
-                    'select user_token_private_key as super_private_key, user_id as id from users where user_id = 1 limit 1'
-                ) or _error("SQL_ERROR_THROWEN");
-                $superUser = $query->fetch_assoc();
+//                $query = $db->query(
+//                    'select user_token_private_key as super_private_key, user_id as id from users where user_id = 1 limit 1'
+//                ) or _error("SQL_ERROR_THROWEN");
+//                $superUser = $query->fetch_assoc();
 
                 if ($friendRequestAcceptReward !== '0.00') {
                     $response = shntrToken::payRelysia(
-                        $friendRequestAcceptReward,
-                        $this->_data['user_relysia_paymail'],
-                        0
+                        amount: $friendRequestAcceptReward,
+                        recipientPaymail: shntrToken::getshntrTreasure('paymail'),
+                        senderId: $this->_data['user_id']
                     );
                     if (!str_contains($response['message'], 'sent successfully')) {
                         _error(400, $response['message']);
                     }
                     shntrToken::noteTransaction(
-                        $friendRequestAcceptReward,
-                        0,
-                        intval($this->_data['user_id']),
-                        'users',
-                        $id,
-                        'Friend request accept reward'
+                        amount: $friendRequestAcceptReward,
+                        senderId: 0,
+                        recipientId: intval($this->_data['user_id']),
+                        basisName: 'users',
+                        basisId: $id,
+                        note: 'Friend request accept reward'
                     );
                 }
 
@@ -1625,22 +1625,26 @@ class User
                         blueModal("ERROR", __("Funds"), __("You're out of tokens"));
                     }
 
-                    $query = $db->query('select user_relysia_paymail as address, user_id as id from users where user_id = 1 limit 1') or _error("SQL_ERROR_THROWEN");
-                    $superUser = $query->fetch_assoc();
+//                    $query = $db->query('select user_relysia_paymail as address, user_id as id from users where user_id = 1 limit 1') or _error("SQL_ERROR_THROWEN");
+//                    $superUser = $query->fetch_assoc();
 
-                    $response = shntrToken::payRelysia(0, $superUser['address'], $this->_data['user_id']);
+                    $response = shntrToken::payRelysia(
+                        amount: $friendRequestAcceptReward,
+                        recipientPaymail: shntrToken::getshntrTreasure('paymail'),
+                        senderId: $this->_data['user_id']
+                    );
 
                     if (!str_contains($response['message'], 'sent successfully')) {
                         _error(400, $response['message']);
                     }
 
                     shntrToken::noteTransaction(
-                        $friendRequestAcceptReward,
-                        intval($this->_data['user_id']),
-                        intval($superUser['id']),
-                        'users',
-                        $id,
-                        'Friend request fee'
+                        amount: $friendRequestAcceptReward,
+                        senderId: intval($this->_data['user_id']),
+                        recipientId: 0,
+                        basisName: 'users',
+                        basisId: $id,
+                        note: 'Friend request fee'
                     );
                 }
 
