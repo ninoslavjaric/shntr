@@ -26,6 +26,12 @@ if (!file_exists(ABSPATH . 'includes/config.php')) {
 require_once(ABSPATH . 'includes/config.php');
 
 
+// log errors in error.log, access from domain.com/logger
+if (ERROR_LOGGING) {
+    ini_set('log_errors', true);
+    ini_set('error_log', ABSPATH . '/error.log');
+}
+
 // enviroment settings
 if (DEBUGGING) {
     ini_set("display_errors", true);

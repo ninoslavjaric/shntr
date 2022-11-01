@@ -42,6 +42,12 @@ define('DEFAULT_LOCALE', 'en_us');
 define('DEBUGGING', false);
 
 
+/**
+ * For developers: log errors in error.log
+ */
+define('ERROR_LOGGING', true);
+
+
 // ** LICENCE ** //
 /**
  * A unique key for your licence.

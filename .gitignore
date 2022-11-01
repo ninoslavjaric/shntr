@@ -13,3 +13,4 @@ app/content/uploads/photos
 app/content/uploads
 dump.sql
 app/includes/.cache-buster
+app/error.log
