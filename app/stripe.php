@@ -155,7 +155,7 @@ try {
                     $transaction = $db->query(
                         sprintf(
                             'select 
-                                           st.session_id, st.user_id, st.qty, u.user_relysia_paymail, u.user_email
+                                           st.session_id, st.user_id, st.qty, u.user_relysia_paymail, u.user_email, st.status
                                     from stripe_transactions st 
                                         inner join users u using(user_id) 
                                     where st.session_id = %s',
@@ -165,6 +165,15 @@ try {
 
                     if ($transaction === null) {
                         $errorMsg = "No transaction {$checkout_session->id} in db";
+                        _email('admin@shntr.com', 'Stripe transaction fail', $errorMsg, $errorMsg);
+                        return_json([
+                            'success' => false,
+                            'msg' => $errorMsg,
+                        ]);
+                    }
+
+                    if ($transaction['status'] !== 'PENDING') {
+                        $errorMsg = "Transaction is not pending. {$checkout_session->id} is {$transaction['status']}";
                         _email('admin@shntr.com', 'Stripe transaction fail', $errorMsg, $errorMsg);
                         return_json([
                             'success' => false,
