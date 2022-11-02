@@ -573,12 +573,19 @@ function return_json_async($response = [])
  *
  * @return void
  */
-function _error()
+function _error($args, $db)
 {
     $args = func_get_args();
+
+    if (ERROR_LOGGING) {
+        error_log('MySql error: ' . mysqli_error($db));
+    }
+
     if (count($args) > 1 && $args[0] != "BANNED_USER") {
         $title = $args[0];
-        $message = $args[1];
+        if (is_string($args[1])){
+            $message = $args[1];
+        }
     } else {
         switch ($args[0]) {
             case 'DB_ERROR':

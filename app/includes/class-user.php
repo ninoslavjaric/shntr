@@ -33,7 +33,7 @@ class User
     {
         global $db, $system;
         if (isset($_COOKIE[$this->_cookie_user_id]) && isset($_COOKIE[$this->_cookie_user_token])) {
-            $get_user = $db->query(sprintf("SELECT users.*, users_sessions.*, posts_photos.source as user_picture_full, packages.*, packages.name as package_name FROM users INNER JOIN users_sessions ON users.user_id = users_sessions.user_id LEFT JOIN posts_photos ON users.user_picture_id = posts_photos.photo_id LEFT JOIN packages ON users.user_subscribed = '1' AND users.user_package = packages.package_id WHERE users_sessions.user_id = %s AND users_sessions.session_token = %s", secure($_COOKIE[$this->_cookie_user_id], 'int'), secure($_COOKIE[$this->_cookie_user_token]))) or _error("SQL_ERROR_THROWEN");
+            $get_user = $db->query(sprintf("SELECT users.*, users_sessions.*, posts_photos.source as user_picture_full, packages.*, packages.name as package_name FROM users INNER JOIN users_sessions ON users.user_id = users_sessions.user_id LEFT JOIN posts_photos ON users.user_picture_id = posts_photos.photo_id LEFT JOIN packages ON users.user_subscribed = '1' AND users.user_package = packages.package_id WHERE users_sessions.user_id = %s AND users_sessions.session_token = %s", secure($_COOKIE[$this->_cookie_user_id], 'int'), secure($_COOKIE[$this->_cookie_user_token]))) or _error("SQL_ERROR_THROWEN", $db);
             if ($get_user->num_rows > 0) {
                 $this->_data = $get_user->fetch_assoc();
                 /* prepare full name */
@@ -49,10 +49,10 @@ class User
                 $this->_is_moderator = ($this->_data['user_group'] == 2) ? true : false;
                 /* update user language */
                 if ($system['current_language'] != $this->_data['user_language']) {
-                    $db->query(sprintf("UPDATE users SET user_language = %s WHERE user_id = %s", secure($system['current_language']), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE users SET user_language = %s WHERE user_id = %s", secure($system['current_language']), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 }
                 /* update user last seen */
-                $db->query(sprintf("UPDATE users SET user_last_seen = NOW() WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE users SET user_last_seen = NOW() WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* active session */
                 $this->_data['active_session_id'] = $this->_data['session_id'];
                 $this->_data['active_session_token'] = $this->_data['session_token'];
@@ -162,7 +162,7 @@ class User
     {
         global $db, $system;
         $countries = [];
-        $get_countries = $db->query("SELECT * FROM system_countries ORDER BY country_id") or _error("SQL_ERROR_THROWEN");
+        $get_countries = $db->query("SELECT * FROM system_countries ORDER BY country_id") or _error("SQL_ERROR_THROWEN", $db);
         if ($get_countries->num_rows > 0) {
             while ($country = $get_countries->fetch_assoc()) {
                 $country['country_name'] = __($country['country_name']);
@@ -182,7 +182,7 @@ class User
     public function check_country($country_id)
     {
         global $db;
-        $check = $db->query(sprintf("SELECT COUNT(*) as count FROM system_countries WHERE country_id = %s", secure($country_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $check = $db->query(sprintf("SELECT COUNT(*) as count FROM system_countries WHERE country_id = %s", secure($country_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check->fetch_assoc()['count'] > 0) {
             return true;
         }
@@ -204,7 +204,7 @@ class User
     {
         global $db, $system;
         $currencies = [];
-        $get_currencies = $db->query("SELECT * FROM system_currencies") or _error("SQL_ERROR_THROWEN");
+        $get_currencies = $db->query("SELECT * FROM system_currencies") or _error("SQL_ERROR_THROWEN", $db);
         if ($get_currencies->num_rows > 0) {
             while ($currency = $get_currencies->fetch_assoc()) {
                 $currencies[] = $currency;
@@ -229,7 +229,7 @@ class User
         global $db, $system;
         $genders = [];
         $order_query = ($sorted) ? " ORDER BY gender_order ASC " : " ORDER BY gender_id ASC ";
-        $get_genders = $db->query("SELECT * FROM system_genders" . $order_query) or _error("SQL_ERROR_THROWEN");
+        $get_genders = $db->query("SELECT * FROM system_genders" . $order_query) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_genders->num_rows > 0) {
             while ($gender = $get_genders->fetch_assoc()) {
                 $genders[] = $gender;
@@ -248,7 +248,7 @@ class User
     public function get_gender($gender_id)
     {
         global $db;
-        $get_gender = $db->query(sprintf("SELECT gender_name FROM system_genders WHERE gender_id = %s", secure($gender_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_gender = $db->query(sprintf("SELECT gender_name FROM system_genders WHERE gender_id = %s", secure($gender_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_gender->num_rows == 0) {
             return "N/A";
         }
@@ -265,7 +265,7 @@ class User
     public function check_gender($gender_id)
     {
         global $db;
-        $check = $db->query(sprintf("SELECT COUNT(*) as count FROM system_genders WHERE gender_id = %s", secure($gender_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $check = $db->query(sprintf("SELECT COUNT(*) as count FROM system_genders WHERE gender_id = %s", secure($gender_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check->fetch_assoc()['count'] > 0) {
             return true;
         }
@@ -329,7 +329,7 @@ class User
         global $db;
         $user_id = (isset($user_id)) ? $user_id : $this->_data['user_id'];
         $friends = [];
-        $get_friends = $db->query(sprintf('SELECT users.user_id FROM friends INNER JOIN users ON (friends.user_one_id = users.user_id AND friends.user_one_id != %1$s) OR (friends.user_two_id = users.user_id AND friends.user_two_id != %1$s) WHERE friends.status = 1 AND (friends.user_one_id = %1$s OR friends.user_two_id = %1$s)', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_friends = $db->query(sprintf('SELECT users.user_id FROM friends INNER JOIN users ON (friends.user_one_id = users.user_id AND friends.user_one_id != %1$s) OR (friends.user_two_id = users.user_id AND friends.user_two_id != %1$s) WHERE friends.status = 1 AND (friends.user_one_id = %1$s OR friends.user_two_id = %1$s)', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_friends->num_rows > 0) {
             while ($friend = $get_friends->fetch_assoc()) {
                 $friends[] = $friend['user_id'];
@@ -351,14 +351,14 @@ class User
             union
             select user_two_id friends from friends where user_one_id = %1$s',
             secure($user_id, 'int')
-        )) or _error("SQL_ERROR_THROWEN");
+        )) or _error("SQL_ERROR_THROWEN", $db);
 
         $query = $db->query(sprintf(
             'select user_one_id user_id from friends where user_two_id in (select friends from my_friends) and user_one_id <> %1$s
             union
             select user_two_id user_id from friends where user_one_id in (select friends from my_friends) and user_two_id <> %1$s',
             secure($user_id, 'int')
-        )) or _error("SQL_ERROR_THROWEN");
+        )) or _error("SQL_ERROR_THROWEN", $db);
 
         $friends = [];
 
@@ -382,7 +382,7 @@ class User
         global $db;
         $user_id = (isset($user_id)) ? $user_id : $this->_data['user_id'];
         $followings = [];
-        $get_followings = $db->query(sprintf("SELECT followings.following_id FROM followings INNER JOIN users ON followings.following_id = users.user_id WHERE users.user_banned = '0' AND followings.user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_followings = $db->query(sprintf("SELECT followings.following_id FROM followings INNER JOIN users ON followings.following_id = users.user_id WHERE users.user_banned = '0' AND followings.user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_followings->num_rows > 0) {
             while ($following = $get_followings->fetch_assoc()) {
                 $followings[] = $following['following_id'];
@@ -403,7 +403,7 @@ class User
         global $db;
         $user_id = (isset($user_id)) ? $user_id : $this->_data['user_id'];
         $followers = [];
-        $get_followers = $db->query(sprintf("SELECT followings.user_id FROM followings INNER JOIN users ON followings.user_id = users.user_id WHERE users.user_banned = '0' AND followings.following_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_followers = $db->query(sprintf("SELECT followings.user_id FROM followings INNER JOIN users ON followings.user_id = users.user_id WHERE users.user_banned = '0' AND followings.following_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_followers->num_rows > 0) {
             while ($follower = $get_followers->fetch_assoc()) {
                 $followers[] = $follower['user_id'];
@@ -433,7 +433,7 @@ class User
     {
         global $db;
         $requests = [];
-        $get_requests = $db->query(sprintf("SELECT user_one_id FROM friends WHERE status = 0 AND user_two_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_requests = $db->query(sprintf("SELECT user_one_id FROM friends WHERE status = 0 AND user_two_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_requests->num_rows > 0) {
             while ($request = $get_requests->fetch_assoc()) {
                 $requests[] = $request['user_one_id'];
@@ -452,7 +452,7 @@ class User
     {
         global $db;
         $requests = [];
-        $get_requests = $db->query(sprintf("SELECT user_two_id FROM friends WHERE status = 0 AND user_one_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_requests = $db->query(sprintf("SELECT user_two_id FROM friends WHERE status = 0 AND user_one_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_requests->num_rows > 0) {
             while ($request = $get_requests->fetch_assoc()) {
                 $requests[] = $request['user_two_id'];
@@ -472,7 +472,7 @@ class User
         global $db;
         $pages = [];
         if ($this->_logged_in) {
-            $get_pages = $db->query(sprintf("SELECT page_id FROM pages_likes WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_pages = $db->query(sprintf("SELECT page_id FROM pages_likes WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             if ($get_pages->num_rows > 0) {
                 while ($page = $get_pages->fetch_assoc()) {
                     $pages[] = $page['page_id'];
@@ -495,7 +495,7 @@ class User
         $groups = [];
         if ($this->_logged_in) {
             $where_statement = ($only_approved) ? " approved = '1' AND" : "";
-            $get_groups = $db->query(sprintf("SELECT group_id FROM groups_members WHERE " . $where_statement . " user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_groups = $db->query(sprintf("SELECT group_id FROM groups_members WHERE " . $where_statement . " user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             if ($get_groups->num_rows > 0) {
                 while ($group = $get_groups->fetch_assoc()) {
                     $groups[] = $group['group_id'];
@@ -516,7 +516,7 @@ class User
         global $db;
         $events = [];
         if ($this->_logged_in) {
-            $get_events = $db->query(sprintf("SELECT event_id FROM events_members WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_events = $db->query(sprintf("SELECT event_id FROM events_members WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             if ($get_events->num_rows > 0) {
                 while ($event = $get_events->fetch_assoc()) {
                     $events[] = $event['event_id'];
@@ -557,14 +557,14 @@ class User
         $friends = [];
         $offset *= $system['max_results_even'];
         /* get the target user's privacy */
-        $get_privacy = $db->query(sprintf("SELECT user_privacy_friends FROM users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_privacy = $db->query(sprintf("SELECT user_privacy_friends FROM users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         $privacy = $get_privacy->fetch_assoc();
         /* check the target user's privacy  */
         if (!$this->check_privacy($privacy['user_privacy_friends'], $user_id)) {
             return $friends;
         }
         $limit_statement = ($get_all) ? "" : sprintf("LIMIT %s, %s", secure($offset, 'int', false), secure($system['max_results_even'], 'int', false));
-        $get_friends = $db->query(sprintf('SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM friends INNER JOIN users ON (friends.user_one_id = users.user_id AND friends.user_one_id != %1$s) OR (friends.user_two_id = users.user_id AND friends.user_two_id != %1$s) WHERE users.user_banned = "0" AND friends.status = 1 AND (friends.user_one_id = %1$s OR friends.user_two_id = %1$s) ' . $limit_statement, secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_friends = $db->query(sprintf('SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM friends INNER JOIN users ON (friends.user_one_id = users.user_id AND friends.user_one_id != %1$s) OR (friends.user_two_id = users.user_id AND friends.user_two_id != %1$s) WHERE users.user_banned = "0" AND friends.status = 1 AND (friends.user_one_id = %1$s OR friends.user_two_id = %1$s) ' . $limit_statement, secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_friends->num_rows > 0) {
             while ($friend = $get_friends->fetch_assoc()) {
                 $friend['user_picture'] = get_picture($friend['user_picture'], $friend['user_gender']);
@@ -587,7 +587,7 @@ class User
     {
         global $db;
         $user_id = (isset($user_id)) ? $user_id : $this->_data['user_id'];
-        $get_friends_count = $db->query(sprintf('SELECT COUNT(*) AS count FROM friends INNER JOIN users ON (friends.user_one_id = users.user_id AND friends.user_one_id != %1$s) OR (friends.user_two_id = users.user_id AND friends.user_two_id != %1$s) WHERE friends.status = 1 AND (friends.user_one_id = %1$s OR friends.user_two_id = %1$s)', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_friends_count = $db->query(sprintf('SELECT COUNT(*) AS count FROM friends INNER JOIN users ON (friends.user_one_id = users.user_id AND friends.user_one_id != %1$s) OR (friends.user_two_id = users.user_id AND friends.user_two_id != %1$s) WHERE friends.status = 1 AND (friends.user_one_id = %1$s OR friends.user_two_id = %1$s)', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         return $get_friends_count->fetch_assoc()['count'];
     }
 
@@ -606,7 +606,7 @@ class User
         $followings = [];
         $offset *= $system['max_results_even'];
         $limit_statement = ($get_all) ? "" : sprintf("LIMIT %s, %s", secure($offset, 'int', false), secure($system['max_results_even'], 'int', false));
-        $get_followings = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM followings INNER JOIN users ON followings.following_id = users.user_id WHERE users.user_banned = '0' AND followings.user_id = %s " . $limit_statement, secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_followings = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM followings INNER JOIN users ON followings.following_id = users.user_id WHERE users.user_banned = '0' AND followings.user_id = %s " . $limit_statement, secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_followings->num_rows > 0) {
             while ($following = $get_followings->fetch_assoc()) {
                 $following['user_picture'] = get_picture($following['user_picture'], $following['user_gender']);
@@ -629,7 +629,7 @@ class User
     {
         global $db;
         $user_id = (isset($user_id)) ? $user_id : $this->_data['user_id'];
-        $get_followings_count = $db->query(sprintf("SELECT COUNT(*) AS count FROM followings INNER JOIN users ON followings.following_id = users.user_id WHERE users.user_banned = '0' AND followings.user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_followings_count = $db->query(sprintf("SELECT COUNT(*) AS count FROM followings INNER JOIN users ON followings.following_id = users.user_id WHERE users.user_banned = '0' AND followings.user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         return $get_followings_count->fetch_assoc()['count'];
     }
 
@@ -648,7 +648,7 @@ class User
         $followers = [];
         $offset *= $system['max_results_even'];
         $limit_statement = ($get_all) ? "" : sprintf("LIMIT %s, %s", secure($offset, 'int', false), secure($system['max_results_even'], 'int', false));
-        $get_followers = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM followings INNER JOIN users ON followings.user_id = users.user_id WHERE users.user_banned = '0' AND followings.following_id = %s " . $limit_statement, secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_followers = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM followings INNER JOIN users ON followings.user_id = users.user_id WHERE users.user_banned = '0' AND followings.following_id = %s " . $limit_statement, secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_followers->num_rows > 0) {
             while ($follower = $get_followers->fetch_assoc()) {
                 $follower['user_picture'] = get_picture($follower['user_picture'], $follower['user_gender']);
@@ -671,7 +671,7 @@ class User
     {
         global $db;
         $user_id = (isset($user_id)) ? $user_id : $this->_data['user_id'];
-        $get_followers_count = $db->query(sprintf("SELECT COUNT(*) AS count FROM followings INNER JOIN users ON followings.user_id = users.user_id WHERE users.user_banned = '0' AND followings.following_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_followers_count = $db->query(sprintf("SELECT COUNT(*) AS count FROM followings INNER JOIN users ON followings.user_id = users.user_id WHERE users.user_banned = '0' AND followings.following_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         return $get_followers_count->fetch_assoc()['count'];
     }
 
@@ -687,7 +687,7 @@ class User
         global $db, $system;
         $blocks = [];
         $offset *= $system['max_results'];
-        $get_blocks = $db->query(sprintf('SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM users_blocks INNER JOIN users ON users_blocks.blocked_id = users.user_id WHERE users_blocks.user_id = %s LIMIT %s, %s', secure($this->_data['user_id'], 'int'), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+        $get_blocks = $db->query(sprintf('SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM users_blocks INNER JOIN users ON users_blocks.blocked_id = users.user_id WHERE users_blocks.user_id = %s LIMIT %s, %s', secure($this->_data['user_id'], 'int'), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_blocks->num_rows > 0) {
             while ($block = $get_blocks->fetch_assoc()) {
                 $block['user_picture'] = get_picture($block['user_picture'], $block['user_gender']);
@@ -709,7 +709,7 @@ class User
     {
         global $db, $system;
         /* check if last friend reuqest deleted already */
-        $deleted = $db->query(sprintf("SELECT COUNT(*) as count FROM friends WHERE id = %s", secure($last_request_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $deleted = $db->query(sprintf("SELECT COUNT(*) as count FROM friends WHERE id = %s", secure($last_request_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($deleted->fetch_assoc()['count'] == 0) {
             /* if yes > return true */
             return true;
@@ -731,9 +731,9 @@ class User
         $requests = [];
         $offset *= $system['max_results'];
         if ($last_request_id !== null) {
-            $get_requests = $db->query(sprintf("SELECT friends.id, friends.user_one_id as user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture FROM friends INNER JOIN users ON friends.user_one_id = users.user_id WHERE friends.status = 0 AND friends.user_two_id = %s AND friends.id > %s ORDER BY friends.id DESC", secure($this->_data['user_id'], 'int'), secure($last_request_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_requests = $db->query(sprintf("SELECT friends.id, friends.user_one_id as user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture FROM friends INNER JOIN users ON friends.user_one_id = users.user_id WHERE friends.status = 0 AND friends.user_two_id = %s AND friends.id > %s ORDER BY friends.id DESC", secure($this->_data['user_id'], 'int'), secure($last_request_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         } else {
-            $get_requests = $db->query(sprintf("SELECT friends.id, friends.user_one_id as user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture FROM friends INNER JOIN users ON friends.user_one_id = users.user_id WHERE friends.status = 0 AND friends.user_two_id = %s ORDER BY friends.id DESC LIMIT %s, %s", secure($this->_data['user_id'], 'int'), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+            $get_requests = $db->query(sprintf("SELECT friends.id, friends.user_one_id as user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture FROM friends INNER JOIN users ON friends.user_one_id = users.user_id WHERE friends.status = 0 AND friends.user_two_id = %s ORDER BY friends.id DESC LIMIT %s, %s", secure($this->_data['user_id'], 'int'), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         }
         if ($get_requests->num_rows > 0) {
             while ($request = $get_requests->fetch_assoc()) {
@@ -764,7 +764,7 @@ class User
         global $db, $system;
         $requests = [];
         $offset *= $system['max_results'];
-        $get_requests = $db->query(sprintf("SELECT friends.user_two_id as user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture FROM friends INNER JOIN users ON friends.user_two_id = users.user_id WHERE friends.status = 0 AND friends.user_one_id = %s LIMIT %s, %s", secure($this->_data['user_id'], 'int'), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+        $get_requests = $db->query(sprintf("SELECT friends.user_two_id as user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture FROM friends INNER JOIN users ON friends.user_two_id = users.user_id WHERE friends.status = 0 AND friends.user_one_id = %s LIMIT %s, %s", secure($this->_data['user_id'], 'int'), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_requests->num_rows > 0) {
             while ($request = $get_requests->fetch_assoc()) {
                 $request['user_picture'] = get_picture($request['user_picture'], $request['user_gender']);
@@ -784,7 +784,7 @@ class User
     public function get_friend_requests_sent_total()
     {
         global $db;
-        $get_total_requests = $db->query(sprintf("SELECT COUNT(*) as count FROM friends INNER JOIN users ON friends.user_two_id = users.user_id WHERE friends.status = 0 AND friends.user_one_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_total_requests = $db->query(sprintf("SELECT COUNT(*) as count FROM friends INNER JOIN users ON friends.user_two_id = users.user_id WHERE friends.status = 0 AND friends.user_one_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         return $get_total_requests->fetch_assoc()['count'];
     }
 
@@ -800,7 +800,7 @@ class User
     {
         global $db, $system;
         $mutual_friends = [];
-        $get_mutual_friends = $db->query(sprintf("SELECT user_id, user_name, user_firstname, user_lastname, user_gender, user_picture, user_subscribed, user_verified FROM users WHERE user_id IN (%s) AND user_id IN (%s) LIMIT %s, %s", $this->spread_ids($this->_data['friends_ids']), $this->spread_ids($this->get_friends_ids($user_two_id)), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+        $get_mutual_friends = $db->query(sprintf("SELECT user_id, user_name, user_firstname, user_lastname, user_gender, user_picture, user_subscribed, user_verified FROM users WHERE user_id IN (%s) AND user_id IN (%s) LIMIT %s, %s", $this->spread_ids($this->_data['friends_ids']), $this->spread_ids($this->get_friends_ids($user_two_id)), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_mutual_friends->num_rows > 0) {
             while ($mutual_friend = $get_mutual_friends->fetch_assoc()) {
                 $mutual_friend['user_picture'] = get_picture($mutual_friend['user_picture'], $mutual_friend['user_gender']);
@@ -820,7 +820,7 @@ class User
     public function get_mutual_friends_count($user_two_id)
     {
         global $db;
-        $get_mutual_friends_count = $db->query(sprintf("SELECT COUNT(*) AS count FROM users WHERE user_id IN (%s) AND user_id IN (%s)", $this->spread_ids($this->_data['friends_ids']), $this->spread_ids($this->get_friends_ids($user_two_id)))) or _error("SQL_ERROR_THROWEN");
+        $get_mutual_friends_count = $db->query(sprintf("SELECT COUNT(*) AS count FROM users WHERE user_id IN (%s) AND user_id IN (%s)", $this->spread_ids($this->_data['friends_ids']), $this->spread_ids($this->get_friends_ids($user_two_id)))) or _error("SQL_ERROR_THROWEN", $db);
         return $get_mutual_friends_count->fetch_assoc()['count'];
     }
 
@@ -850,15 +850,15 @@ class User
             $unit = ($system['system_distance'] == "mile") ? 3958 : 6371;
             $distance = 10000;
             if ($random) {
-                $get_users = $db->query(sprintf("SELECT * FROM (SELECT user_id, user_name, user_firstname, user_lastname, user_gender, user_picture, user_subscribed, user_verified, (%s * acos(cos(radians(%s)) * cos(radians(user_latitude)) * cos(radians(user_longitude) - radians(%s)) + sin(radians(%s)) * sin(radians(user_latitude))) ) AS distance FROM users " . $where . " HAVING distance < %s ORDER BY distance ASC LIMIT %s) tmp ORDER BY RAND() LIMIT %s", secure($unit, 'int'), secure($this->_data['user_latitude']), secure($this->_data['user_longitude']), secure($this->_data['user_latitude']), secure($distance, 'int'), secure($system['max_results'] * 2, 'int', false), secure($system['min_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+                $get_users = $db->query(sprintf("SELECT * FROM (SELECT user_id, user_name, user_firstname, user_lastname, user_gender, user_picture, user_subscribed, user_verified, (%s * acos(cos(radians(%s)) * cos(radians(user_latitude)) * cos(radians(user_longitude) - radians(%s)) + sin(radians(%s)) * sin(radians(user_latitude))) ) AS distance FROM users " . $where . " HAVING distance < %s ORDER BY distance ASC LIMIT %s) tmp ORDER BY RAND() LIMIT %s", secure($unit, 'int'), secure($this->_data['user_latitude']), secure($this->_data['user_longitude']), secure($this->_data['user_latitude']), secure($distance, 'int'), secure($system['max_results'] * 2, 'int', false), secure($system['min_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
             } else {
-                $get_users = $db->query(sprintf("SELECT user_id, user_name, user_firstname, user_lastname, user_gender, user_picture, user_subscribed, user_verified, (%s * acos(cos(radians(%s)) * cos(radians(user_latitude)) * cos(radians(user_longitude) - radians(%s)) + sin(radians(%s)) * sin(radians(user_latitude))) ) AS distance FROM users " . $where . " HAVING distance < %s ORDER BY distance ASC LIMIT %s, %s", secure($unit, 'int'), secure($this->_data['user_latitude']), secure($this->_data['user_longitude']), secure($this->_data['user_latitude']), secure($distance, 'int'), secure($offset, 'int', false), secure($system['min_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+                $get_users = $db->query(sprintf("SELECT user_id, user_name, user_firstname, user_lastname, user_gender, user_picture, user_subscribed, user_verified, (%s * acos(cos(radians(%s)) * cos(radians(user_latitude)) * cos(radians(user_longitude) - radians(%s)) + sin(radians(%s)) * sin(radians(user_latitude))) ) AS distance FROM users " . $where . " HAVING distance < %s ORDER BY distance ASC LIMIT %s, %s", secure($unit, 'int'), secure($this->_data['user_latitude']), secure($this->_data['user_longitude']), secure($this->_data['user_latitude']), secure($distance, 'int'), secure($offset, 'int', false), secure($system['min_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
             }
         } else {
             if ($random) {
-                $get_users = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM users JOIN (SELECT CEIL(RAND() * (SELECT MAX(user_id) FROM users)) AS user_id) AS u " . $where . " AND users.user_id >= u.user_id ORDER BY users.user_id ASC LIMIT %s, %s", secure($offset, 'int', false), secure($system['min_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+                $get_users = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM users JOIN (SELECT CEIL(RAND() * (SELECT MAX(user_id) FROM users)) AS user_id) AS u " . $where . " AND users.user_id >= u.user_id ORDER BY users.user_id ASC LIMIT %s, %s", secure($offset, 'int', false), secure($system['min_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
             } else {
-                $get_users = $db->query(sprintf("SELECT user_id, user_name, user_firstname, user_lastname, user_gender, user_picture, user_subscribed, user_verified FROM users " . $where . " LIMIT %s, %s", secure($offset, 'int', false), secure($system['min_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+                $get_users = $db->query(sprintf("SELECT user_id, user_name, user_firstname, user_lastname, user_gender, user_picture, user_subscribed, user_verified FROM users " . $where . " LIMIT %s, %s", secure($offset, 'int', false), secure($system['min_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
             }
         }
         if ($get_users->num_rows > 0) {
@@ -898,7 +898,7 @@ class User
     {
         global $db, $system;
         $pro_members = [];
-        $get_pro_members = $db->query(sprintf("SELECT user_id, user_name, user_firstname, user_lastname, user_gender, user_picture, user_subscribed, user_verified FROM users WHERE user_subscribed = '1' ORDER BY RAND() LIMIT %s", $system['max_results'])) or _error("SQL_ERROR_THROWEN");
+        $get_pro_members = $db->query(sprintf("SELECT user_id, user_name, user_firstname, user_lastname, user_gender, user_picture, user_subscribed, user_verified FROM users WHERE user_subscribed = '1' ORDER BY RAND() LIMIT %s", $system['max_results'])) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_pro_members->num_rows > 0) {
             while ($user = $get_pro_members->fetch_assoc()) {
                 $user['user_picture'] = get_picture($user['user_picture'], $user['user_gender']);
@@ -932,7 +932,7 @@ class User
         /* prepare skipped statment */
         $skipped_statment = ($skipped_array) ? sprintf(" user_id NOT IN (%s) AND ", $this->spread_ids($skipped_array)) : "";
         /* get users */
-        $get_users = $db->query("SELECT user_id, user_name, user_firstname, user_lastname, user_gender, user_picture, user_subscribed, user_verified FROM users WHERE user_id != " . secure($this->_data['user_id'], 'int') . " AND " . $skipped_statment . $where_statement . $order_statement . " LIMIT " . secure($system['min_results'], 'int', false)) or _error("SQL_ERROR_THROWEN");
+        $get_users = $db->query("SELECT user_id, user_name, user_firstname, user_lastname, user_gender, user_picture, user_subscribed, user_verified FROM users WHERE user_id != " . secure($this->_data['user_id'], 'int') . " AND " . $skipped_statment . $where_statement . $order_statement . " LIMIT " . secure($system['min_results'], 'int', false)) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_users->num_rows > 0) {
             while ($user = $get_users->fetch_assoc()) {
                 /* check if there is any blocking between the viewer & the target user */
@@ -980,7 +980,7 @@ class User
     public function get_user($user_id)
     {
         global $db;
-        $get_user = $db->query(sprintf("SELECT * FROM users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_user = $db->query(sprintf("SELECT * FROM users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_user->num_rows == 0) {
             return false;
         }
@@ -1036,7 +1036,7 @@ class User
             case 'articles':
                 /* search articles */
                 if ($system['blogs_enabled']) {
-                    $get_articles = $db->query(sprintf('SELECT post_id FROM posts_articles WHERE title LIKE %1$s OR text LIKE %1$s OR tags LIKE %1$s ORDER BY title ASC LIMIT %2$s, %3$s', secure($query, 'search'), secure($offset, 'int', false), secure($system['search_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+                    $get_articles = $db->query(sprintf('SELECT post_id FROM posts_articles WHERE title LIKE %1$s OR text LIKE %1$s OR tags LIKE %1$s ORDER BY title ASC LIMIT %2$s, %3$s', secure($query, 'search'), secure($offset, 'int', false), secure($system['search_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
                     if ($get_articles->num_rows > 0) {
                         while ($article = $get_articles->fetch_assoc()) {
                             $article = $this->get_post($article['post_id']);
@@ -1073,7 +1073,7 @@ class User
                     WHERE user_banned = "0" 
                       AND (user_name LIKE %1$s OR CONCAT(user_firstname,  " ", user_lastname) LIKE %1$s) '. $extraWhere
                     .'ORDER BY user_firstname ASC LIMIT %2$s, %3$s', secure($query, 'search'), secure($offset, 'int', false), secure($system['search_results'], 'int', false))
-                ) or _error("SQL_ERROR_THROWEN");
+                ) or _error("SQL_ERROR_THROWEN", $db);
                 if ($get_users->num_rows > 0) {
                     while ($user = $get_users->fetch_assoc()) {
                         $user['user_picture'] = get_picture($user['user_picture'], $user['user_gender']);
@@ -1098,7 +1098,7 @@ class User
             case 'pages':
                 /* search pages */
                 if ($system['pages_enabled']) {
-                    $get_pages = $db->query(sprintf('SELECT * FROM pages WHERE page_name LIKE %1$s OR page_title LIKE %1$s ORDER BY page_title ASC LIMIT %2$s, %3$s', secure($query, 'search'), secure($offset, 'int', false), secure($system['search_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+                    $get_pages = $db->query(sprintf('SELECT * FROM pages WHERE page_name LIKE %1$s OR page_title LIKE %1$s ORDER BY page_title ASC LIMIT %2$s, %3$s', secure($query, 'search'), secure($offset, 'int', false), secure($system['search_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
                     if ($get_pages->num_rows > 0) {
                         while ($page = $get_pages->fetch_assoc()) {
                             $page['page_picture'] = get_picture($page['page_picture'], 'page');
@@ -1113,7 +1113,7 @@ class User
             case 'groups':
                 /* search groups */
                 if ($system['groups_enabled']) {
-                    $get_groups = $db->query(sprintf('SELECT * FROM `groups` WHERE group_privacy != "secret" AND (group_name LIKE %1$s OR group_title LIKE %1$s) ORDER BY group_title ASC LIMIT %2$s, %3$s', secure($query, 'search'), secure($offset, 'int', false), secure($system['search_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+                    $get_groups = $db->query(sprintf('SELECT * FROM `groups` WHERE group_privacy != "secret" AND (group_name LIKE %1$s OR group_title LIKE %1$s) ORDER BY group_title ASC LIMIT %2$s, %3$s', secure($query, 'search'), secure($offset, 'int', false), secure($system['search_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
                     if ($get_groups->num_rows > 0) {
                         while ($group = $get_groups->fetch_assoc()) {
                             $group['group_picture'] = get_picture($group['group_picture'], 'group');
@@ -1128,7 +1128,7 @@ class User
             case 'events':
                 /* search events */
                 if ($system['events_enabled']) {
-                    $get_events = $db->query(sprintf('SELECT * FROM `events` WHERE event_privacy != "secret" AND event_title LIKE %1$s ORDER BY event_title ASC LIMIT %2$s, %3$s', secure($query, 'search'), secure($offset, 'int', false), secure($system['search_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+                    $get_events = $db->query(sprintf('SELECT * FROM `events` WHERE event_privacy != "secret" AND event_title LIKE %1$s ORDER BY event_title ASC LIMIT %2$s, %3$s', secure($query, 'search'), secure($offset, 'int', false), secure($system['search_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
                     if ($get_events->num_rows > 0) {
                         while ($event = $get_events->fetch_assoc()) {
                             $event['event_picture'] = get_picture($event['event_cover'], 'event');
@@ -1155,7 +1155,7 @@ class User
         global $db, $system;
         $results = [];
         /* search users */
-        $get_users = $db->query(sprintf('SELECT user_id, user_name, user_firstname, user_lastname, user_gender, user_picture, user_subscribed, user_verified FROM users WHERE user_banned = "0" AND (user_name LIKE %1$s OR user_firstname LIKE %1$s OR user_lastname LIKE %1$s OR CONCAT(user_firstname,  " ", user_lastname) LIKE %1$s) LIMIT %2$s', secure($query, 'search'), secure($system['min_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+        $get_users = $db->query(sprintf('SELECT user_id, user_name, user_firstname, user_lastname, user_gender, user_picture, user_subscribed, user_verified FROM users WHERE user_banned = "0" AND (user_name LIKE %1$s OR user_firstname LIKE %1$s OR user_lastname LIKE %1$s OR CONCAT(user_firstname,  " ", user_lastname) LIKE %1$s) LIMIT %2$s', secure($query, 'search'), secure($system['min_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_users->num_rows > 0) {
             while ($user = $get_users->fetch_assoc()) {
                 $user['user_picture'] = get_picture($user['user_picture'], $user['user_gender']);
@@ -1179,7 +1179,7 @@ class User
         }
         /* search pages */
         if ($system['pages_enabled']) {
-            $get_pages = $db->query(sprintf('SELECT * FROM pages WHERE page_name LIKE %1$s OR page_title LIKE %1$s LIMIT %2$s', secure($query, 'search'), secure($system['min_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+            $get_pages = $db->query(sprintf('SELECT * FROM pages WHERE page_name LIKE %1$s OR page_title LIKE %1$s LIMIT %2$s', secure($query, 'search'), secure($system['min_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
             if ($get_pages->num_rows > 0) {
                 while ($page = $get_pages->fetch_assoc()) {
                     $page['page_picture'] = get_picture($page['page_picture'], 'page');
@@ -1193,7 +1193,7 @@ class User
         }
         /* search groups */
         if ($system['groups_enabled']) {
-            $get_groups = $db->query(sprintf('SELECT * FROM `groups` WHERE group_privacy != "secret" AND (group_name LIKE %1$s OR group_title LIKE %1$s) LIMIT %2$s', secure($query, 'search'), secure($system['min_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+            $get_groups = $db->query(sprintf('SELECT * FROM `groups` WHERE group_privacy != "secret" AND (group_name LIKE %1$s OR group_title LIKE %1$s) LIMIT %2$s', secure($query, 'search'), secure($system['min_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
             if ($get_groups->num_rows > 0) {
                 while ($group = $get_groups->fetch_assoc()) {
                     $group['group_picture'] = get_picture($group['group_picture'], 'group');
@@ -1207,7 +1207,7 @@ class User
         }
         /* search events */
         if ($system['events_enabled']) {
-            $get_events = $db->query(sprintf('SELECT * FROM `events` WHERE event_privacy != "secret" AND event_title LIKE %1$s LIMIT %2$s', secure($query, 'search'), secure($system['min_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+            $get_events = $db->query(sprintf('SELECT * FROM `events` WHERE event_privacy != "secret" AND event_title LIKE %1$s LIMIT %2$s', secure($query, 'search'), secure($system['min_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
             if ($get_events->num_rows > 0) {
                 while ($event = $get_events->fetch_assoc()) {
                     $event['event_picture'] = get_picture($event['event_cover'], 'event');
@@ -1337,7 +1337,7 @@ class User
             $query .= sprintf(" LIMIT %s", secure($system['max_results'], 'int', false));
         }
         /* get users */
-        $get_users = $db->query($query) or _error("SQL_ERROR_THROWEN");
+        $get_users = $db->query($query) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_users->num_rows > 0) {
             while ($user = $get_users->fetch_assoc()) {
                 $user['user_picture'] = get_picture($user['user_picture'], $user['user_gender']);
@@ -1371,7 +1371,7 @@ class User
     {
         global $db, $system;
         $results = [];
-        $get_search_log = $db->query(sprintf("SELECT users_searches.log_id, users_searches.node_type, users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified, pages.*, `groups`.*, `events`.* FROM users_searches LEFT JOIN users ON users_searches.node_type = 'user' AND users_searches.node_id = users.user_id LEFT JOIN pages ON users_searches.node_type = 'page' AND users_searches.node_id = pages.page_id LEFT JOIN `groups` ON users_searches.node_type = 'group' AND users_searches.node_id = `groups`.group_id LEFT JOIN `events` ON users_searches.node_type = 'event' AND users_searches.node_id = `events`.event_id WHERE users_searches.user_id = %s ORDER BY users_searches.log_id DESC LIMIT %s", secure($this->_data['user_id'], 'int'), secure($system['min_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+        $get_search_log = $db->query(sprintf("SELECT users_searches.log_id, users_searches.node_type, users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified, pages.*, `groups`.*, `events`.* FROM users_searches LEFT JOIN users ON users_searches.node_type = 'user' AND users_searches.node_id = users.user_id LEFT JOIN pages ON users_searches.node_type = 'page' AND users_searches.node_id = pages.page_id LEFT JOIN `groups` ON users_searches.node_type = 'group' AND users_searches.node_id = `groups`.group_id LEFT JOIN `events` ON users_searches.node_type = 'event' AND users_searches.node_id = `events`.event_id WHERE users_searches.user_id = %s ORDER BY users_searches.log_id DESC LIMIT %s", secure($this->_data['user_id'], 'int'), secure($system['min_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_search_log->num_rows > 0) {
             while ($result = $get_search_log->fetch_assoc()) {
                 switch ($result['node_type']) {
@@ -1437,7 +1437,7 @@ class User
     public function clear_search_log()
     {
         global $db, $system;
-        $db->query(sprintf("DELETE FROM users_searches WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("DELETE FROM users_searches WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
     private function fund(string $entity, int $id, float $amount): array
@@ -1448,10 +1448,10 @@ class User
             sprintf('select %1$s_admin from `%1$ss` where %1$s_id = %2$s',
                 secure($entity,'', false),
                 secure($id, 'int'))
-        ) or _error("SQL_ERROR_THROWEN");
+        ) or _error("SQL_ERROR_THROWEN", $db);
         $userId = $query->fetch_row()[0];
 
-        $query = $db->query(sprintf('select user_relysia_paymail as address from users where user_id = %1$s limit 1', secure($userId, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $query = $db->query(sprintf('select user_relysia_paymail as address from users where user_id = %1$s limit 1', secure($userId, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         $recipientAddress = $query->fetch_row()[0];
 
         // get shntr token transactions
@@ -1500,7 +1500,7 @@ class User
                             $this->_data['user_id'],
                             'int'
                         ) . ' and paywall_invader_id = ' . secure($id, 'int'),
-                    ) or _error("SQL_ERROR_THROWEN");
+                    ) or _error("SQL_ERROR_THROWEN", $db);
 
                     $response['paywall_set'] = $query;
                     break;
@@ -1519,7 +1519,7 @@ class User
                         secure($id, 'int'),
                         secure($value, 'int', false)
                     ),
-                ) or _error("SQL_ERROR_THROWEN");
+                ) or _error("SQL_ERROR_THROWEN", $db);
                 $response['paywall_set'] = $query;
                 break;
 
@@ -1533,14 +1533,14 @@ class User
                 /* delete the target from viewer's followings */
                 $this->connect('unfollow', $id);
                 /* delete the viewer from target's followings */
-                $db->query(sprintf("DELETE FROM followings WHERE user_id = %s AND following_id = %s", secure($id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM followings WHERE user_id = %s AND following_id = %s", secure($id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* block the user */
-                $db->query(sprintf("INSERT INTO users_blocks (user_id, blocked_id) VALUES (%s, %s)", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("INSERT INTO users_blocks (user_id, blocked_id) VALUES (%s, %s)", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'unblock':
                 /* unblock the user */
-                $db->query(sprintf("DELETE FROM users_blocks WHERE user_id = %s AND blocked_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM users_blocks WHERE user_id = %s AND blocked_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'friend-accept':
@@ -1549,7 +1549,7 @@ class User
                 $friendRequestAcceptReward = isset($price["price"]) && !empty($price["price"]) ?  $price["price"] : 0;
 //                $query = $db->query(
 //                    'select user_token_private_key as super_private_key, user_id as id from users where user_id = 1 limit 1'
-//                ) or _error("SQL_ERROR_THROWEN");
+//                ) or _error("SQL_ERROR_THROWEN", $db);
 //                $superUser = $query->fetch_assoc();
 
                 if ($friendRequestAcceptReward !== '0.00') {
@@ -1572,11 +1572,11 @@ class User
                 }
 
                 /* check if there is a friend request from the target to the viewer */
-                $check = $db->query(sprintf("SELECT COUNT(*) as count FROM friends WHERE user_one_id = %s AND user_two_id = %s AND status = 0", secure($id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check = $db->query(sprintf("SELECT COUNT(*) as count FROM friends WHERE user_one_id = %s AND user_two_id = %s AND status = 0", secure($id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* if no -> return */
                 if ($check->fetch_assoc()['count'] == 0) return;
                 /* add the target as a friend */
-                $db->query(sprintf("UPDATE friends SET status = 1 WHERE user_one_id = %s AND user_two_id = %s", secure($id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE friends SET status = 1 WHERE user_one_id = %s AND user_two_id = %s", secure($id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* post new notification */
                 $this->post_notification(array('to_user_id' => $id, 'action' => 'friend_accept', 'node_url' => $this->_data['user_name']));
                 /* follow */
@@ -1585,14 +1585,14 @@ class User
 
             case 'friend-decline':
                 /* check if there is a friend request from the target to the viewer */
-                $check = $db->query(sprintf("SELECT COUNT(*) as count FROM friends WHERE user_one_id = %s AND user_two_id = %s AND status = 0", secure($id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check = $db->query(sprintf("SELECT COUNT(*) as count FROM friends WHERE user_one_id = %s AND user_two_id = %s AND status = 0", secure($id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* if no -> return */
                 if ($check->fetch_assoc()['count'] == 0) return;
                 /* decline this friend request */
                 if ($system['disable_declined_friendrequest']) {
-                    $db->query(sprintf("UPDATE friends SET status = -1 WHERE user_one_id = %s AND user_two_id = %s", secure($id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE friends SET status = -1 WHERE user_one_id = %s AND user_two_id = %s", secure($id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 } else {
-                    $db->query(sprintf("DELETE FROM friends WHERE user_one_id = %s AND user_two_id = %s", secure($id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("DELETE FROM friends WHERE user_one_id = %s AND user_two_id = %s", secure($id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 }
                 /* unfollow */
                 $this->_unfollow($id);
@@ -1625,7 +1625,7 @@ class User
                         blueModal("ERROR", __("Funds"), __("You're out of tokens"));
                     }
 
-//                    $query = $db->query('select user_relysia_paymail as address, user_id as id from users where user_id = 1 limit 1') or _error("SQL_ERROR_THROWEN");
+//                    $query = $db->query('select user_relysia_paymail as address, user_id as id from users where user_id = 1 limit 1') or _error("SQL_ERROR_THROWEN", $db);
 //                    $superUser = $query->fetch_assoc();
 
                     $response = shntrToken::payRelysia(
@@ -1649,30 +1649,30 @@ class User
                 }
 
                 /* check if there is any relation between the viewer & the target */
-                $check_relation = $db->query(sprintf('SELECT COUNT(*) as count FROM friends WHERE (user_one_id = %1$s AND user_two_id = %2$s) OR (user_one_id = %2$s AND user_two_id = %1$s)', secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check_relation = $db->query(sprintf('SELECT COUNT(*) as count FROM friends WHERE (user_one_id = %1$s AND user_two_id = %2$s) OR (user_one_id = %2$s AND user_two_id = %1$s)', secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* if yes -> return */
                 if ($check_relation->fetch_assoc()['count'] > 0) return;
                 /* check max friends/user limit for both the viewer & the target */
                 if ($system['max_friends'] > 0) {
                     /* get target user group */
-                    $get_target_user = $db->query(sprintf("SELECT user_group FROM users WHERE user_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $get_target_user = $db->query(sprintf("SELECT user_group FROM users WHERE user_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     if ($get_target_user->num_rows == 0) return;
                     $target_user = $get_target_user->fetch_assoc();
                     /* viewer check */
-                    $check_viewer_limit = $db->query(sprintf('SELECT COUNT(*) as count FROM friends WHERE (user_one_id = %1$s OR user_two_id = %1$s) AND status = 1', secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $check_viewer_limit = $db->query(sprintf('SELECT COUNT(*) as count FROM friends WHERE (user_one_id = %1$s OR user_two_id = %1$s) AND status = 1', secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     if ($check_viewer_limit->fetch_assoc()['count'] >= $system['max_friends'] && $this->_data['user_group'] >= 3) {
                         blueModal("MESSAGE", __("Maximum Limit Reached"), __("Your have reached the maximum limit of Friends" . " (" . $system['max_friends'] . " " . __("Friends") . ")"));
                     }
                     /* target check */
-                    $check_target_limit = $db->query(sprintf('SELECT COUNT(*) as count FROM friends WHERE (user_one_id = %1$s OR user_two_id = %1$s) AND status = 1', secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $check_target_limit = $db->query(sprintf('SELECT COUNT(*) as count FROM friends WHERE (user_one_id = %1$s OR user_two_id = %1$s) AND status = 1', secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     if ($check_target_limit->fetch_assoc()['count'] >= $system['max_friends'] && $target_user['user_group'] >= 3) {
                         blueModal("MESSAGE", __("Maximum Limit Reached"), __("This user has reached the maximum limit of Friends" . " (" . $system['max_friends'] . " " . __("Friends") . ")"));
                     }
                 }
                 /* add the friend request */
-                $db->query(sprintf("INSERT INTO friends (user_one_id, user_two_id, status) VALUES (%s, %s, '0')", secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("INSERT INTO friends (user_one_id, user_two_id, status) VALUES (%s, %s, '0')", secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* update requests counter +1 */
-                $db->query(sprintf("UPDATE users SET user_live_requests_counter = user_live_requests_counter + 1 WHERE user_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE users SET user_live_requests_counter = user_live_requests_counter + 1 WHERE user_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* post new notification */
                 $this->post_notification(array('to_user_id' => $id, 'action' => 'friend_add', 'node_url' => $this->_data['user_name']));
                 /* follow */
@@ -1681,13 +1681,13 @@ class User
 
             case 'friend-cancel':
                 /* check if there is a request from the viewer to the target */
-                $check = $db->query(sprintf("SELECT COUNT(*) as count FROM friends WHERE user_one_id = %s AND user_two_id = %s AND status = 0", secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check = $db->query(sprintf("SELECT COUNT(*) as count FROM friends WHERE user_one_id = %s AND user_two_id = %s AND status = 0", secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* if no -> return */
                 if ($check->fetch_assoc()['count'] == 0) return;
                 /* delete the friend request */
-                $db->query(sprintf("DELETE FROM friends WHERE user_one_id = %s AND user_two_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM friends WHERE user_one_id = %s AND user_two_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* update requests counter -1 */
-                $db->query(sprintf("UPDATE users SET user_live_requests_counter = IF(user_live_requests_counter=0,0,user_live_requests_counter-1), user_live_notifications_counter = IF(user_live_notifications_counter=0,0,user_live_notifications_counter-1) WHERE user_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE users SET user_live_requests_counter = IF(user_live_requests_counter=0,0,user_live_requests_counter-1), user_live_notifications_counter = IF(user_live_notifications_counter=0,0,user_live_notifications_counter-1) WHERE user_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* delete notification */
                 $this->delete_notification($id, 'friend_add', "", $this->_data['user_name']);
                 /* unfollow */
@@ -1696,15 +1696,15 @@ class User
 
             case 'friend-remove':
                 /* check if there is any relation between me & him */
-                $check = $db->query(sprintf('SELECT COUNT(*) as count FROM friends WHERE (user_one_id = %1$s AND user_two_id = %2$s AND status = 1) OR (user_one_id = %2$s AND user_two_id = %1$s AND status = 1)', secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check = $db->query(sprintf('SELECT COUNT(*) as count FROM friends WHERE (user_one_id = %1$s AND user_two_id = %2$s AND status = 1) OR (user_one_id = %2$s AND user_two_id = %1$s AND status = 1)', secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* if no -> return */
                 if ($check->fetch_assoc()['count'] == 0) return;
                 /* delete this friend */
-                $db->query(sprintf('DELETE FROM friends WHERE (user_one_id = %1$s AND user_two_id = %2$s AND status = 1) OR (user_one_id = %2$s AND user_two_id = %1$s AND status = 1)', secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf('DELETE FROM friends WHERE (user_one_id = %1$s AND user_two_id = %2$s AND status = 1) OR (user_one_id = %2$s AND user_two_id = %1$s AND status = 1)', secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'friend-fund':
-                $query = $db->query(sprintf('select user_relysia_paymail as address from users where user_id = %1$s limit 1', secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $query = $db->query(sprintf('select user_relysia_paymail as address from users where user_id = %1$s limit 1', secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 $recipientAddress = $query->fetch_row()[0];
 
                 // get shntr token transactions
@@ -1735,7 +1735,7 @@ class User
 
             case 'poke':
                 /* check if the viewer allowed to poke the target */
-                $get_target_user = $db->query(sprintf("SELECT user_privacy_poke FROM users WHERE user_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_target_user = $db->query(sprintf("SELECT user_privacy_poke FROM users WHERE user_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 if ($get_target_user->num_rows == 0) return;
                 $target_user = $get_target_user->fetch_assoc();
                 if ($target_user['user_privacy_poke'] == "me" || ($target_user['user_privacy_poke'] == "friends" && !$this->friendship_approved($id))) {
@@ -1746,40 +1746,40 @@ class User
                     throw new Exception(__("You have already poked this user before!"));
                 }
                 /* poke the target user */
-                $db->query(sprintf("INSERT INTO users_pokes (user_id, poked_id) VALUES (%s, %s)", secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("INSERT INTO users_pokes (user_id, poked_id) VALUES (%s, %s)", secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* post new notification */
                 $this->post_notification(array('to_user_id' => $id, 'action' => 'poke', 'node_url' => $this->_data['user_name']));
                 break;
 
             case 'page-like':
                 /* check if the viewer already liked this page */
-                $check = $db->query(sprintf("SELECT COUNT(*) as count FROM pages_likes WHERE user_id = %s AND page_id = %s", secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check = $db->query(sprintf("SELECT COUNT(*) as count FROM pages_likes WHERE user_id = %s AND page_id = %s", secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* if yes -> return */
                 if ($check->fetch_assoc()['count'] > 0) return;
                 /* if no -> like this page */
-                $db->query(sprintf("INSERT INTO pages_likes (user_id, page_id) VALUES (%s, %s)", secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("INSERT INTO pages_likes (user_id, page_id) VALUES (%s, %s)", secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* update likes counter +1 */
-                $db->query(sprintf("UPDATE pages SET page_likes = page_likes + 1  WHERE page_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE pages SET page_likes = page_likes + 1  WHERE page_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'page-unlike':
                 /* check if the viewer already liked this page */
-                $check = $db->query(sprintf("SELECT COUNT(*) as count FROM pages_likes WHERE user_id = %s AND page_id = %s", secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check = $db->query(sprintf("SELECT COUNT(*) as count FROM pages_likes WHERE user_id = %s AND page_id = %s", secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* if no -> return */
                 if ($check->fetch_assoc()['count'] == 0) return;
                 /* if yes -> unlike this page */
-                $db->query(sprintf("DELETE FROM pages_likes WHERE user_id = %s AND page_id = %s", secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM pages_likes WHERE user_id = %s AND page_id = %s", secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* update likes counter -1 */
-                $db->query(sprintf("UPDATE pages SET page_likes = IF(page_likes=0,0,page_likes-1) WHERE page_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE pages SET page_likes = IF(page_likes=0,0,page_likes-1) WHERE page_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'page-boost':
                 if ($this->_is_admin) {
                     /* check if the user is the system admin */
-                    $check = $db->query(sprintf("SELECT * FROM pages WHERE page_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $check = $db->query(sprintf("SELECT * FROM pages WHERE page_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 } else {
                     /* check if the user is the page admin */
-                    $check = $db->query(sprintf("SELECT * FROM pages WHERE page_id = %s AND page_admin = %s", secure($id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $check = $db->query(sprintf("SELECT * FROM pages WHERE page_id = %s AND page_admin = %s", secure($id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 }
                 if ($check->num_rows == 0) {
                     _error(403);
@@ -1792,19 +1792,19 @@ class User
                 /* boost page */
                 if (!$spage['page_boosted']) {
                     /* boost page */
-                    $db->query(sprintf("UPDATE pages SET page_boosted = '1', page_boosted_by = %s WHERE page_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE pages SET page_boosted = '1', page_boosted_by = %s WHERE page_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     /* update user */
-                    $db->query(sprintf("UPDATE users SET user_boosted_pages = user_boosted_pages + 1 WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE users SET user_boosted_pages = user_boosted_pages + 1 WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 }
                 break;
 
             case 'page-unboost':
                 if ($this->_is_admin) {
                     /* check if the user is the system admin */
-                    $check = $db->query(sprintf("SELECT * FROM pages WHERE page_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $check = $db->query(sprintf("SELECT * FROM pages WHERE page_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 } else {
                     /* check if the user is the page admin */
-                    $check = $db->query(sprintf("SELECT * FROM pages WHERE page_id = %s AND page_admin = %s", secure($id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $check = $db->query(sprintf("SELECT * FROM pages WHERE page_id = %s AND page_admin = %s", secure($id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 }
                 if ($check->num_rows == 0) {
                     _error(403);
@@ -1813,9 +1813,9 @@ class User
                 /* unboost page */
                 if ($spage['page_boosted']) {
                     /* unboost page */
-                    $db->query(sprintf("UPDATE pages SET page_boosted = '0', page_boosted_by = NULL WHERE page_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE pages SET page_boosted = '0', page_boosted_by = NULL WHERE page_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     /* update user */
-                    $db->query(sprintf("UPDATE users SET user_boosted_pages = IF(user_boosted_pages=0,0,user_boosted_pages-1) WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE users SET user_boosted_pages = IF(user_boosted_pages=0,0,user_boosted_pages-1) WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 }
                 break;
 
@@ -1824,22 +1824,22 @@ class User
                     _error(400);
                 }
                 /* check if the viewer liked the page */
-                $check_viewer = $db->query(sprintf("SELECT pages.* FROM pages INNER JOIN pages_likes ON pages.page_id = pages_likes.page_id WHERE pages_likes.user_id = %s AND pages_likes.page_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check_viewer = $db->query(sprintf("SELECT pages.* FROM pages INNER JOIN pages_likes ON pages.page_id = pages_likes.page_id WHERE pages_likes.user_id = %s AND pages_likes.page_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* if no -> return */
                 if ($check_viewer->num_rows == 0) return;
                 /* check if the target already liked this page */
-                $check_target = $db->query(sprintf("SELECT * FROM pages_likes WHERE user_id = %s AND page_id = %s", secure($uid, 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check_target = $db->query(sprintf("SELECT * FROM pages_likes WHERE user_id = %s AND page_id = %s", secure($uid, 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* if yes -> return */
                 if ($check_target->num_rows > 0) return;
                 /* check if the viewer already invited to the viewer to this page */
-                $check_target = $db->query(sprintf("SELECT * FROM pages_invites WHERE page_id = %s AND user_id = %s AND from_user_id = %s", secure($id, 'int'), secure($uid, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check_target = $db->query(sprintf("SELECT * FROM pages_invites WHERE page_id = %s AND user_id = %s AND from_user_id = %s", secure($id, 'int'), secure($uid, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* if yes -> return */
                 if ($check_target->num_rows > 0) return;
                 /* if no -> invite to this page */
                 /* get page */
                 $page = $check_viewer->fetch_assoc();
                 /* insert invitation */
-                $db->query(sprintf("INSERT INTO pages_invites (page_id, user_id, from_user_id) VALUES (%s, %s, %s)", secure($id, 'int'), secure($uid, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("INSERT INTO pages_invites (page_id, user_id, from_user_id) VALUES (%s, %s, %s)", secure($id, 'int'), secure($uid, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* send notification (page invitation) to the target user */
                 $this->post_notification(array('to_user_id' => $uid, 'action' => 'page_invitation', 'node_type' => $page['page_title'], 'node_url' => $page['page_name']));
                 break;
@@ -1849,22 +1849,22 @@ class User
                     _error(400);
                 }
                 /* check if the target already a page member */
-                $check = $db->query(sprintf("SELECT * FROM pages_likes WHERE user_id = %s AND page_id = %s", secure($uid, 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check = $db->query(sprintf("SELECT * FROM pages_likes WHERE user_id = %s AND page_id = %s", secure($uid, 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* if no -> return */
                 if ($check->num_rows == 0) return;
                 /* check if the target already a page admin */
-                $check = $db->query(sprintf("SELECT * FROM pages_admins WHERE user_id = %s AND page_id = %s", secure($uid, 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check = $db->query(sprintf("SELECT * FROM pages_admins WHERE user_id = %s AND page_id = %s", secure($uid, 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* if yes -> return */
                 if ($check->num_rows > 0) return;
                 /* get page */
-                $get_page = $db->query(sprintf("SELECT * FROM pages WHERE page_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_page = $db->query(sprintf("SELECT * FROM pages WHERE page_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 $page = $get_page->fetch_assoc();
                 /* check if the viewer is page admin */
                 if (!$this->check_page_adminship($this->_data['user_id'], $page['page_id']) && $this->_data['user_id'] != $page['page_admin']) {
                     _error(400);
                 }
                 /* add the target as page admin */
-                $db->query(sprintf("INSERT INTO pages_admins (user_id, page_id) VALUES (%s, %s)", secure($uid, 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("INSERT INTO pages_admins (user_id, page_id) VALUES (%s, %s)", secure($uid, 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* send notification (page admin addation) to the target user */
                 $this->post_notification(array('to_user_id' => $uid, 'action' => 'page_admin_addation', 'node_type' => $page['page_title'], 'node_url' => $page['page_name']));
                 break;
@@ -1874,11 +1874,11 @@ class User
                     _error(400);
                 }
                 /* check if the target already a page admin */
-                $check = $db->query(sprintf("SELECT * FROM pages_admins WHERE user_id = %s AND page_id = %s", secure($uid, 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check = $db->query(sprintf("SELECT * FROM pages_admins WHERE user_id = %s AND page_id = %s", secure($uid, 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* if no -> return */
                 if ($check->num_rows == 0) return;
                 /* get page */
-                $get_page = $db->query(sprintf("SELECT * FROM pages WHERE page_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_page = $db->query(sprintf("SELECT * FROM pages WHERE page_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 $page = $get_page->fetch_assoc();
                 /* check if the viewer is page admin */
                 if (!$this->check_page_adminship($this->_data['user_id'], $page['page_id'])) {
@@ -1889,7 +1889,7 @@ class User
                     throw new Exception(__("You can not remove page super admin"));
                 }
                 /* remove the target as page admin */
-                $db->query(sprintf("DELETE FROM pages_admins WHERE user_id = %s AND page_id = %s", secure($uid, 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM pages_admins WHERE user_id = %s AND page_id = %s", secure($uid, 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* delete notification (page admin addation) to the target user */
                 $this->delete_notification($uid, 'page_admin_addation', $page['page_title'], $page['page_name']);
                 break;
@@ -1899,22 +1899,22 @@ class User
                     _error(400);
                 }
                 /* check if the target already a page member */
-                $check = $db->query(sprintf("SELECT * FROM pages_likes WHERE user_id = %s AND page_id = %s", secure($uid, 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check = $db->query(sprintf("SELECT * FROM pages_likes WHERE user_id = %s AND page_id = %s", secure($uid, 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* if no -> return */
                 if ($check->num_rows == 0) return;
                 /* get page */
-                $get_page = $db->query(sprintf("SELECT * FROM pages WHERE page_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_page = $db->query(sprintf("SELECT * FROM pages WHERE page_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 $page = $get_page->fetch_assoc();
                 /* check if the target is the super page admin */
                 if ($uid == $page['page_admin']) {
                     throw new Exception(__("You can not remove page super admin"));
                 }
                 /* remove the target as page admin */
-                $db->query(sprintf("DELETE FROM pages_admins WHERE user_id = %s AND page_id = %s", secure($uid, 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM pages_admins WHERE user_id = %s AND page_id = %s", secure($uid, 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* remove the target as page member */
-                $db->query(sprintf("DELETE FROM pages_likes WHERE user_id = %s AND page_id = %s", secure($uid, 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM pages_likes WHERE user_id = %s AND page_id = %s", secure($uid, 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* update members counter -1 */
-                $db->query(sprintf("UPDATE pages SET page_likes = IF(page_likes=0,0,page_likes-1) WHERE page_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE pages SET page_likes = IF(page_likes=0,0,page_likes-1) WHERE page_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'page-fund':
@@ -1923,12 +1923,12 @@ class User
 
             case 'group-join':
                 /* check if the viewer already joined (approved||pending) this group */
-                $check = $db->query(sprintf("SELECT * FROM groups_members WHERE user_id = %s AND group_id = %s", secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check = $db->query(sprintf("SELECT * FROM groups_members WHERE user_id = %s AND group_id = %s", secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* if yes -> return */
                 if ($check->num_rows > 0) return;
                 /* if no -> join this group */
                 /* get group */
-                $get_group = $db->query(sprintf("SELECT * FROM `groups` WHERE group_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_group = $db->query(sprintf("SELECT * FROM `groups` WHERE group_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 $group = $get_group->fetch_assoc();
                 /* check approved */
                 $approved = 0;
@@ -1939,10 +1939,10 @@ class User
                     /* the group admin join his group */
                     $approved = '1';
                 }
-                $db->query(sprintf("INSERT INTO groups_members (user_id, group_id, approved) VALUES (%s, %s, %s)", secure($this->_data['user_id'], 'int'),  secure($id, 'int'), secure($approved))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("INSERT INTO groups_members (user_id, group_id, approved) VALUES (%s, %s, %s)", secure($this->_data['user_id'], 'int'),  secure($id, 'int'), secure($approved))) or _error("SQL_ERROR_THROWEN", $db);
                 if ($approved) {
                     /* update members counter +1 */
-                    $db->query(sprintf("UPDATE `groups` SET group_members = group_members + 1  WHERE group_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE `groups` SET group_members = group_members + 1  WHERE group_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 } else {
                     /* send notification (pending request) to group admin  */
                     $this->post_notification(array('to_user_id' => $group['group_admin'], 'action' => 'group_join', 'node_type' => $group['group_title'], 'node_url' => $group['group_name']));
@@ -1951,15 +1951,15 @@ class User
 
             case 'group-leave':
                 /* check if the viewer already joined (approved||pending) this group */
-                $check = $db->query(sprintf("SELECT groups_members.approved, `groups`.* FROM groups_members INNER JOIN `groups` ON groups_members.group_id = `groups`.group_id WHERE groups_members.user_id = %s AND groups_members.group_id = %s", secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check = $db->query(sprintf("SELECT groups_members.approved, `groups`.* FROM groups_members INNER JOIN `groups` ON groups_members.group_id = `groups`.group_id WHERE groups_members.user_id = %s AND groups_members.group_id = %s", secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* if no -> return */
                 if ($check->num_rows == 0) return;
                 /* if yes -> leave this group */
                 $group = $check->fetch_assoc();
-                $db->query(sprintf("DELETE FROM groups_members WHERE user_id = %s AND group_id = %s", secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM groups_members WHERE user_id = %s AND group_id = %s", secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* update members counter -1 */
                 if ($group['approved']) {
-                    $db->query(sprintf("UPDATE `groups` SET group_members = IF(group_members=0,0,group_members-1) WHERE group_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE `groups` SET group_members = IF(group_members=0,0,group_members-1) WHERE group_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 } else {
                     /* delete notification (pending request) that sent to group admin */
                     $this->delete_notification($group['group_admin'], 'group_join', $group['group_title'], $group['group_name']);
@@ -1971,11 +1971,11 @@ class User
                     _error(400);
                 }
                 /* check if the viewer is group member (approved) */
-                $check_viewer = $db->query(sprintf("SELECT `groups`.* FROM `groups` INNER JOIN groups_members ON `groups`.group_id = groups_members.group_id WHERE groups_members.approved = '1' AND groups_members.user_id = %s AND groups_members.group_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check_viewer = $db->query(sprintf("SELECT `groups`.* FROM `groups` INNER JOIN groups_members ON `groups`.group_id = groups_members.group_id WHERE groups_members.approved = '1' AND groups_members.user_id = %s AND groups_members.group_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* if no -> return */
                 if ($check_viewer->num_rows == 0) return;
                 /* check if the target already joined (approved||pending) this group */
-                $check_target = $db->query(sprintf("SELECT * FROM groups_members WHERE user_id = %s AND group_id = %s", secure($uid, 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check_target = $db->query(sprintf("SELECT * FROM groups_members WHERE user_id = %s AND group_id = %s", secure($uid, 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* if yes -> return */
                 if ($check_target->num_rows > 0) return;
                 /* if no -> join this group */
@@ -1994,10 +1994,10 @@ class User
                     $approved = '1';
                 }
                 /* add the target user as group member */
-                $db->query(sprintf("INSERT INTO groups_members (user_id, group_id, approved) VALUES (%s, %s, %s)", secure($uid, 'int'),  secure($id, 'int'), secure($approved))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("INSERT INTO groups_members (user_id, group_id, approved) VALUES (%s, %s, %s)", secure($uid, 'int'),  secure($id, 'int'), secure($approved))) or _error("SQL_ERROR_THROWEN", $db);
                 if ($approved) {
                     /* update members counter +1 */
-                    $db->query(sprintf("UPDATE `groups` SET group_members = group_members + 1  WHERE group_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE `groups` SET group_members = group_members + 1  WHERE group_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     /* send notification (group addition) to the target user */
                     $this->post_notification(array('to_user_id' => $uid, 'action' => 'group_add', 'node_type' => $group['group_title'], 'node_url' => $group['group_name']));
                 } else {
@@ -2015,7 +2015,7 @@ class User
                     _error(400);
                 }
                 /* check if the target has pending request */
-                $check = $db->query(sprintf("SELECT `groups`.* FROM `groups` INNER JOIN groups_members ON `groups`.group_id = groups_members.group_id WHERE groups_members.approved = '0' AND groups_members.user_id = %s AND groups_members.group_id = %s", secure($uid, 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check = $db->query(sprintf("SELECT `groups`.* FROM `groups` INNER JOIN groups_members ON `groups`.group_id = groups_members.group_id WHERE groups_members.approved = '0' AND groups_members.user_id = %s AND groups_members.group_id = %s", secure($uid, 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* if no -> return */
                 if ($check->num_rows == 0) return;
                 $group = $check->fetch_assoc();
@@ -2024,9 +2024,9 @@ class User
                     _error(400);
                 }
                 /* update request */
-                $db->query(sprintf("UPDATE groups_members SET approved = '1' WHERE user_id = %s AND group_id = %s", secure($uid, 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE groups_members SET approved = '1' WHERE user_id = %s AND group_id = %s", secure($uid, 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* update members counter +1 */
-                $db->query(sprintf("UPDATE `groups` SET group_members = group_members + 1  WHERE group_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE `groups` SET group_members = group_members + 1  WHERE group_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* send notification (group acceptance) to the target user */
                 $this->post_notification(array('to_user_id' => $uid, 'action' => 'group_accept', 'node_type' => $group['group_title'], 'node_url' => $group['group_name']));
                 break;
@@ -2036,7 +2036,7 @@ class User
                     _error(400);
                 }
                 /* check if the target has pending request */
-                $check = $db->query(sprintf("SELECT `groups`.* FROM `groups` INNER JOIN groups_members ON `groups`.group_id = groups_members.group_id WHERE groups_members.approved = '0' AND groups_members.user_id = %s AND groups_members.group_id = %s", secure($uid, 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check = $db->query(sprintf("SELECT `groups`.* FROM `groups` INNER JOIN groups_members ON `groups`.group_id = groups_members.group_id WHERE groups_members.approved = '0' AND groups_members.user_id = %s AND groups_members.group_id = %s", secure($uid, 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* if no -> return */
                 if ($check->num_rows == 0) return;
                 $group = $check->fetch_assoc();
@@ -2045,7 +2045,7 @@ class User
                     _error(400);
                 }
                 /* delete request */
-                $db->query(sprintf("DELETE FROM groups_members WHERE user_id = %s AND group_id = %s", secure($uid, 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM groups_members WHERE user_id = %s AND group_id = %s", secure($uid, 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'group-admin-addation':
@@ -2053,22 +2053,22 @@ class User
                     _error(400);
                 }
                 /* check if the target already a group member */
-                $check = $db->query(sprintf("SELECT * FROM groups_members WHERE user_id = %s AND group_id = %s", secure($uid, 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check = $db->query(sprintf("SELECT * FROM groups_members WHERE user_id = %s AND group_id = %s", secure($uid, 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* if no -> return */
                 if ($check->num_rows == 0) return;
                 /* check if the target already a group admin */
-                $check = $db->query(sprintf("SELECT * FROM groups_admins WHERE user_id = %s AND group_id = %s", secure($uid, 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check = $db->query(sprintf("SELECT * FROM groups_admins WHERE user_id = %s AND group_id = %s", secure($uid, 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* if yes -> return */
                 if ($check->num_rows > 0) return;
                 /* get group */
-                $get_group = $db->query(sprintf("SELECT * FROM `groups` WHERE group_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_group = $db->query(sprintf("SELECT * FROM `groups` WHERE group_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 $group = $get_group->fetch_assoc();
                 /* check if the viewer is group admin */
                 if (!$this->check_group_adminship($this->_data['user_id'], $group['group_id']) && $this->_data['user_id'] != $group['group_admin']) {
                     _error(400);
                 }
                 /* add the target as group admin */
-                $db->query(sprintf("INSERT INTO groups_admins (user_id, group_id) VALUES (%s, %s)", secure($uid, 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("INSERT INTO groups_admins (user_id, group_id) VALUES (%s, %s)", secure($uid, 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* send notification (group admin addation) to the target user */
                 $this->post_notification(array('to_user_id' => $uid, 'action' => 'group_admin_addation', 'node_type' => $group['group_title'], 'node_url' => $group['group_name']));
                 break;
@@ -2078,11 +2078,11 @@ class User
                     _error(400);
                 }
                 /* check if the target already a group admin */
-                $check = $db->query(sprintf("SELECT * FROM groups_admins WHERE user_id = %s AND group_id = %s", secure($uid, 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check = $db->query(sprintf("SELECT * FROM groups_admins WHERE user_id = %s AND group_id = %s", secure($uid, 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* if no -> return */
                 if ($check->num_rows == 0) return;
                 /* get group */
-                $get_group = $db->query(sprintf("SELECT * FROM `groups` WHERE group_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_group = $db->query(sprintf("SELECT * FROM `groups` WHERE group_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 $group = $get_group->fetch_assoc();
                 /* check if the viewer is group admin */
                 if (!$this->check_group_adminship($this->_data['user_id'], $group['group_id'])) {
@@ -2093,7 +2093,7 @@ class User
                     throw new Exception(__("You can not remove group super admin"));
                 }
                 /* remove the target as group admin */
-                $db->query(sprintf("DELETE FROM groups_admins WHERE user_id = %s AND group_id = %s", secure($uid, 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM groups_admins WHERE user_id = %s AND group_id = %s", secure($uid, 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* delete notification (group admin addation) to the target user */
                 $this->delete_notification($uid, 'group_admin_addation', $group['group_title'], $group['group_name']);
                 break;
@@ -2103,22 +2103,22 @@ class User
                     _error(400);
                 }
                 /* check if the target already a group member */
-                $check = $db->query(sprintf("SELECT * FROM groups_members WHERE user_id = %s AND group_id = %s", secure($uid, 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check = $db->query(sprintf("SELECT * FROM groups_members WHERE user_id = %s AND group_id = %s", secure($uid, 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* if no -> return */
                 if ($check->num_rows == 0) return;
                 /* get group */
-                $get_group = $db->query(sprintf("SELECT * FROM `groups` WHERE group_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_group = $db->query(sprintf("SELECT * FROM `groups` WHERE group_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 $group = $get_group->fetch_assoc();
                 /* check if the target is the super group admin */
                 if ($uid == $group['group_admin']) {
                     throw new Exception(__("You can not remove group super admin"));
                 }
                 /* remove the target as group admin */
-                $db->query(sprintf("DELETE FROM groups_admins WHERE user_id = %s AND group_id = %s", secure($uid, 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM groups_admins WHERE user_id = %s AND group_id = %s", secure($uid, 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* remove the target as group member */
-                $db->query(sprintf("DELETE FROM groups_members WHERE user_id = %s AND group_id = %s", secure($uid, 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM groups_members WHERE user_id = %s AND group_id = %s", secure($uid, 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* update members counter -1 */
-                $db->query(sprintf("UPDATE `groups` SET group_members = IF(group_members=0,0,group_members-1) WHERE group_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE `groups` SET group_members = IF(group_members=0,0,group_members-1) WHERE group_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'group-fund':
@@ -2127,7 +2127,7 @@ class User
 
             case 'event-go':
                 /* check if the viewer member to this event */
-                $check = $db->query(sprintf("SELECT * FROM events_members WHERE user_id = %s AND event_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check = $db->query(sprintf("SELECT * FROM events_members WHERE user_id = %s AND event_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 $invited = false;
                 $interested = false;
                 if ($check->num_rows > 0) {
@@ -2142,7 +2142,7 @@ class User
                     $approved = true;
                 } else {
                     /* get event */
-                    $get_event = $db->query(sprintf("SELECT * FROM `events` WHERE event_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $get_event = $db->query(sprintf("SELECT * FROM `events` WHERE event_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     $event = $get_event->fetch_assoc();
                     if ($event['event_privacy'] == 'public') {
                         /* the event is public */
@@ -2154,18 +2154,18 @@ class User
                 }
                 if ($approved) {
                     if ($invited || $interested) {
-                        $db->query(sprintf("UPDATE events_members SET is_going = '1' WHERE user_id = %s AND event_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                        $db->query(sprintf("UPDATE events_members SET is_going = '1' WHERE user_id = %s AND event_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     } else {
-                        $db->query(sprintf("INSERT INTO events_members (user_id, event_id, is_going) VALUES (%s, %s, '1')", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                        $db->query(sprintf("INSERT INTO events_members (user_id, event_id, is_going) VALUES (%s, %s, '1')", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     }
                     /* update going counter +1 */
-                    $db->query(sprintf("UPDATE `events` SET event_going = event_going + 1  WHERE event_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE `events` SET event_going = event_going + 1  WHERE event_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 }
                 break;
 
             case 'event-ungo':
                 /* check if the viewer member to this event */
-                $check = $db->query(sprintf("SELECT * FROM events_members WHERE user_id = %s AND event_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check = $db->query(sprintf("SELECT * FROM events_members WHERE user_id = %s AND event_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* if no -> return */
                 if ($check->num_rows == 0) return;
                 $invited = false;
@@ -2176,17 +2176,17 @@ class User
                 $invited = ($member['is_invited'] == '1') ? true : false;
                 $interested = ($member['is_interested'] == '1') ? true : false;
                 if (!$invited && !$interested) {
-                    $db->query(sprintf("DELETE FROM events_members WHERE user_id = %s AND event_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("DELETE FROM events_members WHERE user_id = %s AND event_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 } else {
-                    $db->query(sprintf("UPDATE events_members SET is_going = '0' WHERE user_id = %s AND event_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE events_members SET is_going = '0' WHERE user_id = %s AND event_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 }
                 /* update going counter -1 */
-                $db->query(sprintf("UPDATE `events` SET event_going = IF(event_going=0,0,event_going-1)  WHERE event_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE `events` SET event_going = IF(event_going=0,0,event_going-1)  WHERE event_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'event-interest':
                 /* check if the viewer member to this event */
-                $check = $db->query(sprintf("SELECT * FROM events_members WHERE user_id = %s AND event_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check = $db->query(sprintf("SELECT * FROM events_members WHERE user_id = %s AND event_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 $invited = false;
                 $going = false;
                 if ($check->num_rows > 0) {
@@ -2201,7 +2201,7 @@ class User
                     $approved = true;
                 } else {
                     /* get event */
-                    $get_event = $db->query(sprintf("SELECT * FROM `events` WHERE event_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $get_event = $db->query(sprintf("SELECT * FROM `events` WHERE event_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     $event = $get_event->fetch_assoc();
                     if ($event['event_privacy'] == 'public') {
                         /* the event is public */
@@ -2213,18 +2213,18 @@ class User
                 }
                 if ($approved) {
                     if ($invited || $going) {
-                        $db->query(sprintf("UPDATE events_members SET is_interested = '1' WHERE user_id = %s AND event_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                        $db->query(sprintf("UPDATE events_members SET is_interested = '1' WHERE user_id = %s AND event_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     } else {
-                        $db->query(sprintf("INSERT INTO events_members (user_id, event_id, is_interested) VALUES (%s, %s, '1')", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                        $db->query(sprintf("INSERT INTO events_members (user_id, event_id, is_interested) VALUES (%s, %s, '1')", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     }
                     /* update interested counter +1 */
-                    $db->query(sprintf("UPDATE `events` SET event_interested = event_interested + 1  WHERE event_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE `events` SET event_interested = event_interested + 1  WHERE event_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 }
                 break;
 
             case 'event-uninterest':
                 /* check if the viewer member to this event */
-                $check = $db->query(sprintf("SELECT * FROM events_members WHERE user_id = %s AND event_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check = $db->query(sprintf("SELECT * FROM events_members WHERE user_id = %s AND event_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* if no -> return */
                 if ($check->num_rows == 0) return;
                 $invited = false;
@@ -2235,12 +2235,12 @@ class User
                 $invited = ($member['is_invited'] == '1') ? true : false;
                 $going = ($member['is_going'] == '1') ? true : false;
                 if (!$invited && !$going) {
-                    $db->query(sprintf("DELETE FROM events_members WHERE user_id = %s AND event_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("DELETE FROM events_members WHERE user_id = %s AND event_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 } else {
-                    $db->query(sprintf("UPDATE events_members SET is_interested = '0' WHERE user_id = %s AND event_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE events_members SET is_interested = '0' WHERE user_id = %s AND event_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 }
                 /* update interested counter -1 */
-                $db->query(sprintf("UPDATE `events` SET event_interested = IF(event_interested=0,0,event_interested-1)  WHERE event_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE `events` SET event_interested = IF(event_interested=0,0,event_interested-1)  WHERE event_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'event-invite':
@@ -2248,19 +2248,19 @@ class User
                     _error(400);
                 }
                 /* check if the viewer is event member */
-                $check_viewer = $db->query(sprintf("SELECT `events`.* FROM `events` INNER JOIN events_members ON `events`.event_id = events_members.event_id WHERE events_members.user_id = %s AND events_members.event_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check_viewer = $db->query(sprintf("SELECT `events`.* FROM `events` INNER JOIN events_members ON `events`.event_id = events_members.event_id WHERE events_members.user_id = %s AND events_members.event_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* if no -> return */
                 if ($check_viewer->num_rows == 0) return;
                 /* check if the target already event member */
-                $check_target = $db->query(sprintf("SELECT * FROM events_members WHERE user_id = %s AND event_id = %s", secure($uid, 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check_target = $db->query(sprintf("SELECT * FROM events_members WHERE user_id = %s AND event_id = %s", secure($uid, 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* if yes -> return */
                 if ($check_target->num_rows > 0) return;
                 /* get event */
                 $event = $check_viewer->fetch_assoc();
                 /* insert invitation */
-                $db->query(sprintf("INSERT INTO events_members (user_id, event_id, is_invited) VALUES (%s, %s, '1')", secure($uid, 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("INSERT INTO events_members (user_id, event_id, is_invited) VALUES (%s, %s, '1')", secure($uid, 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* update invited counter +1 */
-                $db->query(sprintf("UPDATE `events` SET event_invited = event_invited + 1  WHERE event_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE `events` SET event_invited = event_invited + 1  WHERE event_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* send notification (page invitation) to the target user */
                 $this->post_notification(array('to_user_id' => $uid, 'action' => 'event_invitation', 'node_type' => $event['event_title'], 'node_url' => $event['event_id']));
                 break;
@@ -2342,7 +2342,7 @@ class User
     public function banned($user_id)
     {
         global $db;
-        $check = $db->query(sprintf("SELECT COUNT(*) as count FROM users WHERE user_banned = '1' AND user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $check = $db->query(sprintf("SELECT COUNT(*) as count FROM users WHERE user_banned = '1' AND user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check->fetch_assoc()['count'] > 0) {
             return true;
         }
@@ -2378,7 +2378,7 @@ class User
                 blueModal("ERROR", __("Funds"), __("You're out of tokens"));
             }
 
-            $query = $db->query(sprintf('select user_relysia_paymail as address from users where user_id = %1$s limit 1', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $query = $db->query(sprintf('select user_relysia_paymail as address from users where user_id = %1$s limit 1', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             $recipientAddress = $query->fetch_row()[0];
 
             $response = shntrToken::payRelysia(floatval($price), $recipientAddress, $this->_data['user_id']);
@@ -2410,7 +2410,7 @@ class User
                     secure($paywallOwner, 'int'),
                     secure($invader, 'int')
                 )
-            ) or _error("SQL_ERROR_THROWEN");
+            ) or _error("SQL_ERROR_THROWEN", $db);
 
             if ($check->num_rows != 0) {
                 return intval($check->fetch_assoc()['price']);
@@ -2436,7 +2436,7 @@ class User
                     secure($this->_data['user_id'], 'int'),
                     secure($user_id, 'int'),
                 )
-            ) or _error("SQL_ERROR_THROWEN");
+            ) or _error("SQL_ERROR_THROWEN", $db);
 
             if ($check->num_rows != 0) {
                 return intval($check->fetch_assoc()['price']);
@@ -2461,7 +2461,7 @@ class User
         }
         /* check if there is any blocking between the viewer & the target */
         if ($this->_logged_in) {
-            $check = $db->query(sprintf('SELECT COUNT(*) as count FROM users_blocks WHERE (user_id = %1$s AND blocked_id = %2$s) OR (user_id = %2$s AND blocked_id = %1$s)', secure($this->_data['user_id'], 'int'),  secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $check = $db->query(sprintf('SELECT COUNT(*) as count FROM users_blocks WHERE (user_id = %1$s AND blocked_id = %2$s) OR (user_id = %2$s AND blocked_id = %1$s)', secure($this->_data['user_id'], 'int'),  secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             if ($check->fetch_assoc()['count'] > 0) {
                 return true;
             }
@@ -2497,7 +2497,7 @@ class User
         global $db;
         /* check if there is any declined friendship request between the viewer & the target */
         if ($this->_logged_in) {
-            $check = $db->query(sprintf('SELECT COUNT(*) as count FROM friends WHERE status = -1 AND (user_one_id = %1$s AND user_two_id = %2$s) OR (user_one_id = %2$s AND user_two_id = %1$s)', secure($this->_data['user_id'], 'int'),  secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $check = $db->query(sprintf('SELECT COUNT(*) as count FROM friends WHERE status = -1 AND (user_one_id = %1$s AND user_two_id = %2$s) OR (user_one_id = %2$s AND user_two_id = %1$s)', secure($this->_data['user_id'], 'int'),  secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             if ($check->fetch_assoc()['count'] > 0) {
                 return true;
             }
@@ -2562,7 +2562,7 @@ class User
         global $db;
         /* check if the viewer poked the target before */
         if ($this->_logged_in) {
-            $check = $db->query(sprintf("SELECT COUNT(*) as count FROM users_pokes WHERE user_id = %s AND poked_id = %s ", secure($this->_data['user_id'], 'int'),  secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $check = $db->query(sprintf("SELECT COUNT(*) as count FROM users_pokes WHERE user_id = %s AND poked_id = %s ", secure($this->_data['user_id'], 'int'),  secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             if ($check->fetch_assoc()['count'] > 0) {
                 return true;
             }
@@ -2581,7 +2581,7 @@ class User
     {
         global $db;
         /* (check&get) user */
-        $get_user = $db->query(sprintf("SELECT user_group FROM users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_user = $db->query(sprintf("SELECT user_group FROM users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_user->num_rows == 0) {
             _error(403);
         }
@@ -2603,32 +2603,32 @@ class User
         /* delete the user */
         if ($can_delete) {
                 /* delete the user interests */
-                $db->query(sprintf("DELETE FROM interests_users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM interests_users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* delete the stripe transactions */
-                $db->query(sprintf("DELETE FROM stripe_transactions WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM stripe_transactions WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* delete the user paywalls */
-                $db->query(sprintf('DELETE FROM paywalls WHERE paywall_owner_id = %1$s OR paywall_invader_id = %1$s', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf('DELETE FROM paywalls WHERE paywall_owner_id = %1$s OR paywall_invader_id = %1$s', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* delete the user */
                 //$db->query("SET FOREIGN_KEY_CHECKS=0");
-                $db->query(sprintf("DELETE FROM users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 //$db->query("SET FOREIGN_KEY_CHECKS=1");
 
                 /* delete user posts */
                 $this->delete_posts($user_id);
                 /* delete all user pages */
-                $db->query(sprintf("DELETE FROM pages WHERE page_admin = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM pages WHERE page_admin = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* delete all user groups */
-                $db->query(sprintf("DELETE FROM `groups` WHERE group_admin = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM `groups` WHERE group_admin = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* delete the user from all joined groups */
-                $db->query(sprintf("DELETE FROM groups_members WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM groups_members WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* delete all user events */
-                $db->query(sprintf("DELETE FROM `events` WHERE event_admin = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM `events` WHERE event_admin = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* delete the user from all joined events */
-                $db->query(sprintf("DELETE FROM events_members WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM events_members WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* delete all user friends connections */
-                $db->query(sprintf('DELETE FROM friends WHERE user_one_id = %1$s OR user_two_id = %1$s', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf('DELETE FROM friends WHERE user_one_id = %1$s OR user_two_id = %1$s', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* delete all user following connections */
-                $db->query(sprintf('DELETE FROM followings WHERE user_id = %1$s OR following_id = %1$s', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf('DELETE FROM followings WHERE user_id = %1$s OR following_id = %1$s', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         }
     }
 
@@ -2642,7 +2642,7 @@ class User
     {
         global $db;
         /* (check&get) user */
-        $get_user = $db->query(sprintf("SELECT user_id, user_firstname, user_lastname, user_name FROM users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_user = $db->query(sprintf("SELECT user_id, user_firstname, user_lastname, user_name FROM users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_user->num_rows == 0) {
             _error(403);
         }
@@ -2690,11 +2690,11 @@ class User
             $this->breach_paywall($user_id);
         }
         /* check if the viewer already follow the target */
-        $check = $db->query(sprintf("SELECT COUNT(*) as count FROM followings WHERE user_id = %s AND following_id = %s", secure($this->_data['user_id'], 'int'),  secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $check = $db->query(sprintf("SELECT COUNT(*) as count FROM followings WHERE user_id = %s AND following_id = %s", secure($this->_data['user_id'], 'int'),  secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* if yes -> return */
         if ($check->fetch_assoc()['count'] > 0) return;
         /* add as following */
-        $db->query(sprintf("INSERT INTO followings (user_id, following_id, time) VALUES (%s, %s, %s)", secure($this->_data['user_id'], 'int'),  secure($user_id, 'int'), secure($date))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO followings (user_id, following_id, time) VALUES (%s, %s, %s)", secure($this->_data['user_id'], 'int'),  secure($user_id, 'int'), secure($date))) or _error("SQL_ERROR_THROWEN", $db);
         /* post new notification */
         $this->post_notification(array('to_user_id' => $user_id, 'action' => 'follow'));
         /* points balance */
@@ -2712,11 +2712,11 @@ class User
     {
         global $db;
         /* check if the viewer already follow the target */
-        $check = $db->query(sprintf("SELECT COUNT(*) as count FROM followings WHERE user_id = %s AND following_id = %s", secure($this->_data['user_id'], 'int'),  secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $check = $db->query(sprintf("SELECT COUNT(*) as count FROM followings WHERE user_id = %s AND following_id = %s", secure($this->_data['user_id'], 'int'),  secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* if no -> return */
         if ($check->fetch_assoc()['count'] == 0) return;
         /* delete from viewer's followings */
-        $db->query(sprintf("DELETE FROM followings WHERE user_id = %s AND following_id = %s", secure($this->_data['user_id'], 'int'), secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("DELETE FROM followings WHERE user_id = %s AND following_id = %s", secure($this->_data['user_id'], 'int'), secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* delete notification */
         $this->delete_notification($user_id, 'follow');
         /* points balance */
@@ -2740,16 +2740,16 @@ class User
         global $db;
         switch ($counter) {
             case 'friend_requests':
-                $db->query(sprintf("UPDATE users SET user_live_requests_counter = 0 WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE users SET user_live_requests_counter = 0 WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'messages':
-                $db->query(sprintf("UPDATE users SET user_live_messages_counter = 0 WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE users SET user_live_messages_counter = 0 WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'notifications':
-                $db->query(sprintf("UPDATE users SET user_live_notifications_counter = 0 WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
-                $db->query(sprintf("UPDATE notifications SET seen = '1' WHERE to_user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE users SET user_live_notifications_counter = 0 WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+                $db->query(sprintf("UPDATE notifications SET seen = '1' WHERE to_user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
         }
     }
@@ -2776,9 +2776,9 @@ class User
         $offset *= $system['max_results'];
         $notifications = [];
         if ($last_notification_id !== null) {
-            $get_notifications = $db->query(sprintf("SELECT notifications.*, users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified, pages.page_id, pages.page_title, pages.page_picture FROM notifications LEFT JOIN users ON notifications.from_user_id = users.user_id AND notifications.from_user_type = 'user' LEFT JOIN pages ON notifications.from_user_id = pages.page_id AND notifications.from_user_type = 'page' WHERE (notifications.to_user_id = %s OR notifications.to_user_id = '0') AND notifications.notification_id > %s ORDER BY notifications.notification_id DESC", secure($this->_data['user_id'], 'int'), secure($last_notification_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_notifications = $db->query(sprintf("SELECT notifications.*, users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified, pages.page_id, pages.page_title, pages.page_picture FROM notifications LEFT JOIN users ON notifications.from_user_id = users.user_id AND notifications.from_user_type = 'user' LEFT JOIN pages ON notifications.from_user_id = pages.page_id AND notifications.from_user_type = 'page' WHERE (notifications.to_user_id = %s OR notifications.to_user_id = '0') AND notifications.notification_id > %s ORDER BY notifications.notification_id DESC", secure($this->_data['user_id'], 'int'), secure($last_notification_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         } else {
-            $get_notifications = $db->query(sprintf("SELECT notifications.*, users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified, pages.page_id, pages.page_title, pages.page_picture FROM notifications LEFT JOIN users ON notifications.from_user_id = users.user_id AND notifications.from_user_type = 'user' LEFT JOIN pages ON notifications.from_user_id = pages.page_id AND notifications.from_user_type = 'page' WHERE notifications.to_user_id = %s OR notifications.to_user_id = '0' ORDER BY notifications.notification_id DESC LIMIT %s, %s", secure($this->_data['user_id'], 'int'), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+            $get_notifications = $db->query(sprintf("SELECT notifications.*, users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified, pages.page_id, pages.page_title, pages.page_picture FROM notifications LEFT JOIN users ON notifications.from_user_id = users.user_id AND notifications.from_user_type = 'user' LEFT JOIN pages ON notifications.from_user_id = pages.page_id AND notifications.from_user_type = 'page' WHERE notifications.to_user_id = %s OR notifications.to_user_id = '0' ORDER BY notifications.notification_id DESC LIMIT %s, %s", secure($this->_data['user_id'], 'int'), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         }
         if ($get_notifications->num_rows > 0) {
             while ($notification = $get_notifications->fetch_assoc()) {
@@ -3222,7 +3222,7 @@ class User
             return;
         }
         /* get receiver user */
-        $get_receiver = $db->query(sprintf("SELECT user_firstname, user_lastname, user_email, email_friend_requests, email_post_likes, email_post_comments, email_post_shares, email_mentions, email_profile_visits, email_wall_posts, onesignal_user_id, user_language FROM users WHERE user_id = %s", secure($to_user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_receiver = $db->query(sprintf("SELECT user_firstname, user_lastname, user_email, email_friend_requests, email_post_likes, email_post_comments, email_post_shares, email_mentions, email_profile_visits, email_wall_posts, onesignal_user_id, user_language FROM users WHERE user_id = %s", secure($to_user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_receiver->num_rows == 0) {
             return;
         }
@@ -3232,9 +3232,9 @@ class User
             $receiver['name'] = ($system['show_usernames_enabled']) ? $receiver['user_name'] : $receiver['user_firstname'] . " " . $receiver['user_lastname'];
         }
         /* insert notification */
-        $db->query(sprintf("INSERT INTO notifications (to_user_id, from_user_id, from_user_type, action, node_type, node_url, notify_id, message, time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)", secure($to_user_id, 'int'), secure($from_user_id, 'int'), secure($from_user_type), secure($action), secure($node_type), secure($node_url), secure($notify_id), secure($message), secure($date))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO notifications (to_user_id, from_user_id, from_user_type, action, node_type, node_url, notify_id, message, time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)", secure($to_user_id, 'int'), secure($from_user_id, 'int'), secure($from_user_type), secure($action), secure($node_type), secure($node_url), secure($notify_id), secure($message), secure($date))) or _error("SQL_ERROR_THROWEN", $db);
         /* update notifications counter +1 */
-        $db->query(sprintf("UPDATE users SET user_live_notifications_counter = user_live_notifications_counter + 1 WHERE user_id = %s", secure($to_user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE users SET user_live_notifications_counter = user_live_notifications_counter + 1 WHERE user_id = %s", secure($to_user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* email notifications */
         if ($system['email_notifications']) {
             /* prepare notification notify_id */
@@ -3708,9 +3708,9 @@ class User
     {
         global $db, $date;
         /* insert notification */
-        $db->query(sprintf("INSERT INTO notifications (to_user_id, from_user_id, action, node_type, node_url, message, time, seen) VALUES ('0', %s, 'mass_notification', 'notification', %s, %s, %s, '1')", secure($this->_data['user_id'], 'int'), secure($url), secure($message), secure($date))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO notifications (to_user_id, from_user_id, action, node_type, node_url, message, time, seen) VALUES ('0', %s, 'mass_notification', 'notification', %s, %s, %s, '1')", secure($this->_data['user_id'], 'int'), secure($url), secure($message), secure($date))) or _error("SQL_ERROR_THROWEN", $db);
         /* update notifications counter +1 */
-        $db->query(sprintf("UPDATE users SET user_live_notifications_counter = user_live_notifications_counter + 1")) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE users SET user_live_notifications_counter = user_live_notifications_counter + 1")) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -3727,9 +3727,9 @@ class User
     {
         global $db;
         /* delete notification */
-        $db->query(sprintf("DELETE FROM notifications WHERE to_user_id = %s AND from_user_id = %s AND action = %s AND node_type = %s AND node_url = %s", secure($to_user_id, 'int'), secure($this->_data['user_id'], 'int'), secure($action), secure($node_type), secure($node_url))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("DELETE FROM notifications WHERE to_user_id = %s AND from_user_id = %s AND action = %s AND node_type = %s AND node_url = %s", secure($to_user_id, 'int'), secure($this->_data['user_id'], 'int'), secure($action), secure($node_type), secure($node_url))) or _error("SQL_ERROR_THROWEN", $db);
         /* update notifications counter -1 */
-        $db->query(sprintf("UPDATE users SET user_live_notifications_counter = IF(user_live_notifications_counter=0,0,user_live_notifications_counter-1) WHERE user_id = %s", secure($to_user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE users SET user_live_notifications_counter = IF(user_live_notifications_counter=0,0,user_live_notifications_counter-1) WHERE user_id = %s", secure($to_user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -3745,7 +3745,7 @@ class User
         global $db;
         /* get system admins */
         $where_query = ($notify_moderators) ? "user_group < 3" : "user_group = '1'";
-        $get_system_admins = $db->query("SELECT user_id FROM users WHERE " . $where_query) or _error("SQL_ERROR_THROWEN");
+        $get_system_admins = $db->query("SELECT user_id FROM users WHERE " . $where_query) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_system_admins->num_rows == 0) {
             return;
         }
@@ -3790,7 +3790,7 @@ class User
             return false;
         }
         /* check if the target user is online & enable the chat */
-        $get_user_status = $db->query(sprintf("SELECT COUNT(*) as count FROM users WHERE user_id = %s AND user_chat_enabled = '1' AND user_last_seen >= SUBTIME(NOW(), SEC_TO_TIME(%s))", secure($user_id, 'int'), secure($system['offline_time'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+        $get_user_status = $db->query(sprintf("SELECT COUNT(*) as count FROM users WHERE user_id = %s AND user_chat_enabled = '1' AND user_last_seen >= SUBTIME(NOW(), SEC_TO_TIME(%s))", secure($user_id, 'int'), secure($system['offline_time'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_user_status->fetch_assoc()['count'] == 0) {
             /* if no > return false */
             return false;
@@ -3809,7 +3809,7 @@ class User
         global $db, $system;
         /* get online friends */
         $online_friends = [];
-        $get_online_friends = $db->query(sprintf("SELECT user_id, user_name, user_firstname, user_lastname, user_gender, user_picture FROM users WHERE user_last_seen >= SUBTIME(NOW(), SEC_TO_TIME(%s)) AND user_chat_enabled = '1' AND user_id IN (%s)", secure($system['offline_time'], 'int', false), $this->spread_ids($this->_data['friends_ids']))) or _error("SQL_ERROR_THROWEN");
+        $get_online_friends = $db->query(sprintf("SELECT user_id, user_name, user_firstname, user_lastname, user_gender, user_picture FROM users WHERE user_last_seen >= SUBTIME(NOW(), SEC_TO_TIME(%s)) AND user_chat_enabled = '1' AND user_id IN (%s)", secure($system['offline_time'], 'int', false), $this->spread_ids($this->_data['friends_ids']))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_online_friends->num_rows > 0) {
             while ($online_friend = $get_online_friends->fetch_assoc()) {
                 $online_friend['user_picture'] = get_picture($online_friend['user_picture'], $online_friend['user_gender']);
@@ -3840,7 +3840,7 @@ class User
         global $db, $system;
         $offline_friends = [];
         /* make a list from viewer's friends */
-        $get_offline_friends = $db->query(sprintf("SELECT user_id, user_name, user_firstname, user_lastname, user_gender, user_picture, user_subscribed, user_verified, user_last_seen FROM users WHERE user_last_seen < SUBTIME(NOW(), SEC_TO_TIME(%s)) AND user_id IN (%s) ORDER BY user_last_seen DESC LIMIT 25", secure($system['offline_time'], 'int', false), $this->spread_ids($this->_data['friends_ids']))) or _error("SQL_ERROR_THROWEN");
+        $get_offline_friends = $db->query(sprintf("SELECT user_id, user_name, user_firstname, user_lastname, user_gender, user_picture, user_subscribed, user_verified, user_last_seen FROM users WHERE user_last_seen < SUBTIME(NOW(), SEC_TO_TIME(%s)) AND user_id IN (%s) ORDER BY user_last_seen DESC LIMIT 25", secure($system['offline_time'], 'int', false), $this->spread_ids($this->_data['friends_ids']))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_offline_friends->num_rows > 0) {
             while ($offline_friend = $get_offline_friends->fetch_assoc()) {
                 $offline_friend['user_picture'] = get_picture($offline_friend['user_picture'], $offline_friend['user_gender']);
@@ -3873,13 +3873,13 @@ class User
         if (!empty($_SESSION['chat_boxes_opened'])) {
             /* make list from opened chat boxes keys (conversations ids) */
             $chat_boxes_opened_list = $this->spread_ids($_SESSION['chat_boxes_opened']);
-            $get_conversations = $db->query(sprintf("SELECT conversation_id FROM conversations_users WHERE user_id = %s AND seen = '0' AND deleted = '0' AND conversation_id NOT IN (%s)", secure($this->_data['user_id'], 'int'), $chat_boxes_opened_list)) or _error("SQL_ERROR_THROWEN");
+            $get_conversations = $db->query(sprintf("SELECT conversation_id FROM conversations_users WHERE user_id = %s AND seen = '0' AND deleted = '0' AND conversation_id NOT IN (%s)", secure($this->_data['user_id'], 'int'), $chat_boxes_opened_list)) or _error("SQL_ERROR_THROWEN", $db);
         } else {
-            $get_conversations = $db->query(sprintf("SELECT conversation_id FROM conversations_users WHERE user_id = %s AND seen = '0' AND deleted = '0'", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_conversations = $db->query(sprintf("SELECT conversation_id FROM conversations_users WHERE user_id = %s AND seen = '0' AND deleted = '0'", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         }
         if ($get_conversations->num_rows > 0) {
             while ($conversation = $get_conversations->fetch_assoc()) {
-                $db->query(sprintf("UPDATE conversations_users SET seen = '1' WHERE conversation_id = %s AND user_id = %s", secure($conversation['conversation_id'], 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE conversations_users SET seen = '1' WHERE conversation_id = %s AND user_id = %s", secure($conversation['conversation_id'], 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 $conversations[] = $this->get_conversation($conversation['conversation_id']);
             }
         }
@@ -3898,7 +3898,7 @@ class User
         global $db, $system;
         $conversations = [];
         $offset *= $system['max_results'];
-        $get_conversations = $db->query(sprintf("SELECT conversations.conversation_id FROM conversations INNER JOIN conversations_users ON conversations.conversation_id = conversations_users.conversation_id WHERE conversations_users.deleted = '0' AND conversations_users.user_id = %s ORDER BY conversations.last_message_id DESC LIMIT %s, %s", secure($this->_data['user_id'], 'int'), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+        $get_conversations = $db->query(sprintf("SELECT conversations.conversation_id FROM conversations INNER JOIN conversations_users ON conversations.conversation_id = conversations_users.conversation_id WHERE conversations_users.deleted = '0' AND conversations_users.user_id = %s ORDER BY conversations.last_message_id DESC LIMIT %s, %s", secure($this->_data['user_id'], 'int'), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_conversations->num_rows > 0) {
             while ($conversation = $get_conversations->fetch_assoc()) {
                 $conversation = $this->get_conversation($conversation['conversation_id']);
@@ -3921,13 +3921,13 @@ class User
     {
         global $db, $system;
         $conversation = [];
-        $get_conversation = $db->query(sprintf("SELECT conversations.*, conversations_messages.message, conversations_messages.image, conversations_messages.voice_note, conversations_messages.time, conversations_users.seen FROM conversations INNER JOIN conversations_messages ON conversations.last_message_id = conversations_messages.message_id INNER JOIN conversations_users ON conversations.conversation_id = conversations_users.conversation_id WHERE conversations_users.user_id = %s AND conversations.conversation_id = %s", secure($this->_data['user_id'], 'int'), secure($conversation_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_conversation = $db->query(sprintf("SELECT conversations.*, conversations_messages.message, conversations_messages.image, conversations_messages.voice_note, conversations_messages.time, conversations_users.seen FROM conversations INNER JOIN conversations_messages ON conversations.last_message_id = conversations_messages.message_id INNER JOIN conversations_users ON conversations.conversation_id = conversations_users.conversation_id WHERE conversations_users.user_id = %s AND conversations.conversation_id = %s", secure($this->_data['user_id'], 'int'), secure($conversation_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_conversation->num_rows == 0) {
             return false;
         }
         $conversation = $get_conversation->fetch_assoc();
         /* get recipients */
-        $get_recipients = $db->query(sprintf("SELECT conversations_users.seen, conversations_users.typing, users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM conversations_users INNER JOIN users ON conversations_users.user_id = users.user_id WHERE conversations_users.conversation_id = %s AND conversations_users.user_id != %s", secure($conversation['conversation_id'], 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_recipients = $db->query(sprintf("SELECT conversations_users.seen, conversations_users.typing, users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM conversations_users INNER JOIN users ON conversations_users.user_id = users.user_id WHERE conversations_users.conversation_id = %s AND conversations_users.user_id != %s", secure($conversation['conversation_id'], 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         $recipients_num = $get_recipients->num_rows;
         if ($recipients_num == 0) {
             return false;
@@ -3941,10 +3941,10 @@ class User
             /* prepare typing recipients */
             if ($system['chat_typing_enabled'] && $recipient['typing']) {
                 /* check if recipient typing but offline */
-                $get_recipient_status = $db->query(sprintf("SELECT COUNT(*) as count FROM users WHERE user_id = %s AND user_last_seen >= SUBTIME(NOW(), SEC_TO_TIME(%s))", secure($recipient['user_id'], 'int'), secure($system['offline_time'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+                $get_recipient_status = $db->query(sprintf("SELECT COUNT(*) as count FROM users WHERE user_id = %s AND user_last_seen >= SUBTIME(NOW(), SEC_TO_TIME(%s))", secure($recipient['user_id'], 'int'), secure($system['offline_time'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
                 if ($get_recipient_status->fetch_assoc()['count'] == 0) {
                     /* recipient offline -> remove his typing status */
-                    $db->query(sprintf("UPDATE conversations_users SET typing = '0' WHERE conversation_id = %s AND user_id = %s", secure($conversation_id, 'int'), secure($recipient['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE conversations_users SET typing = '0' WHERE conversation_id = %s AND user_id = %s", secure($conversation_id, 'int'), secure($recipient['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 } else {
                     /* recipient online -> return his typing status */
                     if ($conversation['typing_name_list']) {
@@ -4027,14 +4027,14 @@ class User
         $recipients_array = (array)$recipients;
         $recipients_array[] = $this->_data['user_id'];
         $recipients_list = $this->spread_ids($recipients_array);
-        $get_mutual_conversations = $db->query(sprintf('SELECT conversation_id FROM conversations_users WHERE user_id IN (%s) GROUP BY conversation_id HAVING COUNT(conversation_id) = %s', $recipients_list, count($recipients_array))) or _error("SQL_ERROR_THROWEN");
+        $get_mutual_conversations = $db->query(sprintf('SELECT conversation_id FROM conversations_users WHERE user_id IN (%s) GROUP BY conversation_id HAVING COUNT(conversation_id) = %s', $recipients_list, count($recipients_array))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_mutual_conversations->num_rows == 0) {
             return false;
         }
         while ($mutual_conversation = $get_mutual_conversations->fetch_assoc()) {
             /* get recipients */
             $where_statement = ($check_deleted) ? " AND deleted != '1' " : "";
-            $get_recipients = $db->query(sprintf("SELECT COUNT(*) as count FROM conversations_users WHERE conversation_id = %s" . $where_statement, secure($mutual_conversation['conversation_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_recipients = $db->query(sprintf("SELECT COUNT(*) as count FROM conversations_users WHERE conversation_id = %s" . $where_statement, secure($mutual_conversation['conversation_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             if ($get_recipients->fetch_assoc()['count'] == count($recipients_array)) {
                 return $mutual_conversation['conversation_id'];
             }
@@ -4051,7 +4051,7 @@ class User
     public function get_conversation_total_messages($conversation_id)
     {
         global $db;
-        $get_total_messages = $db->query(sprintf("SELECT COUNT(*) as count FROM conversations_messages WHERE conversation_id = %s", secure($conversation_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_total_messages = $db->query(sprintf("SELECT COUNT(*) as count FROM conversations_messages WHERE conversation_id = %s", secure($conversation_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         return $get_total_messages->fetch_assoc()['count'];
     }
 
@@ -4068,7 +4068,7 @@ class User
     {
         global $db, $system;
         /* check if user authorized to see this conversation */
-        $check_conversation = $db->query(sprintf("SELECT COUNT(*) as count FROM conversations_users WHERE conversation_id = %s AND user_id = %s", secure($conversation_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $check_conversation = $db->query(sprintf("SELECT COUNT(*) as count FROM conversations_users WHERE conversation_id = %s AND user_id = %s", secure($conversation_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check_conversation->fetch_assoc()['count'] == 0) {
             throw new Exception(__("You are not authorized to view this"));
         }
@@ -4076,9 +4076,9 @@ class User
         $messages = [];
         if ($last_message_id !== null) {
             /* get all messages after the last_message_id */
-            $get_messages = $db->query(sprintf("SELECT conversations_messages.message_id, conversations_messages.message, conversations_messages.image, conversations_messages.voice_note, conversations_messages.time, users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM conversations_messages INNER JOIN users ON conversations_messages.user_id = users.user_id WHERE conversations_messages.conversation_id = %s AND conversations_messages.message_id > %s", secure($conversation_id, 'int'), secure($last_message_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_messages = $db->query(sprintf("SELECT conversations_messages.message_id, conversations_messages.message, conversations_messages.image, conversations_messages.voice_note, conversations_messages.time, users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM conversations_messages INNER JOIN users ON conversations_messages.user_id = users.user_id WHERE conversations_messages.conversation_id = %s AND conversations_messages.message_id > %s", secure($conversation_id, 'int'), secure($last_message_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         } else {
-            $get_messages = $db->query(sprintf("SELECT * FROM ( SELECT conversations_messages.message_id, conversations_messages.message, conversations_messages.image, conversations_messages.voice_note, conversations_messages.time, users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM conversations_messages INNER JOIN users ON conversations_messages.user_id = users.user_id WHERE conversations_messages.conversation_id = %s ORDER BY conversations_messages.message_id DESC LIMIT %s,%s ) messages ORDER BY messages.message_id ASC", secure($conversation_id, 'int'), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+            $get_messages = $db->query(sprintf("SELECT * FROM ( SELECT conversations_messages.message_id, conversations_messages.message, conversations_messages.image, conversations_messages.voice_note, conversations_messages.time, users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM conversations_messages INNER JOIN users ON conversations_messages.user_id = users.user_id WHERE conversations_messages.conversation_id = %s ORDER BY conversations_messages.message_id DESC LIMIT %s,%s ) messages ORDER BY messages.message_id ASC", secure($conversation_id, 'int'), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         }
         while ($message = $get_messages->fetch_assoc()) {
             $message['user_picture'] = get_picture($message['user_picture'], $message['user_gender']);
@@ -4110,13 +4110,13 @@ class User
             if (!$mutual_conversation) {
                 /* [1] there is no conversation between viewer and the recipients -> start new one */
                 /* insert conversation */
-                $db->query("INSERT INTO conversations (last_message_id) VALUES ('0')") or _error("SQL_ERROR_THROWEN");
+                $db->query("INSERT INTO conversations (last_message_id) VALUES ('0')") or _error("SQL_ERROR_THROWEN", $db);
                 $conversation_id = $db->insert_id;
                 /* insert the sender (viewer) */
-                $db->query(sprintf("INSERT INTO conversations_users (conversation_id, user_id, seen) VALUES (%s, %s, '1')", secure($conversation_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("INSERT INTO conversations_users (conversation_id, user_id, seen) VALUES (%s, %s, '1')", secure($conversation_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* insert recipients */
                 foreach ($recipients as $recipient) {
-                    $db->query(sprintf("INSERT INTO conversations_users (conversation_id, user_id) VALUES (%s, %s)", secure($conversation_id, 'int'), secure($recipient, 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("INSERT INTO conversations_users (conversation_id, user_id) VALUES (%s, %s)", secure($conversation_id, 'int'), secure($recipient, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 }
             } else {
                 /* [2] there is a conversation between the viewer and the recipients */
@@ -4137,28 +4137,28 @@ class User
                 }
             }
             /* update sender (viewer) as seen and not deleted if any */
-            $db->query(sprintf("UPDATE conversations_users SET seen = '1', deleted = '0' WHERE conversation_id = %s AND user_id = %s", secure($conversation_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE conversations_users SET seen = '1', deleted = '0' WHERE conversation_id = %s AND user_id = %s", secure($conversation_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             /* update recipients as not seen and not deleted if any */
-            $db->query(sprintf("UPDATE conversations_users SET seen = '0', deleted = '0' WHERE conversation_id = %s AND user_id != %s", secure($conversation_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE conversations_users SET seen = '0', deleted = '0' WHERE conversation_id = %s AND user_id != %s", secure($conversation_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         }
         /* insert message */
         $image = ($image != '') ? $image : '';
         $voice_note = ($voice_note != '') ? $voice_note : '';
-        $db->query(sprintf("INSERT INTO conversations_messages (conversation_id, user_id, message, image, voice_note, time) VALUES (%s, %s, %s, %s, %s, %s)", secure($conversation_id, 'int'), secure($this->_data['user_id'], 'int'), secure($message), secure($image), secure($voice_note), secure($date))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO conversations_messages (conversation_id, user_id, message, image, voice_note, time) VALUES (%s, %s, %s, %s, %s, %s)", secure($conversation_id, 'int'), secure($this->_data['user_id'], 'int'), secure($message), secure($image), secure($voice_note), secure($date))) or _error("SQL_ERROR_THROWEN", $db);
         $message_id = $db->insert_id;
         /* update the conversation with last message id */
-        $db->query(sprintf("UPDATE conversations SET last_message_id = %s WHERE conversation_id = %s", secure($message_id, 'int'), secure($conversation_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE conversations SET last_message_id = %s WHERE conversation_id = %s", secure($message_id, 'int'), secure($conversation_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* update sender (viewer) with last message id */
-        $db->query(sprintf("UPDATE users SET user_live_messages_lastid = %s WHERE user_id = %s", secure($message_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE users SET user_live_messages_lastid = %s WHERE user_id = %s", secure($message_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* get conversation */
         $conversation = $this->get_conversation($conversation_id);
         /* update all recipients with last message id & only offline recipient messages counter */
         foreach ($conversation['recipients'] as $recipient) {
-            $db->query(sprintf("UPDATE users SET user_live_messages_lastid = %s, user_live_messages_counter = user_live_messages_counter + 1 WHERE user_id = %s", secure($message_id, 'int'), secure($recipient['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE users SET user_live_messages_lastid = %s, user_live_messages_counter = user_live_messages_counter + 1 WHERE user_id = %s", secure($message_id, 'int'), secure($recipient['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         }
         /* update typing status of the viewer for this conversation */
         $is_typing = '0';
-        $db->query(sprintf("UPDATE conversations_users SET typing = %s WHERE conversation_id = %s AND user_id = %s", secure($is_typing), secure($conversation_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE conversations_users SET typing = %s WHERE conversation_id = %s AND user_id = %s", secure($is_typing), secure($conversation_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* return with conversation */
         return $conversation;
     }
@@ -4174,21 +4174,21 @@ class User
     {
         global $db, $system;
         /* check if user authorized */
-        $check_conversation = $db->query(sprintf("SELECT COUNT(*) as count FROM conversations_users WHERE conversation_id = %s AND user_id = %s", secure($conversation_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $check_conversation = $db->query(sprintf("SELECT COUNT(*) as count FROM conversations_users WHERE conversation_id = %s AND user_id = %s", secure($conversation_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check_conversation->fetch_assoc()['count'] == 0) {
             throw new Exception(__("You are not authorized to do this"));
         }
         if ($system['chat_permanently_delete_enabled']) {
             /* delete conversation */
-            $db->query(sprintf("DELETE FROM conversations WHERE conversation_id = %s", secure($conversation_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("DELETE FROM conversations WHERE conversation_id = %s", secure($conversation_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             /* delete conversation users */
-            $db->query(sprintf("DELETE FROM conversations_users WHERE conversation_id = %s", secure($conversation_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("DELETE FROM conversations_users WHERE conversation_id = %s", secure($conversation_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         } else {
             /* update typing status of the viewer for this conversation */
             $is_typing = '0';
-            $db->query(sprintf("UPDATE conversations_users SET typing = %s WHERE conversation_id = %s AND user_id = %s", secure($is_typing), secure($conversation_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE conversations_users SET typing = %s WHERE conversation_id = %s AND user_id = %s", secure($is_typing), secure($conversation_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             /* update conversation as deleted */
-            $db->query(sprintf("UPDATE conversations_users SET deleted = '1' WHERE conversation_id = %s AND user_id = %s", secure($conversation_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE conversations_users SET deleted = '1' WHERE conversation_id = %s AND user_id = %s", secure($conversation_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         }
     }
 
@@ -4202,7 +4202,7 @@ class User
     public function get_conversation_color($conversation_id)
     {
         global $db;
-        $get_conversation = $db->query(sprintf("SELECT color FROM conversations WHERE conversation_id = %s", secure($conversation_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_conversation = $db->query(sprintf("SELECT color FROM conversations WHERE conversation_id = %s", secure($conversation_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         return $get_conversation->fetch_assoc()['color'];
     }
 
@@ -4218,11 +4218,11 @@ class User
     {
         global $db;
         /* check if user authorized */
-        $check_conversation = $db->query(sprintf("SELECT COUNT(*) as count FROM conversations_users WHERE conversation_id = %s AND user_id = %s", secure($conversation_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $check_conversation = $db->query(sprintf("SELECT COUNT(*) as count FROM conversations_users WHERE conversation_id = %s AND user_id = %s", secure($conversation_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check_conversation->fetch_assoc()['count'] == 0) {
             _error(403);
         }
-        $db->query(sprintf("UPDATE conversations SET color = %s WHERE conversation_id = %s", secure($color), secure($conversation_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE conversations SET color = %s WHERE conversation_id = %s", secure($color), secure($conversation_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -4237,13 +4237,13 @@ class User
     {
         global $db;
         /* check if user authorized */
-        $check_conversation = $db->query(sprintf("SELECT COUNT(*) as count FROM conversations_users WHERE conversation_id = %s AND user_id = %s", secure($conversation_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $check_conversation = $db->query(sprintf("SELECT COUNT(*) as count FROM conversations_users WHERE conversation_id = %s AND user_id = %s", secure($conversation_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check_conversation->fetch_assoc()['count'] == 0) {
             return;
         }
         /* update typing status of the viewer for this conversation */
         $is_typing = ($is_typing) ? '1' : '0';
-        $db->query(sprintf("UPDATE conversations_users SET typing = %s WHERE conversation_id = %s AND user_id = %s", secure($is_typing), secure($conversation_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE conversations_users SET typing = %s WHERE conversation_id = %s AND user_id = %s", secure($is_typing), secure($conversation_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -4259,7 +4259,7 @@ class User
         $conversations_array = [];
         /* check if user authorized */
         foreach ((array)$conversation_ids as $conversation_id) {
-            $check_conversation = $db->query(sprintf("SELECT COUNT(*) as count FROM conversations_users WHERE conversation_id = %s AND user_id = %s", secure($conversation_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $check_conversation = $db->query(sprintf("SELECT COUNT(*) as count FROM conversations_users WHERE conversation_id = %s AND user_id = %s", secure($conversation_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             if ($check_conversation->fetch_assoc()['count'] > 0) {
                 $conversations_array[] = $conversation_id;
             }
@@ -4267,7 +4267,7 @@ class User
         if (!$conversations_array) return;
         $conversations_list = $this->spread_ids($conversations_array);
         /* update seen status of the viewer to these conversation(s) */
-        $db->query(sprintf("UPDATE conversations_users SET seen = '1' WHERE conversation_id IN (%s) AND user_id = %s", $conversations_list, secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE conversations_users SET seen = '1' WHERE conversation_id IN (%s) AND user_id = %s", $conversations_list, secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -4317,7 +4317,7 @@ class User
                 break;
         }
         /* check if target user exist */
-        $check_target_user = $db->query(sprintf("SELECT COUNT(*) as count FROM users WHERE user_id = %s", secure($to_user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $check_target_user = $db->query(sprintf("SELECT COUNT(*) as count FROM users WHERE user_id = %s", secure($to_user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check_target_user->fetch_assoc()['count'] == 0) {
             return false;
         }
@@ -4330,25 +4330,25 @@ class User
             $this->breach_paywall($to_user_id);
         }
         /* check if target user offline */
-        $check_target_busy_offline = $db->query(sprintf("SELECT COUNT(*) as count FROM users WHERE user_id = %s AND user_last_seen >= SUBTIME(NOW(), SEC_TO_TIME(%s))", secure($to_user_id, 'int'), secure($system['offline_time'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+        $check_target_busy_offline = $db->query(sprintf("SELECT COUNT(*) as count FROM users WHERE user_id = %s AND user_last_seen >= SUBTIME(NOW(), SEC_TO_TIME(%s))", secure($to_user_id, 'int'), secure($system['offline_time'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check_target_busy_offline->fetch_assoc()['count'] == 0) {
             return "recipient_offline";
         }
         /* check if target user busy (someone calling him || he calling someone || in a call) (audio|video) */
-        $check_target_busy_audio = $db->query(sprintf('SELECT COUNT(*) as count FROM conversations_calls_audio WHERE (from_user_id = %1$s OR to_user_id = %1$s) AND declined = "0" AND updated_time >= SUBTIME(NOW(), SEC_TO_TIME(40))', secure($to_user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $check_target_busy_audio = $db->query(sprintf('SELECT COUNT(*) as count FROM conversations_calls_audio WHERE (from_user_id = %1$s OR to_user_id = %1$s) AND declined = "0" AND updated_time >= SUBTIME(NOW(), SEC_TO_TIME(40))', secure($to_user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check_target_busy_audio->fetch_assoc()['count'] > 0) {
             return "recipient_busy";
         }
-        $check_target_busy_video = $db->query(sprintf('SELECT COUNT(*) as count FROM conversations_calls_video WHERE (from_user_id = %1$s OR to_user_id = %1$s) AND declined = "0" AND updated_time >= SUBTIME(NOW(), SEC_TO_TIME(40))', secure($to_user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $check_target_busy_video = $db->query(sprintf('SELECT COUNT(*) as count FROM conversations_calls_video WHERE (from_user_id = %1$s OR to_user_id = %1$s) AND declined = "0" AND updated_time >= SUBTIME(NOW(), SEC_TO_TIME(40))', secure($to_user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check_target_busy_video->fetch_assoc()['count'] > 0) {
             return "recipient_busy";
         }
         /* check if the viewer busy (someone calling him || he calling someone || in a call) (audio|video) */
-        $check_viewer_busy_audio = $db->query(sprintf('SELECT COUNT(*) as count FROM conversations_calls_audio WHERE (from_user_id = %1$s OR to_user_id = %1$s) AND declined = "0" AND updated_time >= SUBTIME(NOW(), SEC_TO_TIME(40))', secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $check_viewer_busy_audio = $db->query(sprintf('SELECT COUNT(*) as count FROM conversations_calls_audio WHERE (from_user_id = %1$s OR to_user_id = %1$s) AND declined = "0" AND updated_time >= SUBTIME(NOW(), SEC_TO_TIME(40))', secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check_viewer_busy_audio->fetch_assoc()['count'] > 0) {
             return "caller_busy";
         }
-        $check_viewer_busy_video = $db->query(sprintf('SELECT COUNT(*) as count FROM conversations_calls_audio WHERE (from_user_id = %1$s OR to_user_id = %1$s) AND declined = "0" AND updated_time >= SUBTIME(NOW(), SEC_TO_TIME(40))', secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $check_viewer_busy_video = $db->query(sprintf('SELECT COUNT(*) as count FROM conversations_calls_audio WHERE (from_user_id = %1$s OR to_user_id = %1$s) AND declined = "0" AND updated_time >= SUBTIME(NOW(), SEC_TO_TIME(40))', secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check_viewer_busy_video->fetch_assoc()['count'] > 0) {
             return "caller_busy";
         }
@@ -4373,7 +4373,7 @@ class User
         $receiver_token_serialized = $receiver_token->toJWT();
         /* -- */
         /* insert the new call */
-        $db->query(sprintf("INSERT INTO %s (from_user_id, from_user_token, to_user_id, to_user_token, room, created_time, updated_time) VALUES (%s, %s, %s, %s, %s, %s, %s)", $table, secure($this->_data['user_id'], 'int'), secure($caller_token_serialized), secure($to_user_id, 'int'), secure($receiver_token_serialized), secure($room), secure($date), secure($date))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO %s (from_user_id, from_user_token, to_user_id, to_user_token, room, created_time, updated_time) VALUES (%s, %s, %s, %s, %s, %s, %s)", $table, secure($this->_data['user_id'], 'int'), secure($caller_token_serialized), secure($to_user_id, 'int'), secure($receiver_token_serialized), secure($room), secure($date), secure($date))) or _error("SQL_ERROR_THROWEN", $db);
         return $db->insert_id;
     }
 
@@ -4402,7 +4402,7 @@ class User
                 break;
         }
         /* new call -> [call created from less than 40 seconds and not answered nor declined] */
-        $get_new_calls = $db->query(sprintf('SELECT %1$s.*, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture FROM %1$s INNER JOIN users ON %1$s.from_user_id = users.user_id WHERE to_user_id = %2$s AND created_time >= SUBTIME(NOW(), SEC_TO_TIME(40)) AND answered = "0" AND declined = "0"', $table, secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_new_calls = $db->query(sprintf('SELECT %1$s.*, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture FROM %1$s INNER JOIN users ON %1$s.from_user_id = users.user_id WHERE to_user_id = %2$s AND created_time >= SUBTIME(NOW(), SEC_TO_TIME(40)) AND answered = "0" AND declined = "0"', $table, secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_new_calls->num_rows == 0) {
             return false;
         }
@@ -4438,13 +4438,13 @@ class User
                 break;
         }
         /* check if user authorized */
-        $check_call = $db->query(sprintf("SELECT * FROM %s WHERE call_id = %s AND from_user_id = %s", $table, secure($call_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $check_call = $db->query(sprintf("SELECT * FROM %s WHERE call_id = %s AND from_user_id = %s", $table, secure($call_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check_call->num_rows == 0) {
             _error(403);
         }
         $call = $check_call->fetch_assoc();
         /* update the call */
-        $db->query(sprintf("UPDATE %s SET updated_time = %s WHERE call_id = %s", $table, secure($date), secure($call_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE %s SET updated_time = %s WHERE call_id = %s", $table, secure($date), secure($call_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* return */
         if ($call['declined']) {
             return "declined";
@@ -4481,13 +4481,13 @@ class User
                 break;
         }
         /* check if user authorized */
-        $check_call = $db->query(sprintf("SELECT * FROM %s WHERE call_id = %s AND to_user_id = %s", $table, secure($call_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $check_call = $db->query(sprintf("SELECT * FROM %s WHERE call_id = %s AND to_user_id = %s", $table, secure($call_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check_call->num_rows == 0) {
             _error(403);
         }
         $call = $check_call->fetch_assoc();
         /* update the call */
-        $db->query(sprintf("UPDATE %s SET answered = '1', updated_time = %s WHERE call_id = %s", $table, secure($date), secure($call_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE %s SET answered = '1', updated_time = %s WHERE call_id = %s", $table, secure($date), secure($call_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* return */
         return $call;
     }
@@ -4518,12 +4518,12 @@ class User
                 break;
         }
         /* check if user authorized */
-        $check_call = $db->query(sprintf('SELECT COUNT(*) as count FROM  %1$s WHERE call_id =  %2$s AND (from_user_id = %3$s OR to_user_id = %3$s)', $table, secure($call_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $check_call = $db->query(sprintf('SELECT COUNT(*) as count FROM  %1$s WHERE call_id =  %2$s AND (from_user_id = %3$s OR to_user_id = %3$s)', $table, secure($call_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check_call->fetch_assoc()['count'] == 0) {
             _error(403);
         }
         /* update the call */
-        $db->query(sprintf("UPDATE %s SET declined = '1', updated_time = %s WHERE call_id = %s", $table, secure($date), secure($call_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE %s SET declined = '1', updated_time = %s WHERE call_id = %s", $table, secure($date), secure($call_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -4552,12 +4552,12 @@ class User
                 break;
         }
         /* check if user authorized */
-        $check_call = $db->query(sprintf('SELECT COUNT(*) as count FROM  %1$s WHERE call_id =  %2$s AND (from_user_id = %3$s OR to_user_id = %3$s)', $table, secure($call_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $check_call = $db->query(sprintf('SELECT COUNT(*) as count FROM  %1$s WHERE call_id =  %2$s AND (from_user_id = %3$s OR to_user_id = %3$s)', $table, secure($call_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check_call->fetch_assoc()['count'] == 0) {
             return; /* not 403 error returned as error will not be handled */
         }
         /* update the call */
-        $db->query(sprintf("UPDATE %s SET updated_time = %s WHERE call_id = %s", $table, secure($date), secure($call_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE %s SET updated_time = %s WHERE call_id = %s", $table, secure($date), secure($call_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -4589,10 +4589,10 @@ class User
         /* prepare live video thumbnail */
         $video_thumbnail = save_picture_from_url($video_thumbnail);
         /* insert post */
-        $db->query(sprintf("INSERT INTO posts (user_id, user_type, post_type, time, privacy) VALUES (%s, 'user', 'live', %s, 'public')", secure($this->_data['user_id'], 'int'), secure($date))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO posts (user_id, user_type, post_type, time, privacy) VALUES (%s, 'user', 'live', %s, 'public')", secure($this->_data['user_id'], 'int'), secure($date))) or _error("SQL_ERROR_THROWEN", $db);
         $post_id = $db->insert_id;
         /* insert live */
-        $db->query(sprintf("INSERT INTO posts_live (post_id, video_thumbnail, agora_uid, agora_channel_name) VALUES (%s, %s, %s, %s)", secure($post_id, 'int'), secure($video_thumbnail), secure($agora_uid, 'int'), secure($agora_channel_name))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO posts_live (post_id, video_thumbnail, agora_uid, agora_channel_name) VALUES (%s, %s, %s, %s)", secure($post_id, 'int'), secure($video_thumbnail), secure($agora_uid, 'int'), secure($agora_channel_name))) or _error("SQL_ERROR_THROWEN", $db);
         // [BACKGROUND PROCESS]
         /* return async */
         return_json_async(['post_id' => $post_id]);
@@ -4627,9 +4627,9 @@ class User
             _error(403);
         }
         /* end live post */
-        $db->query(sprintf("UPDATE posts_live SET live_ended = '1' WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE posts_live SET live_ended = '1' WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* remove all audience */
-        $db->query(sprintf("DELETE FROM posts_live_users WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("DELETE FROM posts_live_users WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* stop live recording */
         if ($system['save_live_enabled']) {
             $this->stop_live_recording($post_id, $post['live']['agora_uid'], $post['live']['agora_channel_name'], $post['live']['agora_resource_id'], $post['live']['agora_sid']);
@@ -4750,7 +4750,7 @@ class User
         }
 
         /* update post */
-        $db->query(sprintf("UPDATE posts_live SET agora_resource_id = %s, agora_sid = %s WHERE post_id = %s", secure($resourceId), secure($sid), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE posts_live SET agora_resource_id = %s, agora_sid = %s WHERE post_id = %s", secure($resourceId), secure($sid), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -4793,7 +4793,7 @@ class User
         }
 
         /* update post */
-        $db->query(sprintf("UPDATE posts_live SET live_recorded = '1', agora_file = %s WHERE post_id = %s", secure($file), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE posts_live SET live_recorded = '1', agora_file = %s WHERE post_id = %s", secure($file), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -4826,7 +4826,7 @@ class User
             _error(403);
         }
         /* remove audience */
-        $db->query(sprintf("DELETE FROM posts_live_users WHERE user_id = %s AND post_id = %s", secure($this->_data['user_id'], 'int'), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("DELETE FROM posts_live_users WHERE user_id = %s AND post_id = %s", secure($this->_data['user_id'], 'int'), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -4904,7 +4904,7 @@ class User
     public function get_mentions($matches)
     {
         global $db, $system;
-        $get_user = $db->query(sprintf("SELECT user_id, user_name, user_firstname, user_lastname FROM users WHERE user_name = %s", secure($matches[1]))) or _error("SQL_ERROR_THROWEN");
+        $get_user = $db->query(sprintf("SELECT user_id, user_name, user_firstname, user_lastname FROM users WHERE user_name = %s", secure($matches[1]))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_user->num_rows > 0) {
             $user = $get_user->fetch_assoc();
             $replacement = popover($user['user_id'], $user['user_name'], ($system['show_usernames_enabled']) ? $user['user_name'] : $user['user_firstname'] . " " . $user['user_lastname']);
@@ -4937,7 +4937,7 @@ class User
         if (preg_match_all('/\[([a-zA-Z0-9._]+)\]/', $text, $matches)) {
             foreach ($matches[1] as $username) {
                 if ($this->_data['user_name'] != $username && !in_array($username, $done)) {
-                    $get_user = $db->query(sprintf("SELECT user_id FROM users WHERE " . $where_query . " user_name = %s", secure($username))) or _error("SQL_ERROR_THROWEN");
+                    $get_user = $db->query(sprintf("SELECT user_id FROM users WHERE " . $where_query . " user_name = %s", secure($username))) or _error("SQL_ERROR_THROWEN", $db);
                     if ($get_user->num_rows > 0) {
                         $_user = $get_user->fetch_assoc();
                         $this->post_notification(array('to_user_id' => $_user['user_id'], 'action' => 'mention', 'node_type' => $node_type, 'node_url' => $node_url, 'notify_id' => $notify_id));
@@ -4968,7 +4968,7 @@ class User
         /* check the type to get */
         if ($type == "user") {
             /* get user info */
-            $get_profile = $db->query(sprintf("SELECT * FROM users WHERE user_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_profile = $db->query(sprintf("SELECT * FROM users WHERE user_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             if ($get_profile->num_rows > 0) {
                 $profile = $get_profile->fetch_assoc();
                 /* get profile picture */
@@ -4989,7 +4989,7 @@ class User
             }
         } else {
             /* get page info */
-            $get_profile = $db->query(sprintf("SELECT * FROM pages WHERE page_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_profile = $db->query(sprintf("SELECT * FROM pages WHERE page_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             if ($get_profile->num_rows > 0) {
                 $profile = $get_profile->fetch_assoc();
                 $profile['page_picture'] = get_picture($profile['page_picture'], "page");
@@ -5023,7 +5023,7 @@ class User
     {
         global $system, $db;
         $hashtags = [];
-        $get_trending_hashtags = $db->query(sprintf("SELECT hashtags.hashtag, COUNT(hashtags_posts.id) AS frequency FROM hashtags INNER JOIN hashtags_posts ON hashtags.hashtag_id = hashtags_posts.hashtag_id WHERE hashtags_posts.created_at > DATE_SUB(CURDATE(), INTERVAL 1 %s) GROUP BY hashtags_posts.hashtag_id ORDER BY frequency DESC LIMIT %s", secure($system['trending_hashtags_interval'], "", false), secure($system['trending_hashtags_limit'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+        $get_trending_hashtags = $db->query(sprintf("SELECT hashtags.hashtag, COUNT(hashtags_posts.id) AS frequency FROM hashtags INNER JOIN hashtags_posts ON hashtags.hashtag_id = hashtags_posts.hashtag_id WHERE hashtags_posts.created_at > DATE_SUB(CURDATE(), INTERVAL 1 %s) GROUP BY hashtags_posts.hashtag_id ORDER BY frequency DESC LIMIT %s", secure($system['trending_hashtags_interval'], "", false), secure($system['trending_hashtags_limit'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_trending_hashtags->num_rows > 0) {
             while ($hashtag = $get_trending_hashtags->fetch_assoc()) {
                 $hashtag['hashtag'] = html_entity_decode($hashtag['hashtag'], ENT_QUOTES);
@@ -5048,10 +5048,10 @@ class User
         $text = preg_replace_callback($pattern, function ($matches) use ($trending_hashtags, $post_id) {
             global $system, $db, $date;
             if ($trending_hashtags) {
-                $get_hashtag = $db->query(sprintf("SELECT hashtag_id FROM hashtags WHERE hashtag = %s", secure($matches[4]))) or _error("SQL_ERROR_THROWEN");
+                $get_hashtag = $db->query(sprintf("SELECT hashtag_id FROM hashtags WHERE hashtag = %s", secure($matches[4]))) or _error("SQL_ERROR_THROWEN", $db);
                 if ($get_hashtag->num_rows == 0) {
                     /* insert the new hashtag */
-                    $db->query(sprintf("INSERT INTO hashtags (hashtag) VALUES (%s)", secure($matches[4]))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("INSERT INTO hashtags (hashtag) VALUES (%s)", secure($matches[4]))) or _error("SQL_ERROR_THROWEN", $db);
                     $hashtag_id = $db->insert_id;
                 } else {
                     $hashtag_id = $get_hashtag->fetch_assoc()['hashtag_id'];
@@ -5100,24 +5100,24 @@ class User
             throw new Exception(__("You don't have the permission to do this"));
         }
         /* check latest story */
-        $get_last_story = $db->query(sprintf("SELECT story_id FROM stories WHERE time >= DATE_SUB(NOW(), INTERVAL 1 DAY) AND stories.user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_last_story = $db->query(sprintf("SELECT story_id FROM stories WHERE time >= DATE_SUB(NOW(), INTERVAL 1 DAY) AND stories.user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_last_story->num_rows > 0) {
             /* get story_id */
             $story_id = $get_last_story->fetch_assoc()['story_id'];
             /* update story time */
-            $db->query(sprintf("UPDATE stories SET time = %s WHERE story_id = %s", secure($date), secure($story_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE stories SET time = %s WHERE story_id = %s", secure($date), secure($story_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         } else {
             /* insert new story */
-            $db->query(sprintf("INSERT INTO stories (user_id, time) VALUES (%s, %s)", secure($this->_data['user_id'], 'int'), secure($date))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("INSERT INTO stories (user_id, time) VALUES (%s, %s)", secure($this->_data['user_id'], 'int'), secure($date))) or _error("SQL_ERROR_THROWEN", $db);
             /* get story_id */
             $story_id = $db->insert_id;
         }
         /* insert story media items */
         foreach ($photos as $photo) {
-            $db->query(sprintf("INSERT INTO stories_media (story_id, source, text, time) VALUES (%s, %s, %s, %s)", secure($story_id, 'int'), secure($photo['source']), secure($message), secure($date))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("INSERT INTO stories_media (story_id, source, text, time) VALUES (%s, %s, %s, %s)", secure($story_id, 'int'), secure($photo['source']), secure($message), secure($date))) or _error("SQL_ERROR_THROWEN", $db);
         }
         foreach ($videos as $video) {
-            $db->query(sprintf("INSERT INTO stories_media (story_id, source, is_photo, text, time) VALUES (%s, %s, '0', %s, %s)", secure($story_id, 'int'), secure($video), secure($message), secure($date))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("INSERT INTO stories_media (story_id, source, is_photo, text, time) VALUES (%s, %s, '0', %s, %s)", secure($story_id, 'int'), secure($video), secure($message), secure($date))) or _error("SQL_ERROR_THROWEN", $db);
         }
     }
 
@@ -5135,7 +5135,7 @@ class User
         if ($system['newsfeed_source'] == "default") {
             $source_query = sprintf(" AND (stories.user_id = %s OR stories.user_id IN (%s)) ", $this->_data['user_id'], $this->spread_ids($this->_data['friends_ids']));
         }
-        $get_stories = $db->query("SELECT stories.*, users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture FROM stories INNER JOIN users ON stories.user_id = users.user_id WHERE time >= DATE_SUB(NOW(), INTERVAL 1 DAY) $source_query ORDER BY stories.story_id DESC") or _error("SQL_ERROR_THROWEN");
+        $get_stories = $db->query("SELECT stories.*, users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture FROM stories INNER JOIN users ON stories.user_id = users.user_id WHERE time >= DATE_SUB(NOW(), INTERVAL 1 DAY) $source_query ORDER BY stories.story_id DESC") or _error("SQL_ERROR_THROWEN", $db);
         if ($get_stories->num_rows > 0) {
             while ($_story = $get_stories->fetch_assoc()) {
                 $story['id'] = $_story['story_id'];
@@ -5144,7 +5144,7 @@ class User
                 $story['lastUpdated'] = strtotime($_story['time']);
                 $story['items'] = [];
                 /* get story media items */
-                $get_media_items = $db->query(sprintf("SELECT * FROM stories_media WHERE story_id = %s", secure($_story['story_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_media_items = $db->query(sprintf("SELECT * FROM stories_media WHERE story_id = %s", secure($_story['story_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 while ($media_item = $get_media_items->fetch_assoc()) {
                     $story_item['id'] = $media_item['media_id'];
                     $story_item['type'] = ($media_item['is_photo']) ? 'photo' : 'video';
@@ -5169,7 +5169,7 @@ class User
     public function get_my_story()
     {
         global $db, $system;
-        $get_my_story = $db->query(sprintf("SELECT COUNT(*) as count FROM stories WHERE time >= DATE_SUB(NOW(), INTERVAL 1 DAY) AND user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_my_story = $db->query(sprintf("SELECT COUNT(*) as count FROM stories WHERE time >= DATE_SUB(NOW(), INTERVAL 1 DAY) AND user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_my_story->fetch_assoc()['count'] == 0) {
             return false;
         } else {
@@ -5186,7 +5186,7 @@ class User
     public function delete_my_story()
     {
         global $db, $system;
-        $check_story = $db->query(sprintf("DELETE FROM stories WHERE time >= DATE_SUB(NOW(), INTERVAL 1 DAY) AND user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $check_story = $db->query(sprintf("DELETE FROM stories WHERE time >= DATE_SUB(NOW(), INTERVAL 1 DAY) AND user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -5208,7 +5208,7 @@ class User
         /* check max posts/hour limit */
         if ($system['max_posts_hour'] > 0 && $this->_data['user_group'] >= 3) {
             $where_query = ($args['handle'] == "page") ? sprintf("user_id = %s AND user_type = 'page'", secure($args['id'], 'int')) : sprintf("user_id = %s AND user_type = 'user'", secure($this->_data['user_id'], 'int'));
-            $check_limit = $db->query("SELECT COUNT(*) as count FROM posts WHERE posts.time >= DATE_SUB(NOW(),INTERVAL 1 HOUR) AND " . $where_query) or _error("SQL_ERROR_THROWEN");
+            $check_limit = $db->query("SELECT COUNT(*) as count FROM posts WHERE posts.time >= DATE_SUB(NOW(),INTERVAL 1 HOUR) AND " . $where_query) or _error("SQL_ERROR_THROWEN", $db);
             if ($check_limit->fetch_assoc()['count'] >= $system['max_posts_hour']) {
                 blueModal("MESSAGE", __("Maximum Limit Reached"), __("You have reached the maximum limit of posts/hour, please try again later"));
             }
@@ -5248,7 +5248,7 @@ class User
                 _error(400);
             }
             /* check if the user is valid & the viewer can post on his wall */
-            $check_user = $db->query(sprintf("SELECT * FROM users WHERE user_id = %s", secure($args['id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $check_user = $db->query(sprintf("SELECT * FROM users WHERE user_id = %s", secure($args['id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             if ($check_user->num_rows == 0) {
                 _error(400);
             }
@@ -5270,7 +5270,7 @@ class User
 
         } elseif ($args['handle'] == "page") {
             /* check if the page is valid */
-            $check_page = $db->query(sprintf("SELECT * FROM pages WHERE page_id = %s", secure($args['id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $check_page = $db->query(sprintf("SELECT * FROM pages WHERE page_id = %s", secure($args['id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             if ($check_page->num_rows == 0) {
                 _error(400);
             }
@@ -5287,7 +5287,7 @@ class User
             $post['post_author_verified'] = $this->_data['page_verified'];
         } elseif ($args['handle'] == "group") {
             /* check if the group is valid & the viewer is group member (approved) */
-            $check_group = $db->query(sprintf("SELECT `groups`.* FROM `groups` INNER JOIN groups_members ON `groups`.group_id = groups_members.group_id WHERE groups_members.approved = '1' AND groups_members.user_id = %s AND groups_members.group_id = %s", secure($this->_data['user_id'], 'int'), secure($args['id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $check_group = $db->query(sprintf("SELECT `groups`.* FROM `groups` INNER JOIN groups_members ON `groups`.group_id = groups_members.group_id WHERE groups_members.approved = '1' AND groups_members.user_id = %s AND groups_members.group_id = %s", secure($this->_data['user_id'], 'int'), secure($args['id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             $_group = $check_group->fetch_assoc();
             $_group['i_admin'] = $this->check_group_adminship($this->_data['user_id'], $_group['group_id']);
             /* check if group publish enabled */
@@ -5299,7 +5299,7 @@ class User
             $post['group_approved'] = ($_group['group_publish_approval_enabled'] && !$_group['i_admin']) ? '0' : '1';
         } elseif ($args['handle'] == "event") {
             /* check if the event is valid & the viewer is event member */
-            $check_event = $db->query(sprintf("SELECT `events`.* FROM `events` INNER JOIN events_members ON `events`.event_id = events_members.event_id WHERE events_members.user_id = %s AND events_members.event_id = %s", secure($this->_data['user_id'], 'int'), secure($args['id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $check_event = $db->query(sprintf("SELECT `events`.* FROM `events` INNER JOIN events_members ON `events`.event_id = events_members.event_id WHERE events_members.user_id = %s AND events_members.event_id = %s", secure($this->_data['user_id'], 'int'), secure($args['id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             $_event = $check_event->fetch_assoc();
             $_event['i_admin'] = $this->check_event_adminship($this->_data['user_id'], $_event['event_id']);
             /* check if event publish enabled */
@@ -5401,12 +5401,12 @@ class User
 
         try {
             /* insert the post */
-            $db->query(sprintf("INSERT INTO posts (user_id, user_type, in_wall, wall_id, in_group, group_id, group_approved, in_event, event_id, event_approved, post_type, colored_pattern, time, location, privacy, text, feeling_action, feeling_value, is_anonymous) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", secure($post['user_id'], 'int'), secure($post['user_type']), secure($post['in_wall'], 'int'), secure($post['wall_id'], 'int'), secure($post['in_group']), secure($post['group_id'], 'int'), secure($post['group_approved']), secure($post['in_event']), secure($post['event_id'], 'int'), secure($post['event_approved']), secure($post['post_type']), secure($post['colored_pattern'], 'int'), secure($post['time']), secure($post['location']), secure($post['privacy']), secure($post['text']), secure($post['feeling_action']), secure($post['feeling_value']), secure($post['is_anonymous']))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("INSERT INTO posts (user_id, user_type, in_wall, wall_id, in_group, group_id, group_approved, in_event, event_id, event_approved, post_type, colored_pattern, time, location, privacy, text, feeling_action, feeling_value, is_anonymous) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", secure($post['user_id'], 'int'), secure($post['user_type']), secure($post['in_wall'], 'int'), secure($post['wall_id'], 'int'), secure($post['in_group']), secure($post['group_id'], 'int'), secure($post['group_approved']), secure($post['in_event']), secure($post['event_id'], 'int'), secure($post['event_approved']), secure($post['post_type']), secure($post['colored_pattern'], 'int'), secure($post['time']), secure($post['location']), secure($post['privacy']), secure($post['text']), secure($post['feeling_action']), secure($post['feeling_value']), secure($post['is_anonymous']))) or _error("SQL_ERROR_THROWEN", $db);
             $post['post_id'] = $db->insert_id;
 
             switch ($post['post_type']) {
                 case 'link':
-                    $db->query(sprintf("INSERT INTO posts_links (post_id, source_url, source_host, source_title, source_text, source_thumbnail) VALUES (%s, %s, %s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($args['link']->source_url), secure($args['link']->source_host), secure($args['link']->source_title), secure($args['link']->source_text), secure($args['link']->source_thumbnail))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("INSERT INTO posts_links (post_id, source_url, source_host, source_title, source_text, source_thumbnail) VALUES (%s, %s, %s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($args['link']->source_url), secure($args['link']->source_host), secure($args['link']->source_title), secure($args['link']->source_text), secure($args['link']->source_thumbnail))) or _error("SQL_ERROR_THROWEN", $db);
                     $post['link']['link_id'] = $db->insert_id;
                     $post['link']['post_id'] = $post['post_id'];
                     $post['link']['source_url'] = $args['link']->source_url;
@@ -5417,7 +5417,7 @@ class User
                     break;
 
                 case 'media':
-                    $db->query(sprintf("INSERT INTO posts_media (post_id, source_url, source_provider, source_type, source_title, source_text, source_html, source_thumbnail) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($args['link']->source_url), secure($args['link']->source_provider), secure($args['link']->source_type), secure($args['link']->source_title), secure($args['link']->source_text), secure($args['link']->source_html), secure($args['link']->source_thumbnail))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("INSERT INTO posts_media (post_id, source_url, source_provider, source_type, source_title, source_text, source_html, source_thumbnail) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($args['link']->source_url), secure($args['link']->source_provider), secure($args['link']->source_type), secure($args['link']->source_title), secure($args['link']->source_text), secure($args['link']->source_html), secure($args['link']->source_thumbnail))) or _error("SQL_ERROR_THROWEN", $db);
                     $post['media']['media_id'] = $db->insert_id;
                     $post['media']['post_id'] = $post['post_id'];
                     $post['media']['source_url'] = $args['link']->source_url;
@@ -5433,45 +5433,45 @@ class User
                         /* check for page timeline album (public by default) */
                         if (!$_page['page_album_timeline']) {
                             /* create new page timeline album */
-                            $db->query(sprintf("INSERT INTO posts_photos_albums (user_id, user_type, title) VALUES (%s, 'page', 'Timeline Photos')", secure($_page['page_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                            $db->query(sprintf("INSERT INTO posts_photos_albums (user_id, user_type, title) VALUES (%s, 'page', 'Timeline Photos')", secure($_page['page_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                             $_page['page_album_timeline'] = $db->insert_id;
                             /* update page */
-                            $db->query(sprintf("UPDATE pages SET page_album_timeline = %s WHERE page_id = %s", secure($_page['page_album_timeline'], 'int'), secure($_page['page_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                            $db->query(sprintf("UPDATE pages SET page_album_timeline = %s WHERE page_id = %s", secure($_page['page_album_timeline'], 'int'), secure($_page['page_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                         }
                         $album_id = $_page['page_album_timeline'];
                     } elseif ($args['handle'] == "group") {
                         /* check for group timeline album */
                         if (!$_group['group_album_timeline']) {
                             /* create new group timeline album */
-                            $db->query(sprintf("INSERT INTO posts_photos_albums (user_id, user_type, in_group, group_id, title, privacy) VALUES (%s, %s, %s, %s, 'Timeline Photos', 'custom')", secure($post['user_id'], 'int'), secure($post['user_type']), secure($post['in_group']), secure($post['group_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                            $db->query(sprintf("INSERT INTO posts_photos_albums (user_id, user_type, in_group, group_id, title, privacy) VALUES (%s, %s, %s, %s, 'Timeline Photos', 'custom')", secure($post['user_id'], 'int'), secure($post['user_type']), secure($post['in_group']), secure($post['group_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                             $_group['group_album_timeline'] = $db->insert_id;
                             /* update group */
-                            $db->query(sprintf("UPDATE `groups` SET group_album_timeline = %s WHERE group_id = %s", secure($_group['group_album_timeline'], 'int'), secure($_group['group_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                            $db->query(sprintf("UPDATE `groups` SET group_album_timeline = %s WHERE group_id = %s", secure($_group['group_album_timeline'], 'int'), secure($_group['group_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                         }
                         $album_id = $_group['group_album_timeline'];
                     } elseif ($args['handle'] == "event") {
                         /* check for event timeline album */
                         if (!$_event['event_album_timeline']) {
                             /* create new event timeline album */
-                            $db->query(sprintf("INSERT INTO posts_photos_albums (user_id, user_type, in_event, event_id, title, privacy) VALUES (%s, %s, %s, %s, 'Timeline Photos', 'custom')", secure($post['user_id'], 'int'), secure($post['user_type']), secure($post['in_event']), secure($post['event_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                            $db->query(sprintf("INSERT INTO posts_photos_albums (user_id, user_type, in_event, event_id, title, privacy) VALUES (%s, %s, %s, %s, 'Timeline Photos', 'custom')", secure($post['user_id'], 'int'), secure($post['user_type']), secure($post['in_event']), secure($post['event_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                             $_event['event_album_timeline'] = $db->insert_id;
                             /* update event */
-                            $db->query(sprintf("UPDATE `events` SET event_album_timeline = %s WHERE event_id = %s", secure($_event['event_album_timeline'], 'int'), secure($_event['event_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                            $db->query(sprintf("UPDATE `events` SET event_album_timeline = %s WHERE event_id = %s", secure($_event['event_album_timeline'], 'int'), secure($_event['event_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                         }
                         $album_id = $_event['event_album_timeline'];
                     } else {
                         /* check for timeline album */
                         if (!$this->_data['user_album_timeline']) {
                             /* create new timeline album (public by default) */
-                            $db->query(sprintf("INSERT INTO posts_photos_albums (user_id, user_type, title) VALUES (%s, 'user', 'Timeline Photos')", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                            $db->query(sprintf("INSERT INTO posts_photos_albums (user_id, user_type, title) VALUES (%s, 'user', 'Timeline Photos')", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                             $this->_data['user_album_timeline'] = $db->insert_id;
                             /* update user */
-                            $db->query(sprintf("UPDATE users SET user_album_timeline = %s WHERE user_id = %s", secure($this->_data['user_album_timeline'], 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                            $db->query(sprintf("UPDATE users SET user_album_timeline = %s WHERE user_id = %s", secure($this->_data['user_album_timeline'], 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                         }
                         $album_id = $this->_data['user_album_timeline'];
                     }
                     foreach ($args['photos'] as $photo) {
-                        $db->query(sprintf("INSERT INTO posts_photos (post_id, album_id, source, blur) VALUES (%s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($album_id, 'int'), secure($photo['source']), secure($photo['blur']))) or _error("SQL_ERROR_THROWEN");
+                        $db->query(sprintf("INSERT INTO posts_photos (post_id, album_id, source, blur) VALUES (%s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($album_id, 'int'), secure($photo['source']), secure($photo['blur']))) or _error("SQL_ERROR_THROWEN", $db);
                         $post_photo['photo_id'] = $db->insert_id;
                         $post_photo['post_id'] = $post['post_id'];
                         $post_photo['source'] = $photo['source'];
@@ -5492,10 +5492,10 @@ class User
 
                 case 'album':
                     /* create new album */
-                    $db->query(sprintf("INSERT INTO posts_photos_albums (user_id, user_type, in_group, group_id, in_event, event_id, title, privacy) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", secure($post['user_id'], 'int'), secure($post['user_type']), secure($post['in_group']), secure($post['group_id'], 'int'), secure($post['in_event']), secure($post['event_id'], 'int'), secure($args['album']), secure($post['privacy']))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("INSERT INTO posts_photos_albums (user_id, user_type, in_group, group_id, in_event, event_id, title, privacy) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", secure($post['user_id'], 'int'), secure($post['user_type']), secure($post['in_group']), secure($post['group_id'], 'int'), secure($post['in_event']), secure($post['event_id'], 'int'), secure($args['album']), secure($post['privacy']))) or _error("SQL_ERROR_THROWEN", $db);
                     $album_id = $db->insert_id;
                     foreach ($args['photos'] as $photo) {
-                        $db->query(sprintf("INSERT INTO posts_photos (post_id, album_id, source, blur) VALUES (%s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($album_id, 'int'), secure($photo['source']), secure($photo['blur']))) or _error("SQL_ERROR_THROWEN");
+                        $db->query(sprintf("INSERT INTO posts_photos (post_id, album_id, source, blur) VALUES (%s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($album_id, 'int'), secure($photo['source']), secure($photo['blur']))) or _error("SQL_ERROR_THROWEN", $db);
                         $post_photo['photo_id'] = $db->insert_id;
                         $post_photo['post_id'] = $post['post_id'];
                         $post_photo['source'] = $photo['source'];
@@ -5555,16 +5555,16 @@ class User
                             empty($product->location_id) ? 'NULL' : secure($product->location_id, 'int'),
                             secure($product->rent, 'int')
                         )
-                    ) or _error("SQL_ERROR_THROWEN");
+                    ) or _error("SQL_ERROR_THROWEN", $db);
                     /* insert product photos */
                     if (count($args['photos']) > 0) {
                         foreach ($args['photos'] as $photo) {
-                            $db->query(sprintf("INSERT INTO posts_photos (post_id, source, blur) VALUES (%s, %s, %s)", secure($post['post_id'], 'int'), secure($photo['source']), secure($photo['blur']))) or _error("SQL_ERROR_THROWEN");
+                            $db->query(sprintf("INSERT INTO posts_photos (post_id, source, blur) VALUES (%s, %s, %s)", secure($post['post_id'], 'int'), secure($photo['source']), secure($photo['blur']))) or _error("SQL_ERROR_THROWEN", $db);
                         }
                     }
                     if (count($args['files']) > 0) {
                         foreach ($args['files'] as $file) {
-                            $db->query(sprintf("INSERT INTO posts_files (post_id, file_title, source) VALUES (%s, %s, %s)", secure($post['post_id'], 'int'), secure($file['title']), secure($file['source']))) or _error("SQL_ERROR_THROWEN");
+                            $db->query(sprintf("INSERT INTO posts_files (post_id, file_title, source) VALUES (%s, %s, %s)", secure($post['post_id'], 'int'), secure($file['title']), secure($file['source']))) or _error("SQL_ERROR_THROWEN", $db);
                         }
                     }
                     break;
@@ -5572,30 +5572,30 @@ class User
                 case 'funding':
                     /* insert funding details */
                     /* Note: no need to return any data as publisher will redirect to post link */
-                    $db->query(sprintf("INSERT INTO posts_funding (post_id, title, amount, cover_image) VALUES (%s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($args['funding']->title), secure($args['funding']->amount), secure($args['funding']->cover_image))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("INSERT INTO posts_funding (post_id, title, amount, cover_image) VALUES (%s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($args['funding']->title), secure($args['funding']->amount), secure($args['funding']->cover_image))) or _error("SQL_ERROR_THROWEN", $db);
                     break;
 
                 case 'offer':
                     /* insert offer details */
                     /* Note: no need to return any data as publisher will redirect to post link */
-                    $db->query(sprintf("INSERT INTO posts_offers (post_id, category_id, title, discount_type, discount_percent, discount_amount, buy_x, get_y, spend_x, amount_y, end_date, thumbnail) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($args['offer']->category, 'int'), secure($args['offer']->title), secure($args['offer']->discount_type), secure($args['offer']->discount_percent, 'int'), secure($args['offer']->discount_amount), secure($args['offer']->buy_x), secure($args['offer']->get_y), secure($args['offer']->spend_x), secure($args['offer']->amount_y), secure($args['offer']->end_date, 'datetime'), secure($args['offer']->thumbnail))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("INSERT INTO posts_offers (post_id, category_id, title, discount_type, discount_percent, discount_amount, buy_x, get_y, spend_x, amount_y, end_date, thumbnail) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($args['offer']->category, 'int'), secure($args['offer']->title), secure($args['offer']->discount_type), secure($args['offer']->discount_percent, 'int'), secure($args['offer']->discount_amount), secure($args['offer']->buy_x), secure($args['offer']->get_y), secure($args['offer']->spend_x), secure($args['offer']->amount_y), secure($args['offer']->end_date, 'datetime'), secure($args['offer']->thumbnail))) or _error("SQL_ERROR_THROWEN", $db);
                     break;
 
                 case 'job':
                     /* insert job details */
                     /* Note: no need to return any data as publisher will redirect to post link */
-                    $db->query(sprintf("INSERT INTO posts_jobs (post_id, category_id, title, location, salary_minimum, salary_maximum, pay_salary_per, type, question_1_type, question_1_title, question_1_choices, question_2_type, question_2_title, question_2_choices, question_3_type, question_3_title, question_3_choices, cover_image) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($args['job']->category, 'int'), secure($args['job']->title), secure($args['job']->location), secure($args['job']->salary_minimum), secure($args['job']->salary_maximum), secure($args['job']->pay_salary_per), secure($args['job']->type), secure($args['job']->question_1_type), secure($args['job']->question_1_title), secure($args['job']->question_1_choices), secure($args['job']->question_2_type), secure($args['job']->question_2_title), secure($args['job']->question_2_choices), secure($args['job']->question_3_type), secure($args['job']->question_3_title), secure($args['job']->question_3_choices), secure($args['job']->cover_image))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("INSERT INTO posts_jobs (post_id, category_id, title, location, salary_minimum, salary_maximum, pay_salary_per, type, question_1_type, question_1_title, question_1_choices, question_2_type, question_2_title, question_2_choices, question_3_type, question_3_title, question_3_choices, cover_image) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($args['job']->category, 'int'), secure($args['job']->title), secure($args['job']->location), secure($args['job']->salary_minimum), secure($args['job']->salary_maximum), secure($args['job']->pay_salary_per), secure($args['job']->type), secure($args['job']->question_1_type), secure($args['job']->question_1_title), secure($args['job']->question_1_choices), secure($args['job']->question_2_type), secure($args['job']->question_2_title), secure($args['job']->question_2_choices), secure($args['job']->question_3_type), secure($args['job']->question_3_title), secure($args['job']->question_3_choices), secure($args['job']->cover_image))) or _error("SQL_ERROR_THROWEN", $db);
                     break;
 
                 case 'poll':
                     /* insert poll */
-                    $db->query(sprintf("INSERT INTO posts_polls (post_id) VALUES (%s)", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("INSERT INTO posts_polls (post_id) VALUES (%s)", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     $post['poll']['poll_id'] = $db->insert_id;
                     $post['poll']['post_id'] = $post['post_id'];
                     $post['poll']['votes'] = '0';
                     /* insert poll options */
                     foreach ($args['poll_options'] as $option) {
-                        $db->query(sprintf("INSERT INTO posts_polls_options (poll_id, text) VALUES (%s, %s)", secure($post['poll']['poll_id'], 'int'), secure($option))) or _error("SQL_ERROR_THROWEN");
+                        $db->query(sprintf("INSERT INTO posts_polls_options (poll_id, text) VALUES (%s, %s)", secure($post['poll']['poll_id'], 'int'), secure($option))) or _error("SQL_ERROR_THROWEN", $db);
                         $poll_option['option_id'] = $db->insert_id;
                         $poll_option['text'] = $option;
                         $poll_option['votes'] = 0;
@@ -5605,20 +5605,20 @@ class User
                     break;
 
                 case 'video':
-                    $db->query(sprintf("INSERT INTO posts_videos (post_id, source, thumbnail) VALUES (%s, %s, %s)", secure($post['post_id'], 'int'), secure($args['video']->source), secure($args['video_thumbnail']))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("INSERT INTO posts_videos (post_id, source, thumbnail) VALUES (%s, %s, %s)", secure($post['post_id'], 'int'), secure($args['video']->source), secure($args['video_thumbnail']))) or _error("SQL_ERROR_THROWEN", $db);
                     $post['video']['video_id'] = $db->insert_id;
                     $post['video']['source'] = $args['video']->source;
                     $post['video']['thumbnail'] = $args['video_thumbnail'];
                     break;
 
                 case 'audio':
-                    $db->query(sprintf("INSERT INTO posts_audios (post_id, source) VALUES (%s, %s)", secure($post['post_id'], 'int'), secure($args['audio']->source))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("INSERT INTO posts_audios (post_id, source) VALUES (%s, %s)", secure($post['post_id'], 'int'), secure($args['audio']->source))) or _error("SQL_ERROR_THROWEN", $db);
                     $post['audio']['audio_id'] = $db->insert_id;
                     $post['audio']['source'] = $args['audio']->source;
                     break;
 
                 case 'file':
-                    $db->query(sprintf("INSERT INTO posts_files (post_id, source) VALUES (%s, %s)", secure($post['post_id'], 'int'), secure($args['file']->source))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("INSERT INTO posts_files (post_id, source) VALUES (%s, %s)", secure($post['post_id'], 'int'), secure($args['file']->source))) or _error("SQL_ERROR_THROWEN", $db);
                     $post['file']['file_id'] = $db->insert_id;
                     $post['file']['source'] = $args['file']->source;
                     break;
@@ -5747,7 +5747,7 @@ class User
     {
         global $db;
         $patterns = [];
-        $get_patterns = $db->query("SELECT * FROM posts_colored_patterns") or _error("SQL_ERROR_THROWEN");
+        $get_patterns = $db->query("SELECT * FROM posts_colored_patterns") or _error("SQL_ERROR_THROWEN", $db);
         if ($get_patterns->num_rows > 0) {
             while ($pattern = $get_patterns->fetch_assoc()) {
                 $patterns[] = $pattern;
@@ -5766,7 +5766,7 @@ class User
     public function get_posts_colored_pattern($pattern_id)
     {
         global $db;
-        $get_pattern = $db->query(sprintf("SELECT * FROM posts_colored_patterns WHERE pattern_id = %s", secure($pattern_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_pattern = $db->query(sprintf("SELECT * FROM posts_colored_patterns WHERE pattern_id = %s", secure($pattern_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_pattern->num_rows == 0) {
             return 0;
         }
@@ -6086,10 +6086,10 @@ class User
 
         /* get posts */
         if ($last_post_id != null && $get != 'popular' && $get != 'saved' && $get != 'memories') { /* excluded as not ordered by post_id */
-            $get_posts = $db->query(sprintf("SELECT * FROM (SELECT posts.post_id FROM posts " . $where_query . ") posts WHERE posts.post_id > %s ORDER BY posts.post_id DESC", secure($last_post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_posts = $db->query(sprintf("SELECT * FROM (SELECT posts.post_id FROM posts " . $where_query . ") posts WHERE posts.post_id > %s ORDER BY posts.post_id DESC", secure($last_post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         } else {
             $limit_statement = ($get_all) ? "" : sprintf("LIMIT %s, %s", secure($offset, 'int', false), secure($max_results, 'int', false)); /* get_all for cases like download user's posts */
-            $get_posts = $db->query("SELECT posts.post_id FROM posts " . $where_query . " " . $order_query . " " . $limit_statement) or _error("SQL_ERROR_THROWEN");
+            $get_posts = $db->query("SELECT posts.post_id FROM posts " . $where_query . " " . $order_query . " " . $limit_statement) or _error("SQL_ERROR_THROWEN", $db);
         }
         if ($get_posts->num_rows > 0) {
             while ($post = $get_posts->fetch_assoc()) {
@@ -6142,7 +6142,7 @@ class User
 
             case 'link':
                 /* get link */
-                $get_link = $db->query(sprintf("SELECT * FROM posts_links WHERE post_id = %s", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_link = $db->query(sprintf("SELECT * FROM posts_links WHERE post_id = %s", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* check if link has been deleted */
                 if ($get_link->num_rows == 0) {
                     return false;
@@ -6156,7 +6156,7 @@ class User
 
             case 'media':
                 /* get media */
-                $get_media = $db->query(sprintf("SELECT * FROM posts_media WHERE post_id = %s", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_media = $db->query(sprintf("SELECT * FROM posts_media WHERE post_id = %s", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* check if media has been deleted */
                 if ($get_media->num_rows == 0) {
                     return false;
@@ -6169,7 +6169,7 @@ class User
 
             case 'live':
                 /* get live details */
-                $get_live = $db->query(sprintf("SELECT * FROM posts_live WHERE post_id = %s", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_live = $db->query(sprintf("SELECT * FROM posts_live WHERE post_id = %s", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* check if live has been deleted */
                 if ($get_live->num_rows == 0) {
                     return false;
@@ -6191,7 +6191,7 @@ class User
             case 'group_cover':
             case 'event_cover':
                 /* get photos */
-                $get_photos = $db->query(sprintf("SELECT * FROM posts_photos WHERE post_id = %s ORDER BY photo_id ASC", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_photos = $db->query(sprintf("SELECT * FROM posts_photos WHERE post_id = %s ORDER BY photo_id ASC", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 $post['photos_num'] = $get_photos->num_rows;
                 /* check if photos has been deleted */
                 if ($post['photos_num'] == 0) {
@@ -6216,7 +6216,7 @@ class User
 
             case 'article':
                 /* get article */
-                $get_article = $db->query(sprintf("SELECT posts_articles.*, blogs_categories.category_name FROM posts_articles LEFT JOIN blogs_categories ON posts_articles.category_id = blogs_categories.category_id WHERE posts_articles.post_id = %s", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_article = $db->query(sprintf("SELECT posts_articles.*, blogs_categories.category_name FROM posts_articles LEFT JOIN blogs_categories ON posts_articles.category_id = blogs_categories.category_id WHERE posts_articles.post_id = %s", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* check if article has been deleted */
                 if ($get_article->num_rows == 0) {
                     return false;
@@ -6251,14 +6251,14 @@ class User
                         WHERE post_id = %s",
                         secure($post['post_id'], 'int')
                     )
-                ) or _error("SQL_ERROR_THROWEN");
+                ) or _error("SQL_ERROR_THROWEN", $db);
                 /* check if product has been deleted */
                 if ($get_product->num_rows == 0) {
                     return false;
                 }
                 $post['product'] = $get_product->fetch_assoc();
                 /* get photos */
-                $get_photos = $db->query(sprintf("SELECT * FROM posts_photos WHERE post_id = %s ORDER BY photo_id DESC", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_photos = $db->query(sprintf("SELECT * FROM posts_photos WHERE post_id = %s ORDER BY photo_id DESC", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 $post['photos_num'] = $get_photos->num_rows;
                 /* check if photos has been deleted */
                 if ($post['photos_num'] > 0) {
@@ -6270,7 +6270,7 @@ class User
                 }
 
                 /* get files */
-                $get_files = $db->query(sprintf("SELECT * FROM posts_files WHERE post_id = %s ORDER BY file_id ASC", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_files = $db->query(sprintf("SELECT * FROM posts_files WHERE post_id = %s ORDER BY file_id ASC", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 $post['files_num'] = $get_files->num_rows;
                 /* check if photos has been deleted */
                 if ($post['files_num'] > 0) {
@@ -6285,7 +6285,7 @@ class User
 
             case 'funding':
                 /* get funding */
-                $get_funding = $db->query(sprintf("SELECT * FROM posts_funding WHERE post_id = %s", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_funding = $db->query(sprintf("SELECT * FROM posts_funding WHERE post_id = %s", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* check if funding has been deleted */
                 if ($get_funding->num_rows == 0) {
                     return false;
@@ -6299,7 +6299,7 @@ class User
 
             case 'offer':
                 /* get offer */
-                $get_offer = $db->query(sprintf("SELECT * FROM posts_offers WHERE post_id = %s", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_offer = $db->query(sprintf("SELECT * FROM posts_offers WHERE post_id = %s", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* check if offer has been deleted */
                 if ($get_offer->num_rows == 0) {
                     return false;
@@ -6334,7 +6334,7 @@ class User
 
             case 'job':
                 /* get job */
-                $get_job = $db->query(sprintf("SELECT * FROM posts_jobs WHERE post_id = %s", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_job = $db->query(sprintf("SELECT * FROM posts_jobs WHERE post_id = %s", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* check if job has been deleted */
                 if ($get_job->num_rows == 0) {
                     return false;
@@ -6402,25 +6402,25 @@ class User
 
             case 'poll':
                 /* get poll */
-                $get_poll = $db->query(sprintf("SELECT * FROM posts_polls WHERE post_id = %s", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_poll = $db->query(sprintf("SELECT * FROM posts_polls WHERE post_id = %s", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* check if poll has been deleted */
                 if ($get_poll->num_rows == 0) {
                     return false;
                 }
                 $post['poll'] = $get_poll->fetch_assoc();
                 /* get poll options */
-                $get_poll_options = $db->query(sprintf("SELECT posts_polls_options.option_id, posts_polls_options.text FROM posts_polls_options WHERE poll_id = %s", secure($post['poll']['poll_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_poll_options = $db->query(sprintf("SELECT posts_polls_options.option_id, posts_polls_options.text FROM posts_polls_options WHERE poll_id = %s", secure($post['poll']['poll_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 if ($get_poll_options->num_rows == 0) {
                     return false;
                 }
                 while ($poll_option = $get_poll_options->fetch_assoc()) {
                     /* get option votes */
-                    $get_option_votes = $db->query(sprintf("SELECT COUNT(*) as count FROM posts_polls_options_users WHERE option_id = %s", secure($poll_option['option_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $get_option_votes = $db->query(sprintf("SELECT COUNT(*) as count FROM posts_polls_options_users WHERE option_id = %s", secure($poll_option['option_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     $poll_option['votes'] = $get_option_votes->fetch_assoc()['count'];
                     /* check if viewer voted */
                     $poll_option['checked'] = false;
                     if ($this->_logged_in) {
-                        $check = $db->query(sprintf("SELECT COUNT(*) as count FROM posts_polls_options_users WHERE user_id = %s AND option_id = %s", secure($this->_data['user_id'], 'int'), secure($poll_option['option_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                        $check = $db->query(sprintf("SELECT COUNT(*) as count FROM posts_polls_options_users WHERE user_id = %s AND option_id = %s", secure($this->_data['user_id'], 'int'), secure($poll_option['option_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                         if ($check->fetch_assoc()['count'] > 0) {
                             $poll_option['checked'] = true;
                         }
@@ -6431,7 +6431,7 @@ class User
 
             case 'video':
                 /* get video */
-                $get_video = $db->query(sprintf("SELECT * FROM posts_videos WHERE post_id = %s", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_video = $db->query(sprintf("SELECT * FROM posts_videos WHERE post_id = %s", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* check if video has been deleted */
                 if ($get_video->num_rows == 0) {
                     return false;
@@ -6441,7 +6441,7 @@ class User
 
             case 'audio':
                 /* get audio */
-                $get_audio = $db->query(sprintf("SELECT * FROM posts_audios WHERE post_id = %s", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_audio = $db->query(sprintf("SELECT * FROM posts_audios WHERE post_id = %s", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* check if audio has been deleted */
                 if ($get_audio->num_rows == 0) {
                     return false;
@@ -6451,7 +6451,7 @@ class User
 
             case 'file':
                 /* get file */
-                $get_file = $db->query(sprintf("SELECT * FROM posts_files WHERE post_id = %s", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_file = $db->query(sprintf("SELECT * FROM posts_files WHERE post_id = %s", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* check if file has been deleted */
                 if ($get_file->num_rows == 0) {
                     return false;
@@ -6517,7 +6517,7 @@ class User
             $hidden_posts_list = $this->spread_ids($hidden_posts);
             $where_query .= " AND (post_id NOT IN ($hidden_posts_list)) ";
         }
-        $get_random_post = $db->query("SELECT post_id FROM posts WHERE boosted = '1'" . $where_query . "ORDER BY RAND() LIMIT 1") or _error("SQL_ERROR_THROWEN");
+        $get_random_post = $db->query("SELECT post_id FROM posts WHERE boosted = '1'" . $where_query . "ORDER BY RAND() LIMIT 1") or _error("SQL_ERROR_THROWEN", $db);
         if ($get_random_post->num_rows == 0) {
             return false;
         }
@@ -6552,17 +6552,17 @@ class User
             /* where statement */
             $where_statement = ($reaction_type == "all") ? "" : sprintf("AND posts_reactions.reaction = %s", secure($reaction_type));
             /* get users who like the post */
-            $get_users = $db->query(sprintf('SELECT posts_reactions.reaction, users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM posts_reactions INNER JOIN users ON (posts_reactions.user_id = users.user_id) WHERE posts_reactions.post_id = %s ' . $where_statement . ' LIMIT %s, %s', secure($post_id, 'int'), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+            $get_users = $db->query(sprintf('SELECT posts_reactions.reaction, users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM posts_reactions INNER JOIN users ON (posts_reactions.user_id = users.user_id) WHERE posts_reactions.post_id = %s ' . $where_statement . ' LIMIT %s, %s', secure($post_id, 'int'), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         } elseif ($photo_id != null) {
             /* where statement */
             $where_statement = ($reaction_type == "all") ? "" : sprintf("AND posts_photos_reactions.reaction = %s", secure($reaction_type));
             /* get users who like the photo */
-            $get_users = $db->query(sprintf('SELECT posts_photos_reactions.reaction, users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM posts_photos_reactions INNER JOIN users ON (posts_photos_reactions.user_id = users.user_id) WHERE posts_photos_reactions.photo_id = %s ' . $where_statement . ' LIMIT %s, %s', secure($photo_id, 'int'), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+            $get_users = $db->query(sprintf('SELECT posts_photos_reactions.reaction, users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM posts_photos_reactions INNER JOIN users ON (posts_photos_reactions.user_id = users.user_id) WHERE posts_photos_reactions.photo_id = %s ' . $where_statement . ' LIMIT %s, %s', secure($photo_id, 'int'), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         } else {
             /* where statement */
             $where_statement = ($reaction_type == "all") ? "" : sprintf("AND posts_comments_reactions.reaction = %s", secure($reaction_type));
             /* get users who like the comment */
-            $get_users = $db->query(sprintf('SELECT posts_comments_reactions.reaction, users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM posts_comments_reactions INNER JOIN users ON (posts_comments_reactions.user_id = users.user_id) WHERE posts_comments_reactions.comment_id = %s ' . $where_statement . ' LIMIT %s, %s', secure($comment_id, 'int'), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+            $get_users = $db->query(sprintf('SELECT posts_comments_reactions.reaction, users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM posts_comments_reactions INNER JOIN users ON (posts_comments_reactions.user_id = users.user_id) WHERE posts_comments_reactions.comment_id = %s ' . $where_statement . ' LIMIT %s, %s', secure($comment_id, 'int'), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         }
         if ($get_users->num_rows > 0) {
             while ($_user = $get_users->fetch_assoc()) {
@@ -6599,7 +6599,7 @@ class User
         global $db, $system;
         $posts = [];
         $offset *= $system['max_results'];
-        $get_posts = $db->query(sprintf('SELECT posts.post_id FROM posts INNER JOIN users ON posts.user_id = users.user_id WHERE posts.post_type = "shared" AND posts.origin_id = %s LIMIT %s, %s', secure($post_id, 'int'), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+        $get_posts = $db->query(sprintf('SELECT posts.post_id FROM posts INNER JOIN users ON posts.user_id = users.user_id WHERE posts.post_type = "shared" AND posts.origin_id = %s LIMIT %s, %s', secure($post_id, 'int'), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_posts->num_rows > 0) {
             while ($post = $get_posts->fetch_assoc()) {
                 $post = $this->get_post($post['post_id']);
@@ -6624,7 +6624,7 @@ class User
         global $db, $system;
         $donors = [];
         $offset *= $system['max_results'];
-        $get_donors = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_picture, users.user_gender, posts_funding_donors.donation_amount, posts_funding_donors.donation_time FROM posts_funding_donors INNER JOIN users ON posts_funding_donors.user_id = users.user_id WHERE posts_funding_donors.post_id = %s ORDER BY posts_funding_donors.donation_id DESC LIMIT %s, %s", secure($post_id, 'int'), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+        $get_donors = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_picture, users.user_gender, posts_funding_donors.donation_amount, posts_funding_donors.donation_time FROM posts_funding_donors INNER JOIN users ON posts_funding_donors.user_id = users.user_id WHERE posts_funding_donors.post_id = %s ORDER BY posts_funding_donors.donation_id DESC LIMIT %s, %s", secure($post_id, 'int'), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         while ($donor = $get_donors->fetch_assoc()) {
             $donor['user_picture'] = get_picture($donor['user_picture'], $donor['user_gender']);
             /* get the connection between the viewer & the target */
@@ -6655,7 +6655,7 @@ class User
         global $db, $system;
         $voters = [];
         $offset *= $system['max_results'];
-        $get_voters = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_picture, users.user_gender FROM posts_polls_options_users INNER JOIN users ON posts_polls_options_users.user_id = users.user_id WHERE option_id = %s LIMIT %s, %s", secure($option_id, 'int'), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+        $get_voters = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_picture, users.user_gender FROM posts_polls_options_users INNER JOIN users ON posts_polls_options_users.user_id = users.user_id WHERE option_id = %s LIMIT %s, %s", secure($option_id, 'int'), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         while ($voter = $get_voters->fetch_assoc()) {
             $voter['user_picture'] = get_picture($voter['user_picture'], $voter['user_gender']);
             /* get the connection between the viewer & the target */
@@ -6684,7 +6684,7 @@ class User
     {
         global $db;
         $hidden_posts = [];
-        $get_hidden_posts = $db->query(sprintf("SELECT post_id FROM posts_hidden WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_hidden_posts = $db->query(sprintf("SELECT post_id FROM posts_hidden WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_hidden_posts->num_rows > 0) {
             while ($hidden_post = $get_hidden_posts->fetch_assoc()) {
                 $hidden_posts[] = $hidden_post['post_id'];
@@ -6736,7 +6736,7 @@ class User
             WHERE NOT (users.user_name <=> NULL AND pages.page_name <=> NULL) AND posts.post_id = %s",
        secure($id, 'int')
             )
-        ) or _error("SQL_ERROR_THROWEN");
+        ) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_post->num_rows == 0) {
             return false;
         }
@@ -6783,7 +6783,7 @@ class User
             $post['pinned'] = ((!$post['in_group'] && !$post['in_event'] && $post['post_id'] == $post['user_pinned_post']) || ($post['in_group'] && $post['post_id'] == $post['group_pinned_post']) || ($post['in_event'] && $post['post_id'] == $post['event_pinned_post'])) ? true : false;
             if ($system['posts_online_status']) {
                 /* check if the post author is online & enable the chat */
-                $get_user_status = $db->query(sprintf("SELECT COUNT(*) as count FROM users WHERE user_id = %s AND user_chat_enabled = '1' AND user_last_seen >= SUBTIME(NOW(), SEC_TO_TIME(%s))", secure($post['author_id'], 'int'), secure($system['offline_time'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+                $get_user_status = $db->query(sprintf("SELECT COUNT(*) as count FROM users WHERE user_id = %s AND user_chat_enabled = '1' AND user_last_seen >= SUBTIME(NOW(), SEC_TO_TIME(%s))", secure($post['author_id'], 'int'), secure($system['offline_time'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
                 if ($get_user_status->fetch_assoc()['count'] > 0) {
                     $post['post_author_online'] = true;
                 }
@@ -6826,7 +6826,7 @@ class User
         if ($full_details) {
             /* check if wall post */
             if ($post['in_wall']) {
-                $get_wall_user = $db->query(sprintf("SELECT user_id, user_firstname, user_lastname, user_name FROM users WHERE user_id = %s", secure($post['wall_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_wall_user = $db->query(sprintf("SELECT user_id, user_firstname, user_lastname, user_name FROM users WHERE user_id = %s", secure($post['wall_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 if ($get_wall_user->num_rows == 0) {
                     return false;
                 }
@@ -6847,13 +6847,13 @@ class User
             $post['i_react'] = false;
             if ($this->_logged_in) {
                 /* save */
-                $check_save = $db->query(sprintf("SELECT COUNT(*) as count FROM posts_saved WHERE user_id = %s AND post_id = %s", secure($this->_data['user_id'], 'int'), secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check_save = $db->query(sprintf("SELECT COUNT(*) as count FROM posts_saved WHERE user_id = %s AND post_id = %s", secure($this->_data['user_id'], 'int'), secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 if ($check_save->fetch_assoc()['count'] > 0) {
                     $post['i_save'] = true;
                 }
                 /* reaction */
                 if ($post['reactions_total_count'] > 0) {
-                    $get_reaction = $db->query(sprintf("SELECT reaction FROM posts_reactions WHERE user_id = %s AND post_id = %s", secure($this->_data['user_id'], 'int'), secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $get_reaction = $db->query(sprintf("SELECT reaction FROM posts_reactions WHERE user_id = %s AND post_id = %s", secure($this->_data['user_id'], 'int'), secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     if ($get_reaction->num_rows > 0) {
                         $post['i_react'] = true;
                         $post['i_reaction'] = $get_reaction->fetch_assoc()['reaction'];
@@ -6974,12 +6974,12 @@ class User
         switch ($args['share_to']) {
             case 'timeline':
                 /* insert the new shared post */
-                $db->query(sprintf("INSERT INTO posts (user_id, user_type, post_type, origin_id, time, privacy, text) VALUES (%s, 'user', 'shared', %s, %s, 'public', %s)", secure($this->_data['user_id'], 'int'), secure($post_id, 'int'), secure($date), secure($args['message']))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("INSERT INTO posts (user_id, user_type, post_type, origin_id, time, privacy, text) VALUES (%s, 'user', 'shared', %s, %s, 'public', %s)", secure($this->_data['user_id'], 'int'), secure($post_id, 'int'), secure($date), secure($args['message']))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'page':
                 /* check if the page is valid */
-                $check_page = $db->query(sprintf("SELECT COUNT(*) as count FROM pages WHERE page_id = %s", secure($args['page'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check_page = $db->query(sprintf("SELECT COUNT(*) as count FROM pages WHERE page_id = %s", secure($args['page'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 if ($check_page->fetch_assoc()['count'] == 0) {
                     _error(400);
                 }
@@ -6988,13 +6988,13 @@ class User
                     _error(400);
                 }
                 /* insert the new shared post */
-                $db->query(sprintf("INSERT INTO posts (user_id, user_type, post_type, origin_id, time, privacy, text) VALUES (%s, 'page', 'shared', %s, %s, 'public', %s)", secure($args['page'], 'int'), secure($post_id, 'int'), secure($date), secure($args['message']))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("INSERT INTO posts (user_id, user_type, post_type, origin_id, time, privacy, text) VALUES (%s, 'page', 'shared', %s, %s, 'public', %s)", secure($args['page'], 'int'), secure($post_id, 'int'), secure($date), secure($args['message']))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
 
             case 'group':
                 /* check if the group is valid */
-                $get_group = $db->query(sprintf("SELECT * FROM `groups` WHERE group_id = %s", secure($args['group'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_group = $db->query(sprintf("SELECT * FROM `groups` WHERE group_id = %s", secure($args['group'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 if ($get_group->num_rows == 0) {
                     _error(400);
                 }
@@ -7011,7 +7011,7 @@ class User
                 }
                 /* insert the new shared post */
                 $group_approved = ($group['group_publish_approval_enabled'] && !$group['i_admin']) ? "0" : "1";
-                $db->query(sprintf("INSERT INTO posts (user_id, user_type, post_type, origin_id, time, privacy, text, in_group, group_id, group_approved) VALUES (%s, 'user', 'shared', %s, %s, 'public', %s, '1', %s, %s)", secure($this->_data['user_id'], 'int'), secure($post_id, 'int'), secure($date), secure($args['message']), secure($args['group'], 'int'), secure($group_approved))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("INSERT INTO posts (user_id, user_type, post_type, origin_id, time, privacy, text, in_group, group_id, group_approved) VALUES (%s, 'user', 'shared', %s, %s, 'public', %s, '1', %s, %s)", secure($this->_data['user_id'], 'int'), secure($post_id, 'int'), secure($date), secure($args['message']), secure($args['group'], 'int'), secure($group_approved))) or _error("SQL_ERROR_THROWEN", $db);
                 $post_id = $db->insert_id;
                 /* post in_group notification */
                 if (!$group_approved) {
@@ -7025,7 +7025,7 @@ class User
                 break;
         }
         /* update the origin post shares counter */
-        $db->query(sprintf("UPDATE posts SET shares = shares + 1 WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE posts SET shares = shares + 1 WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* post notification */
         $this->post_notification(array('to_user_id' => $author_id, 'action' => 'share', 'node_type' => 'post', 'node_url' => $post_id));
     }
@@ -7044,19 +7044,19 @@ class User
         /* get all user posts */
         switch ($node_type) {
             case 'user':
-                $get_posts = $db->query(sprintf("SELECT post_id FROM posts WHERE user_id = %s AND user_type = 'user'", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_posts = $db->query(sprintf("SELECT post_id FROM posts WHERE user_id = %s AND user_type = 'user'", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'page':
-                $get_posts = $db->query(sprintf("SELECT post_id FROM posts WHERE user_id = %s AND user_type = 'page'", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_posts = $db->query(sprintf("SELECT post_id FROM posts WHERE user_id = %s AND user_type = 'page'", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'group':
-                $get_posts = $db->query(sprintf("SELECT post_id FROM posts WHERE group_id = %s AND in_group = '1'", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_posts = $db->query(sprintf("SELECT post_id FROM posts WHERE group_id = %s AND in_group = '1'", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'event':
-                $get_posts = $db->query(sprintf("SELECT post_id FROM posts WHERE event_id = %s AND in_event = '1'", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_posts = $db->query(sprintf("SELECT post_id FROM posts WHERE event_id = %s AND in_event = '1'", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
         }
         if ($get_posts->num_rows > 0) {
@@ -7092,9 +7092,9 @@ class User
             }
             /* check & delete orphaned data */
             if ($this->_is_admin) {
-                $check_post = $db->query(sprintf("SELECT COUNT(*) as count FROM posts WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check_post = $db->query(sprintf("SELECT COUNT(*) as count FROM posts WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 if ($check_post->fetch_assoc()['count'] > 0) {
-                    $db->query(sprintf("DELETE FROM posts WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("DELETE FROM posts WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     return;
                 }
             }
@@ -7104,7 +7104,7 @@ class User
         $this->delete_hashtags($post_id);
         /* delete post */
         $refresh = false;
-        $db->query(sprintf("DELETE FROM posts WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("DELETE FROM posts WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         switch ($post['post_type']) {
             case 'photos':
             case 'album':
@@ -7122,12 +7122,12 @@ class User
                         delete_uploads_file($photo['source']);
                     }
                     /* delete post photos from database */
-                    $db->query(sprintf("DELETE FROM posts_photos WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("DELETE FROM posts_photos WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     switch ($post['post_type']) {
                         case 'profile_cover':
                             /* update user cover if it's current cover */
                             if ($post['user_cover_id']  ==  $post['photos'][0]['photo_id']) {
-                                $db->query(sprintf("UPDATE users SET user_cover = null, user_cover_id = null WHERE user_id = %s", secure($post['author_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                                $db->query(sprintf("UPDATE users SET user_cover = null, user_cover_id = null WHERE user_id = %s", secure($post['author_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                                 /* return */
                                 $refresh = true;
                             }
@@ -7136,7 +7136,7 @@ class User
                         case 'profile_picture':
                             /* update user picture if it's current picture */
                             if ($post['user_picture_id']  ==  $post['photos'][0]['photo_id']) {
-                                $db->query(sprintf("UPDATE users SET user_picture = null, user_picture_id = null WHERE user_id = %s", secure($post['author_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                                $db->query(sprintf("UPDATE users SET user_picture = null, user_picture_id = null WHERE user_id = %s", secure($post['author_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                                 /* delete cropped picture from uploads folder */
                                 delete_uploads_file($post['user_picture']);
                                 /* return */
@@ -7147,7 +7147,7 @@ class User
                         case 'page_cover':
                             /* update page cover if it's current cover */
                             if ($post['page_cover_id']  ==  $post['photos'][0]['photo_id']) {
-                                $db->query(sprintf("UPDATE pages SET page_cover = null, page_cover_id = null WHERE page_id = %s", secure($post['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                                $db->query(sprintf("UPDATE pages SET page_cover = null, page_cover_id = null WHERE page_id = %s", secure($post['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                                 /* return */
                                 $refresh = true;
                             }
@@ -7156,7 +7156,7 @@ class User
                         case 'page_picture':
                             /* update page picture if it's current picture */
                             if ($post['page_picture_id']  ==  $post['photos'][0]['photo_id']) {
-                                $db->query(sprintf("UPDATE pages SET page_picture = null, page_picture_id = null WHERE page_id = %s", secure($post['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                                $db->query(sprintf("UPDATE pages SET page_picture = null, page_picture_id = null WHERE page_id = %s", secure($post['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                                 /* delete cropped picture from uploads folder */
                                 delete_uploads_file($post['page_picture']);
                                 /* return */
@@ -7167,7 +7167,7 @@ class User
                         case 'group_cover':
                             /* update group cover if it's current cover */
                             if ($post['group_cover_id']  ==  $post['photos'][0]['photo_id']) {
-                                $db->query(sprintf("UPDATE `groups` SET group_cover = null, group_cover_id = null WHERE group_id = %s", secure($post['group_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                                $db->query(sprintf("UPDATE `groups` SET group_cover = null, group_cover_id = null WHERE group_id = %s", secure($post['group_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                                 /* return */
                                 $refresh = true;
                             }
@@ -7176,7 +7176,7 @@ class User
                         case 'group_picture':
                             /* update group picture if it's current picture */
                             if ($post['group_picture_id']  ==  $post['photos'][0]['photo_id']) {
-                                $db->query(sprintf("UPDATE `groups` SET group_picture = null, group_picture_id = null WHERE group_id = %s", secure($post['group_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                                $db->query(sprintf("UPDATE `groups` SET group_picture = null, group_picture_id = null WHERE group_id = %s", secure($post['group_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                                 /* delete cropped from uploads folder */
                                 delete_uploads_file($post['group_picture']);
                                 /* return */
@@ -7187,7 +7187,7 @@ class User
                         case 'event_cover':
                             /* update event cover if it's current cover */
                             if ($post['event_cover_id']  ==  $post['photos'][0]['photo_id']) {
-                                $db->query(sprintf("UPDATE `events` SET event_cover = null, event_cover_id = null WHERE event_id = %s", secure($post['event_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                                $db->query(sprintf("UPDATE `events` SET event_cover = null, event_cover_id = null WHERE event_id = %s", secure($post['event_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                                 /* return */
                                 $refresh = true;
                             }
@@ -7195,7 +7195,7 @@ class User
 
                         case 'product':
                             /* delete nested table row */
-                            $db->query(sprintf("DELETE FROM posts_products WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                            $db->query(sprintf("DELETE FROM posts_products WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                             break;
                     }
                 }
@@ -7203,64 +7203,64 @@ class User
 
             case 'live':
                 /* delete nested table row */
-                $db->query(sprintf("DELETE FROM posts_live WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM posts_live WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'media':
                 /* delete nested table row */
-                $db->query(sprintf("DELETE FROM posts_media WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM posts_media WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'link':
                 /* delete nested table row */
-                $db->query(sprintf("DELETE FROM posts_links WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM posts_links WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'offer':
                 /* delete uploads from uploads folder */
                 delete_uploads_file($post['offer']['thumbnail']);
                 /* delete nested table row */
-                $db->query(sprintf("DELETE FROM posts_offers WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM posts_offers WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'job':
                 /* delete uploads from uploads folder */
                 delete_uploads_file($post['job']['cover_image']);
                 /* delete nested table row */
-                $db->query(sprintf("DELETE FROM posts_jobs WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM posts_jobs WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'article':
                 /* delete nested table row */
-                $db->query(sprintf("DELETE FROM posts_articles WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM posts_articles WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'poll':
                 /* delete nested table row */
-                $db->query(sprintf("DELETE FROM posts_polls WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
-                $db->query(sprintf("DELETE FROM posts_polls_options WHERE poll_id = %s", secure($post['poll']['poll_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
-                $db->query(sprintf("DELETE FROM posts_polls_options_users WHERE poll_id = %s", secure($post['poll']['poll_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM posts_polls WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+                $db->query(sprintf("DELETE FROM posts_polls_options WHERE poll_id = %s", secure($post['poll']['poll_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+                $db->query(sprintf("DELETE FROM posts_polls_options_users WHERE poll_id = %s", secure($post['poll']['poll_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'video':
                 /* delete uploads from uploads folder */
                 delete_uploads_file($post['video']['source']);
                 /* delete nested table row */
-                $db->query(sprintf("DELETE FROM posts_videos WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM posts_videos WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'audio':
                 /* delete uploads from uploads folder */
                 delete_uploads_file($post['audio']['source']);
                 /* delete nested table row */
-                $db->query(sprintf("DELETE FROM posts_audios WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM posts_audios WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'file':
                 /* delete uploads from uploads folder */
                 delete_uploads_file($post['file']['source']);
                 /* delete nested table row */
-                $db->query(sprintf("DELETE FROM posts_files WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM posts_files WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
         }
         /* points balance */
@@ -7321,7 +7321,7 @@ class User
             }
         }
         /* update post */
-        $db->query(sprintf("UPDATE posts SET text = %s, group_approved = %s, event_approved = %s WHERE post_id = %s", secure($message), secure($post['group_approved']), secure($post['event_approved']), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE posts SET text = %s, group_approved = %s, event_approved = %s WHERE post_id = %s", secure($message), secure($post['group_approved']), secure($post['event_approved']), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* post mention notifications */
         $this->post_mentions($message, $post_id);
         /* parse text */
@@ -7355,7 +7355,7 @@ class User
             _error(403);
         }
         /* update post */
-        $db->query(sprintf("UPDATE posts SET text = %s WHERE post_id = %s", secure($message), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE posts SET text = %s WHERE post_id = %s", secure($message), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* update product */
         if ($args['location'] && empty($args['location_id'])) {
             $args['location'] = htmlspecialchars_decode($args['location']);
@@ -7373,7 +7373,7 @@ class User
                 secure($args['buying_candidate_id'], 'int'),
                 secure($args['rent'], 'int'),
                 secure($post_id, 'int'))
-        ) or _error("SQL_ERROR_THROWEN");
+        ) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -7398,9 +7398,9 @@ class User
             _error(403);
         }
         /* update post */
-        $db->query(sprintf("UPDATE posts SET text = %s WHERE post_id = %s", secure($message), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE posts SET text = %s WHERE post_id = %s", secure($message), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* update funding */
-        $db->query(sprintf("UPDATE posts_funding SET title = %s, amount = %s, cover_image = %s WHERE post_id = %s", secure($args['title']), secure($args['amount']), secure($args['cover_image']), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE posts_funding SET title = %s, amount = %s, cover_image = %s WHERE post_id = %s", secure($args['title']), secure($args['amount']), secure($args['cover_image']), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -7425,9 +7425,9 @@ class User
             _error(403);
         }
         /* update post */
-        $db->query(sprintf("UPDATE posts SET text = %s WHERE post_id = %s", secure($message), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE posts SET text = %s WHERE post_id = %s", secure($message), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* update offer */
-        $db->query(sprintf("UPDATE posts_offers SET category_id = %s, title = %s, discount_type = %s, discount_percent = %s, discount_amount = %s, buy_x = %s, get_y = %s, spend_x = %s, amount_y = %s, end_date = %s, thumbnail = %s WHERE post_id = %s", secure($args['category'], 'int'), secure($args['title']), secure($args['discount_type']), secure($args['discount_percent'], 'int'), secure($args['discount_amount']), secure($args['buy_x']), secure($args['get_y']), secure($args['spend_x']), secure($args['amount_y']), secure($args['end_date'], 'datetime'), secure($args['thumbnail']), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE posts_offers SET category_id = %s, title = %s, discount_type = %s, discount_percent = %s, discount_amount = %s, buy_x = %s, get_y = %s, spend_x = %s, amount_y = %s, end_date = %s, thumbnail = %s WHERE post_id = %s", secure($args['category'], 'int'), secure($args['title']), secure($args['discount_type']), secure($args['discount_percent'], 'int'), secure($args['discount_amount']), secure($args['buy_x']), secure($args['get_y']), secure($args['spend_x']), secure($args['amount_y']), secure($args['end_date'], 'datetime'), secure($args['thumbnail']), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -7452,7 +7452,7 @@ class User
             _error(403);
         }
         /* update post */
-        $db->query(sprintf("UPDATE posts SET text = %s WHERE post_id = %s", secure($message), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE posts SET text = %s WHERE post_id = %s", secure($message), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* update job */
         $db->query(sprintf(
             "UPDATE posts_jobs SET 
@@ -7492,7 +7492,7 @@ class User
             secure($args['question_3_choices']),
             secure($args['cover_image']),
             secure($post_id, 'int')
-        )) or _error("SQL_ERROR_THROWEN");
+        )) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -7518,7 +7518,7 @@ class User
         /* check if viewer can edit privacy */
         if ($post['manage_post'] && $post['user_type'] == 'user' && !$post['in_group'] && !$post['in_event'] && $post['post_type'] != "product") {
             /* update privacy */
-            $db->query(sprintf("UPDATE posts SET privacy = %s WHERE post_id = %s", secure($privacy), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE posts SET privacy = %s WHERE post_id = %s", secure($privacy), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         } else {
             _error(403);
         }
@@ -7548,7 +7548,7 @@ class User
             throw new Exception(__("You can not do this with anonymous post"));
         }
         /* set post as hidden */
-        $db->query(sprintf("UPDATE posts SET is_hidden = '1' WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE posts SET is_hidden = '1' WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -7575,7 +7575,7 @@ class User
             throw new Exception(__("You can not do this with anonymous post"));
         }
         /* set post as not hidden */
-        $db->query(sprintf("UPDATE posts SET is_hidden = '0' WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE posts SET is_hidden = '0' WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -7598,7 +7598,7 @@ class User
             _error(403);
         }
         /* trun off post commenting */
-        $db->query(sprintf("UPDATE posts SET comments_disabled = '1' WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE posts SET comments_disabled = '1' WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -7621,7 +7621,7 @@ class User
             _error(403);
         }
         /* trun on post commenting */
-        $db->query(sprintf("UPDATE posts SET comments_disabled = '0' WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE posts SET comments_disabled = '0' WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -7645,7 +7645,7 @@ class User
                 _error(403);
             }
             /* approve post */
-            $db->query(sprintf("UPDATE posts SET group_approved = '1' WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE posts SET group_approved = '1' WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             /* send notification to the post author */
             $this->post_notification(array('to_user_id' => $post['author_id'], 'action' => 'group_post_approval', 'node_type' => $post['group_title'], 'node_url' => $post['group_name']));
         } elseif ($post['in_event']) {
@@ -7653,7 +7653,7 @@ class User
                 _error(403);
             }
             /* approve post */
-            $db->query(sprintf("UPDATE posts SET event_approved = '1' WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE posts SET event_approved = '1' WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             /* send notification to the post author */
             $this->post_notification(array('to_user_id' => $post['author_id'], 'action' => 'event_post_approval', 'node_type' => $post['event_title'], 'node_url' => $post['event_id']));
         }
@@ -7679,7 +7679,7 @@ class User
             _error(403);
         }
         /* sold post */
-        $db->query(sprintf("UPDATE posts_products SET available = '0' WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE posts_products SET available = '0' WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -7702,7 +7702,7 @@ class User
             _error(403);
         }
         /* unsold post */
-        $db->query(sprintf("UPDATE posts_products SET available = '1' WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE posts_products SET available = '1' WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -7725,7 +7725,7 @@ class User
             _error(403);
         }
         /* sold post */
-        $db->query(sprintf("UPDATE posts_jobs SET available = '0' WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE posts_jobs SET available = '0' WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -7748,7 +7748,7 @@ class User
             _error(403);
         }
         /* unsold post */
-        $db->query(sprintf("UPDATE posts_jobs SET available = '1' WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE posts_jobs SET available = '1' WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -7768,7 +7768,7 @@ class User
         }
         /* save post */
         if (!$post['i_save']) {
-            $db->query(sprintf("INSERT INTO posts_saved (post_id, user_id, time) VALUES (%s, %s, %s)", secure($post_id, 'int'), secure($this->_data['user_id'], 'int'), secure($date))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("INSERT INTO posts_saved (post_id, user_id, time) VALUES (%s, %s, %s)", secure($post_id, 'int'), secure($this->_data['user_id'], 'int'), secure($date))) or _error("SQL_ERROR_THROWEN", $db);
         }
     }
 
@@ -7789,7 +7789,7 @@ class User
         }
         /* unsave post */
         if ($post['i_save']) {
-            $db->query(sprintf("DELETE FROM posts_saved WHERE post_id = %s AND user_id = %s", secure($post_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("DELETE FROM posts_saved WHERE post_id = %s AND user_id = %s", secure($post_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         }
     }
 
@@ -7823,9 +7823,9 @@ class User
         /* boost post */
         if (!$post['boosted']) {
             /* boost post */
-            $db->query(sprintf("UPDATE posts SET boosted = '1', boosted_by = %s WHERE post_id = %s", secure($this->_data['user_id'], 'int'), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE posts SET boosted = '1', boosted_by = %s WHERE post_id = %s", secure($this->_data['user_id'], 'int'), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             /* update user */
-            $db->query(sprintf("UPDATE users SET user_boosted_posts = user_boosted_posts + 1 WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE users SET user_boosted_posts = user_boosted_posts + 1 WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         }
     }
 
@@ -7851,9 +7851,9 @@ class User
         /* unboost post */
         if ($post['boosted']) {
             /* unboost post */
-            $db->query(sprintf("UPDATE posts SET boosted = '0', boosted_by = NULL WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE posts SET boosted = '0', boosted_by = NULL WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             /* update user */
-            $db->query(sprintf("UPDATE users SET user_boosted_posts = IF(user_boosted_posts=0,0,user_boosted_posts-1) WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE users SET user_boosted_posts = IF(user_boosted_posts=0,0,user_boosted_posts-1) WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         }
     }
 
@@ -7890,20 +7890,20 @@ class User
                         throw new Exception(__("Only group admin can pin the post"));
                     }
                     /* update group */
-                    $db->query(sprintf("UPDATE `groups` SET group_pinned_post = %s WHERE group_id = %s", secure($post_id, 'int'), secure($post['group_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE `groups` SET group_pinned_post = %s WHERE group_id = %s", secure($post_id, 'int'), secure($post['group_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 } elseif ($post['in_event']) {
                     if (!$post['is_event_admin']) {
                         throw new Exception(__("Only event admin can pin the post"));
                     }
                     /* update event */
-                    $db->query(sprintf("UPDATE `events` SET event_pinned_post = %s WHERE event_id = %s", secure($post_id, 'int'), secure($post['event_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE `events` SET event_pinned_post = %s WHERE event_id = %s", secure($post_id, 'int'), secure($post['event_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 } else {
                     /* update user */
-                    $db->query(sprintf("UPDATE users SET user_pinned_post = %s WHERE user_id = %s", secure($post_id, 'int'), secure($post['author_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE users SET user_pinned_post = %s WHERE user_id = %s", secure($post_id, 'int'), secure($post['author_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 }
             } else {
                 /* update page */
-                $db->query(sprintf("UPDATE pages SET page_pinned_post = %s WHERE page_id = %s", secure($post_id, 'int'), secure($post['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE pages SET page_pinned_post = %s WHERE page_id = %s", secure($post_id, 'int'), secure($post['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             }
         }
     }
@@ -7941,20 +7941,20 @@ class User
                         throw new Exception(__("Only group admin can unpin the post"));
                     }
                     /* update group */
-                    $db->query(sprintf("UPDATE `groups` SET group_pinned_post = '0' WHERE group_id = %s", secure($post['group_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE `groups` SET group_pinned_post = '0' WHERE group_id = %s", secure($post['group_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 } elseif ($post['in_event']) {
                     if (!$post['is_event_admin']) {
                         throw new Exception(__("Only event admin can unpin the post"));
                     }
                     /* update event */
-                    $db->query(sprintf("UPDATE `events` SET event_pinned_post = '0' WHERE event_id = %s", secure($post['event_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE `events` SET event_pinned_post = '0' WHERE event_id = %s", secure($post['event_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 } else {
                     /* update user */
-                    $db->query(sprintf("UPDATE users SET user_pinned_post = '0' WHERE user_id = %s", secure($post['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE users SET user_pinned_post = '0' WHERE user_id = %s", secure($post['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 }
             } else {
                 /* update page */
-                $db->query(sprintf("UPDATE pages SET page_pinned_post = '0' WHERE page_id = %s", secure($post['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE pages SET page_pinned_post = '0' WHERE page_id = %s", secure($post['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             }
         }
     }
@@ -7991,20 +7991,20 @@ class User
         /* react the post */
         if ($post['i_react']) {
             /* remove any previous reaction */
-            $db->query(sprintf("DELETE FROM posts_reactions WHERE user_id = %s AND post_id = %s", secure($this->_data['user_id'], 'int'), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("DELETE FROM posts_reactions WHERE user_id = %s AND post_id = %s", secure($this->_data['user_id'], 'int'), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             /* update post reaction counter */
             $reaction_field = "reaction_" . $post['i_reaction'] . "_count";
-            $db->query(sprintf("UPDATE posts SET $reaction_field = IF($reaction_field=0,0,$reaction_field-1) WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE posts SET $reaction_field = IF($reaction_field=0,0,$reaction_field-1) WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             /* delete notification */
             $this->delete_notification($post['author_id'], 'react_' . $post['i_reaction'], 'post', $post_id);
             /* points balance */
             $this->points_balance("delete", $this->_data['user_id'], "posts_reactions");
         }
-        $db->query(sprintf("INSERT INTO posts_reactions (user_id, post_id, reaction, reaction_time) VALUES (%s, %s, %s, %s)", secure($this->_data['user_id'], 'int'), secure($post_id, 'int'), secure($reaction), secure($date))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO posts_reactions (user_id, post_id, reaction, reaction_time) VALUES (%s, %s, %s, %s)", secure($this->_data['user_id'], 'int'), secure($post_id, 'int'), secure($reaction), secure($date))) or _error("SQL_ERROR_THROWEN", $db);
         $reaction_id = $db->insert_id;
         /* update post reaction counter */
         $reaction_field = "reaction_" . $reaction . "_count";
-        $db->query(sprintf("UPDATE posts SET $reaction_field = $reaction_field + 1 WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE posts SET $reaction_field = $reaction_field + 1 WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* post notification */
         $this->post_notification(array('to_user_id' => $post['author_id'], 'action' => 'react_' . $reaction, 'node_type' => 'post', 'node_url' => $post_id));
         /* points balance */
@@ -8041,10 +8041,10 @@ class User
         }
         /* unreact the post */
         if ($post['i_react']) {
-            $db->query(sprintf("DELETE FROM posts_reactions WHERE user_id = %s AND post_id = %s", secure($this->_data['user_id'], 'int'), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("DELETE FROM posts_reactions WHERE user_id = %s AND post_id = %s", secure($this->_data['user_id'], 'int'), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             /* update post reaction counter */
             $reaction_field = "reaction_" . $reaction . "_count";
-            $db->query(sprintf("UPDATE posts SET $reaction_field = IF($reaction_field=0,0,$reaction_field-1) WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE posts SET $reaction_field = IF($reaction_field=0,0,$reaction_field-1) WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             /* delete notification */
             $this->delete_notification($post['author_id'], 'react_' . $reaction, 'post', $post_id);
             /* points balance */
@@ -8076,7 +8076,7 @@ class User
             $this->breach_paywall($post['author_id']);
         }
         /* hide the post */
-        $db->query(sprintf("INSERT INTO posts_hidden (user_id, post_id) VALUES (%s, %s)", secure($this->_data['user_id'], 'int'), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO posts_hidden (user_id, post_id) VALUES (%s, %s)", secure($this->_data['user_id'], 'int'), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -8095,7 +8095,7 @@ class User
             _error(403);
         }
         /* unhide the post */
-        $db->query(sprintf("DELETE FROM posts_hidden WHERE user_id = %s AND post_id = %s", secure($this->_data['user_id'], 'int'), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("DELETE FROM posts_hidden WHERE user_id = %s AND post_id = %s", secure($this->_data['user_id'], 'int'), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -8109,7 +8109,7 @@ class User
     {
         global $db;
         /* get poll */
-        $get_poll = $db->query(sprintf("SELECT posts_polls.* FROM posts_polls_options INNER JOIN posts_polls ON posts_polls_options.poll_id = posts_polls.poll_id WHERE option_id = %s", secure($option_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_poll = $db->query(sprintf("SELECT posts_polls.* FROM posts_polls_options INNER JOIN posts_polls ON posts_polls_options.poll_id = posts_polls.poll_id WHERE option_id = %s", secure($option_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_poll->num_rows == 0) {
             _error(403);
         }
@@ -8131,7 +8131,7 @@ class User
         $vote = $db->query(sprintf("INSERT INTO posts_polls_options_users (user_id, poll_id, option_id) VALUES (%s, %s, %s)", secure($this->_data['user_id'], 'int'), secure($poll['poll_id'], 'int'), secure($option_id, 'int')));
         if ($vote) {
             /* update poll votes */
-            $db->query(sprintf("UPDATE posts_polls SET votes = votes + 1 WHERE poll_id = %s", secure($poll['poll_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE posts_polls SET votes = votes + 1 WHERE poll_id = %s", secure($poll['poll_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             /* post notification */
             $this->post_notification(array('to_user_id' => $post['author_id'], 'action' => 'vote', 'node_type' => 'post', 'node_url' => $post['post_id']));
         }
@@ -8148,7 +8148,7 @@ class User
     {
         global $db;
         /* get poll */
-        $get_poll = $db->query(sprintf("SELECT posts_polls.* FROM posts_polls_options INNER JOIN posts_polls ON posts_polls_options.poll_id = posts_polls.poll_id WHERE option_id = %s", secure($option_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_poll = $db->query(sprintf("SELECT posts_polls.* FROM posts_polls_options INNER JOIN posts_polls ON posts_polls_options.poll_id = posts_polls.poll_id WHERE option_id = %s", secure($option_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_poll->num_rows == 0) {
             _error(403);
         }
@@ -8167,10 +8167,10 @@ class User
             $this->breach_paywall($post['author_id']);
         }
         /* delete user vote */
-        $db->query(sprintf("DELETE FROM posts_polls_options_users WHERE user_id = %s AND poll_id = %s AND option_id = %s", secure($this->_data['user_id'], 'int'), secure($poll['poll_id'], 'int'), secure($option_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("DELETE FROM posts_polls_options_users WHERE user_id = %s AND poll_id = %s AND option_id = %s", secure($this->_data['user_id'], 'int'), secure($poll['poll_id'], 'int'), secure($option_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($db->affected_rows > 0) {
             /* update poll votes */
-            $db->query(sprintf("UPDATE posts_polls SET votes = IF(votes=0,0,votes-1) WHERE poll_id = %s", secure($poll['poll_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE posts_polls SET votes = IF(votes=0,0,votes-1) WHERE poll_id = %s", secure($poll['poll_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             /* delete notification */
             $this->delete_notification($post['author_id'], 'vote', 'post', $post['post_id']);
         }
@@ -8188,7 +8188,7 @@ class User
     {
         global $db;
         /* get poll */
-        $get_poll = $db->query(sprintf("SELECT posts_polls.* FROM posts_polls_options INNER JOIN posts_polls ON posts_polls_options.poll_id = posts_polls.poll_id WHERE option_id = %s", secure($option_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_poll = $db->query(sprintf("SELECT posts_polls.* FROM posts_polls_options INNER JOIN posts_polls ON posts_polls_options.poll_id = posts_polls.poll_id WHERE option_id = %s", secure($option_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_poll->num_rows == 0) {
             _error(403);
         }
@@ -8207,10 +8207,10 @@ class User
             $this->breach_paywall($post['author_id']);
         }
         /* delete old vote */
-        $db->query(sprintf("DELETE FROM posts_polls_options_users WHERE user_id = %s AND poll_id = %s AND option_id = %s", secure($this->_data['user_id'], 'int'), secure($poll['poll_id'], 'int'), secure($checked_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("DELETE FROM posts_polls_options_users WHERE user_id = %s AND poll_id = %s AND option_id = %s", secure($this->_data['user_id'], 'int'), secure($poll['poll_id'], 'int'), secure($checked_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($db->affected_rows > 0) {
             /* insert new vote */
-            $db->query(sprintf("INSERT INTO posts_polls_options_users (user_id, poll_id, option_id) VALUES (%s, %s, %s)", secure($this->_data['user_id'], 'int'), secure($poll['poll_id'], 'int'), secure($option_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("INSERT INTO posts_polls_options_users (user_id, poll_id, option_id) VALUES (%s, %s, %s)", secure($this->_data['user_id'], 'int'), secure($poll['poll_id'], 'int'), secure($option_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         }
     }
 
@@ -8227,11 +8227,11 @@ class User
         global $db;
         switch ($media_type) {
             case 'video':
-                $db->query(sprintf("UPDATE posts_videos SET views = views + 1 WHERE video_id = %s", secure($media_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE posts_videos SET views = views + 1 WHERE video_id = %s", secure($media_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'audio':
-                $db->query(sprintf("UPDATE posts_audios SET views = views + 1 WHERE audio_id = %s", secure($media_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE posts_audios SET views = views + 1 WHERE audio_id = %s", secure($media_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
         }
     }
@@ -8271,9 +8271,9 @@ class User
             }
             /* get post comments */
             if (!$last_comment_id) {
-                $get_comments = $db->query(sprintf("SELECT posts_comments.*, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_verified, pages.* FROM posts_comments LEFT JOIN users ON posts_comments.user_id = users.user_id AND posts_comments.user_type = 'user' LEFT JOIN pages ON posts_comments.user_id = pages.page_id AND posts_comments.user_type = 'page' WHERE NOT (users.user_name <=> NULL AND pages.page_name <=> NULL) AND posts_comments.node_type = 'post' AND posts_comments.node_id = %s " . $order_query . " LIMIT %s, %s", secure($node_id, 'int'), secure($offset, 'int', false), secure($system['min_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+                $get_comments = $db->query(sprintf("SELECT posts_comments.*, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_verified, pages.* FROM posts_comments LEFT JOIN users ON posts_comments.user_id = users.user_id AND posts_comments.user_type = 'user' LEFT JOIN pages ON posts_comments.user_id = pages.page_id AND posts_comments.user_type = 'page' WHERE NOT (users.user_name <=> NULL AND pages.page_name <=> NULL) AND posts_comments.node_type = 'post' AND posts_comments.node_id = %s " . $order_query . " LIMIT %s, %s", secure($node_id, 'int'), secure($offset, 'int', false), secure($system['min_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
             } else {
-                $get_comments = $db->query(sprintf("SELECT posts_comments.*, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_verified, pages.* FROM posts_comments LEFT JOIN users ON posts_comments.user_id = users.user_id AND posts_comments.user_type = 'user' LEFT JOIN pages ON posts_comments.user_id = pages.page_id AND posts_comments.user_type = 'page' WHERE NOT (users.user_name <=> NULL AND pages.page_name <=> NULL) AND posts_comments.node_type = 'post' AND posts_comments.node_id = %s AND posts_comments.comment_id > %s " . $order_query, secure($node_id, 'int'), secure($last_comment_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_comments = $db->query(sprintf("SELECT posts_comments.*, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_verified, pages.* FROM posts_comments LEFT JOIN users ON posts_comments.user_id = users.user_id AND posts_comments.user_type = 'user' LEFT JOIN pages ON posts_comments.user_id = pages.page_id AND posts_comments.user_type = 'page' WHERE NOT (users.user_name <=> NULL AND pages.page_name <=> NULL) AND posts_comments.node_type = 'post' AND posts_comments.node_id = %s AND posts_comments.comment_id > %s " . $order_query, secure($node_id, 'int'), secure($last_comment_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             }
         } else {
             /* get photo comments */
@@ -8287,7 +8287,7 @@ class User
                 $post = $photo['post'];
             }
             /* get photo comments */
-            $get_comments = $db->query(sprintf("SELECT posts_comments.*, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_verified, pages.* FROM posts_comments LEFT JOIN users ON posts_comments.user_id = users.user_id AND posts_comments.user_type = 'user' LEFT JOIN pages ON posts_comments.user_id = pages.page_id AND posts_comments.user_type = 'page' WHERE NOT (users.user_name <=> NULL AND pages.page_name <=> NULL) AND posts_comments.node_type = 'photo' AND posts_comments.node_id = %s " . $order_query . " LIMIT %s, %s", secure($node_id, 'int'), secure($offset, 'int', false), secure($system['min_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+            $get_comments = $db->query(sprintf("SELECT posts_comments.*, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_verified, pages.* FROM posts_comments LEFT JOIN users ON posts_comments.user_id = users.user_id AND posts_comments.user_type = 'user' LEFT JOIN pages ON posts_comments.user_id = pages.page_id AND posts_comments.user_type = 'page' WHERE NOT (users.user_name <=> NULL AND pages.page_name <=> NULL) AND posts_comments.node_type = 'photo' AND posts_comments.node_id = %s " . $order_query . " LIMIT %s, %s", secure($node_id, 'int'), secure($offset, 'int', false), secure($system['min_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         }
         if ($get_comments->num_rows == 0) {
             return $comments;
@@ -8350,7 +8350,7 @@ class User
             if ($this->_logged_in) {
                 /* reaction */
                 if ($comment['reactions_total_count'] > 0) {
-                    $get_reaction = $db->query(sprintf("SELECT reaction FROM posts_comments_reactions WHERE user_id = %s AND comment_id = %s", secure($this->_data['user_id'], 'int'), secure($comment['comment_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $get_reaction = $db->query(sprintf("SELECT reaction FROM posts_comments_reactions WHERE user_id = %s AND comment_id = %s", secure($this->_data['user_id'], 'int'), secure($comment['comment_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     if ($get_reaction->num_rows > 0) {
                         $comment['i_react'] = true;
                         $comment['i_reaction'] = $get_reaction->fetch_assoc()['reaction'];
@@ -8417,7 +8417,7 @@ class User
             $post_author_id = $post['author_id'];
         }
         /* get replies */
-        $get_replies = $db->query(sprintf("SELECT * FROM (SELECT posts_comments.*, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_verified, pages.* FROM posts_comments LEFT JOIN users ON posts_comments.user_id = users.user_id AND posts_comments.user_type = 'user' LEFT JOIN pages ON posts_comments.user_id = pages.page_id AND posts_comments.user_type = 'page' WHERE NOT (users.user_name <=> NULL AND pages.page_name <=> NULL) AND posts_comments.node_type = 'comment' AND posts_comments.node_id = %s ORDER BY posts_comments.comment_id DESC LIMIT %s, %s) comments ORDER BY comments.comment_id ASC", secure($comment_id, 'int'), secure($offset, 'int', false), secure($system['min_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+        $get_replies = $db->query(sprintf("SELECT * FROM (SELECT posts_comments.*, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_verified, pages.* FROM posts_comments LEFT JOIN users ON posts_comments.user_id = users.user_id AND posts_comments.user_type = 'user' LEFT JOIN pages ON posts_comments.user_id = pages.page_id AND posts_comments.user_type = 'page' WHERE NOT (users.user_name <=> NULL AND pages.page_name <=> NULL) AND posts_comments.node_type = 'comment' AND posts_comments.node_id = %s ORDER BY posts_comments.comment_id DESC LIMIT %s, %s) comments ORDER BY comments.comment_id ASC", secure($comment_id, 'int'), secure($offset, 'int', false), secure($system['min_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_replies->num_rows == 0) {
             return $replies;
         }
@@ -8475,7 +8475,7 @@ class User
             if ($this->_logged_in) {
                 /* reaction */
                 if ($reply['reactions_total_count'] > 0) {
-                    $get_reaction = $db->query(sprintf("SELECT reaction FROM posts_comments_reactions WHERE user_id = %s AND comment_id = %s", secure($this->_data['user_id'], 'int'), secure($reply['comment_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $get_reaction = $db->query(sprintf("SELECT reaction FROM posts_comments_reactions WHERE user_id = %s AND comment_id = %s", secure($this->_data['user_id'], 'int'), secure($reply['comment_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     if ($get_reaction->num_rows > 0) {
                         $reply['i_react'] = true;
                         $reply['i_reaction'] = $get_reaction->fetch_assoc()['reaction'];
@@ -8526,7 +8526,7 @@ class User
 
         /* check max comments/hour limit */
         if ($system['max_comments_hour'] > 0 && $this->_data['user_group'] >= 3) {
-            $check_limit = $db->query(sprintf("SELECT COUNT(*) as count FROM posts_comments WHERE posts_comments.time >= DATE_SUB(NOW(),INTERVAL 1 HOUR) AND user_id = %s AND user_type = 'user'", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $check_limit = $db->query(sprintf("SELECT COUNT(*) as count FROM posts_comments WHERE posts_comments.time >= DATE_SUB(NOW(),INTERVAL 1 HOUR) AND user_id = %s AND user_type = 'user'", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             if ($check_limit->fetch_assoc()['count'] >= $system['max_comments_hour']) {
                 blueModal("MESSAGE", __("Maximum Limit Reached"), __("You have reached the maximum limit of comments/hour, please try again later"));
             }
@@ -8619,24 +8619,24 @@ class User
         }
 
         /* insert the comment */
-        $db->query(sprintf("INSERT INTO posts_comments (node_id, node_type, user_id, user_type, text, image, voice_note, time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", secure($comment['node_id'], 'int'), secure($comment['node_type']), secure($comment['user_id'], 'int'), secure($comment['user_type']), secure($comment['text']), secure($comment['image']), secure($comment['voice_note']), secure($comment['time']))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO posts_comments (node_id, node_type, user_id, user_type, text, image, voice_note, time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", secure($comment['node_id'], 'int'), secure($comment['node_type']), secure($comment['user_id'], 'int'), secure($comment['user_type']), secure($comment['text']), secure($comment['image']), secure($comment['voice_note']), secure($comment['time']))) or _error("SQL_ERROR_THROWEN", $db);
         $comment['comment_id'] = $db->insert_id;
         /* update (post|photo|comment) (comments|replies) counter */
         switch ($handle) {
             case 'post':
-                $db->query(sprintf("UPDATE posts SET comments = comments + 1 WHERE post_id = %s", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE posts SET comments = comments + 1 WHERE post_id = %s", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'photo':
-                $db->query(sprintf("UPDATE posts_photos SET comments = comments + 1 WHERE photo_id = %s", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE posts_photos SET comments = comments + 1 WHERE photo_id = %s", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'comment':
-                $db->query(sprintf("UPDATE posts_comments SET replies = replies + 1 WHERE comment_id = %s", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE posts_comments SET replies = replies + 1 WHERE comment_id = %s", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 if ($parent_comment['node_type'] == "post") {
-                    $db->query(sprintf("UPDATE posts SET comments = comments + 1 WHERE post_id = %s", secure($parent_comment['node_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE posts SET comments = comments + 1 WHERE post_id = %s", secure($parent_comment['node_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 } elseif ($parent_comment['node_type'] == "photo") {
-                    $db->query(sprintf("UPDATE posts_photos SET comments = comments + 1 WHERE photo_id = %s", secure($parent_comment['node_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE posts_photos SET comments = comments + 1 WHERE photo_id = %s", secure($parent_comment['node_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 }
                 break;
         }
@@ -8684,7 +8684,7 @@ class User
     {
         global $db;
         /* get comment */
-        $get_comment = $db->query(sprintf("SELECT posts_comments.*, pages.page_admin FROM posts_comments LEFT JOIN pages ON posts_comments.user_type = 'page' AND posts_comments.user_id = pages.page_id WHERE posts_comments.comment_id = %s", secure($comment_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_comment = $db->query(sprintf("SELECT posts_comments.*, pages.page_admin FROM posts_comments LEFT JOIN pages ON posts_comments.user_type = 'page' AND posts_comments.user_id = pages.page_id WHERE posts_comments.comment_id = %s", secure($comment_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_comment->num_rows == 0) {
             return false;
         }
@@ -8757,7 +8757,7 @@ class User
         if ($this->_logged_in) {
             /* reaction */
             if ($comment['reactions_total_count'] > 0) {
-                $get_reaction = $db->query(sprintf("SELECT reaction FROM posts_comments_reactions WHERE user_id = %s AND comment_id = %s", secure($this->_data['user_id'], 'int'), secure($comment['comment_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_reaction = $db->query(sprintf("SELECT reaction FROM posts_comments_reactions WHERE user_id = %s AND comment_id = %s", secure($this->_data['user_id'], 'int'), secure($comment['comment_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 if ($get_reaction->num_rows > 0) {
                     $comment['i_react'] = true;
                     $comment['i_reaction'] = $get_reaction->fetch_assoc()['reaction'];
@@ -8812,34 +8812,34 @@ class User
         /* delete the comment */
         if ($comment['delete_comment']) {
             /* delete the comment */
-            $db->query(sprintf("DELETE FROM posts_comments WHERE comment_id = %s", secure($comment_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("DELETE FROM posts_comments WHERE comment_id = %s", secure($comment_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             /* delete comment image from uploads folder */
             delete_uploads_file($comment['image']);
             /* delete replies */
             if ($comment['replies'] > 0) {
-                $get_replies = $db->query(sprintf("SELECT image FROM posts_comments WHERE node_type = 'comment' AND node_id = %s", secure($comment_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_replies = $db->query(sprintf("SELECT image FROM posts_comments WHERE node_type = 'comment' AND node_id = %s", secure($comment_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 while ($reply = $get_replies->fetch_assoc()) {
                     /* delete reply image from uploads folder */
                     delete_uploads_file($reply['image']);
                 }
-                $db->query(sprintf("DELETE FROM posts_comments WHERE node_type = 'comment' AND node_id = %s", secure($comment_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM posts_comments WHERE node_type = 'comment' AND node_id = %s", secure($comment_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             }
             /* update comments counter */
             switch ($comment['node_type']) {
                 case 'post':
-                    $db->query(sprintf("UPDATE posts SET comments = IF(comments=0,0,comments-%s) WHERE post_id = %s", secure($comment['replies'] + 1, 'int'), secure($comment['node_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE posts SET comments = IF(comments=0,0,comments-%s) WHERE post_id = %s", secure($comment['replies'] + 1, 'int'), secure($comment['node_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     break;
 
                 case 'photo':
-                    $db->query(sprintf("UPDATE posts_photos SET comments = IF(comments=0,0,comments-%s) WHERE photo_id = %s", secure($comment['replies'] + 1, 'int'), secure($comment['node_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE posts_photos SET comments = IF(comments=0,0,comments-%s) WHERE photo_id = %s", secure($comment['replies'] + 1, 'int'), secure($comment['node_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     break;
 
                 case 'comment':
-                    $db->query(sprintf("UPDATE posts_comments SET replies = IF(replies=0,0,replies-1) WHERE comment_id = %s", secure($comment['node_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE posts_comments SET replies = IF(replies=0,0,replies-1) WHERE comment_id = %s", secure($comment['node_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     if ($comment['parent_comment']['node_type'] == "post") {
-                        $db->query(sprintf("UPDATE posts SET comments = IF(comments=0,0,comments-1) WHERE post_id = %s", secure($comment['parent_comment']['node_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                        $db->query(sprintf("UPDATE posts SET comments = IF(comments=0,0,comments-1) WHERE post_id = %s", secure($comment['parent_comment']['node_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     } elseif ($comment['parent_comment']['node_type'] == "photo") {
-                        $db->query(sprintf("UPDATE posts_photos SET comments = IF(comments=0,0,comments-1) WHERE photo_id = %s", secure($comment['parent_comment']['node_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                        $db->query(sprintf("UPDATE posts_photos SET comments = IF(comments=0,0,comments-1) WHERE photo_id = %s", secure($comment['parent_comment']['node_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     }
                     break;
             }
@@ -8889,7 +8889,7 @@ class User
         /* update comment */
         $comment['text'] = $message;
         $comment['image'] = (!is_empty($comment['image'])) ? $comment['image'] : $photo;
-        $db->query(sprintf("UPDATE posts_comments SET text = %s, image = %s WHERE comment_id = %s", secure($comment['text']), secure($comment['image']), secure($comment_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE posts_comments SET text = %s, image = %s WHERE comment_id = %s", secure($comment['text']), secure($comment['image']), secure($comment_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* post mention notifications if any */
         if ($comment['node_type'] == "comment") {
             $this->post_mentions($comment['text'], $comment['parent_comment']['node_id'], "reply_" . $comment['parent_comment']['node_type'], 'comment_' . $comment['comment_id'], array($comment['post']['author_id'], $comment['parent_comment']['author_id']));
@@ -8932,10 +8932,10 @@ class User
         }
         /* react the comment */
         if ($comment['i_react']) {
-            $db->query(sprintf("DELETE FROM posts_comments_reactions WHERE user_id = %s AND comment_id = %s", secure($this->_data['user_id'], 'int'), secure($comment_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("DELETE FROM posts_comments_reactions WHERE user_id = %s AND comment_id = %s", secure($this->_data['user_id'], 'int'), secure($comment_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             /* update comment reaction counter */
             $reaction_field = "reaction_" . $comment['i_reaction'] . "_count";
-            $db->query(sprintf("UPDATE posts_comments SET $reaction_field = IF($reaction_field=0,0,$reaction_field-1) WHERE comment_id = %s", secure($comment_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE posts_comments SET $reaction_field = IF($reaction_field=0,0,$reaction_field-1) WHERE comment_id = %s", secure($comment_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             /* delete notification */
             switch ($comment['node_type']) {
                 case 'post':
@@ -8953,10 +8953,10 @@ class User
                     break;
             }
         }
-        $db->query(sprintf("INSERT INTO posts_comments_reactions (user_id, comment_id, reaction, reaction_time) VALUES (%s, %s, %s, %s)", secure($this->_data['user_id'], 'int'), secure($comment_id, 'int'), secure($reaction), secure($date))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO posts_comments_reactions (user_id, comment_id, reaction, reaction_time) VALUES (%s, %s, %s, %s)", secure($this->_data['user_id'], 'int'), secure($comment_id, 'int'), secure($reaction), secure($date))) or _error("SQL_ERROR_THROWEN", $db);
         /* update comment reaction counter */
         $reaction_field = "reaction_" . $reaction . "_count";
-        $db->query(sprintf("UPDATE posts_comments SET $reaction_field = $reaction_field + 1 WHERE comment_id = %s", secure($comment_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE posts_comments SET $reaction_field = $reaction_field + 1 WHERE comment_id = %s", secure($comment_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* post notification */
         switch ($comment['node_type']) {
             case 'post':
@@ -9004,10 +9004,10 @@ class User
         }
         /* unreact the comment */
         if ($comment['i_react']) {
-            $db->query(sprintf("DELETE FROM posts_comments_reactions WHERE user_id = %s AND comment_id = %s", secure($this->_data['user_id'], 'int'), secure($comment_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("DELETE FROM posts_comments_reactions WHERE user_id = %s AND comment_id = %s", secure($this->_data['user_id'], 'int'), secure($comment_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             /* update comment reaction counter */
             $reaction_field = "reaction_" . $reaction . "_count";
-            $db->query(sprintf("UPDATE posts_comments SET $reaction_field = IF($reaction_field=0,0,$reaction_field-1) WHERE comment_id = %s", secure($comment_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE posts_comments SET $reaction_field = IF($reaction_field=0,0,$reaction_field-1) WHERE comment_id = %s", secure($comment_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             /* delete notification */
             switch ($comment['node_type']) {
                 case 'post':
@@ -9056,7 +9056,7 @@ class User
                         return $photos;
                     }
                 }
-                $get_photos = $db->query(sprintf("SELECT posts_photos.photo_id, posts_photos.source, posts_photos.blur, posts.user_id, posts.user_type, posts.privacy FROM posts_photos INNER JOIN posts ON posts_photos.post_id = posts.post_id WHERE posts_photos.album_id = %s AND posts.is_anonymous = '0' ORDER BY posts_photos.photo_id DESC LIMIT %s, %s", secure($id, 'int'), secure($offset, 'int', false), secure($system['max_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+                $get_photos = $db->query(sprintf("SELECT posts_photos.photo_id, posts_photos.source, posts_photos.blur, posts.user_id, posts.user_type, posts.privacy FROM posts_photos INNER JOIN posts ON posts_photos.post_id = posts.post_id WHERE posts_photos.album_id = %s AND posts.is_anonymous = '0' ORDER BY posts_photos.photo_id DESC LIMIT %s, %s", secure($id, 'int'), secure($offset, 'int', false), secure($system['max_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
                 if ($get_photos->num_rows > 0) {
                     while ($photo = $get_photos->fetch_assoc()) {
                         /* check the photo privacy */
@@ -9074,7 +9074,7 @@ class User
 
             case 'user':
                 /* get the target user's privacy */
-                $get_privacy = $db->query(sprintf("SELECT user_privacy_photos FROM users WHERE user_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_privacy = $db->query(sprintf("SELECT user_privacy_photos FROM users WHERE user_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 $privacy = $get_privacy->fetch_assoc();
                 /* check the target user's privacy  */
                 if (!$this->check_privacy($privacy['user_privacy_photos'], $id)) {
@@ -9094,7 +9094,7 @@ class User
                 }
                 /* get all user photos (except photos from groups or events) */
                 $offset *= $system['min_results_even'];
-                $get_photos = $db->query(sprintf("SELECT posts_photos.photo_id, posts_photos.source, posts_photos.blur, posts.privacy FROM posts_photos INNER JOIN posts ON posts_photos.post_id = posts.post_id WHERE posts.user_id = %s AND posts.user_type = 'user' AND posts.in_group = '0' AND posts.in_event = '0' AND posts.is_anonymous = '0' ORDER BY posts_photos.photo_id DESC LIMIT %s, %s", secure($id, 'int'), secure($offset, 'int', false), secure($system['min_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+                $get_photos = $db->query(sprintf("SELECT posts_photos.photo_id, posts_photos.source, posts_photos.blur, posts.privacy FROM posts_photos INNER JOIN posts ON posts_photos.post_id = posts.post_id WHERE posts.user_id = %s AND posts.user_type = 'user' AND posts.in_group = '0' AND posts.in_event = '0' AND posts.is_anonymous = '0' ORDER BY posts_photos.photo_id DESC LIMIT %s, %s", secure($id, 'int'), secure($offset, 'int', false), secure($system['min_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
                 if ($get_photos->num_rows > 0) {
                     while ($photo = $get_photos->fetch_assoc()) {
                         if ($this->check_privacy($photo['privacy'], $id)) {
@@ -9120,7 +9120,7 @@ class User
                 }
                 /* get all page photos */
                 $offset *= $system['min_results_even'];
-                $get_photos = $db->query(sprintf("SELECT posts_photos.photo_id, posts_photos.source, posts_photos.blur FROM posts_photos INNER JOIN posts ON posts_photos.post_id = posts.post_id WHERE posts.user_id = %s AND posts.user_type = 'page' ORDER BY posts_photos.photo_id DESC LIMIT %s, %s", secure($id, 'int'), secure($offset, 'int', false), secure($system['min_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+                $get_photos = $db->query(sprintf("SELECT posts_photos.photo_id, posts_photos.source, posts_photos.blur FROM posts_photos INNER JOIN posts ON posts_photos.post_id = posts.post_id WHERE posts.user_id = %s AND posts.user_type = 'page' ORDER BY posts_photos.photo_id DESC LIMIT %s, %s", secure($id, 'int'), secure($offset, 'int', false), secure($system['min_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
                 if ($get_photos->num_rows > 0) {
                     while ($photo = $get_photos->fetch_assoc()) {
                         $photo['manage'] = $manage_photos;
@@ -9150,7 +9150,7 @@ class User
                 }
                 /* get all group photos */
                 $offset *= $system['min_results_even'];
-                $get_photos = $db->query(sprintf("SELECT posts_photos.photo_id, posts_photos.source, posts_photos.blur FROM posts_photos INNER JOIN posts ON posts_photos.post_id = posts.post_id WHERE posts.group_id = %s AND posts.in_group = '1' ORDER BY posts_photos.photo_id DESC LIMIT %s, %s", secure($id, 'int'), secure($offset, 'int', false), secure($system['min_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+                $get_photos = $db->query(sprintf("SELECT posts_photos.photo_id, posts_photos.source, posts_photos.blur FROM posts_photos INNER JOIN posts ON posts_photos.post_id = posts.post_id WHERE posts.group_id = %s AND posts.in_group = '1' ORDER BY posts_photos.photo_id DESC LIMIT %s, %s", secure($id, 'int'), secure($offset, 'int', false), secure($system['min_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
                 if ($get_photos->num_rows > 0) {
                     while ($photo = $get_photos->fetch_assoc()) {
                         $photo['manage'] = $manage_photos;
@@ -9180,7 +9180,7 @@ class User
                 }
                 /* get all event photos */
                 $offset *= $system['min_results_even'];
-                $get_photos = $db->query(sprintf("SELECT posts_photos.photo_id, posts_photos.source, posts_photos.blur FROM posts_photos INNER JOIN posts ON posts_photos.post_id = posts.post_id WHERE posts.event_id = %s AND posts.in_event = '1' ORDER BY posts_photos.photo_id DESC LIMIT %s, %s", secure($id, 'int'), secure($offset, 'int', false), secure($system['min_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+                $get_photos = $db->query(sprintf("SELECT posts_photos.photo_id, posts_photos.source, posts_photos.blur FROM posts_photos INNER JOIN posts ON posts_photos.post_id = posts.post_id WHERE posts.event_id = %s AND posts.in_event = '1' ORDER BY posts_photos.photo_id DESC LIMIT %s, %s", secure($id, 'int'), secure($offset, 'int', false), secure($system['min_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
                 if ($get_photos->num_rows > 0) {
                     while ($photo = $get_photos->fetch_assoc()) {
                         $photo['manage'] = $manage_photos;
@@ -9207,7 +9207,7 @@ class User
         global $db, $system;
 
         /* get photo */
-        $get_photo = $db->query(sprintf("SELECT * FROM posts_photos WHERE photo_id = %s", secure($photo_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_photo = $db->query(sprintf("SELECT * FROM posts_photos WHERE photo_id = %s", secure($photo_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_photo->num_rows == 0) {
             return false;
         }
@@ -9235,7 +9235,7 @@ class User
         }
 
         /* check photo type [single|mutiple] */
-        $check_single = $db->query(sprintf("SELECT COUNT(*) as count FROM posts_photos WHERE post_id = %s", secure($photo['post_id'], 'int')))  or _error("SQL_ERROR_THROWEN");
+        $check_single = $db->query(sprintf("SELECT COUNT(*) as count FROM posts_photos WHERE post_id = %s", secure($photo['post_id'], 'int')))  or _error("SQL_ERROR_THROWEN", $db);
         $photo['is_single'] = ($check_single->fetch_assoc()['count'] > 1) ? false : true;
 
         /* get reactions */
@@ -9272,7 +9272,7 @@ class User
             $photo['i_react'] = false;
             if ($this->_logged_in) {
                 /* reaction */
-                $get_reaction = $db->query(sprintf("SELECT reaction FROM posts_photos_reactions WHERE user_id = %s AND photo_id = %s", secure($this->_data['user_id'], 'int'), secure($photo['photo_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_reaction = $db->query(sprintf("SELECT reaction FROM posts_photos_reactions WHERE user_id = %s AND photo_id = %s", secure($this->_data['user_id'], 'int'), secure($photo['photo_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 if ($get_reaction->num_rows > 0) {
                     $photo['i_react'] = true;
                     $photo['i_reaction'] = $get_reaction->fetch_assoc()['reaction'];
@@ -9304,7 +9304,7 @@ class User
         if ($get_gallery) {
             switch ($context) {
                 case 'post':
-                    $get_post_photos = $db->query(sprintf("SELECT photo_id, source FROM posts_photos WHERE post_id = %s ORDER BY photo_id ASC", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $get_post_photos = $db->query(sprintf("SELECT photo_id, source FROM posts_photos WHERE post_id = %s ORDER BY photo_id ASC", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     while ($post_photo = $get_post_photos->fetch_assoc()) {
                         $post_photos[$post_photo['photo_id']] = $post_photo;
                     }
@@ -9313,7 +9313,7 @@ class User
                     break;
 
                 case 'album':
-                    $get_album_photos = $db->query(sprintf("SELECT posts_photos.photo_id, posts_photos.source, posts.user_id, posts.privacy FROM posts_photos INNER JOIN posts ON posts_photos.post_id = posts.post_id WHERE posts_photos.album_id = %s", secure($photo['album_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $get_album_photos = $db->query(sprintf("SELECT posts_photos.photo_id, posts_photos.source, posts.user_id, posts.privacy FROM posts_photos INNER JOIN posts ON posts_photos.post_id = posts.post_id WHERE posts_photos.album_id = %s", secure($photo['album_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     while ($album_photo = $get_album_photos->fetch_assoc()) {
                         /* check the photo privacy */
                         if ($album_photo['privacy'] == "public" || $album_photo['privacy'] == "custom") {
@@ -9331,13 +9331,13 @@ class User
 
                 case 'photos':
                     if ($post['in_group']) {
-                        $get_target_photos = $db->query(sprintf("SELECT posts_photos.photo_id, posts_photos.source, posts.user_id, posts.privacy FROM posts_photos INNER JOIN posts ON posts_photos.post_id = posts.post_id WHERE posts.in_group = '1' AND posts.group_id = %s", secure($post['group_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                        $get_target_photos = $db->query(sprintf("SELECT posts_photos.photo_id, posts_photos.source, posts.user_id, posts.privacy FROM posts_photos INNER JOIN posts ON posts_photos.post_id = posts.post_id WHERE posts.in_group = '1' AND posts.group_id = %s", secure($post['group_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     } elseif ($post['in_event']) {
-                        $get_target_photos = $db->query(sprintf("SELECT posts_photos.photo_id, posts_photos.source, posts.user_id, posts.privacy FROM posts_photos INNER JOIN posts ON posts_photos.post_id = posts.post_id WHERE posts.in_event = '1' AND posts.event_id = %s", secure($post['event_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                        $get_target_photos = $db->query(sprintf("SELECT posts_photos.photo_id, posts_photos.source, posts.user_id, posts.privacy FROM posts_photos INNER JOIN posts ON posts_photos.post_id = posts.post_id WHERE posts.in_event = '1' AND posts.event_id = %s", secure($post['event_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     } elseif ($post['user_type'] == "page") {
-                        $get_target_photos = $db->query(sprintf("SELECT posts_photos.photo_id, posts_photos.source, posts.user_id, posts.privacy FROM posts_photos INNER JOIN posts ON posts_photos.post_id = posts.post_id WHERE posts.user_type = 'page' AND posts.user_id = %s", secure($post['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                        $get_target_photos = $db->query(sprintf("SELECT posts_photos.photo_id, posts_photos.source, posts.user_id, posts.privacy FROM posts_photos INNER JOIN posts ON posts_photos.post_id = posts.post_id WHERE posts.user_type = 'page' AND posts.user_id = %s", secure($post['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     } elseif ($post['user_type'] == "user") {
-                        $get_target_photos = $db->query(sprintf("SELECT posts_photos.photo_id, posts_photos.source, posts.user_id, posts.privacy FROM posts_photos INNER JOIN posts ON posts_photos.post_id = posts.post_id WHERE posts.user_type = 'user' AND posts.user_id = %s", secure($post['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                        $get_target_photos = $db->query(sprintf("SELECT posts_photos.photo_id, posts_photos.source, posts.user_id, posts.privacy FROM posts_photos INNER JOIN posts ON posts_photos.post_id = posts.post_id WHERE posts.user_type = 'user' AND posts.user_id = %s", secure($post['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     }
                     while ($target_photo = $get_target_photos->fetch_assoc()) {
                         /* check the photo privacy */
@@ -9392,7 +9392,7 @@ class User
             throw new Exception(__("This photo can't be deleted"));
         }
         /* delete the photo */
-        $db->query(sprintf("DELETE FROM posts_photos WHERE photo_id = %s", secure($photo_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("DELETE FROM posts_photos WHERE photo_id = %s", secure($photo_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* delete photo from uploads folder */
         delete_uploads_file($photo['source']);
     }
@@ -9429,18 +9429,18 @@ class User
         /* reaction the post */
         if ($photo['i_react']) {
             /* remove any previous reaction */
-            $db->query(sprintf("DELETE FROM posts_photos_reactions WHERE user_id = %s AND photo_id = %s", secure($this->_data['user_id'], 'int'), secure($photo_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("DELETE FROM posts_photos_reactions WHERE user_id = %s AND photo_id = %s", secure($this->_data['user_id'], 'int'), secure($photo_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             /* update photo reaction counter */
             $reaction_field = "reaction_" . $photo['i_reaction'] . "_count";
-            $db->query(sprintf("UPDATE posts_photos SET $reaction_field = IF($reaction_field=0,0,$reaction_field-1) WHERE photo_id = %s", secure($photo_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE posts_photos SET $reaction_field = IF($reaction_field=0,0,$reaction_field-1) WHERE photo_id = %s", secure($photo_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             /* delete notification */
             $this->delete_notification($post['author_id'], 'react_' . $photo['i_reaction'], 'photo', $photo_id);
         }
-        $db->query(sprintf("INSERT INTO posts_photos_reactions (user_id, photo_id, reaction, reaction_time) VALUES (%s, %s, %s, %s)", secure($this->_data['user_id'], 'int'), secure($photo_id, 'int'), secure($reaction), secure($date))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO posts_photos_reactions (user_id, photo_id, reaction, reaction_time) VALUES (%s, %s, %s, %s)", secure($this->_data['user_id'], 'int'), secure($photo_id, 'int'), secure($reaction), secure($date))) or _error("SQL_ERROR_THROWEN", $db);
         $reaction_id = $db->insert_id;
         /* update photo reaction counter */
         $reaction_field = "reaction_" . $reaction . "_count";
-        $db->query(sprintf("UPDATE posts_photos SET $reaction_field = $reaction_field + 1 WHERE photo_id = %s", secure($photo_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE posts_photos SET $reaction_field = $reaction_field + 1 WHERE photo_id = %s", secure($photo_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* post notification */
         $this->post_notification(array('to_user_id' => $post['author_id'], 'action' => 'react_' . $reaction, 'node_type' => 'photo', 'node_url' => $photo_id));
         /* points balance */
@@ -9465,10 +9465,10 @@ class User
         }
         $post = $photo['post'];
         /* unreact the photo */
-        $db->query(sprintf("DELETE FROM posts_photos_reactions WHERE user_id = %s AND photo_id = %s", secure($this->_data['user_id'], 'int'), secure($photo_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("DELETE FROM posts_photos_reactions WHERE user_id = %s AND photo_id = %s", secure($this->_data['user_id'], 'int'), secure($photo_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* update photo reaction counter */
         $reaction_field = "reaction_" . $photo['i_reaction'] . "_count";
-        $db->query(sprintf("UPDATE posts_photos SET $reaction_field = IF($reaction_field=0,0,$reaction_field-1) WHERE photo_id = %s", secure($photo_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE posts_photos SET $reaction_field = IF($reaction_field=0,0,$reaction_field-1) WHERE photo_id = %s", secure($photo_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* delete notification */
         $this->delete_notification($post['author_id'], 'react_' . $reaction, 'photo', $photo_id);
         /* points balance */
@@ -9492,19 +9492,19 @@ class User
         $offset *= $system['max_results_even'];
         switch ($type) {
             case 'user':
-                $get_albums = $db->query(sprintf("SELECT album_id FROM posts_photos_albums WHERE user_type = 'user' AND user_id = %s AND in_group = '0' AND in_event = '0' LIMIT %s, %s", secure($id, 'int'), secure($offset, 'int', false), secure($system['max_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+                $get_albums = $db->query(sprintf("SELECT album_id FROM posts_photos_albums WHERE user_type = 'user' AND user_id = %s AND in_group = '0' AND in_event = '0' LIMIT %s, %s", secure($id, 'int'), secure($offset, 'int', false), secure($system['max_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'page':
-                $get_albums = $db->query(sprintf("SELECT album_id FROM posts_photos_albums WHERE user_type = 'page' AND user_id = %s LIMIT %s, %s", secure($id, 'int'), secure($offset, 'int', false), secure($system['max_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+                $get_albums = $db->query(sprintf("SELECT album_id FROM posts_photos_albums WHERE user_type = 'page' AND user_id = %s LIMIT %s, %s", secure($id, 'int'), secure($offset, 'int', false), secure($system['max_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'group':
-                $get_albums = $db->query(sprintf("SELECT album_id FROM posts_photos_albums WHERE in_group = '1' AND group_id = %s LIMIT %s, %s", secure($id, 'int'), secure($offset, 'int', false), secure($system['max_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+                $get_albums = $db->query(sprintf("SELECT album_id FROM posts_photos_albums WHERE in_group = '1' AND group_id = %s LIMIT %s, %s", secure($id, 'int'), secure($offset, 'int', false), secure($system['max_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'event':
-                $get_albums = $db->query(sprintf("SELECT album_id FROM posts_photos_albums WHERE in_event = '1' AND event_id = %s LIMIT %s, %s", secure($id, 'int'), secure($offset, 'int', false), secure($system['max_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+                $get_albums = $db->query(sprintf("SELECT album_id FROM posts_photos_albums WHERE in_event = '1' AND event_id = %s LIMIT %s, %s", secure($id, 'int'), secure($offset, 'int', false), secure($system['max_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
         }
         if ($get_albums->num_rows > 0) {
@@ -9529,7 +9529,7 @@ class User
     public function get_album($album_id, $full_details = true)
     {
         global $db, $system;
-        $get_album = $db->query(sprintf("SELECT posts_photos_albums.*, users.user_name, users.user_album_pictures, users.user_album_covers, users.user_album_timeline, pages.page_id, pages.page_name, pages.page_admin, pages.page_album_pictures, pages.page_album_covers, pages.page_album_timeline, `groups`.group_name, `groups`.group_admin, `groups`.group_album_pictures, `groups`.group_album_covers, `groups`.group_album_timeline, `events`.event_admin, `events`.event_album_covers, `events`.event_album_timeline FROM posts_photos_albums LEFT JOIN users ON posts_photos_albums.user_id = users.user_id AND posts_photos_albums.user_type = 'user' LEFT JOIN pages ON posts_photos_albums.user_id = pages.page_id AND posts_photos_albums.user_type = 'page' LEFT JOIN `groups` ON posts_photos_albums.in_group = '1' AND posts_photos_albums.group_id = `groups`.group_id LEFT JOIN `events` ON posts_photos_albums.in_event = '1' AND posts_photos_albums.event_id = `events`.event_id WHERE NOT (users.user_name <=> NULL AND pages.page_name <=> NULL) AND posts_photos_albums.album_id = %s", secure($album_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_album = $db->query(sprintf("SELECT posts_photos_albums.*, users.user_name, users.user_album_pictures, users.user_album_covers, users.user_album_timeline, pages.page_id, pages.page_name, pages.page_admin, pages.page_album_pictures, pages.page_album_covers, pages.page_album_timeline, `groups`.group_name, `groups`.group_admin, `groups`.group_album_pictures, `groups`.group_album_covers, `groups`.group_album_timeline, `events`.event_admin, `events`.event_album_covers, `events`.event_album_timeline FROM posts_photos_albums LEFT JOIN users ON posts_photos_albums.user_id = users.user_id AND posts_photos_albums.user_type = 'user' LEFT JOIN pages ON posts_photos_albums.user_id = pages.page_id AND posts_photos_albums.user_type = 'page' LEFT JOIN `groups` ON posts_photos_albums.in_group = '1' AND posts_photos_albums.group_id = `groups`.group_id LEFT JOIN `events` ON posts_photos_albums.in_event = '1' AND posts_photos_albums.event_id = `events`.event_id WHERE NOT (users.user_name <=> NULL AND pages.page_name <=> NULL) AND posts_photos_albums.album_id = %s", secure($album_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_album->num_rows == 0) {
             return false;
         }
@@ -9570,7 +9570,7 @@ class User
         }
         /* get album cover photo */
         $where_statement = ($album['user_type'] == "user" && !$album['in_group'] && !$album['in_event']) ? "posts.privacy = 'public' AND" : '';
-        $get_cover = $db->query(sprintf("SELECT source, blur FROM posts_photos INNER JOIN posts ON posts_photos.post_id = posts.post_id WHERE " . $where_statement . " posts_photos.album_id = %s ORDER BY photo_id DESC LIMIT 1", secure($album_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_cover = $db->query(sprintf("SELECT source, blur FROM posts_photos INNER JOIN posts ON posts_photos.post_id = posts.post_id WHERE " . $where_statement . " posts_photos.album_id = %s ORDER BY photo_id DESC LIMIT 1", secure($album_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_cover->num_rows == 0) {
             $album['cover']['source'] = $system['system_url'] . '/content/themes/' . $system['theme'] . '/images/blank_album.jpg';
             $album['cover']['blur'] = 0;
@@ -9642,9 +9642,9 @@ class User
             throw new Exception(__("This album can't be deleted"));
         }
         /* delete the album */
-        $db->query(sprintf("DELETE FROM posts_photos_albums WHERE album_id = %s", secure($album_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("DELETE FROM posts_photos_albums WHERE album_id = %s", secure($album_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* delete all album photos */
-        $db->query(sprintf("DELETE FROM posts_photos WHERE album_id = %s", secure($album_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("DELETE FROM posts_photos WHERE album_id = %s", secure($album_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* retrun path */
         $path = $system['system_url'] . "/" . $album['path'] . "/albums";
         return $path;
@@ -9675,7 +9675,7 @@ class User
             throw new Exception(__("You must fill in all of the fields"));
         }
         /* edit the album */
-        $db->query(sprintf("UPDATE posts_photos_albums SET title = %s WHERE album_id = %s", secure($title), secure($album_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE posts_photos_albums SET title = %s WHERE album_id = %s", secure($title), secure($album_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -9726,11 +9726,11 @@ class User
             }
         }
         /* insert the post */
-        $db->query(sprintf("INSERT INTO posts (user_id, user_type, in_group, group_id, in_event, event_id, post_type, time, location, privacy, text, feeling_action, feeling_value) VALUES (%s, %s, %s, %s, %s, %s, 'album', %s, %s, %s, %s, %s, %s)", secure($user_id, 'int'), secure($album['user_type']), secure($album['in_group']), secure($album['group_id'], 'int'), secure($album['in_event']), secure($album['event_id'], 'int'), secure($date), secure($args['location']), secure($args['privacy']), secure($args['message']), secure($post['feeling_action']), secure($post['feeling_value']))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO posts (user_id, user_type, in_group, group_id, in_event, event_id, post_type, time, location, privacy, text, feeling_action, feeling_value) VALUES (%s, %s, %s, %s, %s, %s, 'album', %s, %s, %s, %s, %s, %s)", secure($user_id, 'int'), secure($album['user_type']), secure($album['in_group']), secure($album['group_id'], 'int'), secure($album['in_event']), secure($album['event_id'], 'int'), secure($date), secure($args['location']), secure($args['privacy']), secure($args['message']), secure($post['feeling_action']), secure($post['feeling_value']))) or _error("SQL_ERROR_THROWEN", $db);
         $post_id = $db->insert_id;
         /* insert new photos */
         foreach ($args['photos'] as $photo) {
-            $db->query(sprintf("INSERT INTO posts_photos (post_id, album_id, source, blur) VALUES (%s, %s, %s, %s)", secure($post_id, 'int'), secure($args['album_id'], 'int'), secure($photo['source']), secure($photo['blur']))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("INSERT INTO posts_photos (post_id, album_id, source, blur) VALUES (%s, %s, %s, %s)", secure($post_id, 'int'), secure($args['album_id'], 'int'), secure($photo['source']), secure($photo['blur']))) or _error("SQL_ERROR_THROWEN", $db);
         }
         /* post mention notifications */
         $this->post_mentions($args['message'], $post_id);
@@ -9759,7 +9759,7 @@ class User
             case 'user':
                 /* get all user videos (except videos from groups or events) */
                 $offset *= $system['min_results_even'];
-                $get_videos = $db->query(sprintf("SELECT posts_videos.*, posts.privacy FROM posts_videos INNER JOIN posts ON posts_videos.post_id = posts.post_id WHERE posts.user_id = %s AND posts.user_type = 'user' AND posts.in_group = '0' AND posts.in_event = '0' ORDER BY posts_videos.video_id DESC LIMIT %s, %s", secure($id, 'int'), secure($offset, 'int', false), secure($system['min_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+                $get_videos = $db->query(sprintf("SELECT posts_videos.*, posts.privacy FROM posts_videos INNER JOIN posts ON posts_videos.post_id = posts.post_id WHERE posts.user_id = %s AND posts.user_type = 'user' AND posts.in_group = '0' AND posts.in_event = '0' ORDER BY posts_videos.video_id DESC LIMIT %s, %s", secure($id, 'int'), secure($offset, 'int', false), secure($system['min_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
                 if ($get_videos->num_rows > 0) {
                     while ($video = $get_videos->fetch_assoc()) {
                         if ($this->check_privacy($video['privacy'], $id)) {
@@ -9771,7 +9771,7 @@ class User
 
             case 'page':
                 $offset *= $system['min_results_even'];
-                $get_videos = $db->query(sprintf("SELECT posts_videos.* FROM posts_videos INNER JOIN posts ON posts_videos.post_id = posts.post_id WHERE posts.user_id = %s AND posts.user_type = 'page' ORDER BY posts_videos.video_id DESC LIMIT %s, %s", secure($id, 'int'), secure($offset, 'int', false), secure($system['min_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+                $get_videos = $db->query(sprintf("SELECT posts_videos.* FROM posts_videos INNER JOIN posts ON posts_videos.post_id = posts.post_id WHERE posts.user_id = %s AND posts.user_type = 'page' ORDER BY posts_videos.video_id DESC LIMIT %s, %s", secure($id, 'int'), secure($offset, 'int', false), secure($system['min_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
                 if ($get_videos->num_rows > 0) {
                     while ($video = $get_videos->fetch_assoc()) {
                         $videos[] = $video;
@@ -9785,7 +9785,7 @@ class User
                     return $videos;
                 }
                 $offset *= $system['min_results_even'];
-                $get_videos = $db->query(sprintf("SELECT posts_videos.* FROM posts_videos INNER JOIN posts ON posts_videos.post_id = posts.post_id WHERE posts.group_id = %s AND posts.in_group = '1' ORDER BY posts_videos.video_id DESC LIMIT %s, %s", secure($id, 'int'), secure($offset, 'int', false), secure($system['min_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+                $get_videos = $db->query(sprintf("SELECT posts_videos.* FROM posts_videos INNER JOIN posts ON posts_videos.post_id = posts.post_id WHERE posts.group_id = %s AND posts.in_group = '1' ORDER BY posts_videos.video_id DESC LIMIT %s, %s", secure($id, 'int'), secure($offset, 'int', false), secure($system['min_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
                 if ($get_videos->num_rows > 0) {
                     while ($video = $get_videos->fetch_assoc()) {
                         $videos[] = $video;
@@ -9799,7 +9799,7 @@ class User
                     return $photos;
                 }
                 $offset *= $system['min_results_even'];
-                $get_videos = $db->query(sprintf("SELECT posts_videos.* FROM posts_videos INNER JOIN posts ON posts_videos.post_id = posts.post_id WHERE posts.event_id = %s AND posts.in_event = '1' ORDER BY posts_videos.video_id DESC LIMIT %s, %s", secure($id, 'int'), secure($offset, 'int', false), secure($system['min_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+                $get_videos = $db->query(sprintf("SELECT posts_videos.* FROM posts_videos INNER JOIN posts ON posts_videos.post_id = posts.post_id WHERE posts.event_id = %s AND posts.in_event = '1' ORDER BY posts_videos.video_id DESC LIMIT %s, %s", secure($id, 'int'), secure($offset, 'int', false), secure($system['min_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
                 if ($get_videos->num_rows > 0) {
                     while ($video = $get_videos->fetch_assoc()) {
                         $videos[] = $video;
@@ -9831,7 +9831,7 @@ class User
         $tree = [];
         if (!$reverse) {
             // top-down tree (default)
-            $get_categories = $db->query(sprintf("SELECT * FROM %s WHERE category_parent_id = %s and category_hidden = 0 ORDER BY category_order ASC", $table_name, secure($category_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_categories = $db->query(sprintf("SELECT * FROM %s WHERE category_parent_id = %s and category_hidden = 0 ORDER BY category_order ASC", $table_name, secure($category_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             if ($get_categories->num_rows > 0) {
                 while ($category = $get_categories->fetch_assoc()) {
                     $category['category_url'] = get_url_text($category['category_name']);
@@ -9847,7 +9847,7 @@ class User
         } else {
             // bottom-up tree
             while (true) {
-                $get_parent = $db->query(sprintf("SELECT * FROM %s WHERE category_id = %s", $table_name, secure($category_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_parent = $db->query(sprintf("SELECT * FROM %s WHERE category_id = %s", $table_name, secure($category_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 if ($get_parent->num_rows == 0) {
                     break;
                 }
@@ -9876,7 +9876,7 @@ class User
     {
         global $db;
         $tree = [];
-        $get_categories = $db->query(sprintf("SELECT * FROM %s WHERE category_parent_id = %s ORDER BY category_order ASC", $table_name, secure($category_id))) or _error("SQL_ERROR_THROWEN");
+        $get_categories = $db->query(sprintf("SELECT * FROM %s WHERE category_parent_id = %s ORDER BY category_order ASC", $table_name, secure($category_id))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_categories->num_rows > 0) {
             while ($category = $get_categories->fetch_assoc()) {
                 $category['iteration'] = $iteration;
@@ -9905,7 +9905,7 @@ class User
             $category['parent'] = $this->get_category($table_name, $category['category_parent_id']);
         }
         /* check sub_categories */
-        $check_sub_categories = $db->query(sprintf("SELECT COUNT(*) as count FROM %s WHERE category_parent_id = %s", $table_name, secure($category['category_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $check_sub_categories = $db->query(sprintf("SELECT COUNT(*) as count FROM %s WHERE category_parent_id = %s", $table_name, secure($category['category_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         $category['sub_categories'] = ($check_sub_categories->fetch_assoc()['count'] > 0) ? true : false;
         return $category;
     }
@@ -9916,7 +9916,7 @@ class User
 
         $get_category = $db->query(
             sprintf("SELECT * FROM %s WHERE %s = %s", $table_name, $column_name, secure($value))
-        ) or _error("SQL_ERROR_THROWEN");
+        ) or _error("SQL_ERROR_THROWEN", $db);
 
         if ($get_category->num_rows == 0) {
             return false;
@@ -9948,7 +9948,7 @@ class User
             $category['parent'] = $this->get_category($table_name, $category['category_parent_id']);
         }
         /* check sub_categories */
-        $check_sub_categories = $db->query(sprintf("SELECT COUNT(*) as count FROM %s WHERE category_parent_id = %s", $table_name, secure($category_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $check_sub_categories = $db->query(sprintf("SELECT COUNT(*) as count FROM %s WHERE category_parent_id = %s", $table_name, secure($category_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         $category['sub_categories'] = ($check_sub_categories->fetch_assoc()['count'] > 0) ? true : false;
         return $category;
     }
@@ -9964,8 +9964,8 @@ class User
     public function delete_category($table_name, $category_id)
     {
         global $db;
-        $db->query(sprintf("DELETE FROM %s WHERE category_id = %s", $table_name, secure($category_id, 'int'))) or _error("SQL_ERROR_THROWEN");
-        $get_sub_categories = $db->query(sprintf("SELECT category_id FROM %s WHERE category_parent_id = %s", $table_name, secure($category_id))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("DELETE FROM %s WHERE category_id = %s", $table_name, secure($category_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+        $get_sub_categories = $db->query(sprintf("SELECT category_id FROM %s WHERE category_parent_id = %s", $table_name, secure($category_id))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_sub_categories->num_rows > 0) {
             while ($sub_category = $get_sub_categories->fetch_assoc()) {
                 $this->delete_category($table_name, $sub_category['category_id']);
@@ -10002,30 +10002,30 @@ class User
         $offset *= $results;
         if ($promoted) {
             /* get promoted pages */
-            $get_pages = $db->query(sprintf("SELECT * FROM pages WHERE page_boosted = '1' ORDER BY RAND() LIMIT %s", $system['max_results'])) or _error("SQL_ERROR_THROWEN");
+            $get_pages = $db->query(sprintf("SELECT * FROM pages WHERE page_boosted = '1' ORDER BY RAND() LIMIT %s", $system['max_results'])) or _error("SQL_ERROR_THROWEN", $db);
         } elseif ($suggested) {
             /* get suggested pages */
             $random_statement = ($random) ? "ORDER BY RAND()" : "";
-            $get_pages = $db->query(sprintf("SELECT * FROM pages WHERE page_id NOT IN (%s) " . $random_statement . " LIMIT %s, %s", $this->spread_ids($this->get_pages_ids()), secure($offset, 'int', false), secure($results, 'int', false))) or _error("SQL_ERROR_THROWEN");
+            $get_pages = $db->query(sprintf("SELECT * FROM pages WHERE page_id NOT IN (%s) " . $random_statement . " LIMIT %s, %s", $this->spread_ids($this->get_pages_ids()), secure($offset, 'int', false), secure($results, 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         } elseif ($boosted) {
             /* get the "viewer" boosted pages */
-            $get_pages = $db->query(sprintf("SELECT * FROM pages WHERE page_boosted = '1' AND page_boosted_by = %s LIMIT %s, %s", secure($this->_data['user_id'], 'int'), secure($offset, 'int', false), secure($results, 'int', false))) or _error("SQL_ERROR_THROWEN");
+            $get_pages = $db->query(sprintf("SELECT * FROM pages WHERE page_boosted = '1' AND page_boosted_by = %s LIMIT %s, %s", secure($this->_data['user_id'], 'int'), secure($offset, 'int', false), secure($results, 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         } elseif ($managed) {
             /* get the "taget" all pages who admin */
-            $get_pages = $db->query(sprintf("SELECT pages.* FROM pages_admins INNER JOIN pages ON pages_admins.page_id = pages.page_id WHERE pages_admins.user_id = %s ORDER BY page_id DESC", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_pages = $db->query(sprintf("SELECT pages.* FROM pages_admins INNER JOIN pages ON pages_admins.page_id = pages.page_id WHERE pages_admins.user_id = %s ORDER BY page_id DESC", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         } elseif ($user_id == null) {
             /* get the "viewer" pages who admin */
-            $get_pages = $db->query(sprintf("SELECT pages.* FROM pages_admins INNER JOIN pages ON pages_admins.page_id = pages.page_id WHERE pages_admins.user_id = %s ORDER BY page_id DESC LIMIT %s, %s", secure($this->_data['user_id'], 'int'), secure($offset, 'int', false), secure($results, 'int', false))) or _error("SQL_ERROR_THROWEN");
+            $get_pages = $db->query(sprintf("SELECT pages.* FROM pages_admins INNER JOIN pages ON pages_admins.page_id = pages.page_id WHERE pages_admins.user_id = %s ORDER BY page_id DESC LIMIT %s, %s", secure($this->_data['user_id'], 'int'), secure($offset, 'int', false), secure($results, 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         } else {
             /* get the "target" liked pages*/
             /* get the target user's privacy */
-            $get_privacy = $db->query(sprintf("SELECT user_privacy_pages FROM users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_privacy = $db->query(sprintf("SELECT user_privacy_pages FROM users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             $privacy = $get_privacy->fetch_assoc();
             /* check the target user's privacy  */
             if (!$this->check_privacy($privacy['user_privacy_pages'], $user_id)) {
                 return $pages;
             }
-            $get_pages = $db->query(sprintf("SELECT pages.* FROM pages INNER JOIN pages_likes ON pages.page_id = pages_likes.page_id WHERE pages_likes.user_id = %s LIMIT %s, %s", secure($user_id, 'int'), secure($offset, 'int', false), secure($results, 'int', false))) or _error("SQL_ERROR_THROWEN");
+            $get_pages = $db->query(sprintf("SELECT pages.* FROM pages INNER JOIN pages_likes ON pages.page_id = pages_likes.page_id WHERE pages_likes.user_id = %s LIMIT %s, %s", secure($user_id, 'int'), secure($offset, 'int', false), secure($results, 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         }
         if ($get_pages->num_rows > 0) {
             while ($page = $get_pages->fetch_assoc()) {
@@ -10130,16 +10130,14 @@ class User
                 sprintf(
                     "INSERT INTO pages (
                        page_admin, 
-                       page_category, 
                        page_name, 
                        page_title, 
                        page_description, 
                        page_location, 
                        page_location_id, 
                        page_date
-               ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+               ) VALUES (%s, %s, %s, %s, %s, %s, %s)",
                     secure($this->_data['user_id'], 'int'),
-                    secure($args['category'], 'int'),
                     secure($args['username']),
                     secure($args['title']),
                     secure($args['description']),
@@ -10147,7 +10145,7 @@ class User
                     empty($args['location_id']) ? 'NULL' : secure($args['location_id'], 'int'),
                     secure($date)
                 )
-            ) or _error("SQL_ERROR_THROWEN");
+            ) or _error("SQL_ERROR_THROWEN", $db);
             /* get page_id */
             $page_id = $db->insert_id;
             /* insert custom fields values */
@@ -10164,17 +10162,19 @@ class User
 
             $query = $db->query(
                 'select user_token_address as address, user_id as id from users where user_id = 1 limit 1'
-            ) or _error("SQL_ERROR_THROWEN");
+            ) or _error("SQL_ERROR_THROWEN", $db);
             $superUser = $query->fetch_assoc();
             $query = $db->query("SELECT price FROM prices WHERE price_name = 'page_price';");
             $price = $query->fetch_assoc();
 
             if ($price["price"] !== '0.00') {
+                error_log('Create page, starting relysia payment');
                 $response = shntrToken::payRelysia(
                     $price['price'],
                     shntrToken::getshntrTreasure('paymail'),
                     $this->_data['user_id']
                 );
+                error_log('Create page, response from relysia: ' . json_encode($response));
                 if (!str_contains($response['message'], 'sent successfully')) {
                     _error(400, $response['message']);
                 }
@@ -10218,7 +10218,7 @@ class User
             throw new Exception(__("You don't have the permission to do this"));
         }
         /* (check&get) page */
-        $get_page = $db->query(sprintf("SELECT * FROM pages WHERE page_id = %s", secure($page_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_page = $db->query(sprintf("SELECT * FROM pages WHERE page_id = %s", secure($page_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_page->num_rows == 0) {
             _error(403);
         }
@@ -10265,7 +10265,7 @@ class User
                 /* edit from admin panel */
                 $args['page_verified'] = ($this->_data['user_group'] == 1 && isset($args['page_verified'])) ? $args['page_verified'] : $page['page_verified'];
                 /* update page */
-                $db->query(sprintf("UPDATE pages SET page_category = %s, page_name = %s, page_title = %s, page_verified = %s WHERE page_id = %s", secure($args['category'], 'int'), secure($args['username']), secure($args['title']), secure($args['page_verified']), secure($page_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE pages SET page_category = %s, page_name = %s, page_title = %s, page_verified = %s WHERE page_id = %s", secure($args['category'], 'int'), secure($args['username']), secure($args['title']), secure($args['page_verified']), secure($page_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'info':
@@ -10300,7 +10300,7 @@ class User
                         secure($args['description']),
                         secure($page_id, 'int')
                     )
-                ) or _error("SQL_ERROR_THROWEN");
+                ) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'action':
@@ -10313,7 +10313,7 @@ class User
                     throw new Exception(__("Please enter a valid action button URL"));
                 }
                 /* update page */
-                $db->query(sprintf("UPDATE pages SET page_action_text = %s, page_action_color = %s, page_action_url = %s WHERE page_id = %s", secure($args['action_text']), secure($args['action_color']), secure($args['action_url']), secure($page_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE pages SET page_action_text = %s, page_action_color = %s, page_action_url = %s WHERE page_id = %s", secure($args['action_text']), secure($args['action_color']), secure($args['action_url']), secure($page_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'social':
@@ -10342,7 +10342,7 @@ class User
                     throw new Exception(__("Please enter a valid Vkontakte Profile URL"));
                 }
                 /* update page */
-                $db->query(sprintf("UPDATE pages SET page_social_facebook = %s, page_social_twitter = %s, page_social_youtube = %s, page_social_instagram = %s, page_social_linkedin = %s, page_social_vkontakte = %s WHERE page_id = %s", secure($args['facebook']), secure($args['twitter']), secure($args['youtube']), secure($args['instagram']), secure($args['linkedin']), secure($args['vkontakte']), secure($page_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE pages SET page_social_facebook = %s, page_social_twitter = %s, page_social_youtube = %s, page_social_instagram = %s, page_social_linkedin = %s, page_social_vkontakte = %s WHERE page_id = %s", secure($args['facebook']), secure($args['twitter']), secure($args['youtube']), secure($args['instagram']), secure($args['linkedin']), secure($args['vkontakte']), secure($page_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'interests':
@@ -10382,7 +10382,7 @@ class User
             throw new Exception(__("You don't have the permission to do this"));
         }
         /* (check&get) page */
-        $get_page = $db->query(sprintf("SELECT * FROM pages WHERE page_id = %s", secure($page_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_page = $db->query(sprintf("SELECT * FROM pages WHERE page_id = %s", secure($page_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_page->num_rows == 0) {
             _error(403);
         }
@@ -10402,11 +10402,11 @@ class User
             _error(403);
         }
         /* delete the page */
-        $db->query(sprintf("DELETE FROM pages WHERE page_id = %s", secure($page_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("DELETE FROM pages WHERE page_id = %s", secure($page_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* delete the page members */
-        $db->query(sprintf("DELETE FROM pages_likes WHERE page_id = %s", secure($page_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("DELETE FROM pages_likes WHERE page_id = %s", secure($page_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* delete the page admins */
-        $db->query(sprintf("DELETE FROM pages_admins WHERE page_id = %s", secure($page_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("DELETE FROM pages_admins WHERE page_id = %s", secure($page_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -10420,7 +10420,7 @@ class User
     {
         global $db;
         $admins = [];
-        $get_admins = $db->query(sprintf("SELECT user_id FROM pages_admins WHERE page_id = %s", secure($page_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_admins = $db->query(sprintf("SELECT user_id FROM pages_admins WHERE page_id = %s", secure($page_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_admins->num_rows > 0) {
             while ($admin = $get_admins->fetch_assoc()) {
                 $admins[] = $admin['user_id'];
@@ -10442,7 +10442,7 @@ class User
         global $db, $system;
         $admins = [];
         $offset *= $system['max_results_even'];
-        $get_admins = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM pages_admins INNER JOIN users ON pages_admins.user_id = users.user_id WHERE pages_admins.page_id = %s LIMIT %s, %s", secure($page_id, 'int'), secure($offset, 'int', false), secure($system['max_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+        $get_admins = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM pages_admins INNER JOIN users ON pages_admins.user_id = users.user_id WHERE pages_admins.page_id = %s LIMIT %s, %s", secure($page_id, 'int'), secure($offset, 'int', false), secure($system['max_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_admins->num_rows > 0) {
             while ($admin = $get_admins->fetch_assoc()) {
                 $admin['user_picture'] = get_picture($admin['user_picture'], $admin['user_gender']);
@@ -10469,7 +10469,7 @@ class User
         global $db, $system;
         $members = [];
         $offset *= $system['max_results_even'];
-        $get_members = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM pages_likes INNER JOIN users ON pages_likes.user_id = users.user_id WHERE pages_likes.page_id = %s LIMIT %s, %s", secure($page_id, 'int'), secure($offset, 'int', false), secure($system['max_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+        $get_members = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM pages_likes INNER JOIN users ON pages_likes.user_id = users.user_id WHERE pages_likes.page_id = %s LIMIT %s, %s", secure($page_id, 'int'), secure($offset, 'int', false), secure($system['max_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_members->num_rows > 0) {
             /* get page admins ids */
             $page_admins_ids = $this->get_page_admins_ids($page_id);
@@ -10498,7 +10498,7 @@ class User
         global $db, $system;
         $friends = [];
         $offset *= $system['max_results_even'];
-        $get_friends = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM users LEFT JOIN pages_likes ON users.user_id = pages_likes.user_id AND pages_likes.page_id = %s LEFT JOIN pages_invites ON users.user_id = pages_invites.user_id AND pages_invites.page_id = %s AND pages_invites.from_user_id = %s WHERE users.user_id IN (%s) AND pages_likes.id IS NULL AND pages_invites.id IS NULL LIMIT %s, %s", secure($page_id, 'int'), secure($page_id, 'int'), secure($this->_data['user_id'], 'int'), $this->spread_ids($this->_data['friends_ids']), secure($offset, 'int', false), secure($system['max_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+        $get_friends = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM users LEFT JOIN pages_likes ON users.user_id = pages_likes.user_id AND pages_likes.page_id = %s LEFT JOIN pages_invites ON users.user_id = pages_invites.user_id AND pages_invites.page_id = %s AND pages_invites.from_user_id = %s WHERE users.user_id IN (%s) AND pages_likes.id IS NULL AND pages_invites.id IS NULL LIMIT %s, %s", secure($page_id, 'int'), secure($page_id, 'int'), secure($this->_data['user_id'], 'int'), $this->spread_ids($this->_data['friends_ids']), secure($offset, 'int', false), secure($system['max_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         while ($friend = $get_friends->fetch_assoc()) {
             $friend['user_picture'] = get_picture($friend['user_picture'], $friend['user_gender']);
             $friend['connection'] = 'page_invite';
@@ -10540,7 +10540,7 @@ class User
     {
         global $db;
         if ($this->_logged_in) {
-            $get_likes = $db->query(sprintf("SELECT COUNT(*) as count FROM pages_likes WHERE user_id = %s AND page_id = %s", secure($user_id, 'int'), secure($page_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_likes = $db->query(sprintf("SELECT COUNT(*) as count FROM pages_likes WHERE user_id = %s AND page_id = %s", secure($user_id, 'int'), secure($page_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             if ($get_likes->fetch_assoc()['count'] > 0) {
                 return true;
             }
@@ -10612,20 +10612,20 @@ class User
                 $where_statement .= sprintf("AND group_id NOT IN (%s) ", $this->spread_ids($this->get_groups_ids()));
                 $sort_statement = ($random) ? " ORDER BY RAND() " : " ORDER BY group_id DESC ";
                 $limit_statement = ($get_all) ? "" : sprintf("LIMIT %s, %s", secure($offset, 'int', false), secure($results, 'int', false));
-                $get_groups = $db->query("SELECT * FROM `groups` WHERE group_privacy != 'secret' " . $where_statement . $sort_statement . $limit_statement) or _error("SQL_ERROR_THROWEN");
+                $get_groups = $db->query("SELECT * FROM `groups` WHERE group_privacy != 'secret' " . $where_statement . $sort_statement . $limit_statement) or _error("SQL_ERROR_THROWEN", $db);
             }
 
         } elseif ($managed) {
             /* get the "taget" all groups who admin */
-            $get_groups = $db->query(sprintf("SELECT `groups`.* FROM groups_admins INNER JOIN `groups` ON groups_admins.group_id = `groups`.group_id WHERE groups_admins.user_id = %s ORDER BY group_id DESC", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_groups = $db->query(sprintf("SELECT `groups`.* FROM groups_admins INNER JOIN `groups` ON groups_admins.group_id = `groups`.group_id WHERE groups_admins.user_id = %s ORDER BY group_id DESC", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         } elseif ($user_id == null) {
             /* get the "viewer" groups who admin */
             $limit_statement = ($get_all) ? "" : sprintf("LIMIT %s, %s", secure($offset, 'int', false), secure($results, 'int', false));
-            $get_groups = $db->query(sprintf("SELECT `groups`.* FROM groups_admins INNER JOIN `groups` ON groups_admins.group_id = `groups`.group_id WHERE groups_admins.user_id = %s ORDER BY group_id DESC " . $limit_statement, secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_groups = $db->query(sprintf("SELECT `groups`.* FROM groups_admins INNER JOIN `groups` ON groups_admins.group_id = `groups`.group_id WHERE groups_admins.user_id = %s ORDER BY group_id DESC " . $limit_statement, secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             /* get the "target" groups*/
         } else {
             /* get the target user's privacy */
-            $get_privacy = $db->query(sprintf("SELECT user_privacy_groups FROM users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_privacy = $db->query(sprintf("SELECT user_privacy_groups FROM users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             $privacy = $get_privacy->fetch_assoc();
             /* check the target user's privacy  */
             if (!$this->check_privacy($privacy['user_privacy_groups'], $user_id)) {
@@ -10634,7 +10634,7 @@ class User
             /* if the viewer not the target exclude secret groups */
             $where_statement = ($this->_data['user_id'] == $user_id) ? "" : "AND `groups`.group_privacy != 'secret'";
             $limit_statement = ($get_all) ? "" : sprintf("LIMIT %s, %s", secure($offset, 'int', false), secure($results, 'int', false));
-            $get_groups = $db->query(sprintf("SELECT `groups`.* FROM `groups` INNER JOIN groups_members ON `groups`.group_id = groups_members.group_id WHERE groups_members.approved = '1' AND groups_members.user_id = %s " . $where_statement . " ORDER BY group_id DESC " . $limit_statement, secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_groups = $db->query(sprintf("SELECT `groups`.* FROM `groups` INNER JOIN groups_members ON `groups`.group_id = groups_members.group_id WHERE groups_members.approved = '1' AND groups_members.user_id = %s " . $where_statement . " ORDER BY group_id DESC " . $limit_statement, secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         }
         if ($get_groups->num_rows > 0) {
             while ($group = $get_groups->fetch_assoc()) {
@@ -10763,7 +10763,7 @@ class User
                     secure($args['location']),
                     empty($args['location_id']) ? 'NULL' : secure($args['location_id'], 'int')
                 )
-            ) or _error("SQL_ERROR_THROWEN");
+            ) or _error("SQL_ERROR_THROWEN", $db);
             /* get group_id */
             $group_id = $db->insert_id;
             /* insert custom fields values */
@@ -10828,7 +10828,7 @@ class User
             throw new Exception(__("You don't have the permission to do this"));
         }
         /* (check&get) group */
-        $get_group = $db->query(sprintf("SELECT * FROM `groups` WHERE group_id = %s", secure($group_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_group = $db->query(sprintf("SELECT * FROM `groups` WHERE group_id = %s", secure($group_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_group->num_rows == 0) {
             _error(403);
         }
@@ -10904,19 +10904,19 @@ class User
                 empty($args['location_id']) ? 'NULL' : secure($args['location_id'], 'int'),
                 secure($group_id, 'int')
             )
-        ) or _error("SQL_ERROR_THROWEN");
+        ) or _error("SQL_ERROR_THROWEN", $db);
         /* check if group privacy changed to public */
         if ($args['privacy'] == "public") {
             /* approve any pending join requests */
-            $db->query(sprintf("UPDATE groups_members SET approved = '1' WHERE group_id = %s", secure($group_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE groups_members SET approved = '1' WHERE group_id = %s", secure($group_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             /* update members counter +affected rows */
             $rows_count = $db->affected_rows;
-            $db->query(sprintf("UPDATE `groups` SET group_members = group_members + %s  WHERE group_id = %s", secure($rows_count, 'int'), secure($group_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE `groups` SET group_members = group_members + %s  WHERE group_id = %s", secure($rows_count, 'int'), secure($group_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         }
         /* check if post approval disabled */
         if (!$args['group_publish_approval_enabled']) {
             /* approve any pending posts */
-            $db->query(sprintf("UPDATE posts SET group_approved = '1' WHERE in_group = '1' AND group_id = %s", secure($group_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE posts SET group_approved = '1' WHERE in_group = '1' AND group_id = %s", secure($group_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         }
     }
 
@@ -10958,7 +10958,7 @@ class User
             throw new Exception(__("You don't have the permission to do this"));
         }
         /* (check&get) group */
-        $get_group = $db->query(sprintf("SELECT * FROM `groups` WHERE group_id = %s", secure($group_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_group = $db->query(sprintf("SELECT * FROM `groups` WHERE group_id = %s", secure($group_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_group->num_rows == 0) {
             _error(403);
         }
@@ -10978,11 +10978,11 @@ class User
             _error(403);
         }
         /* delete the group */
-        $db->query(sprintf("DELETE FROM `groups` WHERE group_id = %s", secure($group_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("DELETE FROM `groups` WHERE group_id = %s", secure($group_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* delete the group members */
-        $db->query(sprintf("DELETE FROM groups_members WHERE group_id = %s", secure($group_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("DELETE FROM groups_members WHERE group_id = %s", secure($group_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* delete the group admins */
-        $db->query(sprintf("DELETE FROM groups_admins WHERE group_id = %s", secure($group_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("DELETE FROM groups_admins WHERE group_id = %s", secure($group_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -10996,7 +10996,7 @@ class User
     {
         global $db;
         $admins = [];
-        $get_admins = $db->query(sprintf("SELECT user_id FROM groups_admins WHERE group_id = %s", secure($group_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_admins = $db->query(sprintf("SELECT user_id FROM groups_admins WHERE group_id = %s", secure($group_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_admins->num_rows > 0) {
             while ($admin = $get_admins->fetch_assoc()) {
                 $admins[] = $admin['user_id'];
@@ -11018,7 +11018,7 @@ class User
         global $db, $system;
         $admins = [];
         $offset *= $system['max_results_even'];
-        $get_admins = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM groups_admins INNER JOIN users ON groups_admins.user_id = users.user_id WHERE groups_admins.group_id = %s LIMIT %s, %s", secure($group_id, 'int'), secure($offset, 'int', false), secure($system['max_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+        $get_admins = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM groups_admins INNER JOIN users ON groups_admins.user_id = users.user_id WHERE groups_admins.group_id = %s LIMIT %s, %s", secure($group_id, 'int'), secure($offset, 'int', false), secure($system['max_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_admins->num_rows > 0) {
             while ($admin = $get_admins->fetch_assoc()) {
                 $admin['user_picture'] = get_picture($admin['user_picture'], $admin['user_gender']);
@@ -11046,7 +11046,7 @@ class User
         global $db, $system;
         $members = [];
         $offset *= $system['max_results_even'];
-        $get_members = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM groups_members INNER JOIN users ON groups_members.user_id = users.user_id WHERE groups_members.approved = '1' AND groups_members.group_id = %s LIMIT %s, %s", secure($group_id, 'int'), secure($offset, 'int', false), secure($system['max_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+        $get_members = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM groups_members INNER JOIN users ON groups_members.user_id = users.user_id WHERE groups_members.approved = '1' AND groups_members.group_id = %s LIMIT %s, %s", secure($group_id, 'int'), secure($offset, 'int', false), secure($system['max_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_members->num_rows > 0) {
             /* get group admins ids */
             $group_admins_ids = $this->get_group_admins_ids($group_id);
@@ -11080,7 +11080,7 @@ class User
         global $db, $system;
         $friends = [];
         $offset *= $system['max_results_even'];
-        $get_friends = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM users LEFT JOIN groups_members ON users.user_id = groups_members.user_id AND groups_members.group_id = %s WHERE users.user_id IN (%s) AND groups_members.id IS NULL LIMIT %s, %s", secure($group_id, 'int'), $this->spread_ids($this->_data['friends_ids']), secure($offset, 'int', false), secure($system['max_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+        $get_friends = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM users LEFT JOIN groups_members ON users.user_id = groups_members.user_id AND groups_members.group_id = %s WHERE users.user_id IN (%s) AND groups_members.id IS NULL LIMIT %s, %s", secure($group_id, 'int'), $this->spread_ids($this->_data['friends_ids']), secure($offset, 'int', false), secure($system['max_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         while ($friend = $get_friends->fetch_assoc()) {
             $friend['user_picture'] = get_picture($friend['user_picture'], $friend['user_gender']);
             $friend['connection'] = 'group_invite';
@@ -11103,7 +11103,7 @@ class User
         global $db, $system;
         $requests = [];
         $offset *= $system['max_results'];
-        $get_requests = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM users INNER JOIN groups_members ON users.user_id = groups_members.user_id WHERE groups_members.approved = '0' AND groups_members.group_id = %s LIMIT %s, %s", secure($group_id, 'int'), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+        $get_requests = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM users INNER JOIN groups_members ON users.user_id = groups_members.user_id WHERE groups_members.approved = '0' AND groups_members.group_id = %s LIMIT %s, %s", secure($group_id, 'int'), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_requests->num_rows > 0) {
             while ($request = $get_requests->fetch_assoc()) {
                 $request['user_picture'] = get_picture($request['user_picture'], $request['user_gender']);
@@ -11125,7 +11125,7 @@ class User
     public function get_group_requests_total($group_id)
     {
         global $db, $system;
-        $get_requests = $db->query(sprintf("SELECT COUNT(*) as count FROM groups_members WHERE approved = '0' AND group_id = %s", secure($group_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_requests = $db->query(sprintf("SELECT COUNT(*) as count FROM groups_members WHERE approved = '0' AND group_id = %s", secure($group_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         return $get_requests->fetch_assoc()['count'];
     }
 
@@ -11161,7 +11161,7 @@ class User
     {
         global $db;
         if ($this->_logged_in) {
-            $get_membership = $db->query(sprintf("SELECT * FROM groups_members WHERE user_id = %s AND group_id = %s", secure($user_id, 'int'), secure($group_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_membership = $db->query(sprintf("SELECT * FROM groups_members WHERE user_id = %s AND group_id = %s", secure($user_id, 'int'), secure($group_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             if ($get_membership->num_rows > 0) {
                 $membership = $get_membership->fetch_assoc();
                 return ($membership['approved'] == '1') ? "approved" : "pending";
@@ -11182,7 +11182,7 @@ class User
     {
         global $db, $system;
         $get_all_query = ($get_all) ? "" : sprintf(" AND user_type = 'user' AND user_id = %s", secure($this->_data['user_id'], 'int'));
-        $get_pending_posts = $db->query(sprintf("SELECT COUNT(*) as count FROM posts WHERE in_group = '1' AND group_approved = '0' AND group_id = %s" . $get_all_query, secure($group_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_pending_posts = $db->query(sprintf("SELECT COUNT(*) as count FROM posts WHERE in_group = '1' AND group_approved = '0' AND group_id = %s" . $get_all_query, secure($group_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         return $get_pending_posts->fetch_assoc()['count'];
     }
 
@@ -11250,35 +11250,35 @@ class User
                 $where_statement .= sprintf("AND event_id NOT IN (%s) ", $this->spread_ids($this->get_events_ids()));
                 $sort_statement = ($random) ? " ORDER BY RAND() " : " ORDER BY event_id DESC ";
                 $limit_statement = ($get_all) ? "" : sprintf("LIMIT %s, %s", secure($offset, 'int', false), secure($results, 'int', false));
-                $get_events = $db->query("SELECT * FROM `events` WHERE event_privacy != 'secret' " . $where_statement . $sort_statement . $limit_statement) or _error("SQL_ERROR_THROWEN");
+                $get_events = $db->query("SELECT * FROM `events` WHERE event_privacy != 'secret' " . $where_statement . $sort_statement . $limit_statement) or _error("SQL_ERROR_THROWEN", $db);
             }
         } elseif ($managed) {
             /* get the "taget" all events who admin */
-            $get_events = $db->query(sprintf("SELECT * FROM `events` WHERE event_admin = %s ORDER BY event_id DESC", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_events = $db->query(sprintf("SELECT * FROM `events` WHERE event_admin = %s ORDER BY event_id DESC", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         } elseif ($user_id == null) {
             /* get the "viewer" events who (going|interested|invited|admin) */
             $limit_statement = ($get_all) ? "" : sprintf("LIMIT %s, %s", secure($offset, 'int', false), secure($results, 'int', false));
             switch ($filter) {
                 case 'going':
-                    $get_events = $db->query(sprintf("SELECT `events`.* FROM `events` INNER JOIN events_members ON `events`.event_id = events_members.event_id WHERE events_members.is_going = '1' AND events_members.user_id = %s ORDER BY event_id DESC " . $limit_statement, secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $get_events = $db->query(sprintf("SELECT `events`.* FROM `events` INNER JOIN events_members ON `events`.event_id = events_members.event_id WHERE events_members.is_going = '1' AND events_members.user_id = %s ORDER BY event_id DESC " . $limit_statement, secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     break;
 
                 case 'interested':
-                    $get_events = $db->query(sprintf("SELECT `events`.* FROM `events` INNER JOIN events_members ON `events`.event_id = events_members.event_id WHERE events_members.is_interested = '1' AND events_members.user_id = %s ORDER BY event_id DESC " . $limit_statement, secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $get_events = $db->query(sprintf("SELECT `events`.* FROM `events` INNER JOIN events_members ON `events`.event_id = events_members.event_id WHERE events_members.is_interested = '1' AND events_members.user_id = %s ORDER BY event_id DESC " . $limit_statement, secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     break;
 
                 case 'invited':
-                    $get_events = $db->query(sprintf("SELECT `events`.* FROM `events` INNER JOIN events_members ON `events`.event_id = events_members.event_id WHERE events_members.is_invited = '1' AND events_members.user_id = %s ORDER BY event_id DESC " . $limit_statement, secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $get_events = $db->query(sprintf("SELECT `events`.* FROM `events` INNER JOIN events_members ON `events`.event_id = events_members.event_id WHERE events_members.is_invited = '1' AND events_members.user_id = %s ORDER BY event_id DESC " . $limit_statement, secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     break;
 
                 default:
-                    $get_events = $db->query(sprintf("SELECT * FROM `events` WHERE event_admin = %s ORDER BY event_id DESC " . $limit_statement, secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $get_events = $db->query(sprintf("SELECT * FROM `events` WHERE event_admin = %s ORDER BY event_id DESC " . $limit_statement, secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     break;
             }
         } else {
             /* get the "target" events */
             /* get the target user's privacy */
-            $get_privacy = $db->query(sprintf("SELECT user_privacy_events FROM users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_privacy = $db->query(sprintf("SELECT user_privacy_events FROM users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             $privacy = $get_privacy->fetch_assoc();
             /* check the target user's privacy  */
             if (!$this->check_privacy($privacy['user_privacy_events'], $user_id)) {
@@ -11287,7 +11287,7 @@ class User
             /* if the viewer not the target exclude secret groups */
             $where_statement = ($this->_data['user_id'] == $user_id) ? "" : "AND `events`.event_privacy != 'secret'";
             $limit_statement = ($get_all) ? "" : sprintf("LIMIT %s, %s", secure($offset, 'int', false), secure($results, 'int', false));
-            $get_events = $db->query(sprintf("SELECT `events`.* FROM `events` INNER JOIN events_members ON `events`.event_id = events_members.event_id WHERE (events_members.is_going = '1' OR events_members.is_interested = '1') AND events_members.user_id = %s " . $where_statement . " ORDER BY event_id DESC " . $limit_statement, secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_events = $db->query(sprintf("SELECT `events`.* FROM `events` INNER JOIN events_members ON `events`.event_id = events_members.event_id WHERE (events_members.is_going = '1' OR events_members.is_interested = '1') AND events_members.user_id = %s " . $where_statement . " ORDER BY event_id DESC " . $limit_statement, secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         }
         if ($get_events->num_rows > 0) {
             while ($event = $get_events->fetch_assoc()) {
@@ -11418,7 +11418,7 @@ class User
                     secure($args['end_date'], 'datetime'),
                     secure($date)
                 )
-            ) or _error("SQL_ERROR_THROWEN");
+            ) or _error("SQL_ERROR_THROWEN", $db);
             /* get event_id */
             $event_id = $db->insert_id;
             /* insert custom fields values */
@@ -11433,7 +11433,7 @@ class User
 
             $query = $db->query(
                 'select user_token_address as address, user_id as id from users where user_id = 1 limit 1'
-            ) or _error("SQL_ERROR_THROWEN");
+            ) or _error("SQL_ERROR_THROWEN", $db);
             $superUser = $query->fetch_assoc();
             $query = $db->query("SELECT price FROM prices WHERE price_name = 'event_price';");
             $price = $query->fetch_assoc();
@@ -11511,7 +11511,7 @@ class User
             throw new Exception(__("You don't have the permission to do this"));
         }
         /* (check&get) event */
-        $get_event = $db->query(sprintf("SELECT * FROM `events` WHERE event_id = %s", secure($event_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_event = $db->query(sprintf("SELECT * FROM `events` WHERE event_id = %s", secure($event_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_event->num_rows == 0) {
             _error(403);
         }
@@ -11586,11 +11586,11 @@ class User
             secure($args['event_publish_enabled']),
             secure($args['event_publish_approval_enabled']),
             secure($event_id, 'int'))
-        ) or _error("SQL_ERROR_THROWEN");
+        ) or _error("SQL_ERROR_THROWEN", $db);
         /* check if post approval disabled */
         if (!$args['event_publish_approval_enabled']) {
             /* approve any pending posts */
-            $db->query(sprintf("UPDATE posts SET event_approved = '1' WHERE in_event = '1' AND event_id = %s", secure($event_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE posts SET event_approved = '1' WHERE in_event = '1' AND event_id = %s", secure($event_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         }
     }
 
@@ -11613,7 +11613,7 @@ class User
             throw new Exception(__("You don't have the permission to do this"));
         }
         /* (check&get) event */
-        $get_event = $db->query(sprintf("SELECT * FROM `events` WHERE event_id = %s", secure($event_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_event = $db->query(sprintf("SELECT * FROM `events` WHERE event_id = %s", secure($event_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_event->num_rows == 0) {
             _error(403);
         }
@@ -11631,7 +11631,7 @@ class User
         if (!$can_delete) {
             _error(403);
         }
-        $db->query(sprintf("DELETE FROM `events` WHERE event_id = %s", secure($event_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("DELETE FROM `events` WHERE event_id = %s", secure($event_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -11650,15 +11650,15 @@ class User
         $offset *= $system['max_results_even'];
         switch ($handle) {
             case 'going':
-                $get_members = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM events_members INNER JOIN users ON events_members.user_id = users.user_id WHERE  events_members.is_going = '1' AND events_members.event_id = %s LIMIT %s, %s", secure($event_id, 'int'), secure($offset, 'int', false), secure($system['max_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+                $get_members = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM events_members INNER JOIN users ON events_members.user_id = users.user_id WHERE  events_members.is_going = '1' AND events_members.event_id = %s LIMIT %s, %s", secure($event_id, 'int'), secure($offset, 'int', false), secure($system['max_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'interested':
-                $get_members = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM events_members INNER JOIN users ON events_members.user_id = users.user_id WHERE  events_members.is_interested = '1' AND events_members.event_id = %s LIMIT %s, %s", secure($event_id, 'int'), secure($offset, 'int', false), secure($system['max_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+                $get_members = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM events_members INNER JOIN users ON events_members.user_id = users.user_id WHERE  events_members.is_interested = '1' AND events_members.event_id = %s LIMIT %s, %s", secure($event_id, 'int'), secure($offset, 'int', false), secure($system['max_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'invited':
-                $get_members = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM events_members INNER JOIN users ON events_members.user_id = users.user_id WHERE  events_members.is_invited = '1' AND events_members.event_id = %s LIMIT %s, %s", secure($event_id, 'int'), secure($offset, 'int', false), secure($system['max_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+                $get_members = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM events_members INNER JOIN users ON events_members.user_id = users.user_id WHERE  events_members.is_invited = '1' AND events_members.event_id = %s LIMIT %s, %s", secure($event_id, 'int'), secure($offset, 'int', false), secure($system['max_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             default:
@@ -11689,7 +11689,7 @@ class User
         global $db, $system;
         $friends = [];
         $offset *= $system['max_results_even'];
-        $get_friends = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM users LEFT JOIN events_members ON users.user_id = events_members.user_id AND events_members.event_id = %s WHERE users.user_id IN (%s) AND events_members.id IS NULL LIMIT %s, %s", secure($event_id, 'int'), $this->spread_ids($this->_data['friends_ids']), secure($offset, 'int', false), secure($system['max_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+        $get_friends = $db->query(sprintf("SELECT users.user_id, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM users LEFT JOIN events_members ON users.user_id = events_members.user_id AND events_members.event_id = %s WHERE users.user_id IN (%s) AND events_members.id IS NULL LIMIT %s, %s", secure($event_id, 'int'), $this->spread_ids($this->_data['friends_ids']), secure($offset, 'int', false), secure($system['max_results_even'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         while ($friend = $get_friends->fetch_assoc()) {
             $friend['user_picture'] = get_picture($friend['user_picture'], $friend['user_gender']);
             $friend['connection'] = 'event_invite';
@@ -11711,7 +11711,7 @@ class User
     {
         global $db;
         if ($this->_logged_in) {
-            $check = $db->query(sprintf("SELECT COUNT(*) as count FROM `events` WHERE event_admin = %s AND event_id = %s", secure($user_id, 'int'), secure($event_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $check = $db->query(sprintf("SELECT COUNT(*) as count FROM `events` WHERE event_admin = %s AND event_id = %s", secure($user_id, 'int'), secure($event_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             if ($check->fetch_assoc()['count'] > 0) {
                 return true;
             }
@@ -11731,7 +11731,7 @@ class User
     {
         global $db;
         if ($this->_logged_in) {
-            $get_membership = $db->query(sprintf("SELECT is_invited, is_interested, is_going FROM events_members WHERE user_id = %s AND event_id = %s", secure($user_id, 'int'), secure($event_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_membership = $db->query(sprintf("SELECT is_invited, is_interested, is_going FROM events_members WHERE user_id = %s AND event_id = %s", secure($user_id, 'int'), secure($event_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             if ($get_membership->num_rows > 0) {
                 return $get_membership->fetch_assoc();
             }
@@ -11751,7 +11751,7 @@ class User
     {
         global $db, $system;
         $get_all_query = ($get_all) ? "" : sprintf(" AND user_type = 'user' AND user_id = %s", secure($this->_data['user_id'], 'int'));
-        $get_pending_posts = $db->query(sprintf("SELECT COUNT(*) as count FROM posts WHERE in_event = '1' AND event_approved = '0' AND event_id = %s" . $get_all_query, secure($event_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_pending_posts = $db->query(sprintf("SELECT COUNT(*) as count FROM posts WHERE in_event = '1' AND event_approved = '0' AND event_id = %s" . $get_all_query, secure($event_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         return $get_pending_posts->fetch_assoc()['count'];
     }
 
@@ -11781,7 +11781,7 @@ class User
         /* get posts */
         $where_query = ($category != null) ? sprintf("AND posts_articles.category_id = %s", secure($args['category'], 'int')) : "";
         $order_query = ($random) ? "ORDER BY RAND()" : "ORDER BY posts.post_id DESC";
-        $get_posts = $db->query(sprintf("SELECT posts.post_id FROM posts INNER JOIN posts_articles ON posts.post_id = posts_articles.post_id INNER JOIN users ON posts.user_id = users.user_id and posts.user_type = 'user' WHERE posts.post_type = 'article' " . $where_query . " " . $order_query . " LIMIT %s, %s", secure($offset, 'int', false), secure($results, 'int', false))) or _error("SQL_ERROR_THROWEN");
+        $get_posts = $db->query(sprintf("SELECT posts.post_id FROM posts INNER JOIN posts_articles ON posts.post_id = posts_articles.post_id INNER JOIN users ON posts.user_id = users.user_id and posts.user_type = 'user' WHERE posts.post_type = 'article' " . $where_query . " " . $order_query . " LIMIT %s, %s", secure($offset, 'int', false), secure($results, 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_posts->num_rows > 0) {
             while ($post = $get_posts->fetch_assoc()) {
                 $post = $this->get_post($post['post_id']);
@@ -11830,7 +11830,7 @@ class User
         if (is_empty($category_id)) {
             throw new Exception(__("You must select valid category for your article"));
         }
-        $check = $db->query(sprintf("SELECT COUNT(*) as count FROM blogs_categories WHERE category_id = %s", secure($category_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $check = $db->query(sprintf("SELECT COUNT(*) as count FROM blogs_categories WHERE category_id = %s", secure($category_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check->fetch_assoc()['count'] == 0) {
             throw new Exception(__("You must select valid category for your article"));
         }
@@ -11842,10 +11842,10 @@ class User
         $purifier = new HTMLPurifier($config);
         $clean_text = $purifier->purify($text);
         /* insert the post */
-        $db->query(sprintf("INSERT INTO posts (user_id, user_type, post_type, time, privacy) VALUES (%s, 'user', 'article', %s, 'public')", secure($this->_data['user_id'], 'int'), secure($date))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO posts (user_id, user_type, post_type, time, privacy) VALUES (%s, 'user', 'article', %s, 'public')", secure($this->_data['user_id'], 'int'), secure($date))) or _error("SQL_ERROR_THROWEN", $db);
         $post_id = $db->insert_id;
         /* insert article */
-        $db->query(sprintf("INSERT INTO posts_articles (post_id, cover, title, text, category_id, tags) VALUES (%s, %s, %s, %s, %s, %s)", secure($post_id, 'int'), secure($cover), secure($title), secure($clean_text), secure($category_id, 'int'), secure($tags))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO posts_articles (post_id, cover, title, text, category_id, tags) VALUES (%s, %s, %s, %s, %s, %s)", secure($post_id, 'int'), secure($cover), secure($title), secure($clean_text), secure($category_id, 'int'), secure($tags))) or _error("SQL_ERROR_THROWEN", $db);
         /* points balance */
         $this->points_balance("add", $this->_data['user_id'], "post", $post_id);
         return $post_id;
@@ -11898,7 +11898,7 @@ class User
         if (is_empty($category_id)) {
             throw new Exception(__("You must select valid category for your article"));
         }
-        $check = $db->query(sprintf("SELECT COUNT(*) as count FROM blogs_categories WHERE category_id = %s", secure($category_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $check = $db->query(sprintf("SELECT COUNT(*) as count FROM blogs_categories WHERE category_id = %s", secure($category_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check->fetch_assoc()['count'] == 0) {
             throw new Exception(__("You must select valid category for your article"));
         }
@@ -11910,7 +11910,7 @@ class User
         $purifier = new HTMLPurifier($config);
         $clean_text = $purifier->purify($text);
         /* update the article */
-        $db->query(sprintf("UPDATE posts_articles SET cover = %s, title = %s, text = %s, category_id = %s, tags = %s WHERE post_id = %s", secure($cover), secure($title), secure($clean_text), secure($category_id, 'int'), secure($tags), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE posts_articles SET cover = %s, title = %s, text = %s, category_id = %s, tags = %s WHERE post_id = %s", secure($cover), secure($title), secure($clean_text), secure($category_id, 'int'), secure($tags), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
     public function edit_post_interests(array $interests, int $post_id): void
@@ -11943,7 +11943,7 @@ class User
     {
         global $db;
         /* update */
-        $db->query(sprintf("UPDATE posts_articles SET views = views + 1 WHERE article_id = %s", secure($article_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE posts_articles SET views = views + 1 WHERE article_id = %s", secure($article_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -11961,7 +11961,7 @@ class User
     public function check_user_job_application($post_id)
     {
         global $db;
-        $check_application = $db->query(sprintf("SELECT COUNT(*) as count FROM posts_jobs_applications WHERE post_id = %s AND user_id = %s", secure($post_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $check_application = $db->query(sprintf("SELECT COUNT(*) as count FROM posts_jobs_applications WHERE post_id = %s AND user_id = %s", secure($post_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check_application->fetch_assoc()['count'] > 0) {
             return true;
         }
@@ -11982,7 +11982,7 @@ class User
         /* prepare inputs */
         $args['work_now'] = (isset($args['work_now'])) ? '1' : '0';
         /* insert job application */
-        $db->query(sprintf("INSERT INTO posts_jobs_applications (post_id, user_id, name, location, phone, email, work_place, work_position, work_description, work_from, work_to, work_now, question_1_answer, question_2_answer, question_3_answer, applied_time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($this->_data['user_id'], 'int'), secure($args['name']), secure($args['location']), secure($args['phone']), secure($args['email']), secure($args['work_place']), secure($args['work_position']), secure($args['work_description']), secure($args['work_from']), secure($args['work_to']), secure($args['work_now']), secure($args['question_1_answer']), secure($args['question_2_answer']), secure($args['question_3_answer']), secure($date))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO posts_jobs_applications (post_id, user_id, name, location, phone, email, work_place, work_position, work_description, work_from, work_to, work_now, question_1_answer, question_2_answer, question_3_answer, applied_time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($this->_data['user_id'], 'int'), secure($args['name']), secure($args['location']), secure($args['phone']), secure($args['email']), secure($args['work_place']), secure($args['work_position']), secure($args['work_description']), secure($args['work_from']), secure($args['work_to']), secure($args['work_now']), secure($args['question_1_answer']), secure($args['question_2_answer']), secure($args['question_3_answer']), secure($date))) or _error("SQL_ERROR_THROWEN", $db);
         $application_id = $db->insert_id;
         /* send notification to page admin */
         $this->post_notification(array('to_user_id' => $post['page_admin'], 'action' => 'page_job_application', 'node_type' => $post['page_title'], 'node_url' => $post['post_id']));
@@ -11998,7 +11998,7 @@ class User
     public function get_total_job_candidates($post_id)
     {
         global $db;
-        $get_candidates = $db->query(sprintf("SELECT COUNT(*) as count FROM posts_jobs_applications WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_candidates = $db->query(sprintf("SELECT COUNT(*) as count FROM posts_jobs_applications WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         return $get_candidates->fetch_assoc()['count'];
     }
 
@@ -12024,7 +12024,7 @@ class User
         }
         $candidates = [];
         $offset *= $system['max_results'];
-        $get_candidates = $db->query(sprintf('SELECT posts_jobs_applications.*, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM posts_jobs_applications INNER JOIN users ON posts_jobs_applications.user_id = users.user_id WHERE posts_jobs_applications.post_id = %s LIMIT %s, %s', secure($post_id, 'int'), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+        $get_candidates = $db->query(sprintf('SELECT posts_jobs_applications.*, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_subscribed, users.user_verified FROM posts_jobs_applications INNER JOIN users ON posts_jobs_applications.user_id = users.user_id WHERE posts_jobs_applications.post_id = %s LIMIT %s, %s', secure($post_id, 'int'), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_candidates->num_rows > 0) {
             while ($candidate = $get_candidates->fetch_assoc()) {
                 $candidate['user_picture'] = get_picture($candidate['user_picture'], $candidate['user_gender']);
@@ -12059,7 +12059,7 @@ class User
         $tree = [];
         if (!$reverse) {
             // top-down tree (default)
-            $get_nodes = $db->query(sprintf("SELECT * FROM forums WHERE forum_section = %s ORDER BY forum_order ASC", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_nodes = $db->query(sprintf("SELECT * FROM forums WHERE forum_section = %s ORDER BY forum_order ASC", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             if ($get_nodes->num_rows > 0) {
                 while ($node = $get_nodes->fetch_assoc()) {
                     $node['title_url'] = get_url_text($node['forum_name']);
@@ -12077,7 +12077,7 @@ class User
         } else {
             // bottom-up tree
             while (true) {
-                $get_parent = $db->query(sprintf("SELECT * FROM forums WHERE forum_id = %s", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_parent = $db->query(sprintf("SELECT * FROM forums WHERE forum_id = %s", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 if ($get_parent->num_rows == 0) {
                     break;
                 }
@@ -12105,7 +12105,7 @@ class User
     {
         global $db;
         $tree = [];
-        $get_nodes = $db->query(sprintf("SELECT * FROM forums WHERE forum_section = %s ORDER BY forum_order ASC", secure($node_id))) or _error("SQL_ERROR_THROWEN");
+        $get_nodes = $db->query(sprintf("SELECT * FROM forums WHERE forum_section = %s ORDER BY forum_order ASC", secure($node_id))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_nodes->num_rows > 0) {
             while ($node = $get_nodes->fetch_assoc()) {
                 $node['iteration'] = $iteration;
@@ -12156,11 +12156,11 @@ class User
     {
         global $db;
         /* delete forum */
-        $db->query(sprintf("DELETE FROM forums WHERE forum_id = %s", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("DELETE FROM forums WHERE forum_id = %s", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* delete replies */
-        $db->query(sprintf("DELETE FROM forums_replies WHERE thread_id IN (SELECT thread_id FROM forums_threads WHERE forum_id = %s)", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("DELETE FROM forums_replies WHERE thread_id IN (SELECT thread_id FROM forums_threads WHERE forum_id = %s)", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* delete threads */
-        $db->query(sprintf("DELETE FROM forums_threads WHERE forum_id = %s", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("DELETE FROM forums_threads WHERE forum_id = %s", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* delete childs */
         $childs = $this->get_child_forums($node_id);
         if ($childs) {
@@ -12181,11 +12181,11 @@ class User
         if (is_array($nodes)) {
             foreach ($nodes as $node) {
                 /* delete forum */
-                $db->query(sprintf("DELETE FROM forums WHERE forum_id = %s", secure($node['forum_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM forums WHERE forum_id = %s", secure($node['forum_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* delete replies */
-                $db->query(sprintf("DELETE FROM forums_replies WHERE thread_id IN (SELECT thread_id FROM forums_threads WHERE forum_id = %s)", secure($node['forum_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM forums_replies WHERE thread_id IN (SELECT thread_id FROM forums_threads WHERE forum_id = %s)", secure($node['forum_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* delete threads */
-                $db->query(sprintf("DELETE FROM forums_threads WHERE forum_id = %s", secure($node['forum_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM forums_threads WHERE forum_id = %s", secure($node['forum_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* delete childs */
                 if ($node['childs']) {
                     $this->delete_child_forums($node['childs']);
@@ -12205,7 +12205,7 @@ class User
     public function get_forum($forum_id, $get_childs = true)
     {
         global $db;
-        $get_forum = $db->query(sprintf("SELECT * FROM forums WHERE forum_id = %s", secure($forum_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_forum = $db->query(sprintf("SELECT * FROM forums WHERE forum_id = %s", secure($forum_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_forum->num_rows == 0) {
             return false;
         }
@@ -12243,9 +12243,9 @@ class User
         $query = !isset($args['query']) ? null : $args['query'];
         /* get threads */
         if ($forum !== null) {
-            $get_total = $db->query(sprintf("SELECT COUNT(*) as count FROM forums_threads WHERE forum_id = %s", secure($forum['forum_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_total = $db->query(sprintf("SELECT COUNT(*) as count FROM forums_threads WHERE forum_id = %s", secure($forum['forum_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         } elseif ($user_id !== null) {
-            $get_total = $db->query(sprintf("SELECT COUNT(*) as count FROM forums_threads WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_total = $db->query(sprintf("SELECT COUNT(*) as count FROM forums_threads WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         } elseif ($query !== null) {
             /* prepare where statement */
             $where = "";
@@ -12256,7 +12256,7 @@ class User
                 $forums_list = $this->spread_ids($args['forums_list']);
                 $where = ($where != '') ? $where . " AND forum_id IN ($forums_list) " : $where;
             }
-            $get_total = $db->query("SELECT COUNT(*) as count FROM forums_threads" . $where) or _error("SQL_ERROR_THROWEN");
+            $get_total = $db->query("SELECT COUNT(*) as count FROM forums_threads" . $where) or _error("SQL_ERROR_THROWEN", $db);
         }
         $total_items = $get_total->fetch_assoc()['count'];
         if ($total_items > 0) {
@@ -12276,11 +12276,11 @@ class User
             $pager = new Pager($params);
             $limit_query = $pager->getLimitSql();
             if ($forum !== null) {
-                $get_threads = $db->query(sprintf("SELECT forums_threads.*, users.user_name, CONCAT(users.user_firstname,' ',users.user_lastname) as user_fullname FROM forums_threads INNER JOIN users ON forums_threads.user_id = users.user_id WHERE forums_threads.forum_id = %s ORDER BY forums_threads.last_reply DESC " . $limit_query, secure($forum['forum_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_threads = $db->query(sprintf("SELECT forums_threads.*, users.user_name, CONCAT(users.user_firstname,' ',users.user_lastname) as user_fullname FROM forums_threads INNER JOIN users ON forums_threads.user_id = users.user_id WHERE forums_threads.forum_id = %s ORDER BY forums_threads.last_reply DESC " . $limit_query, secure($forum['forum_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             } elseif ($user_id !== null) {
-                $get_threads = $db->query(sprintf("SELECT forums_threads.*, users.user_name, CONCAT(users.user_firstname,' ',users.user_lastname) as user_fullname FROM forums_threads INNER JOIN users ON forums_threads.user_id = users.user_id WHERE forums_threads.user_id = %s ORDER BY forums_threads.last_reply DESC " . $limit_query, secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_threads = $db->query(sprintf("SELECT forums_threads.*, users.user_name, CONCAT(users.user_firstname,' ',users.user_lastname) as user_fullname FROM forums_threads INNER JOIN users ON forums_threads.user_id = users.user_id WHERE forums_threads.user_id = %s ORDER BY forums_threads.last_reply DESC " . $limit_query, secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             } elseif ($query !== null) {
-                $get_threads = $db->query("SELECT forums_threads.*, users.user_name, CONCAT(users.user_firstname,' ',users.user_lastname) as user_fullname FROM forums_threads INNER JOIN users ON forums_threads.user_id = users.user_id " . $where . " ORDER BY forums_threads.last_reply DESC " . $limit_query) or _error("SQL_ERROR_THROWEN");
+                $get_threads = $db->query("SELECT forums_threads.*, users.user_name, CONCAT(users.user_firstname,' ',users.user_lastname) as user_fullname FROM forums_threads INNER JOIN users ON forums_threads.user_id = users.user_id " . $where . " ORDER BY forums_threads.last_reply DESC " . $limit_query) or _error("SQL_ERROR_THROWEN", $db);
             }
             while ($thread = $get_threads->fetch_assoc()) {
                 $thread['title_url'] = get_url_text($thread['title']);
@@ -12311,7 +12311,7 @@ class User
     public function get_forum_thread($thread_id, $update_views = false)
     {
         global $db, $system;
-        $get_thread = $db->query(sprintf("SELECT forums_threads.*, users.user_group, users.user_name, users.user_firstname, users.user_lastname, CONCAT(users.user_firstname,' ',users.user_lastname) as user_fullname, users.user_gender, users.user_picture, users.user_registered FROM forums_threads INNER JOIN users ON forums_threads.user_id = users.user_id WHERE thread_id = %s", secure($thread_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_thread = $db->query(sprintf("SELECT forums_threads.*, users.user_group, users.user_name, users.user_firstname, users.user_lastname, CONCAT(users.user_firstname,' ',users.user_lastname) as user_fullname, users.user_gender, users.user_picture, users.user_registered FROM forums_threads INNER JOIN users ON forums_threads.user_id = users.user_id WHERE thread_id = %s", secure($thread_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_thread->num_rows == 0) {
             return false;
         }
@@ -12341,7 +12341,7 @@ class User
         }
         /* update thread views */
         if ($update_views) {
-            $db->query(sprintf("UPDATE forums_threads SET views = views + 1 WHERE thread_id = %s", secure($thread['thread_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE forums_threads SET views = views + 1 WHERE thread_id = %s", secure($thread['thread_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         }
         return $thread;
     }
@@ -12394,10 +12394,10 @@ class User
         $purifier = new HTMLPurifier($config);
         $clean_text = $purifier->purify($text);
         /* insert thread */
-        $db->query(sprintf("INSERT INTO forums_threads (forum_id, user_id, title, text, time, last_reply) VALUES (%s, %s, %s, %s, %s, %s)", secure($forum_id, 'int'), secure($this->_data['user_id'], 'int'), secure($title), secure($clean_text), secure($date), secure($date))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO forums_threads (forum_id, user_id, title, text, time, last_reply) VALUES (%s, %s, %s, %s, %s, %s)", secure($forum_id, 'int'), secure($this->_data['user_id'], 'int'), secure($title), secure($clean_text), secure($date), secure($date))) or _error("SQL_ERROR_THROWEN", $db);
         $thread_id = $db->insert_id;
         /* update forum */
-        $db->query(sprintf("UPDATE forums SET forum_threads = forum_threads + 1 WHERE forum_id = %s", secure($forum_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE forums SET forum_threads = forum_threads + 1 WHERE forum_id = %s", secure($forum_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         return $thread_id;
     }
 
@@ -12450,7 +12450,7 @@ class User
         $purifier = new HTMLPurifier($config);
         $clean_text = $purifier->purify($text);
         /* edit thread */
-        $db->query(sprintf("UPDATE forums_threads SET title = %s, text = %s WHERE thread_id = %s", secure($title), secure($clean_text), secure($thread_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE forums_threads SET title = %s, text = %s WHERE thread_id = %s", secure($title), secure($clean_text), secure($thread_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -12482,11 +12482,11 @@ class User
             _error(403);
         }
         /* delete thread */
-        $db->query(sprintf("DELETE FROM forums_threads WHERE thread_id = %s", secure($thread_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("DELETE FROM forums_threads WHERE thread_id = %s", secure($thread_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* delete replies */
-        $db->query(sprintf("DELETE FROM forums_replies WHERE thread_id = %s", secure($thread_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("DELETE FROM forums_replies WHERE thread_id = %s", secure($thread_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* update forum */
-        $db->query(sprintf("UPDATE forums SET forum_threads = IF(forum_threads=0,0,forum_threads-1), forum_replies = IF(forum_replies=0,0,forum_replies-%s) WHERE forum_id = %s", secure($thread['replies'], 'int'), secure($thread['forum']['forum_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE forums SET forum_threads = IF(forum_threads=0,0,forum_threads-1), forum_replies = IF(forum_replies=0,0,forum_replies-%s) WHERE forum_id = %s", secure($thread['replies'], 'int'), secure($thread['forum']['forum_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         return $thread['forum'];
     }
 
@@ -12508,9 +12508,9 @@ class User
         $query = !isset($args['query']) ? null : $args['query'];
         /* get replies */
         if ($thread !== null) {
-            $get_total = $db->query(sprintf("SELECT COUNT(*) as count FROM forums_replies WHERE thread_id = %s", secure($thread['thread_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_total = $db->query(sprintf("SELECT COUNT(*) as count FROM forums_replies WHERE thread_id = %s", secure($thread['thread_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         } elseif ($user_id !== null) {
-            $get_total = $db->query(sprintf("SELECT COUNT(*) as count FROM forums_replies WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_total = $db->query(sprintf("SELECT COUNT(*) as count FROM forums_replies WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         } elseif ($query !== null) {
             /* prepare where statement */
             $where = "";
@@ -12521,7 +12521,7 @@ class User
                 $forums_list = $this->spread_ids($args['forums_list']);
                 $where = ($where != '') ? $where . " AND forums_threads.forum_id IN ($forums_list) " : $where;
             }
-            $get_total = $db->query("SELECT COUNT(*) as count FROM forums_replies INNER JOIN forums_threads ON forums_replies.thread_id = forums_threads.thread_id" . $where) or _error("SQL_ERROR_THROWEN");
+            $get_total = $db->query("SELECT COUNT(*) as count FROM forums_replies INNER JOIN forums_threads ON forums_replies.thread_id = forums_threads.thread_id" . $where) or _error("SQL_ERROR_THROWEN", $db);
         }
         $total_items = $get_total->fetch_assoc()['count'];
         if ($total_items > 0) {
@@ -12541,11 +12541,11 @@ class User
             $pager = new Pager($params);
             $limit_query = $pager->getLimitSql();
             if ($thread !== null) {
-                $get_replies = $db->query(sprintf("SELECT forums_replies.*, users.user_group, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_registered FROM forums_replies INNER JOIN users ON forums_replies.user_id = users.user_id WHERE forums_replies.thread_id = %s ORDER BY forums_replies.reply_id ASC " . $limit_query, secure($thread['thread_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_replies = $db->query(sprintf("SELECT forums_replies.*, users.user_group, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_registered FROM forums_replies INNER JOIN users ON forums_replies.user_id = users.user_id WHERE forums_replies.thread_id = %s ORDER BY forums_replies.reply_id ASC " . $limit_query, secure($thread['thread_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             } elseif ($user_id !== null) {
-                $get_replies = $db->query(sprintf("SELECT forums_replies.*, users.user_group, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_registered FROM forums_replies INNER JOIN users ON forums_replies.user_id = users.user_id WHERE forums_replies.user_id = %s ORDER BY forums_replies.reply_id DESC " . $limit_query, secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $get_replies = $db->query(sprintf("SELECT forums_replies.*, users.user_group, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_registered FROM forums_replies INNER JOIN users ON forums_replies.user_id = users.user_id WHERE forums_replies.user_id = %s ORDER BY forums_replies.reply_id DESC " . $limit_query, secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             } elseif ($query !== null) {
-                $get_replies = $db->query("SELECT forums_replies.*, users.user_group, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_registered FROM forums_replies INNER JOIN forums_threads ON forums_replies.thread_id = forums_threads.thread_id INNER JOIN users ON forums_replies.user_id = users.user_id " . $where . " ORDER BY forums_replies.reply_id DESC " . $limit_query) or _error("SQL_ERROR_THROWEN");
+                $get_replies = $db->query("SELECT forums_replies.*, users.user_group, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture, users.user_registered FROM forums_replies INNER JOIN forums_threads ON forums_replies.thread_id = forums_threads.thread_id INNER JOIN users ON forums_replies.user_id = users.user_id " . $where . " ORDER BY forums_replies.reply_id DESC " . $limit_query) or _error("SQL_ERROR_THROWEN", $db);
             }
             while ($reply = $get_replies->fetch_assoc()) {
                 $reply['user_picture'] = get_picture($reply['user_picture'], $reply['user_gender']);
@@ -12589,7 +12589,7 @@ class User
     public function get_forum_reply($reply_id)
     {
         global $db;
-        $get_reply = $db->query(sprintf("SELECT * FROM forums_replies WHERE reply_id = %s", secure($reply_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_reply = $db->query(sprintf("SELECT * FROM forums_replies WHERE reply_id = %s", secure($reply_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_reply->num_rows == 0) {
             return false;
         }
@@ -12651,12 +12651,12 @@ class User
         $purifier = new HTMLPurifier($config);
         $clean_text = $purifier->purify($text);
         /* insert reply */
-        $db->query(sprintf("INSERT INTO forums_replies (thread_id, user_id, text, time) VALUES (%s, %s, %s, %s)", secure($thread_id, 'int'), secure($this->_data['user_id'], 'int'), secure($clean_text), secure($date))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO forums_replies (thread_id, user_id, text, time) VALUES (%s, %s, %s, %s)", secure($thread_id, 'int'), secure($this->_data['user_id'], 'int'), secure($clean_text), secure($date))) or _error("SQL_ERROR_THROWEN", $db);
         $reply_id = $db->insert_id;
         /* update thread */
-        $db->query(sprintf("UPDATE forums_threads SET last_reply = %s, replies = replies + 1 WHERE thread_id = %s", secure($date), secure($thread_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE forums_threads SET last_reply = %s, replies = replies + 1 WHERE thread_id = %s", secure($date), secure($thread_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* update forum */
-        $db->query(sprintf("UPDATE forums SET forum_replies = forum_replies + 1 WHERE forum_id = %s", secure($thread['forum']['forum_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE forums SET forum_replies = forum_replies + 1 WHERE forum_id = %s", secure($thread['forum']['forum_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* post notification */
         $this->post_notification(array('to_user_id' => $thread['user_id'], 'action' => 'forum_reply', 'node_url' => $thread['thread_id'] . '/' . $thread['title_url'] . '/#reply-' . $reply_id));
         return array('reply_id' => $reply_id, 'thread' => $thread);
@@ -12703,7 +12703,7 @@ class User
         $purifier = new HTMLPurifier($config);
         $clean_text = $purifier->purify($text);
         /* edit reply */
-        $db->query(sprintf("UPDATE forums_replies SET text = %s WHERE reply_id = %s", secure($clean_text), secure($reply_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE forums_replies SET text = %s WHERE reply_id = %s", secure($clean_text), secure($reply_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         return array('reply_id' => $reply_id, 'thread' => $reply['thread']);
     }
 
@@ -12736,11 +12736,11 @@ class User
             _error(403);
         }
         /* delete reply */
-        $db->query(sprintf("DELETE FROM  forums_replies WHERE reply_id = %s", secure($reply_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("DELETE FROM  forums_replies WHERE reply_id = %s", secure($reply_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* update thread */
-        $db->query(sprintf("UPDATE forums_threads SET replies = IF(replies=0,0,replies-1) WHERE thread_id = %s", secure($reply['thread_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE forums_threads SET replies = IF(replies=0,0,replies-1) WHERE thread_id = %s", secure($reply['thread_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* update forum */
-        $db->query(sprintf("UPDATE forums SET forum_replies = IF(forum_replies=0,0,forum_replies-1) WHERE forum_id = %s", secure($reply['thread']['forum']['forum_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE forums SET forum_replies = IF(forum_replies=0,0,forum_replies-1) WHERE forum_id = %s", secure($reply['thread']['forum']['forum_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* delete notification */
         $this->delete_notification($reply['thread']['user_id'], 'forum_reply', '', $reply['thread']['thread_id'] . '/' . $reply['thread']['title_url'] . '/#reply-' . $reply_id);
     }
@@ -12801,7 +12801,7 @@ class User
     {
         global $db, $system;
         $users = [];
-        $get_users = $db->query(sprintf("SELECT user_id, user_name, user_firstname, user_lastname, user_gender, user_picture, user_subscribed, user_verified FROM users WHERE user_last_seen >= SUBTIME(NOW(), SEC_TO_TIME(%s)) AND user_chat_enabled = '1'", secure($system['offline_time'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+        $get_users = $db->query(sprintf("SELECT user_id, user_name, user_firstname, user_lastname, user_gender, user_picture, user_subscribed, user_verified FROM users WHERE user_last_seen >= SUBTIME(NOW(), SEC_TO_TIME(%s)) AND user_chat_enabled = '1'", secure($system['offline_time'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_users->num_rows > 0) {
             while ($user = $get_users->fetch_assoc()) {
                 $user['user_picture'] = get_picture($user['user_picture'], $user['user_gender']);
@@ -12832,7 +12832,7 @@ class User
         global $db;
         $genres = [];
         $order_query = ($sorted) ? " ORDER BY genre_order ASC " : " ORDER BY genre_id ASC ";
-        $get_genres = $db->query("SELECT * FROM movies_genres" . $order_query) or _error("SQL_ERROR_THROWEN");
+        $get_genres = $db->query("SELECT * FROM movies_genres" . $order_query) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_genres->num_rows > 0) {
             while ($genre = $get_genres->fetch_assoc()) {
                 $genre['genre_url'] = get_url_text($genre['genre_name']);
@@ -12851,7 +12851,7 @@ class User
     public function get_movies_genre($genre_id)
     {
         global $db;
-        $get_genre = $db->query(sprintf('SELECT * FROM movies_genres WHERE genre_id = %s', secure($genre_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_genre = $db->query(sprintf('SELECT * FROM movies_genres WHERE genre_id = %s', secure($genre_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_genre->num_rows == 0) {
             return false;
         }
@@ -12872,7 +12872,7 @@ class User
         global $db;
         $genres = [];
         if ($movie_genres) {
-            $get_genres = $db->query("SELECT * FROM movies_genres WHERE genre_id IN (" . $movie_genres . ")") or _error("SQL_ERROR_THROWEN");
+            $get_genres = $db->query("SELECT * FROM movies_genres WHERE genre_id IN (" . $movie_genres . ")") or _error("SQL_ERROR_THROWEN", $db);
             if ($get_genres->num_rows > 0) {
                 while ($genre = $get_genres->fetch_assoc()) {
                     $genre['genre_url'] = get_url_text($genre['genre_name']);
@@ -12893,7 +12893,7 @@ class User
     public function get_movie($movie_id)
     {
         global $db;
-        $get_movie = $db->query(sprintf('SELECT * FROM movies WHERE movie_id = %s', secure($movie_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_movie = $db->query(sprintf('SELECT * FROM movies WHERE movie_id = %s', secure($movie_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_movie->num_rows == 0) {
             return false;
         }
@@ -12902,7 +12902,7 @@ class User
         $movie['movie_url'] = get_url_text($movie['title']);
         $movie['genres_list'] = $this->get_movie_genres($movie['genres']);
         /* update thread views */
-        $db->query(sprintf("UPDATE movies SET views = views + 1 WHERE movie_id = %s", secure($movie_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE movies SET views = views + 1 WHERE movie_id = %s", secure($movie_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         return $movie;
     }
 
@@ -12925,9 +12925,9 @@ class User
         $games = [];
         $offset *= $system['games_results'];
         if ($played) {
-            $get_games = $db->query(sprintf('SELECT games.*, games_players.last_played_time FROM games INNER JOIN games_players ON games.game_id = games_players.game_id WHERE games_players.user_id = %s ORDER BY games_players.last_played_time DESC LIMIT %s, %s', secure($this->_data['user_id'], 'int'), secure($offset, 'int', false), secure($system['games_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+            $get_games = $db->query(sprintf('SELECT games.*, games_players.last_played_time FROM games INNER JOIN games_players ON games.game_id = games_players.game_id WHERE games_players.user_id = %s ORDER BY games_players.last_played_time DESC LIMIT %s, %s', secure($this->_data['user_id'], 'int'), secure($offset, 'int', false), secure($system['games_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         } else {
-            $get_games = $db->query(sprintf('SELECT * FROM games ORDER BY game_id ASC LIMIT %s, %s', secure($offset, 'int', false), secure($system['games_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+            $get_games = $db->query(sprintf('SELECT * FROM games ORDER BY game_id ASC LIMIT %s, %s', secure($offset, 'int', false), secure($system['games_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         }
         if ($get_games->num_rows > 0) {
             while ($game = $get_games->fetch_assoc()) {
@@ -12951,7 +12951,7 @@ class User
     public function get_game($game_id)
     {
         global $db, $date;
-        $get_game = $db->query(sprintf('SELECT * FROM games WHERE game_id = %s', secure($game_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_game = $db->query(sprintf('SELECT * FROM games WHERE game_id = %s', secure($game_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_game->num_rows == 0) {
             return false;
         }
@@ -12959,7 +12959,7 @@ class User
         $game['thumbnail'] = get_picture($game['thumbnail'], 'game');
         /* check if the viewer played this game before */
         if ($this->_logged_in) {
-            $db->query(sprintf("DELETE FROM games_players WHERE game_id = %s AND user_id = %s", secure($game['game_id'], 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("DELETE FROM games_players WHERE game_id = %s AND user_id = %s", secure($game['game_id'], 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             $db->query(sprintf("INSERT INTO games_players (game_id, user_id, last_played_time) VALUES (%s, %s, %s)", secure($game['game_id'], 'int'), secure($this->_data['user_id'], 'int'), secure($date)));
         }
         return $game;
@@ -12981,7 +12981,7 @@ class User
     {
         global $db;
         $ads = [];
-        $get_ads = $db->query(sprintf("SELECT * FROM ads_system WHERE place = %s", secure($place))) or _error("SQL_ERROR_THROWEN");
+        $get_ads = $db->query(sprintf("SELECT * FROM ads_system WHERE place = %s", secure($place))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_ads->num_rows > 0) {
             while ($ads_unit = $get_ads->fetch_assoc()) {
                 $ads_unit['code'] = html_entity_decode($ads_unit['code'], ENT_QUOTES);
@@ -13007,7 +13007,7 @@ class User
             return $campaigns;
         }
         /* get active campaigns */
-        $get_campaigns = $db->query(sprintf("SELECT ads_campaigns.*, pages.page_name, `groups`.group_name, users.user_wallet_balance FROM ads_campaigns INNER JOIN users ON ads_campaigns.campaign_user_id = users.user_id LEFT JOIN pages ON ads_campaigns.ads_type = 'page' AND ads_campaigns.ads_page = pages.page_id LEFT JOIN `groups` ON ads_campaigns.ads_type = 'group' AND ads_campaigns.ads_group = `groups`.group_id WHERE ads_campaigns.campaign_is_approved = '1' AND ads_campaigns.campaign_is_active = '1' AND ads_campaigns.ads_placement = %s ORDER BY RAND()", secure($place))) or _error("SQL_ERROR_THROWEN");
+        $get_campaigns = $db->query(sprintf("SELECT ads_campaigns.*, pages.page_name, `groups`.group_name, users.user_wallet_balance FROM ads_campaigns INNER JOIN users ON ads_campaigns.campaign_user_id = users.user_id LEFT JOIN pages ON ads_campaigns.ads_type = 'page' AND ads_campaigns.ads_page = pages.page_id LEFT JOIN `groups` ON ads_campaigns.ads_type = 'group' AND ads_campaigns.ads_group = `groups`.group_id WHERE ads_campaigns.campaign_is_approved = '1' AND ads_campaigns.campaign_is_active = '1' AND ads_campaigns.ads_placement = %s ORDER BY RAND()", secure($place))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_campaigns->num_rows > 0) {
             while ($campaign = $get_campaigns->fetch_assoc()) {
                 // check if viewer get 1 valid campaign
@@ -13018,28 +13018,28 @@ class User
                 // update campaign
                 /* [1] -> campaign expired */
                 if (strtotime($campaign['campaign_end_date']) <= strtotime($date)) {
-                    $db->query(sprintf("UPDATE ads_campaigns SET campaign_is_active = '0' WHERE campaign_id = %s", secure($campaign['campaign_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE ads_campaigns SET campaign_is_active = '0' WHERE campaign_id = %s", secure($campaign['campaign_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     continue;
                 }
                 $remaining = $campaign['campaign_budget'] - $campaign['campaign_spend']; // campaign remaining (budget - spend)
                 /* [2] -> campaign remaining = 0 (spend == budget) */
                 if ($remaining == 0) {
-                    $db->query(sprintf("UPDATE ads_campaigns SET campaign_is_active = '0' WHERE campaign_id = %s", secure($campaign['campaign_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE ads_campaigns SET campaign_is_active = '0' WHERE campaign_id = %s", secure($campaign['campaign_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     continue;
                 }
                 /* [3] -> campaign remaining > campaign's author wallet credit */
                 if ($remaining > $campaign['user_wallet_balance']) {
-                    $db->query(sprintf("UPDATE ads_campaigns SET campaign_is_active = '0' WHERE campaign_id = %s", secure($campaign['campaign_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE ads_campaigns SET campaign_is_active = '0' WHERE campaign_id = %s", secure($campaign['campaign_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     continue;
                 }
                 /* [4] -> campaign remaining < cost per click */
                 if ($remaining < $system['ads_cost_click'] && $campaign['campaign_bidding'] == "click") {
-                    $db->query(sprintf("UPDATE ads_campaigns SET campaign_is_active = '0' WHERE campaign_id = %s", secure($campaign['campaign_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE ads_campaigns SET campaign_is_active = '0' WHERE campaign_id = %s", secure($campaign['campaign_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     continue;
                 }
                 /* [5] -> campaign remaining < cost per view */
                 if ($remaining < $system['ads_cost_view'] && $campaign['campaign_bidding'] == "view") {
-                    $db->query(sprintf("UPDATE ads_campaigns SET campaign_is_active = '0' WHERE campaign_id = %s", secure($campaign['campaign_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE ads_campaigns SET campaign_is_active = '0' WHERE campaign_id = %s", secure($campaign['campaign_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     continue;
                 }
 
@@ -13080,9 +13080,9 @@ class User
                 // update campaign if bidding = view
                 if ($campaign['campaign_bidding'] == "view") {
                     /* update campaign spend & views */
-                    $db->query(sprintf("UPDATE ads_campaigns SET campaign_views = campaign_views + 1, campaign_spend = campaign_spend + %s WHERE campaign_id = %s", secure($system['ads_cost_view']), secure($campaign['campaign_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE ads_campaigns SET campaign_views = campaign_views + 1, campaign_spend = campaign_spend + %s WHERE campaign_id = %s", secure($system['ads_cost_view']), secure($campaign['campaign_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     /* decrease campaign author wallet balance */
-                    $db->query(sprintf('UPDATE users SET user_wallet_balance = IF(user_wallet_balance-%1$s<=0,0,user_wallet_balance-%1$s) WHERE user_id = %2$s', secure($system['ads_cost_view']), secure($campaign['campaign_user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf('UPDATE users SET user_wallet_balance = IF(user_wallet_balance-%1$s<=0,0,user_wallet_balance-%1$s) WHERE user_id = %2$s', secure($system['ads_cost_view']), secure($campaign['campaign_user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 }
 
                 // get campaigns
@@ -13102,7 +13102,7 @@ class User
     {
         global $db;
         $campaigns = [];
-        $get_campaigns = $db->query(sprintf("SELECT * FROM ads_campaigns WHERE campaign_user_id = %s ORDER BY campaign_id DESC", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_campaigns = $db->query(sprintf("SELECT * FROM ads_campaigns WHERE campaign_user_id = %s ORDER BY campaign_id DESC", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_campaigns->num_rows > 0) {
             while ($campaign = $get_campaigns->fetch_assoc()) {
                 $campaigns[] = $campaign;
@@ -13121,7 +13121,7 @@ class User
     public function get_campaign($campaign_id)
     {
         global $db;
-        $get_campaign = $db->query(sprintf("SELECT * FROM ads_campaigns WHERE campaign_id = %s", secure($campaign_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_campaign = $db->query(sprintf("SELECT * FROM ads_campaigns WHERE campaign_id = %s", secure($campaign_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_campaign->num_rows == 0) {
             return false;
         }
@@ -13291,7 +13291,7 @@ class User
             secure($args['ads_image']),
             secure($date),
             secure($campaign_is_approved)
-        )) or _error("SQL_ERROR_THROWEN");
+        )) or _error("SQL_ERROR_THROWEN", $db);
         // send notification to admins
         if ($system['ads_approval_enabled']) {
             $this->notify_system_admins("ads_campaign_added");
@@ -13314,7 +13314,7 @@ class User
             throw new Exception(__("This feature has been disabled by the admin"));
         }
         /* (check&get) campaign */
-        $get_campaign = $db->query(sprintf("SELECT ads_campaigns.*, users.user_wallet_balance FROM ads_campaigns INNER JOIN users ON ads_campaigns.campaign_user_id = users.user_id WHERE ads_campaigns.campaign_id = %s", secure($campaign_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_campaign = $db->query(sprintf("SELECT ads_campaigns.*, users.user_wallet_balance FROM ads_campaigns INNER JOIN users ON ads_campaigns.campaign_user_id = users.user_id WHERE ads_campaigns.campaign_id = %s", secure($campaign_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_campaign->num_rows == 0) {
             _error(403);
         }
@@ -13481,7 +13481,7 @@ class User
             secure($args['ads_image']),
             secure($campaign_is_approved),
             secure($campaign_id, 'int')
-        )) or _error("SQL_ERROR_THROWEN");
+        )) or _error("SQL_ERROR_THROWEN", $db);
         // send notification to admins
         if ($system['ads_approval_enabled']) {
             $this->notify_system_admins("ads_campaign_edited");
@@ -13503,7 +13503,7 @@ class User
             throw new Exception(__("This feature has been disabled by the admin"));
         }
         /* (check&get) campaign */
-        $get_campaign = $db->query(sprintf("SELECT * FROM ads_campaigns WHERE campaign_id = %s", secure($campaign_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_campaign = $db->query(sprintf("SELECT * FROM ads_campaigns WHERE campaign_id = %s", secure($campaign_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_campaign->num_rows == 0) {
             _error(403);
         }
@@ -13521,7 +13521,7 @@ class User
         if (!$can_delete) {
             _error(403);
         }
-        $db->query(sprintf("DELETE FROM ads_campaigns WHERE campaign_id = %s", secure($campaign_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("DELETE FROM ads_campaigns WHERE campaign_id = %s", secure($campaign_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -13540,7 +13540,7 @@ class User
             throw new Exception(__("This feature has been disabled by the admin"));
         }
         /* (check&get) campaign */
-        $get_campaign = $db->query(sprintf("SELECT ads_campaigns.*, users.user_wallet_balance FROM ads_campaigns INNER JOIN users ON ads_campaigns.campaign_user_id = users.user_id WHERE ads_campaigns.campaign_id = %s", secure($campaign_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_campaign = $db->query(sprintf("SELECT ads_campaigns.*, users.user_wallet_balance FROM ads_campaigns INNER JOIN users ON ads_campaigns.campaign_user_id = users.user_id WHERE ads_campaigns.campaign_id = %s", secure($campaign_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_campaign->num_rows == 0) {
             _error(403);
         }
@@ -13586,7 +13586,7 @@ class User
                 }
             }
         }
-        $db->query(sprintf("UPDATE ads_campaigns SET campaign_is_active = %s WHERE campaign_id = %s", secure($is_active), secure($campaign_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE ads_campaigns SET campaign_is_active = %s WHERE campaign_id = %s", secure($is_active), secure($campaign_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -13604,7 +13604,7 @@ class User
             return;
         }
         /* (check&get) campaign */
-        $get_campaign = $db->query(sprintf("SELECT ads_campaigns.*, users.user_wallet_balance FROM ads_campaigns INNER JOIN users ON ads_campaigns.campaign_user_id = users.user_id WHERE ads_campaigns.campaign_id = %s", secure($campaign_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_campaign = $db->query(sprintf("SELECT ads_campaigns.*, users.user_wallet_balance FROM ads_campaigns INNER JOIN users ON ads_campaigns.campaign_user_id = users.user_id WHERE ads_campaigns.campaign_id = %s", secure($campaign_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_campaign->num_rows == 0) {
             _error(403);
         }
@@ -13612,9 +13612,9 @@ class User
         // update campaign if bidding = click
         if ($campaign['campaign_bidding'] == "click") {
             /* update campaign spend & clicks */
-            $db->query(sprintf("UPDATE ads_campaigns SET campaign_clicks = campaign_clicks + 1, campaign_spend = campaign_spend + %s WHERE campaign_id = %s", secure($system['ads_cost_click']), secure($campaign['campaign_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE ads_campaigns SET campaign_clicks = campaign_clicks + 1, campaign_spend = campaign_spend + %s WHERE campaign_id = %s", secure($system['ads_cost_click']), secure($campaign['campaign_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             /* decrease campaign author wallet balance */
-            $db->query(sprintf('UPDATE users SET user_wallet_balance = IF(user_wallet_balance-%1$s<=0,0,user_wallet_balance-%1$s) WHERE user_id = %2$s', secure($system['ads_cost_click']), secure($campaign['campaign_user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf('UPDATE users SET user_wallet_balance = IF(user_wallet_balance-%1$s<=0,0,user_wallet_balance-%1$s) WHERE user_id = %2$s', secure($system['ads_cost_click']), secure($campaign['campaign_user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         }
     }
 
@@ -13663,7 +13663,7 @@ class User
             }
         }
         /* get users */
-        $get_users = $db->query("SELECT COUNT(*) as count FROM users" . $where) or _error("SQL_ERROR_THROWEN");
+        $get_users = $db->query("SELECT COUNT(*) as count FROM users" . $where) or _error("SQL_ERROR_THROWEN", $db);
         $results = $get_users->fetch_assoc()['count'];
         return $results;
     }
@@ -13703,7 +13703,7 @@ class User
         if ($this->_data['user_id'] == $user_id) {
             throw new Exception(__("You can't send money to yourself!"));
         }
-        $check_user = $db->query(sprintf("SELECT COUNT(*) as count FROM users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $check_user = $db->query(sprintf("SELECT COUNT(*) as count FROM users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check_user->fetch_assoc()['count'] == 0) {
             throw new Exception(__("You can't send money to this user!"));
         }
@@ -13712,11 +13712,11 @@ class User
             throw new Exception(__("Your current wallet balance is") . " <strong>" . print_money($this->_data['user_wallet_balance']) . "</strong>, " . __("Recharge your wallet to continue"));
         }
         /* decrease viewer user wallet balance */
-        $db->query(sprintf('UPDATE users SET user_wallet_balance = IF(user_wallet_balance-%1$s<=0,0,user_wallet_balance-%1$s) WHERE user_id = %2$s', secure($amount), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf('UPDATE users SET user_wallet_balance = IF(user_wallet_balance-%1$s<=0,0,user_wallet_balance-%1$s) WHERE user_id = %2$s', secure($amount), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* log this transaction */
         $this->wallet_set_transaction($this->_data['user_id'], 'user', $user_id, $amount, 'out');
         /* increase target user wallet balance */
-        $db->query(sprintf("UPDATE users SET user_wallet_balance = user_wallet_balance + %s WHERE user_id = %s", secure($amount), secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE users SET user_wallet_balance = user_wallet_balance + %s WHERE user_id = %s", secure($amount), secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* send notification (money sent) to the target user */
         $this->post_notification(array('to_user_id' => $user_id, 'action' => 'money_sent', 'node_type' => $amount));
         /* wallet transaction */
@@ -13751,9 +13751,9 @@ class User
             throw new Exception(__("The amount is larger than your current affiliates balance") . " <strong>" . print_money($this->_data['user_affiliate_balance']) . "</strong>");
         }
         /* decrease viewer user affiliate balance */
-        $db->query(sprintf('UPDATE users SET user_affiliate_balance = IF(user_affiliate_balance-%1$s=0,0,user_affiliate_balance-%1$s) WHERE user_id = %2$s', secure($amount), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf('UPDATE users SET user_affiliate_balance = IF(user_affiliate_balance-%1$s=0,0,user_affiliate_balance-%1$s) WHERE user_id = %2$s', secure($amount), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* increase viewer user wallet balance */
-        $db->query(sprintf("UPDATE users SET user_wallet_balance = user_wallet_balance + %s WHERE user_id = %s", secure($amount), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE users SET user_wallet_balance = user_wallet_balance + %s WHERE user_id = %s", secure($amount), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* wallet transaction */
         $this->wallet_set_transaction($this->_data['user_id'], 'withdraw_affiliates', 0, $amount, 'in');
         $_SESSION['wallet_withdraw_affiliates_amount'] = $amount;
@@ -13788,9 +13788,9 @@ class User
         }
         /* decrease viewer user points balance */
         $balance = $this->_data['user_points'] - ($system['points_per_currency'] * $_POST['amount']);
-        $db->query(sprintf("UPDATE users SET user_points = %s WHERE user_id = %s", secure($balance), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE users SET user_points = %s WHERE user_id = %s", secure($balance), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* increase viewer user wallet balance */
-        $db->query(sprintf("UPDATE users SET user_wallet_balance = user_wallet_balance + %s WHERE user_id = %s", secure($amount), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE users SET user_wallet_balance = user_wallet_balance + %s WHERE user_id = %s", secure($amount), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* wallet transaction */
         $this->wallet_set_transaction($this->_data['user_id'], 'withdraw_points', 0, $amount, 'in');
         $_SESSION['wallet_withdraw_points_amount'] = $amount;
@@ -13823,9 +13823,9 @@ class User
             throw new Exception(__("The amount is larger than your current funding balance") . " <strong>" . print_money($this->_data['user_funding_balance']) . "</strong>");
         }
         /* decrease viewer user funding balance */
-        $db->query(sprintf('UPDATE users SET user_funding_balance = IF(user_funding_balance-%1$s=0,0,user_funding_balance-%1$s) WHERE user_id = %2$s', secure($amount), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf('UPDATE users SET user_funding_balance = IF(user_funding_balance-%1$s=0,0,user_funding_balance-%1$s) WHERE user_id = %2$s', secure($amount), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* increase viewer user wallet balance */
-        $db->query(sprintf("UPDATE users SET user_wallet_balance = user_wallet_balance + %s WHERE user_id = %s", secure($amount), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE users SET user_wallet_balance = user_wallet_balance + %s WHERE user_id = %s", secure($amount), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* wallet transaction */
         $this->wallet_set_transaction($this->_data['user_id'], 'withdraw_funding', 0, $amount, 'in');
         $_SESSION['wallet_withdraw_funding_amount'] = $amount;
@@ -13845,7 +13845,7 @@ class User
     public function wallet_set_transaction($user_id, $node_type, $node_id, $amount, $type)
     {
         global $db, $system, $date;
-        $db->query(sprintf("INSERT INTO wallet_transactions (user_id, node_type, node_id, amount, type, date) VALUES (%s, %s, %s, %s, %s, %s)", secure($user_id, 'int'), secure($node_type), secure($node_id, 'int'), secure($amount), secure($type), secure($date))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO wallet_transactions (user_id, node_type, node_id, amount, type, date) VALUES (%s, %s, %s, %s, %s, %s)", secure($user_id, 'int'), secure($node_type), secure($node_id, 'int'), secure($amount), secure($type), secure($date))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -13858,7 +13858,7 @@ class User
     {
         global $db;
         $transactions = [];
-        $get_transactions = $db->query(sprintf("SELECT wallet_transactions.*, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture FROM wallet_transactions LEFT JOIN users ON wallet_transactions.node_type='user' AND wallet_transactions.node_id = users.user_id WHERE wallet_transactions.user_id = %s ORDER BY wallet_transactions.transaction_id DESC", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_transactions = $db->query(sprintf("SELECT wallet_transactions.*, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture FROM wallet_transactions LEFT JOIN users ON wallet_transactions.node_type='user' AND wallet_transactions.node_id = users.user_id WHERE wallet_transactions.user_id = %s ORDER BY wallet_transactions.transaction_id DESC", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_transactions->num_rows > 0) {
             while ($transaction = $get_transactions->fetch_assoc()) {
                 if ($transaction['node_type'] == "user") {
@@ -13902,7 +13902,7 @@ class User
             blueModal("ERROR", __("Sorry"), __("There is no enough credit in your wallet to buy this") . ", " . __("Recharge your wallet to continue"));
         }
         /* decrease viewer user wallet balance */
-        $db->query(sprintf('UPDATE users SET user_wallet_balance = IF(user_wallet_balance-%1$s<=0,0,user_wallet_balance-%1$s) WHERE user_id = %2$s', secure($package['price']), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf('UPDATE users SET user_wallet_balance = IF(user_wallet_balance-%1$s<=0,0,user_wallet_balance-%1$s) WHERE user_id = %2$s', secure($package['price']), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* log this transaction */
         $this->wallet_set_transaction($this->_data['user_id'], 'package_payment', $package['package_id'], $package['price'], 'out');
         /* update user package */
@@ -14037,7 +14037,7 @@ class User
     public function set_coinpayments_transaction($amount, $product)
     {
         global $db, $system, $date;
-        $db->query(sprintf("INSERT INTO coinpayments_transactions (user_id, amount, product, created_at, last_update, status) VALUES (%s, %s, %s, %s, %s, '0')", secure($this->_data['user_id'], 'int'), secure($amount), secure($product), secure($date), secure($date))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO coinpayments_transactions (user_id, amount, product, created_at, last_update, status) VALUES (%s, %s, %s, %s, %s, '0')", secure($this->_data['user_id'], 'int'), secure($amount), secure($product), secure($date), secure($date))) or _error("SQL_ERROR_THROWEN", $db);
         return $db->insert_id;
     }
 
@@ -14052,13 +14052,13 @@ class User
     public function get_coinpayments_transaction($transaction_id, $transaction_txn_id)
     {
         global $db;
-        $get_transaction = $db->query(sprintf("SELECT * FROM coinpayments_transactions WHERE transaction_id = %s", secure($transaction_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_transaction = $db->query(sprintf("SELECT * FROM coinpayments_transactions WHERE transaction_id = %s", secure($transaction_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_transaction->num_rows == 0) {
             return false;
         }
         $transaction = $get_transaction->fetch_assoc();
         if (is_empty($transaction['transaction_txn_id'])) {
-            $db->query(sprintf("UPDATE coinpayments_transactions SET transaction_txn_id = %s WHERE transaction_id = %s", secure($transaction_txn_id), secure($transaction_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE coinpayments_transactions SET transaction_txn_id = %s WHERE transaction_id = %s", secure($transaction_txn_id), secure($transaction_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         }
         return $transaction;
     }
@@ -14075,7 +14075,7 @@ class User
     public function update_coinpayments_transaction($transaction_id, $status_message, $status = 0)
     {
         global $db, $date;
-        $db->query(sprintf("UPDATE coinpayments_transactions SET status = %s, status_message = %s, last_update = %s WHERE transaction_id = %s", secure($status, 'int'), secure($status_message), secure($date), secure($transaction_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE coinpayments_transactions SET status = %s, status_message = %s, last_update = %s WHERE transaction_id = %s", secure($status, 'int'), secure($status_message), secure($date), secure($transaction_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         exit;
     }
 
@@ -14091,9 +14091,9 @@ class User
         global $db;
         $transactions = [];
         if ($get_all) {
-            $get_transactions = $db->query("SELECT coinpayments_transactions.*, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture FROM coinpayments_transactions LEFT JOIN users ON coinpayments_transactions.user_id = users.user_id  ORDER BY coinpayments_transactions.created_at DESC, coinpayments_transactions.last_update DESC") or _error("SQL_ERROR_THROWEN");
+            $get_transactions = $db->query("SELECT coinpayments_transactions.*, users.user_name, users.user_firstname, users.user_lastname, users.user_gender, users.user_picture FROM coinpayments_transactions LEFT JOIN users ON coinpayments_transactions.user_id = users.user_id  ORDER BY coinpayments_transactions.created_at DESC, coinpayments_transactions.last_update DESC") or _error("SQL_ERROR_THROWEN", $db);
         } else {
-            $get_transactions = $db->query(sprintf("SELECT * FROM coinpayments_transactions WHERE user_id = %s ORDER BY transaction_id DESC", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_transactions = $db->query(sprintf("SELECT * FROM coinpayments_transactions WHERE user_id = %s ORDER BY transaction_id DESC", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         }
         if ($get_transactions->num_rows > 0) {
             while ($transaction = $get_transactions->fetch_assoc()) {
@@ -14121,7 +14121,7 @@ class User
     {
         global $db;
         $packages = [];
-        $get_packages = $db->query("SELECT * FROM packages ORDER BY package_order ASC") or _error("SQL_ERROR_THROWEN");
+        $get_packages = $db->query("SELECT * FROM packages ORDER BY package_order ASC") or _error("SQL_ERROR_THROWEN", $db);
         if ($get_packages->num_rows > 0) {
             while ($package = $get_packages->fetch_assoc()) {
                 $package['icon'] = get_picture($package['icon'], 'package');
@@ -14141,7 +14141,7 @@ class User
     public function get_package($package_id)
     {
         global $db;
-        $get_package = $db->query(sprintf('SELECT * FROM packages WHERE package_id = %s', secure($package_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_package = $db->query(sprintf('SELECT * FROM packages WHERE package_id = %s', secure($package_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_package->num_rows == 0) {
             return false;
         }
@@ -14189,11 +14189,11 @@ class User
                 }
             }
             /* remove user package */
-            $db->query(sprintf("UPDATE users SET user_subscribed = '0', user_package = null, user_subscription_date = null, user_boosted_posts = '0', user_boosted_pages = '0' WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE users SET user_subscribed = '0', user_package = null, user_subscription_date = null, user_boosted_posts = '0', user_boosted_pages = '0' WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             /* unboost posts */
-            $db->query(sprintf("UPDATE posts SET boosted = '0' WHERE user_id = %s AND user_type = 'user'", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE posts SET boosted = '0' WHERE user_id = %s AND user_type = 'user'", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             /* unboost pages */
-            $db->query(sprintf("UPDATE pages SET page_boosted = '0' WHERE page_admin = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE pages SET page_boosted = '0' WHERE page_admin = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         }
     }
 
@@ -14206,7 +14206,7 @@ class User
     public function check_users_package()
     {
         global $db;
-        $get_subscribed_users = $db->query("SELECT user_id, user_package, user_subscription_date FROM users WHERE user_subscribed = '1'") or _error("SQL_ERROR_THROWEN");
+        $get_subscribed_users = $db->query("SELECT user_id, user_package, user_subscription_date FROM users WHERE user_subscribed = '1'") or _error("SQL_ERROR_THROWEN", $db);
         if ($get_subscribed_users->num_rows == 0) {
             return;
         }
@@ -14241,11 +14241,11 @@ class User
                 }
             }
             /* remove user package */
-            $db->query(sprintf("UPDATE users SET user_subscribed = '0', user_package = null, user_subscription_date = null, user_boosted_posts = '0', user_boosted_pages = '0' WHERE user_id = %s", secure($subscribed_user['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE users SET user_subscribed = '0', user_package = null, user_subscription_date = null, user_boosted_posts = '0', user_boosted_pages = '0' WHERE user_id = %s", secure($subscribed_user['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             /* unboost posts */
-            $db->query(sprintf("UPDATE posts SET boosted = '0' WHERE user_id = %s AND user_type = 'user'", secure($subscribed_user['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE posts SET boosted = '0' WHERE user_id = %s AND user_type = 'user'", secure($subscribed_user['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             /* unboost pages */
-            $db->query(sprintf("UPDATE pages SET page_boosted = '0' WHERE page_admin = %s", secure($subscribed_user['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE pages SET page_boosted = '0' WHERE page_admin = %s", secure($subscribed_user['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         }
     }
 
@@ -14273,9 +14273,9 @@ class User
         /* update user package */
         $verification_statement = ($package_verification) ? " user_verified = '1', " : ""; /* to not affect already verified users */
         $free_trial = ($package_price == "0") ? " user_free_tried = '1', " : "";
-        $db->query(sprintf("UPDATE users SET " . $verification_statement . $free_trial . " user_subscribed = '1', user_package = %s, user_subscription_date = %s, user_boosted_posts = '0', user_boosted_pages = '0' WHERE user_id = %s", secure($package_id, 'int'), secure($date), secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE users SET " . $verification_statement . $free_trial . " user_subscribed = '1', user_package = %s, user_subscription_date = %s, user_boosted_posts = '0', user_boosted_pages = '0' WHERE user_id = %s", secure($package_id, 'int'), secure($date), secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* insert the payment */
-        $db->query(sprintf("INSERT INTO packages_payments (payment_date, package_name, package_price, user_id) VALUES (%s, %s, %s, %s)", secure($date), secure($package_name), secure($package_price), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO packages_payments (payment_date, package_name, package_price, user_id) VALUES (%s, %s, %s, %s)", secure($date), secure($package_name), secure($package_price), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* affiliates system */
         if ($process_affiliates) {
             $this->process_affiliates("packages", $this->_data['user_id'], $this->_data['user_referrer_id'], $package_price);
@@ -14318,7 +14318,7 @@ class User
         if (!$system['affiliates_enabled'] || $system['affiliate_type'] != $type || !isset($_COOKIE[$this->_cookie_user_referrer])) {
             return;
         }
-        $get_referrer = $db->query(sprintf("SELECT user_id FROM users WHERE user_name = %s", secure($_COOKIE[$this->_cookie_user_referrer]))) or _error("SQL_ERROR_THROWEN");
+        $get_referrer = $db->query(sprintf("SELECT user_id FROM users WHERE user_name = %s", secure($_COOKIE[$this->_cookie_user_referrer]))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_referrer->num_rows == 0) {
             return;
         }
@@ -14338,7 +14338,7 @@ class User
         /* update referrer balance */
         $this->update_referrer_balance($referrer['user_id'], $referee_id, $balance);
         /* update referee */
-        $db->query(sprintf("UPDATE users SET user_referrer_id = %s WHERE user_id = %s", secure($referrer['user_id'], 'int'), secure($referee_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE users SET user_referrer_id = %s WHERE user_id = %s", secure($referrer['user_id'], 'int'), secure($referee_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* points balance */
         $this->points_balance("add", $referrer['user_id'], "referred", $referee_id);
     }
@@ -14357,12 +14357,12 @@ class User
     {
         global $db, $system;
         /* update current referrer balance */
-        $db->query(sprintf("UPDATE users SET user_affiliate_balance = user_affiliate_balance + %s WHERE user_id = %s", secure($balance), secure($referrer_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE users SET user_affiliate_balance = user_affiliate_balance + %s WHERE user_id = %s", secure($balance), secure($referrer_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* insert to users affiliates graph */
-        $db->query(sprintf("INSERT INTO users_affiliates (referrer_id, referee_id) VALUES (%s, %s)", secure($referrer_id, 'int'), secure($referee_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO users_affiliates (referrer_id, referee_id) VALUES (%s, %s)", secure($referrer_id, 'int'), secure($referee_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* get parent referrer */
         if ($iteration < $system['affiliates_levels']) {
-            $get_referrer = $db->query(sprintf("SELECT user_referrer_id FROM users WHERE user_referrer_id != '0' AND user_id = %s", secure($referrer_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_referrer = $db->query(sprintf("SELECT user_referrer_id FROM users WHERE user_referrer_id != '0' AND user_id = %s", secure($referrer_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             if ($get_referrer->num_rows > 0) {
                 $referrer = $get_referrer->fetch_assoc();
                 $iteration++;
@@ -14385,7 +14385,7 @@ class User
         global $db, $system;
         $affiliates = [];
         $offset *= $system['max_results'];
-        $get_affiliates = $db->query(sprintf('SELECT user_id, user_name, user_firstname, user_lastname, user_gender, user_picture, user_subscribed, user_verified FROM users INNER JOIN users_affiliates ON users.user_id = users_affiliates.referee_id WHERE users_affiliates.referrer_id = %s LIMIT %s, %s', secure($user_id, 'int'), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN");
+        $get_affiliates = $db->query(sprintf('SELECT user_id, user_name, user_firstname, user_lastname, user_gender, user_picture, user_subscribed, user_verified FROM users INNER JOIN users_affiliates ON users.user_id = users_affiliates.referee_id WHERE users_affiliates.referrer_id = %s LIMIT %s, %s', secure($user_id, 'int'), secure($offset, 'int', false), secure($system['max_results'], 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_affiliates->num_rows > 0) {
             while ($affiliate = $get_affiliates->fetch_assoc()) {
                 $affiliate['user_picture'] = get_picture($affiliate['user_picture'], $affiliate['user_gender']);
@@ -14449,41 +14449,41 @@ class User
                     return;
                 }
                 /* add points */
-                $db->query(sprintf("UPDATE users SET user_points = user_points + %s WHERE user_id = %s", secure($points_per_node, 'int'), secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE users SET user_points = user_points + %s WHERE user_id = %s", secure($points_per_node, 'int'), secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* update the node as earned */
                 switch ($node_type) {
                     case 'post':
-                        $db->query(sprintf("UPDATE posts SET points_earned = '1' WHERE post_id = %s", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                        $db->query(sprintf("UPDATE posts SET points_earned = '1' WHERE post_id = %s", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                         break;
 
                     case 'comment':
-                        $db->query(sprintf("UPDATE posts_comments SET points_earned = '1' WHERE comment_id = %s", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                        $db->query(sprintf("UPDATE posts_comments SET points_earned = '1' WHERE comment_id = %s", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                         break;
 
                     case 'posts_reactions':
-                        $db->query(sprintf("UPDATE posts_reactions SET points_earned = '1' WHERE id = %s", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                        $db->query(sprintf("UPDATE posts_reactions SET points_earned = '1' WHERE id = %s", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                         break;
 
                     case 'posts_photos_reactions':
-                        $db->query(sprintf("UPDATE posts_photos_reactions SET points_earned = '1' WHERE id = %s", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                        $db->query(sprintf("UPDATE posts_photos_reactions SET points_earned = '1' WHERE id = %s", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                         break;
 
                     case 'posts_comments_reactions':
-                        $db->query(sprintf("UPDATE posts_comments_reactions SET points_earned = '1' WHERE id = %s", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                        $db->query(sprintf("UPDATE posts_comments_reactions SET points_earned = '1' WHERE id = %s", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                         break;
 
                     case 'follow':
-                        $db->query(sprintf("UPDATE followings SET points_earned = '1' WHERE following_id = %s AND user_id = %s", secure($user_id, 'int'), secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                        $db->query(sprintf("UPDATE followings SET points_earned = '1' WHERE following_id = %s AND user_id = %s", secure($user_id, 'int'), secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
 
                     case 'referred':
-                        $db->query(sprintf("UPDATE users SET points_earned = '1' WHERE user_referrer_id = %s AND user_id = %s", secure($user_id, 'int'), secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                        $db->query(sprintf("UPDATE users SET points_earned = '1' WHERE user_referrer_id = %s AND user_id = %s", secure($user_id, 'int'), secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                         break;
                 }
                 break;
 
             case 'delete':
                 /* delete points */
-                $db->query(sprintf('UPDATE users SET user_points = IF(user_points-%1$s<=0,0,user_points-%1$s) WHERE user_id = %2$s', secure($points_per_node, 'int'), secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf('UPDATE users SET user_points = IF(user_points-%1$s<=0,0,user_points-%1$s) WHERE user_id = %2$s', secure($points_per_node, 'int'), secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
         }
     }
@@ -14499,25 +14499,25 @@ class User
     {
         global $db, $system;
         /* posts */
-        $get_posts = $db->query(sprintf("SELECT COUNT(*) as count FROM posts WHERE points_earned = '1' AND posts.time >= DATE_SUB(NOW(),INTERVAL 1 DAY) AND user_id = %s AND user_type = 'user'", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_posts = $db->query(sprintf("SELECT COUNT(*) as count FROM posts WHERE points_earned = '1' AND posts.time >= DATE_SUB(NOW(),INTERVAL 1 DAY) AND user_id = %s AND user_type = 'user'", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         $total_posts_points = $get_posts->fetch_assoc()['count'] * $system['points_per_post'];
         /* comments */
-        $get_comments = $db->query(sprintf("SELECT COUNT(*) as count FROM posts_comments WHERE points_earned = '1' AND posts_comments.time >= DATE_SUB(NOW(),INTERVAL 1 DAY) AND user_id = %s AND user_type = 'user'", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_comments = $db->query(sprintf("SELECT COUNT(*) as count FROM posts_comments WHERE points_earned = '1' AND posts_comments.time >= DATE_SUB(NOW(),INTERVAL 1 DAY) AND user_id = %s AND user_type = 'user'", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         $total_comments_points = $get_comments->fetch_assoc()['count'] * $system['points_per_comment'];
         /* reactions */
         $total_reactions_points = 0;
-        $get_reactions_posts = $db->query(sprintf("SELECT COUNT(*) as count FROM posts_reactions WHERE points_earned = '1' AND posts_reactions.reaction_time >= DATE_SUB(NOW(),INTERVAL 1 DAY) AND user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_reactions_posts = $db->query(sprintf("SELECT COUNT(*) as count FROM posts_reactions WHERE points_earned = '1' AND posts_reactions.reaction_time >= DATE_SUB(NOW(),INTERVAL 1 DAY) AND user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         $total_reactions_points += $get_reactions_posts->fetch_assoc()['count'];
-        $get_reactions_photos = $db->query(sprintf("SELECT COUNT(*) as count FROM posts_photos_reactions WHERE points_earned = '1' AND posts_photos_reactions.reaction_time >= DATE_SUB(NOW(),INTERVAL 1 DAY) AND user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_reactions_photos = $db->query(sprintf("SELECT COUNT(*) as count FROM posts_photos_reactions WHERE points_earned = '1' AND posts_photos_reactions.reaction_time >= DATE_SUB(NOW(),INTERVAL 1 DAY) AND user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         $total_reactions_points += $get_reactions_photos->fetch_assoc()['count'];
-        $get_reactions_comments = $db->query(sprintf("SELECT COUNT(*) as count FROM posts_comments_reactions WHERE points_earned = '1' AND posts_comments_reactions.reaction_time >= DATE_SUB(NOW(),INTERVAL 1 DAY) AND user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_reactions_comments = $db->query(sprintf("SELECT COUNT(*) as count FROM posts_comments_reactions WHERE points_earned = '1' AND posts_comments_reactions.reaction_time >= DATE_SUB(NOW(),INTERVAL 1 DAY) AND user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         $total_reactions_points += $get_reactions_comments->fetch_assoc()['count'];
         $total_reactions_points *= $system['points_per_reaction'];
         /* followers */
-        $get_followers = $db->query(sprintf("SELECT COUNT(*) as count FROM followings WHERE points_earned = '1' AND followings.time >= DATE_SUB(NOW(),INTERVAL 1 DAY) AND following_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_followers = $db->query(sprintf("SELECT COUNT(*) as count FROM followings WHERE points_earned = '1' AND followings.time >= DATE_SUB(NOW(),INTERVAL 1 DAY) AND following_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         $total_followers_points = $get_followers->fetch_assoc()['count'] * $system['points_per_follow'];
         /* affiliates */
-        $get_affiliates = $db->query(sprintf("SELECT COUNT(*) as count FROM users WHERE points_earned = '1' AND user_registered >= DATE_SUB(NOW(),INTERVAL 1 DAY) AND user_referrer_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_affiliates = $db->query(sprintf("SELECT COUNT(*) as count FROM users WHERE points_earned = '1' AND user_registered >= DATE_SUB(NOW(),INTERVAL 1 DAY) AND user_referrer_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         $total_affiliates_points = $get_affiliates->fetch_assoc()['count'] * $system['points_per_referred'];
         /* total daily points*/
         $total_daily_points = $total_posts_points + $total_comments_points + $total_reactions_points + $total_followers_points + $total_affiliates_points;
@@ -14537,21 +14537,21 @@ class User
     public function reset_all_users_points()
     {
         global $db;
-        $db->query("UPDATE users SET user_points = '0'") or _error("SQL_ERROR_THROWEN");
+        $db->query("UPDATE users SET user_points = '0'") or _error("SQL_ERROR_THROWEN", $db);
         /* clear posts */
-        $db->query("UPDATE posts SET points_earned = '0'") or _error("SQL_ERROR_THROWEN");
+        $db->query("UPDATE posts SET points_earned = '0'") or _error("SQL_ERROR_THROWEN", $db);
         /* clear posts comments */
-        $db->query("UPDATE posts_comments SET points_earned = '0'") or _error("SQL_ERROR_THROWEN");
+        $db->query("UPDATE posts_comments SET points_earned = '0'") or _error("SQL_ERROR_THROWEN", $db);
         /* clear posts reactions */
-        $db->query("UPDATE posts_reactions SET points_earned = '0'") or _error("SQL_ERROR_THROWEN");
+        $db->query("UPDATE posts_reactions SET points_earned = '0'") or _error("SQL_ERROR_THROWEN", $db);
         /* clear photos reactions */
-        $db->query("UPDATE posts_photos_reactions SET points_earned = '0'") or _error("SQL_ERROR_THROWEN");
+        $db->query("UPDATE posts_photos_reactions SET points_earned = '0'") or _error("SQL_ERROR_THROWEN", $db);
         /* clear comments reactions */
-        $db->query("UPDATE posts_comments_reactions SET points_earned = '0'") or _error("SQL_ERROR_THROWEN");
+        $db->query("UPDATE posts_comments_reactions SET points_earned = '0'") or _error("SQL_ERROR_THROWEN", $db);
         /* clear followers */
-        $db->query("UPDATE followings SET points_earned = '0'") or _error("SQL_ERROR_THROWEN");
+        $db->query("UPDATE followings SET points_earned = '0'") or _error("SQL_ERROR_THROWEN", $db);
         /* clear affiliates */
-        $db->query("UPDATE users SET points_earned = '0'") or _error("SQL_ERROR_THROWEN");
+        $db->query("UPDATE users SET points_earned = '0'") or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -14575,7 +14575,7 @@ class User
         $posts = [];
         $offset *= $results;
         /* get posts */
-        $get_posts = $db->query(sprintf("SELECT posts.post_id FROM posts INNER JOIN posts_funding ON posts.post_id = posts_funding.post_id INNER JOIN users ON posts.user_id = users.user_id and posts.user_type = 'user' WHERE posts.post_type = 'funding' " . $where_query . " " . " ORDER BY posts.post_id DESC LIMIT %s, %s", secure($offset, 'int', false), secure($results, 'int', false))) or _error("SQL_ERROR_THROWEN");
+        $get_posts = $db->query(sprintf("SELECT posts.post_id FROM posts INNER JOIN posts_funding ON posts.post_id = posts_funding.post_id INNER JOIN users ON posts.user_id = users.user_id and posts.user_type = 'user' WHERE posts.post_type = 'funding' " . $where_query . " " . " ORDER BY posts.post_id DESC LIMIT %s, %s", secure($offset, 'int', false), secure($results, 'int', false))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_posts->num_rows > 0) {
             while ($post = $get_posts->fetch_assoc()) {
                 $post = $this->get_post($post['post_id']);
@@ -14609,11 +14609,11 @@ class User
         $commission = ($system['funding_commission']) ? $donation_amount * ($system['funding_commission'] / 100) : 0;
         $donation_amount = $donation_amount - $commission;
         /* update funding request */
-        $db->query(sprintf("UPDATE posts_funding SET raised_amount = raised_amount + %s, total_donations = total_donations + 1 WHERE post_id = %s", secure($donation_amount), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE posts_funding SET raised_amount = raised_amount + %s, total_donations = total_donations + 1 WHERE post_id = %s", secure($donation_amount), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* insert donor */
-        $db->query(sprintf("INSERT INTO posts_funding_donors (user_id, post_id, donation_amount, donation_time) VALUES (%s, %s, %s, %s)", secure($donor_id, 'int'), secure($post_id, 'int'), secure($donation_amount), secure($date)))  or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO posts_funding_donors (user_id, post_id, donation_amount, donation_time) VALUES (%s, %s, %s, %s)", secure($donor_id, 'int'), secure($post_id, 'int'), secure($donation_amount), secure($date)))  or _error("SQL_ERROR_THROWEN", $db);
         /* increase target user funding balance */
-        $db->query(sprintf("UPDATE users SET user_funding_balance = user_funding_balance + %s WHERE user_id = %s", secure($donation_amount), secure($post['author_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE users SET user_funding_balance = user_funding_balance + %s WHERE user_id = %s", secure($donation_amount), secure($post['author_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* send notification to the post author */
         $this->post_notification(array('to_user_id' => $post['author_id'], 'action' => 'funding_donation', 'node_type' => $donation_amount, 'node_url' => $post_id));
     }
@@ -14633,7 +14633,7 @@ class User
     {
         global $db;
         $apps = [];
-        $get_apps = $db->query(sprintf("SELECT * FROM developers_apps WHERE app_user_id = %s ORDER BY app_id DESC", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_apps = $db->query(sprintf("SELECT * FROM developers_apps WHERE app_user_id = %s ORDER BY app_id DESC", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_apps->num_rows > 0) {
             while ($app = $get_apps->fetch_assoc()) {
                 $apps[] = $app;
@@ -14652,7 +14652,7 @@ class User
     {
         global $db;
         $apps = [];
-        $get_apps = $db->query(sprintf("SELECT developers_apps.* FROM developers_apps_users INNER JOIN developers_apps ON developers_apps_users.app_id = developers_apps.app_id WHERE developers_apps_users.user_id = %s ORDER BY developers_apps_users.id DESC", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_apps = $db->query(sprintf("SELECT developers_apps.* FROM developers_apps_users INNER JOIN developers_apps ON developers_apps_users.app_id = developers_apps.app_id WHERE developers_apps_users.user_id = %s ORDER BY developers_apps_users.id DESC", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_apps->num_rows > 0) {
             while ($app = $get_apps->fetch_assoc()) {
                 $apps[] = $app;
@@ -14671,7 +14671,7 @@ class User
     public function get_app($app_auth_id)
     {
         global $db;
-        $get_app = $db->query(sprintf("SELECT developers_apps.*, developers_apps_categories.category_name FROM developers_apps LEFT JOIN developers_apps_categories ON developers_apps.app_category_id = developers_apps_categories.category_id WHERE developers_apps.app_auth_id = %s", secure($app_auth_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_app = $db->query(sprintf("SELECT developers_apps.*, developers_apps_categories.category_name FROM developers_apps LEFT JOIN developers_apps_categories ON developers_apps.app_category_id = developers_apps_categories.category_id WHERE developers_apps.app_auth_id = %s", secure($app_auth_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_app->num_rows == 0) {
             return false;
         }
@@ -14719,7 +14719,7 @@ class User
         if (is_empty($args['app_category'])) {
             throw new Exception(__("You must select valid category for your App"));
         }
-        $check = $db->query(sprintf("SELECT COUNT(*) as count FROM developers_apps_categories WHERE category_id = %s", secure($args['app_category'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $check = $db->query(sprintf("SELECT COUNT(*) as count FROM developers_apps_categories WHERE category_id = %s", secure($args['app_category'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check->fetch_assoc()['count'] == 0) {
             throw new Exception(__("You must select valid category for your App"));
         }
@@ -14753,7 +14753,7 @@ class User
             secure($args['app_description']),
             secure($args['app_icon']),
             secure($date)
-        )) or _error("SQL_ERROR_THROWEN");
+        )) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -14772,7 +14772,7 @@ class User
             throw new Exception(__("This feature has been disabled by the admin"));
         }
         /* (check&get) app */
-        $get_app = $db->query(sprintf("SELECT * FROM developers_apps WHERE app_auth_id = %s", secure($app_auth_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_app = $db->query(sprintf("SELECT * FROM developers_apps WHERE app_auth_id = %s", secure($app_auth_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_app->num_rows == 0) {
             _error(403);
         }
@@ -14816,7 +14816,7 @@ class User
         if (is_empty($args['app_category'])) {
             throw new Exception(__("You must select valid category for your App"));
         }
-        $check = $db->query(sprintf("SELECT COUNT(*) as count FROM developers_apps_categories WHERE category_id = %s", secure($args['app_category'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $check = $db->query(sprintf("SELECT COUNT(*) as count FROM developers_apps_categories WHERE category_id = %s", secure($args['app_category'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check->fetch_assoc()['count'] == 0) {
             throw new Exception(__("You must select valid category for your App"));
         }
@@ -14840,7 +14840,7 @@ class User
             secure($args['app_description']),
             secure($args['app_icon']),
             secure($app_auth_id, 'int')
-        )) or _error("SQL_ERROR_THROWEN");
+        )) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -14858,7 +14858,7 @@ class User
             throw new Exception(__("This feature has been disabled by the admin"));
         }
         /* (check&get) app */
-        $get_app = $db->query(sprintf("SELECT * FROM developers_apps WHERE app_auth_id = %s", secure($app_auth_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_app = $db->query(sprintf("SELECT * FROM developers_apps WHERE app_auth_id = %s", secure($app_auth_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_app->num_rows == 0) {
             _error(403);
         }
@@ -14876,8 +14876,8 @@ class User
         if (!$can_delete) {
             _error(403);
         }
-        $db->query(sprintf("DELETE FROM developers_apps WHERE app_auth_id = %s", secure($app_auth_id, 'int'))) or _error("SQL_ERROR_THROWEN");
-        $db->query(sprintf("DELETE FROM developers_apps_users WHERE app_id = %s", secure($app['app_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("DELETE FROM developers_apps WHERE app_auth_id = %s", secure($app_auth_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+        $db->query(sprintf("DELETE FROM developers_apps_users WHERE app_id = %s", secure($app['app_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -14895,11 +14895,11 @@ class User
             throw new Exception(__("This feature has been disabled by the admin"));
         }
         /* (check&get) app */
-        $get_app = $db->query(sprintf("SELECT * FROM developers_apps WHERE app_auth_id = %s", secure($app_auth_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_app = $db->query(sprintf("SELECT * FROM developers_apps WHERE app_auth_id = %s", secure($app_auth_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_app->num_rows > 0) {
             $app = $get_app->fetch_assoc();
             /* delete the user-app connection */
-            $db->query(sprintf("DELETE FROM developers_apps_users WHERE app_id = %s AND user_id = %s", secure($app['app_id'], 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("DELETE FROM developers_apps_users WHERE app_id = %s AND user_id = %s", secure($app['app_id'], 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         }
     }
 
@@ -14932,13 +14932,13 @@ class User
             }
         }
         /* check if user OAuthenticated this app before */
-        $check_user_connection = $db->query(sprintf("SELECT COUNT(*) as count FROM developers_apps_users WHERE app_id = %s AND user_id = %s", secure($app['app_id'], 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $check_user_connection = $db->query(sprintf("SELECT COUNT(*) as count FROM developers_apps_users WHERE app_id = %s AND user_id = %s", secure($app['app_id'], 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check_user_connection->fetch_assoc()['count'] > 0) {
             /* user OAuthenticated this app -> return redirect URL */
             /* generate new auth_key */
             $auth_key = get_hash_token();
             /* update auth_key */
-            $db->query(sprintf("UPDATE developers_apps_users SET auth_key = %s WHERE app_id = %s AND user_id = %s", secure($auth_key), secure($app['app_id'], 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE developers_apps_users SET auth_key = %s WHERE app_id = %s AND user_id = %s", secure($auth_key), secure($app['app_id'], 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             /* return redirect_URL */
             $redirect_URL = $app['app_redirect_url'] . "?auth_key=" . $auth_key;
             if ($approving) {
@@ -14952,7 +14952,7 @@ class User
                 /* generate new auth_key */
                 $auth_key = get_hash_token();
                 /* insert new auth_key */
-                $db->query(sprintf("INSERT INTO developers_apps_users (app_id, user_id, auth_key) VALUES (%s, %s, %s)", secure($app['app_id'], 'int'), secure($this->_data['user_id'], 'int'), secure($auth_key))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("INSERT INTO developers_apps_users (app_id, user_id, auth_key) VALUES (%s, %s, %s)", secure($app['app_id'], 'int'), secure($this->_data['user_id'], 'int'), secure($auth_key))) or _error("SQL_ERROR_THROWEN", $db);
                 /* return redirect_URL */
                 $redirect_URL = $app['app_redirect_url'] . "?auth_key=" . $auth_key;
                 return $redirect_URL;
@@ -14991,7 +14991,7 @@ class User
             return_json(array('error' => true, 'message' => "Bad Request, invalid app_secret"));
         }
         /* check if user OAuthenticated this app before */
-        $get_user_connection = $db->query(sprintf("SELECT * FROM developers_apps_users WHERE app_id = %s AND auth_key = %s", secure($app['app_id'], 'int'), secure($auth_key))) or _error("SQL_ERROR_THROWEN");
+        $get_user_connection = $db->query(sprintf("SELECT * FROM developers_apps_users WHERE app_id = %s AND auth_key = %s", secure($app['app_id'], 'int'), secure($auth_key))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_user_connection->num_rows == 0) {
             return_json(array('error' => true, 'message' => "Bad Request, invalid auth_key"));
         }
@@ -14999,7 +14999,7 @@ class User
         /* generate new auth_key */
         $auth_key = get_hash_token();
         /* update auth_key */
-        $db->query(sprintf("UPDATE developers_apps_users SET auth_key = %s WHERE app_id = %s AND user_id = %s", secure($auth_key), secure($app['app_id'], 'int'), secure($user_connection['user_id']))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE developers_apps_users SET auth_key = %s WHERE app_id = %s AND user_id = %s", secure($auth_key), secure($app['app_id'], 'int'), secure($user_connection['user_id']))) or _error("SQL_ERROR_THROWEN", $db);
         /* check if there is access_token & valid */
         if ($user_connection['access_token'] && (strtotime($user_connection['access_token_date']) >= strtotime("-1 minutes"))) {
             $access_token = $user_connection['access_token'];
@@ -15007,7 +15007,7 @@ class User
             /* generate new access_token */
             $access_token = get_hash_token();
             /* update access_token */
-            $db->query(sprintf("UPDATE developers_apps_users SET access_token = %s, access_token_date = %s WHERE app_id = %s AND user_id = %s", secure($access_token), secure($date), secure($app['app_id'], 'int'), secure($user_connection['user_id']))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE developers_apps_users SET access_token = %s, access_token_date = %s WHERE app_id = %s AND user_id = %s", secure($access_token), secure($date), secure($app['app_id'], 'int'), secure($user_connection['user_id']))) or _error("SQL_ERROR_THROWEN", $db);
         }
         return $access_token;
     }
@@ -15027,7 +15027,7 @@ class User
             throw new Exception(__("This feature has been disabled by the admin"));
         }
         /* check if user OAuthenticated this app before */
-        $check_user_connection = $db->query(sprintf("SELECT * FROM developers_apps_users WHERE access_token = %s", secure($access_token))) or _error("SQL_ERROR_THROWEN");
+        $check_user_connection = $db->query(sprintf("SELECT * FROM developers_apps_users WHERE access_token = %s", secure($access_token))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check_user_connection->num_rows == 0) {
             return_json(array('error' => true, 'message' => "Bad Request, invalid access_token"));
         }
@@ -15060,42 +15060,42 @@ class User
         switch ($handle) {
             case 'user':
                 /* check the user */
-                $check = $db->query(sprintf("SELECT COUNT(*) as count FROM users WHERE user_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check = $db->query(sprintf("SELECT COUNT(*) as count FROM users WHERE user_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'page':
                 /* check the page */
-                $check = $db->query(sprintf("SELECT COUNT(*) as count FROM pages WHERE page_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check = $db->query(sprintf("SELECT COUNT(*) as count FROM pages WHERE page_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'group':
                 /* check the group */
-                $check = $db->query(sprintf("SELECT COUNT(*) as count FROM `groups` WHERE group_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check = $db->query(sprintf("SELECT COUNT(*) as count FROM `groups` WHERE group_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'event':
                 /* check the event */
-                $check = $db->query(sprintf("SELECT COUNT(*) as count FROM `events` WHERE event_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check = $db->query(sprintf("SELECT COUNT(*) as count FROM `events` WHERE event_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'post':
                 /* check the post */
-                $check = $db->query(sprintf("SELECT COUNT(*) as count FROM posts WHERE post_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check = $db->query(sprintf("SELECT COUNT(*) as count FROM posts WHERE post_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'comment':
                 /* check the comment */
-                $check = $db->query(sprintf("SELECT COUNT(*) as count FROM posts_comments WHERE comment_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check = $db->query(sprintf("SELECT COUNT(*) as count FROM posts_comments WHERE comment_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'forum_thread':
                 /* check the forum thread */
-                $check = $db->query(sprintf("SELECT COUNT(*) as count FROM forums_threads WHERE thread_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check = $db->query(sprintf("SELECT COUNT(*) as count FROM forums_threads WHERE thread_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'forum_reply':
                 /* check the forum thread */
-                $check = $db->query(sprintf("SELECT COUNT(*) as count FROM forums_replies WHERE reply_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check = $db->query(sprintf("SELECT COUNT(*) as count FROM forums_replies WHERE reply_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             default:
@@ -15107,12 +15107,12 @@ class User
             _error(403);
         }
         /* check old reports */
-        $check = $db->query(sprintf("SELECT COUNT(*) as count FROM reports WHERE user_id = %s AND node_id = %s AND node_type = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'), secure($handle))) or _error("SQL_ERROR_THROWEN");
+        $check = $db->query(sprintf("SELECT COUNT(*) as count FROM reports WHERE user_id = %s AND node_id = %s AND node_type = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'), secure($handle))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check->fetch_assoc()['count'] > 0) {
             throw new Exception(__("You have already reported this before!"));
         }
         /* report */
-        $db->query(sprintf("INSERT INTO reports (user_id, node_id, node_type, time, note) VALUES (%s, %s, %s, %s, %s)", secure($this->_data['user_id'], 'int'), secure($id, 'int'), secure($handle), secure($date), secure($note))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO reports (user_id, node_id, node_type, time, note) VALUES (%s, %s, %s, %s, %s)", secure($this->_data['user_id'], 'int'), secure($id, 'int'), secure($handle), secure($date), secure($note))) or _error("SQL_ERROR_THROWEN", $db);
         /* send notification to admins & moderators */
         $this->notify_system_admins("report", true);
     }
@@ -15303,7 +15303,7 @@ class User
                 $fake_avatar = 'null';
             }
             /* insert new group */
-            $query = $db->query(sprintf("INSERT INTO `groups` (group_privacy, group_admin, group_name, group_category, group_title, group_description, group_picture, group_date) VALUES ('public', %s, %s, %s, %s, %s, %s, %s)", secure($this->_data['user_id'], 'int'), secure($fake_username), secure($category), secure($fake_title), secure($fake_title), secure($fake_avatar), secure($date))) or _error("SQL_ERROR_THROWEN");
+            $query = $db->query(sprintf("INSERT INTO `groups` (group_privacy, group_admin, group_name, group_category, group_title, group_description, group_picture, group_date) VALUES ('public', %s, %s, %s, %s, %s, %s, %s)", secure($this->_data['user_id'], 'int'), secure($fake_username), secure($category), secure($fake_title), secure($fake_title), secure($fake_avatar), secure($date))) or _error("SQL_ERROR_THROWEN", $db);
             if (!$query) continue;
             $generated++;
             /* get group_id */
@@ -15429,9 +15429,9 @@ class User
         if ($get_auto_like->num_rows > 0) {
             while ($auto_like = $get_auto_like->fetch_assoc()) {
                 /* like */
-                $db->query(sprintf("INSERT INTO pages_likes (user_id, page_id) VALUES (%s, %s)", secure($user_id, 'int'),  secure($auto_like['page_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("INSERT INTO pages_likes (user_id, page_id) VALUES (%s, %s)", secure($user_id, 'int'),  secure($auto_like['page_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* update likes counter +1 */
-                $db->query(sprintf("UPDATE pages SET page_likes = page_likes + 1  WHERE page_id = %s", secure($auto_like['page_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE pages SET page_likes = page_likes + 1  WHERE page_id = %s", secure($auto_like['page_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             }
         }
     }
@@ -15468,9 +15468,9 @@ class User
         if ($get_auto_join->num_rows > 0) {
             while ($auto_join = $get_auto_join->fetch_assoc()) {
                 /* join */
-                $db->query(sprintf("INSERT INTO groups_members (user_id, group_id, approved) VALUES (%s, %s, '1')", secure($user_id, 'int'),  secure($auto_join['group_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("INSERT INTO groups_members (user_id, group_id, approved) VALUES (%s, %s, '1')", secure($user_id, 'int'),  secure($auto_join['group_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* update members counter +1 */
-                $db->query(sprintf("UPDATE `groups` SET group_members = group_members + 1  WHERE group_id = %s", secure($auto_join['group_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE `groups` SET group_members = group_members + 1  WHERE group_id = %s", secure($auto_join['group_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             }
         }
     }
@@ -15644,7 +15644,7 @@ class User
         } elseif ($args['get'] == "search") {
             $where_query .= " AND in_search = '1'";
         }
-        $get_fields = $db->query("SELECT * FROM custom_fields " . $where_query . " ORDER BY field_order ASC") or _error("SQL_ERROR_THROWEN");
+        $get_fields = $db->query("SELECT * FROM custom_fields " . $where_query . " ORDER BY field_order ASC") or _error("SQL_ERROR_THROWEN", $db);
         if ($get_fields->num_rows > 0) {
             while ($field = $get_fields->fetch_assoc()) {
                 if ($field['type'] == "selectbox" || $field['type'] == "multipleselectbox") {
@@ -15659,7 +15659,7 @@ class User
                         _error(400);
                     }
                     /* get the custom field value */
-                    $get_field_value = $db->query(sprintf("SELECT value FROM custom_fields_values WHERE field_id = %s AND node_id = %s AND node_type = %s", secure($field['field_id'], 'int'), secure($args['node_id'], 'int'), secure($args['for']))) or _error("SQL_ERROR_THROWEN");
+                    $get_field_value = $db->query(sprintf("SELECT value FROM custom_fields_values WHERE field_id = %s AND node_id = %s AND node_type = %s", secure($field['field_id'], 'int'), secure($args['node_id'], 'int'), secure($args['for']))) or _error("SQL_ERROR_THROWEN", $db);
                     if ($get_field_value->num_rows > 0) {
                         $field_value = $get_field_value->fetch_assoc()['value'];
                         switch ($field['type']) {
@@ -15729,7 +15729,7 @@ class User
                 continue;
             }
             $field_id = substr($key, $prefix_len);
-            $get_field = $db->query(sprintf("SELECT * FROM custom_fields WHERE field_id = %s" . $where_query, secure($field_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_field = $db->query(sprintf("SELECT * FROM custom_fields WHERE field_id = %s" . $where_query, secure($field_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             if ($get_field->num_rows == 0) {
                 continue;
             }
@@ -15777,7 +15777,7 @@ class User
                 $insert_field = $db->query(sprintf("INSERT INTO custom_fields_values (value, field_id, node_id, node_type) VALUES (%s, %s, %s, %s)", secure($value), secure($field['field_id'], 'int'), secure($node_id, 'int'), secure($for)));
                 if (!$insert_field) {
                     /* update if already exist */
-                    $db->query(sprintf("UPDATE custom_fields_values SET value = %s WHERE field_id = %s AND node_id = %s AND node_type = %s", secure($value), secure($field['field_id'], 'int'), secure($node_id, 'int'), secure($for))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE custom_fields_values SET value = %s WHERE field_id = %s AND node_id = %s AND node_type = %s", secure($value), secure($field['field_id'], 'int'), secure($node_id, 'int'), secure($for))) or _error("SQL_ERROR_THROWEN", $db);
                 }
             }
         }
@@ -15806,7 +15806,7 @@ class User
                 continue;
             }
             $field_id = substr($key, $prefix_len);
-            $get_field = $db->query(sprintf("SELECT * FROM custom_fields WHERE field_for = 'user' AND in_search = '1' AND field_id = %s", secure($field_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_field = $db->query(sprintf("SELECT * FROM custom_fields WHERE field_for = 'user' AND in_search = '1' AND field_id = %s", secure($field_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             if ($get_field->num_rows == 0) {
                 continue;
             }
@@ -15855,7 +15855,7 @@ class User
     {
         global $db;
         $widgets = [];
-        $get_widgets = $db->query(sprintf("SELECT * FROM widgets WHERE place = %s ORDER BY place_order ASC", secure($place))) or _error("SQL_ERROR_THROWEN");
+        $get_widgets = $db->query(sprintf("SELECT * FROM widgets WHERE place = %s ORDER BY place_order ASC", secure($place))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_widgets->num_rows > 0) {
             while ($widget = $get_widgets->fetch_assoc()) {
                 $widget['code'] = html_entity_decode($widget['code'], ENT_QUOTES);
@@ -15880,7 +15880,7 @@ class User
     {
         global $db;
         $emojis = [];
-        $get_emojis = $db->query("SELECT * FROM emojis") or _error("SQL_ERROR_THROWEN");
+        $get_emojis = $db->query("SELECT * FROM emojis") or _error("SQL_ERROR_THROWEN", $db);
         if ($get_emojis->num_rows > 0) {
             while ($emoji = $get_emojis->fetch_assoc()) {
                 $emojis[] = $emoji;
@@ -15899,7 +15899,7 @@ class User
     public function decode_emoji($text)
     {
         global $db;
-        $get_emojis = $db->query("SELECT * FROM emojis") or _error("SQL_ERROR_THROWEN");
+        $get_emojis = $db->query("SELECT * FROM emojis") or _error("SQL_ERROR_THROWEN", $db);
         if ($get_emojis->num_rows > 0) {
             while ($emoji = $get_emojis->fetch_assoc()) {
                 $replacement = '<i class="twa twa-' . $emoji['class'] . '"></i>';
@@ -15920,7 +15920,7 @@ class User
     {
         global $db;
         $stickers = [];
-        $get_stickers = $db->query("SELECT * FROM stickers") or _error("SQL_ERROR_THROWEN");
+        $get_stickers = $db->query("SELECT * FROM stickers") or _error("SQL_ERROR_THROWEN", $db);
         if ($get_stickers->num_rows > 0) {
             while ($sticker = $get_stickers->fetch_assoc()) {
                 $stickers[] = $sticker;
@@ -15939,7 +15939,7 @@ class User
     public function decode_stickers($text)
     {
         global $db, $system;
-        $get_stickers = $db->query("SELECT * FROM stickers") or _error("SQL_ERROR_THROWEN");
+        $get_stickers = $db->query("SELECT * FROM stickers") or _error("SQL_ERROR_THROWEN", $db);
         if ($get_stickers->num_rows > 0) {
             while ($sticker = $get_stickers->fetch_assoc()) {
                 $replacement = '<img class="sticker" src="' . $system['system_uploads'] . '/' . $sticker['image'] . '"></i>';
@@ -15964,7 +15964,7 @@ class User
     {
         global $db;
         $gifts = [];
-        $get_gifts = $db->query("SELECT * FROM gifts") or _error("SQL_ERROR_THROWEN");
+        $get_gifts = $db->query("SELECT * FROM gifts") or _error("SQL_ERROR_THROWEN", $db);
         if ($get_gifts->num_rows > 0) {
             while ($gift = $get_gifts->fetch_assoc()) {
                 $gifts[] = $gift;
@@ -15982,7 +15982,7 @@ class User
     public function get_gift($gift_id)
     {
         global $db;
-        $get_gift = $db->query(sprintf("SELECT gifts.image, users.user_name, users.user_firstname, users.user_lastname FROM users_gifts INNER JOIN gifts ON users_gifts.gift_id = gifts.gift_id INNER JOIN users ON users_gifts.from_user_id = users.user_id WHERE users_gifts.id = %s AND users_gifts.to_user_id = %s", secure($gift_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_gift = $db->query(sprintf("SELECT gifts.image, users.user_name, users.user_firstname, users.user_lastname FROM users_gifts INNER JOIN gifts ON users_gifts.gift_id = gifts.gift_id INNER JOIN users ON users_gifts.from_user_id = users.user_id WHERE users_gifts.id = %s AND users_gifts.to_user_id = %s", secure($gift_id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_gift->num_rows == 0) {
             return $false;
         }
@@ -16002,7 +16002,7 @@ class User
     {
         global $db, $system;
         /* check if the viewer allowed to send a gift to the target */
-        $get_target_user = $db->query(sprintf("SELECT user_privacy_gifts FROM users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $get_target_user = $db->query(sprintf("SELECT user_privacy_gifts FROM users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_target_user->num_rows == 0) {
             _error(400);
         }
@@ -16011,7 +16011,7 @@ class User
             throw new Exception(__("You can't send a gift to this user"));
         }
         /* send the gift to the target user */
-        $db->query(sprintf("INSERT INTO users_gifts (from_user_id, to_user_id, gift_id) VALUES (%s, %s, %s)", secure($this->_data['user_id'], 'int'),  secure($user_id, 'int'), secure($gift_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO users_gifts (from_user_id, to_user_id, gift_id) VALUES (%s, %s, %s)", secure($this->_data['user_id'], 'int'),  secure($user_id, 'int'), secure($gift_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* post new notification */
         $this->post_notification(array('to_user_id' => $user_id, 'action' => 'gift', 'node_url' => $db->insert_id));
     }
@@ -16032,10 +16032,10 @@ class User
     {
         global $db, $date;
         $announcements = [];
-        $get_announcement = $db->query(sprintf('SELECT * FROM announcements WHERE start_date <= %1$s AND end_date >= %1$s', secure($date))) or _error("SQL_ERROR_THROWEN");
+        $get_announcement = $db->query(sprintf('SELECT * FROM announcements WHERE start_date <= %1$s AND end_date >= %1$s', secure($date))) or _error("SQL_ERROR_THROWEN", $db);
         if ($get_announcement->num_rows > 0) {
             while ($announcement = $get_announcement->fetch_assoc()) {
-                $check = $db->query(sprintf("SELECT COUNT(*) as count FROM announcements_users WHERE announcement_id = %s AND user_id = %s", secure($announcement['announcement_id'], 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $check = $db->query(sprintf("SELECT COUNT(*) as count FROM announcements_users WHERE announcement_id = %s AND user_id = %s", secure($announcement['announcement_id'], 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 if ($check->fetch_assoc()['count'] == 0) {
                     $announcement['code'] = html_entity_decode($announcement['code'], ENT_QUOTES);
                     $announcements[] = $announcement;
@@ -16056,12 +16056,12 @@ class User
     {
         global $db, $system;
         /* check announcement */
-        $check = $db->query(sprintf("SELECT COUNT(*) as count FROM announcements WHERE announcement_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $check = $db->query(sprintf("SELECT COUNT(*) as count FROM announcements WHERE announcement_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check->fetch_assoc()['count'] == 0) {
             _error(403);
         }
         /* hide announcement */
-        $db->query(sprintf("INSERT INTO announcements_users (announcement_id, user_id) VALUES (%s, %s)", secure($id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO announcements_users (announcement_id, user_id) VALUES (%s, %s)", secure($id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -16100,10 +16100,10 @@ class User
     public function get_invitation_codes_stats()
     {
         global $db, $system;
-        $get_generated_codes = $db->query(sprintf("SELECT COUNT(*) as count FROM invitation_codes WHERE created_by = %s AND created_date >= DATE_SUB(NOW(),INTERVAL 1 %s)", secure($this->_data['user_id'], 'int'), strtoupper($system['invitation_expire_period']))) or _error("SQL_ERROR_THROWEN");
+        $get_generated_codes = $db->query(sprintf("SELECT COUNT(*) as count FROM invitation_codes WHERE created_by = %s AND created_date >= DATE_SUB(NOW(),INTERVAL 1 %s)", secure($this->_data['user_id'], 'int'), strtoupper($system['invitation_expire_period']))) or _error("SQL_ERROR_THROWEN", $db);
         $generated_codes = $get_generated_codes->fetch_assoc()['count'];
         $available_codes = $system['invitation_user_limit'] - $generated_codes;
-        $get_used_codes = $db->query(sprintf("SELECT COUNT(*) as count FROM invitation_codes WHERE created_by = %s AND created_date >= DATE_SUB(NOW(),INTERVAL 1 %s) AND used = '1'", secure($this->_data['user_id'], 'int'), strtoupper($system['invitation_expire_period']))) or _error("SQL_ERROR_THROWEN");
+        $get_used_codes = $db->query(sprintf("SELECT COUNT(*) as count FROM invitation_codes WHERE created_by = %s AND created_date >= DATE_SUB(NOW(),INTERVAL 1 %s) AND used = '1'", secure($this->_data['user_id'], 'int'), strtoupper($system['invitation_expire_period']))) or _error("SQL_ERROR_THROWEN", $db);
         $used_codes = $get_used_codes->fetch_assoc()['count'];
         return ["available" => $available_codes, "generated" => $generated_codes, "used" => $used_codes];
     }
@@ -16122,7 +16122,7 @@ class User
             if ($system['invitation_user_limit'] == 0) {
                 return true;
             }
-            $check_limit = $db->query(sprintf("SELECT COUNT(*) as count FROM invitation_codes WHERE created_by = %s AND created_date >= DATE_SUB(NOW(),INTERVAL 1 %s)", secure($this->_data['user_id'], 'int'), strtoupper($system['invitation_expire_period']))) or _error("SQL_ERROR_THROWEN");
+            $check_limit = $db->query(sprintf("SELECT COUNT(*) as count FROM invitation_codes WHERE created_by = %s AND created_date >= DATE_SUB(NOW(),INTERVAL 1 %s)", secure($this->_data['user_id'], 'int'), strtoupper($system['invitation_expire_period']))) or _error("SQL_ERROR_THROWEN", $db);
             if ($check_limit->fetch_assoc()['count'] < $system['invitation_user_limit']) {
                 return true;
             }
@@ -16152,7 +16152,7 @@ class User
             throw new Exception(__("You have reached the maximum number of invitation codes"));
         }
         $code = get_hash_key();
-        $db->query(sprintf("INSERT INTO invitation_codes (code, created_by, created_date) VALUES (%s, %s, %s)", secure($code), secure($this->_data['user_id'], "int"), secure($date))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO invitation_codes (code, created_by, created_date) VALUES (%s, %s, %s)", secure($code), secure($this->_data['user_id'], "int"), secure($date))) or _error("SQL_ERROR_THROWEN", $db);
         return $code;
     }
 
@@ -16167,7 +16167,7 @@ class User
     public function check_invitation_code($code)
     {
         global $db;
-        $query = $db->query(sprintf("SELECT COUNT(*) as count FROM invitation_codes WHERE code = %s AND used = '0'", secure($code))) or _error("SQL_ERROR_THROWEN");
+        $query = $db->query(sprintf("SELECT COUNT(*) as count FROM invitation_codes WHERE code = %s AND used = '0'", secure($code))) or _error("SQL_ERROR_THROWEN", $db);
         if ($query->fetch_assoc()['count'] > 0) {
             return true;
         }
@@ -16185,7 +16185,7 @@ class User
     public function update_invitation_code($code, $user_id)
     {
         global $db, $date;
-        $db->query(sprintf("UPDATE invitation_codes SET used = '1', used_by = %s, used_date = %s WHERE code = %s", secure($user_id, "int"), secure($date), secure($code))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE invitation_codes SET used = '1', used_by = %s, used_date = %s WHERE code = %s", secure($user_id, "int"), secure($date), secure($code))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -16219,7 +16219,7 @@ class User
             throw new Exception(__("Sorry, it looks like") . " <strong>" . $email . "</strong> " . __("belongs to an existing account"));
         }
         /* check if viewer already invited this email before */
-        $check_invitation_log = $db->query(sprintf("SELECT COUNT(*) as count FROM users_invitations WHERE email_phone = %s", secure($email))) or _error("SQL_ERROR_THROWEN");
+        $check_invitation_log = $db->query(sprintf("SELECT COUNT(*) as count FROM users_invitations WHERE email_phone = %s", secure($email))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check_invitation_log->fetch_assoc()['count'] > 0) {
             throw new Exception(__("You already invited this email before"));
         }
@@ -16231,7 +16231,7 @@ class User
             throw new Exception(__("Invitation email could not be sent"));
         }
         /* add to log */
-        $db->query(sprintf("INSERT INTO users_invitations (user_id, email_phone, invitation_date) VALUES (%s, %s, %s)", secure($this->_data['user_id'], 'int'), secure($email), secure($date))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO users_invitations (user_id, email_phone, invitation_date) VALUES (%s, %s, %s)", secure($this->_data['user_id'], 'int'), secure($email), secure($date))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -16265,7 +16265,7 @@ class User
             throw new Exception(__("Sorry, it looks like") . " <strong>" . $phone . "</strong> " . __("belongs to an existing account"));
         }
         /* check if viewer already invited this phone before */
-        $check_invitation_log = $db->query(sprintf("SELECT COUNT(*) as count FROM users_invitations WHERE email_phone = %s", secure($phone))) or _error("SQL_ERROR_THROWEN");
+        $check_invitation_log = $db->query(sprintf("SELECT COUNT(*) as count FROM users_invitations WHERE email_phone = %s", secure($phone))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check_invitation_log->fetch_assoc()['count'] > 0) {
             throw new Exception(__("You already invited this phone number before"));
         }
@@ -16276,7 +16276,7 @@ class User
             throw new Exception(__("Invitation SMS could not be sent"));
         }
         /* add to log */
-        $db->query(sprintf("INSERT INTO users_invitations (user_id, email_phone, invitation_date) VALUES (%s, %s, %s)", secure($this->_data['user_id'], 'int'), secure($phone), secure($date))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO users_invitations (user_id, email_phone, invitation_date) VALUES (%s, %s, %s)", secure($this->_data['user_id'], 'int'), secure($phone), secure($date))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
     private function transform_interests_query(int $id, string $type): string
@@ -16459,10 +16459,10 @@ class User
                         throw new Exception(__("Sorry, it looks like") . " <strong>" . $args['username'] . "</strong> " . __("belongs to an existing account"));
                     }
                     /* update user */
-                    $db->query(sprintf("UPDATE users SET user_name = %s WHERE user_id = %s", secure($args['username']), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE users SET user_name = %s WHERE user_id = %s", secure($args['username']), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     /* verification badge */
                     if ($this->_data['user_verified']) {
-                        $db->query(sprintf("UPDATE users SET user_verified = '0' WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                        $db->query(sprintf("UPDATE users SET user_verified = '0' WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     }
                 }
                 break;
@@ -16563,10 +16563,10 @@ class User
                     secure($args['website']),
                     secure($args['religion']),
                     secure($this->_data['user_id'], 'int'))
-                ) or _error("SQL_ERROR_THROWEN");
+                ) or _error("SQL_ERROR_THROWEN", $db);
                 /* verification badge */
                 if ($this->_data['user_verified'] && ($this->_data['user_firstname'] !=  $args['firstname'] || $this->_data['user_lastname'] !=  $args['lastname'])) {
-                    $db->query(sprintf("UPDATE users SET user_verified = '0' WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE users SET user_verified = '0' WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 }
                 break;
 
@@ -16582,7 +16582,7 @@ class User
                 /* set custom fields */
                 $this->set_custom_fields($args, "user", "settings", $this->_data['user_id']);
                 /* update user */
-                $db->query(sprintf("UPDATE users SET user_work_title = %s, user_work_place = %s, user_work_url = %s WHERE user_id = %s", secure($args['work_title']), secure($args['work_place']), secure($args['work_url']), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE users SET user_work_title = %s, user_work_place = %s, user_work_url = %s WHERE user_id = %s", secure($args['work_title']), secure($args['work_place']), secure($args['work_url']), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'location':
@@ -16608,14 +16608,14 @@ class User
                         empty($hometown_id) ? 'NULL' :  secure($hometown_id, 'int'),
                         secure($this->_data['user_id'], 'int')
                     )
-                ) or _error("SQL_ERROR_THROWEN");
+                ) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'education':
                 /* set custom fields */
                 $this->set_custom_fields($args, "user", "settings", $this->_data['user_id']);
                 /* update user */
-                $db->query(sprintf("UPDATE users SET user_edu_major = %s, user_edu_school = %s, user_edu_class = %s WHERE user_id = %s", secure($args['edu_major']), secure($args['edu_school']), secure($args['edu_class']), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE users SET user_edu_major = %s, user_edu_school = %s, user_edu_class = %s WHERE user_id = %s", secure($args['edu_major']), secure($args['edu_school']), secure($args['edu_class']), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'other':
@@ -16653,7 +16653,7 @@ class User
                     throw new Exception(__("Please enter a valid Vkontakte Profile URL"));
                 }
                 /* update user */
-                $db->query(sprintf("UPDATE users SET user_social_facebook = %s, user_social_twitter = %s, user_social_youtube = %s, user_social_instagram = %s, user_social_twitch = %s, user_social_linkedin = %s, user_social_vkontakte = %s WHERE user_id = %s", secure($args['facebook']), secure($args['twitter']), secure($args['youtube']), secure($args['instagram']), secure($args['twitch']), secure($args['linkedin']), secure($args['vkontakte']), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE users SET user_social_facebook = %s, user_social_twitter = %s, user_social_youtube = %s, user_social_instagram = %s, user_social_twitch = %s, user_social_linkedin = %s, user_social_vkontakte = %s WHERE user_id = %s", secure($args['facebook']), secure($args['twitter']), secure($args['youtube']), secure($args['instagram']), secure($args['twitch']), secure($args['linkedin']), secure($args['vkontakte']), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'interests':
@@ -16675,7 +16675,7 @@ class User
                     throw new Exception(__("This feature has been disabled by the admin"));
                 }
                 /* update user */
-                $db->query(sprintf("UPDATE users SET user_profile_background = %s WHERE user_id = %s", secure($args['user_profile_background']), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE users SET user_profile_background = %s WHERE user_id = %s", secure($args['user_profile_background']), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'password':
@@ -16695,9 +16695,9 @@ class User
                     throw new Exception(__("Password must be at least 6 characters long. Please try another"));
                 }
                 /* update user */
-                $db->query(sprintf("UPDATE users SET user_password = %s WHERE user_id = %s", secure(_password_hash($args['new'])), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE users SET user_password = %s WHERE user_id = %s", secure(_password_hash($args['new'])), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* delete sessions */
-                $db->query(sprintf("DELETE FROM users_sessions WHERE session_id != %s AND user_id = %s", secure($this->_data['active_session_id']), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("DELETE FROM users_sessions WHERE session_id != %s AND user_id = %s", secure($this->_data['active_session_id']), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'two-factor':
@@ -16738,7 +16738,7 @@ class User
                         break;
                 }
                 /* update user */
-                $db->query(sprintf("UPDATE users SET user_two_factor_enabled = %s, user_two_factor_type = %s WHERE user_id = %s", secure($args['two_factor_enabled']), secure($system['two_factor_type']), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE users SET user_two_factor_enabled = %s, user_two_factor_type = %s WHERE user_id = %s", secure($args['two_factor_enabled']), secure($system['two_factor_type']), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'privacy':
@@ -16807,7 +16807,7 @@ class User
                     secure($args['user_privacy_groups']),
                     secure($args['user_privacy_events']),
                     secure($this->_data['user_id'], 'int')
-                )) or _error("SQL_ERROR_THROWEN");
+                )) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'notifications':
@@ -16822,21 +16822,21 @@ class User
                 $args['email_profile_visits'] = (isset($args['email_profile_visits'])) ? '1' : '0';
                 $args['email_friend_requests'] = (isset($args['email_friend_requests'])) ? '1' : '0';
                 /* update user */
-                $db->query(sprintf("UPDATE users SET chat_sound = %s, notifications_sound = %s, email_post_likes = %s, email_post_comments = %s, email_post_shares = %s, email_wall_posts = %s, email_mentions = %s, email_profile_visits = %s, email_friend_requests = %s WHERE user_id = %s", secure($args['chat_sound']), secure($args['notifications_sound']), secure($args['email_post_likes']), secure($args['email_post_comments']), secure($args['email_post_shares']), secure($args['email_wall_posts']), secure($args['email_mentions']), secure($args['email_profile_visits']), secure($args['email_friend_requests']), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE users SET chat_sound = %s, notifications_sound = %s, email_post_likes = %s, email_post_comments = %s, email_post_shares = %s, email_wall_posts = %s, email_mentions = %s, email_profile_visits = %s, email_friend_requests = %s WHERE user_id = %s", secure($args['chat_sound']), secure($args['notifications_sound']), secure($args['email_post_likes']), secure($args['email_post_comments']), secure($args['email_post_shares']), secure($args['email_wall_posts']), secure($args['email_mentions']), secure($args['email_profile_visits']), secure($args['email_friend_requests']), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'notifications_sound':
                 /* prepare */
                 $args['notifications_sound'] = ($args['notifications_sound'] == 0) ? 0 : 1;
                 /* update user */
-                $db->query(sprintf("UPDATE users SET notifications_sound = %s WHERE user_id = %s", secure($args['notifications_sound']), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE users SET notifications_sound = %s WHERE user_id = %s", secure($args['notifications_sound']), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'chat':
                 /* prepare */
                 $args['user_chat_enabled'] = ($args['user_chat_enabled'] == 0) ? 0 : 1;
                 /* update user */
-                $db->query(sprintf("UPDATE users SET user_chat_enabled = %s WHERE user_id = %s", secure($args['user_chat_enabled']), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE users SET user_chat_enabled = %s WHERE user_id = %s", secure($args['user_chat_enabled']), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'started':
@@ -17123,7 +17123,7 @@ class User
 
         $wallet = shntrToken::generateWallet();
         /* register user */
-        $db->query(sprintf("INSERT INTO users (user_name, user_email, user_phone, user_password, user_firstname, user_lastname, user_gender, user_birthdate, user_registered, user_email_verification_code, user_phone_verification_code, user_privacy_newsletter, user_token_private_key, user_token_public_key, user_token_address) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", secure($args['username']), secure($args['email']), secure($args['phone']), secure(_password_hash($args['password'])), secure(ucwords($args['first_name'])), secure(ucwords($args['last_name'])), secure($args['gender']), secure($args['birth_date']), secure($date), secure($email_verification_code), secure($phone_verification_code), secure($newsletter_agree), secure($wallet['private']), secure($wallet['public']), secure($wallet['address']))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO users (user_name, user_email, user_phone, user_password, user_firstname, user_lastname, user_gender, user_birthdate, user_registered, user_email_verification_code, user_phone_verification_code, user_privacy_newsletter, user_token_private_key, user_token_public_key, user_token_address) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", secure($args['username']), secure($args['email']), secure($args['phone']), secure(_password_hash($args['password'])), secure(ucwords($args['first_name'])), secure(ucwords($args['last_name'])), secure($args['gender']), secure($args['birth_date']), secure($date), secure($email_verification_code), secure($phone_verification_code), secure($newsletter_agree), secure($wallet['private']), secure($wallet['public']), secure($wallet['address']))) or _error("SQL_ERROR_THROWEN", $db);
         /* get user_id */
         $user_id = $db->insert_id;
         $this->register_to_relysia($args['username'], $user_id);
@@ -17230,9 +17230,9 @@ class User
             /* check brute-force attack detection */
             if ($system['brute_force_detection_enabled']) {
                 if (time() - strtotime($user['user_first_failed_login'])  >  $system['brute_force_lockout_time']) {
-                    $db->query(sprintf("UPDATE users SET user_first_failed_login = %s, user_failed_login_ip = %s, user_failed_login_count = 1 WHERE user_id = %s", secure($date), secure(get_user_ip()), secure($user['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE users SET user_first_failed_login = %s, user_failed_login_ip = %s, user_failed_login_count = 1 WHERE user_id = %s", secure($date), secure(get_user_ip()), secure($user['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 } else {
-                    $db->query(sprintf("UPDATE users SET user_failed_login_count =  user_failed_login_count + 1 WHERE user_id = %s", secure($user['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE users SET user_failed_login_count =  user_failed_login_count + 1 WHERE user_id = %s", secure($user['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 }
             }
             throw new Exception("<p><strong>" . __("Please re-enter your password") . "</strong></p><p>" . __("The password you entered is incorrect") . ". " . __("If you forgot your password?") . " <a href='" . $system['system_url'] . "/reset'>" . __("Request a new one") . "</a></p>");
@@ -17259,7 +17259,7 @@ class User
                     /* generate two-factor key */
                     $two_factor_key = get_hash_key(6, true);
                     /* update user two factor key */
-                    $db->query(sprintf("UPDATE users SET user_two_factor_key = %s WHERE user_id = %s", secure($two_factor_key), secure($user['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE users SET user_two_factor_key = %s WHERE user_id = %s", secure($two_factor_key), secure($user['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     /* prepare method name */
                     $method = __("Email");
                     /* prepare activation email */
@@ -17280,7 +17280,7 @@ class User
                     /* generate two-factor key */
                     $two_factor_key = get_hash_key(6, true);
                     /* update user two factor key */
-                    $db->query(sprintf("UPDATE users SET user_two_factor_key = %s WHERE user_id = %s", secure($two_factor_key), secure($user['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                    $db->query(sprintf("UPDATE users SET user_two_factor_key = %s WHERE user_id = %s", secure($two_factor_key), secure($user['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     /* prepare method name */
                     $method = __("Phone");
                     /* prepare activation SMS */
@@ -17313,7 +17313,7 @@ class User
     {
         global $db, $date;
         /* delete the session */
-        $db->query(sprintf("DELETE FROM users_sessions WHERE session_token = %s AND user_id = %s", secure($_COOKIE[$this->_cookie_user_token]), secure($_COOKIE[$this->_cookie_user_id], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("DELETE FROM users_sessions WHERE session_token = %s AND user_id = %s", secure($_COOKIE[$this->_cookie_user_token]), secure($_COOKIE[$this->_cookie_user_id], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* destroy the session */
         session_destroy();
         /* unset the cookies */
@@ -17350,10 +17350,10 @@ class User
         }
         /* check brute-force attack detection */
         if ($system['brute_force_detection_enabled']) {
-            $db->query(sprintf("UPDATE users SET user_failed_login_count = 0 WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE users SET user_failed_login_count = 0 WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         }
         /* insert user token */
-        $db->query(sprintf("INSERT INTO users_sessions (session_token, session_date, user_id, user_browser, user_os, user_ip) VALUES (%s, %s, %s, %s, %s, %s)", secure($session_token), secure($date), secure($user_id, 'int'), secure(get_user_browser()), secure(get_user_os()), secure(get_user_ip()))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO users_sessions (session_token, session_date, user_id, user_browser, user_os, user_ip) VALUES (%s, %s, %s, %s, %s, %s)", secure($session_token), secure($date), secure($user_id, 'int'), secure(get_user_browser()), secure(get_user_os()), secure(get_user_ip()))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -17366,7 +17366,7 @@ class User
     {
         global $db, $system;
         if ($system['max_accounts'] > 0) {
-            $check = $db->query(sprintf("SELECT user_ip, COUNT(*) FROM users_sessions WHERE user_ip = %s GROUP BY user_id", secure(get_user_ip()))) or _error("SQL_ERROR_THROWEN");
+            $check = $db->query(sprintf("SELECT user_ip, COUNT(*) FROM users_sessions WHERE user_ip = %s GROUP BY user_id", secure(get_user_ip()))) or _error("SQL_ERROR_THROWEN", $db);
             if ($check->num_rows >= $system['max_accounts']) {
                 throw new Exception(__("You have reached the maximum number of account for your IP"));
             }
@@ -17422,7 +17422,7 @@ class User
                 break;
         }
         /* check if user connected or not */
-        $check_user = $db->query(sprintf("SELECT user_id FROM users WHERE $social_id = %s", secure($user_profile->identifier))) or _error("SQL_ERROR_THROWEN");
+        $check_user = $db->query(sprintf("SELECT user_id FROM users WHERE $social_id = %s", secure($user_profile->identifier))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check_user->num_rows > 0) {
             /* social account connected and just signing-in */
             $user = $check_user->fetch_assoc();
@@ -17437,7 +17437,7 @@ class User
             /* user cloud be connecting his social account or signing-up */
             if ($this->_logged_in) {
                 /* [1] connecting social account */
-                $db->query(sprintf("UPDATE users SET $social_connected = '1', $social_id = %s WHERE user_id = %s", secure($user_profile->identifier), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+                $db->query(sprintf("UPDATE users SET $social_connected = '1', $social_id = %s WHERE user_id = %s", secure($user_profile->identifier), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 redirect('/settings/linked');
             } else {
                 /* [2] signup with social account */
@@ -17562,7 +17562,7 @@ class User
         $wallet = shntrToken::generateWallet();
 
         /* register user */
-        $db->query(sprintf("INSERT INTO users (user_name, user_email, user_password, user_firstname, user_lastname, user_gender, user_registered, user_activated, user_picture, $social_id, $social_connected, user_token_private_key, user_token_public_key, user_token_address) VALUES (%s, %s, %s, %s, %s, %s, %s, '1', %s, %s, '1', %s, %s, %s)", secure($username), secure($email), secure(_password_hash($password)), secure(ucwords($first_name)), secure(ucwords($last_name)), secure($gender), secure($date), secure($image_name), secure($_SESSION['social_id']), secure($wallet['private']), secure($wallet['public']), secure($wallet['address']))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("INSERT INTO users (user_name, user_email, user_password, user_firstname, user_lastname, user_gender, user_registered, user_activated, user_picture, $social_id, $social_connected, user_token_private_key, user_token_public_key, user_token_address) VALUES (%s, %s, %s, %s, %s, %s, %s, '1', %s, %s, '1', %s, %s, %s)", secure($username), secure($email), secure(_password_hash($password)), secure(ucwords($first_name)), secure(ucwords($last_name)), secure($gender), secure($date), secure($image_name), secure($_SESSION['social_id']), secure($wallet['private']), secure($wallet['public']), secure($wallet['address']))) or _error("SQL_ERROR_THROWEN", $db);
         /* get user_id */
         $user_id = $db->insert_id;
         $this->register_to_relysia($args['username'], $user_id);
@@ -17600,7 +17600,7 @@ class User
         global $db, $system;
         if ($system['two_factor_type'] == "google") {
             /* get user */
-            $get_user = $db->query(sprintf("SELECT user_two_factor_gsecret FROM users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+            $get_user = $db->query(sprintf("SELECT user_two_factor_gsecret FROM users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             if ($get_user->num_rows == 0) {
                 _error(400);
             }
@@ -17616,7 +17616,7 @@ class User
             }
         } else {
             /* check two-factor key */
-            $check_key = $db->query(sprintf("SELECT COUNT(*) as count FROM users WHERE user_id = %s AND user_two_factor_key = %s", secure($user_id, 'int'), secure($two_factor_key))) or _error("SQL_ERROR_THROWEN");
+            $check_key = $db->query(sprintf("SELECT COUNT(*) as count FROM users WHERE user_id = %s AND user_two_factor_key = %s", secure($user_id, 'int'), secure($two_factor_key))) or _error("SQL_ERROR_THROWEN", $db);
             if ($check_key->fetch_assoc()['count'] == 0) {
                 throw new Exception(__("Invalid code, please try again"));
             }
@@ -17636,7 +17636,7 @@ class User
     public function disable_two_factor_authentication($user_id)
     {
         global $db;
-        $db->query(sprintf("UPDATE users SET user_two_factor_enabled = '0', user_two_factor_type = null, user_two_factor_key = null, user_two_factor_gsecret = null WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE users SET user_two_factor_enabled = '0', user_two_factor_type = null, user_two_factor_key = null, user_two_factor_gsecret = null WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -17673,7 +17673,7 @@ class User
         /* generate reset key */
         $reset_key = get_hash_key(6);
         /* update user */
-        $db->query(sprintf("UPDATE users SET user_reset_key = %s, user_reseted = '1' WHERE user_email = %s", secure($reset_key), secure($email))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE users SET user_reset_key = %s, user_reseted = '1' WHERE user_email = %s", secure($reset_key), secure($email))) or _error("SQL_ERROR_THROWEN", $db);
         /* send reset email */
         /* prepare reset email */
         $subject = __("Forget password activation key!");
@@ -17699,7 +17699,7 @@ class User
             throw new Exception(__("Invalid email, please try again"));
         }
         /* check reset key */
-        $check_key = $db->query(sprintf("SELECT COUNT(*) as count FROM users WHERE user_email = %s AND user_reset_key = %s AND user_reseted = '1'", secure($email), secure($reset_key))) or _error("SQL_ERROR_THROWEN");
+        $check_key = $db->query(sprintf("SELECT COUNT(*) as count FROM users WHERE user_email = %s AND user_reset_key = %s AND user_reseted = '1'", secure($email), secure($reset_key))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check_key->fetch_assoc()['count'] == 0) {
             throw new Exception(__("Invalid code, please try again"));
         }
@@ -17722,7 +17722,7 @@ class User
             throw new Exception(__("Invalid email, please try again"));
         }
         /* check reset key */
-        $check_key = $db->query(sprintf("SELECT COUNT(*) as count FROM users WHERE user_email = %s AND user_reset_key = %s AND user_reseted = '1'", secure($email), secure($reset_key))) or _error("SQL_ERROR_THROWEN");
+        $check_key = $db->query(sprintf("SELECT COUNT(*) as count FROM users WHERE user_email = %s AND user_reset_key = %s AND user_reseted = '1'", secure($email), secure($reset_key))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check_key->fetch_assoc()['count'] == 0) {
             throw new Exception(__("Invalid code, please try again"));
         }
@@ -17735,7 +17735,7 @@ class User
             throw new Exception(__("Your passwords do not match. Please try another"));
         }
         /* update user password */
-        $db->query(sprintf("UPDATE users SET user_password = %s, user_reseted = '0' WHERE user_email = %s", secure(_password_hash($password)), secure($email))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE users SET user_password = %s, user_reseted = '0' WHERE user_email = %s", secure(_password_hash($password)), secure($email))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
 
@@ -17755,7 +17755,7 @@ class User
         /* generate email verification code */
         $email_verification_code = get_hash_token();
         /* update user */
-        $db->query(sprintf("UPDATE users SET user_email_verification_code = %s WHERE user_id = %s", secure($email_verification_code), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE users SET user_email_verification_code = %s WHERE user_id = %s", secure($email_verification_code), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* prepare activation email */
         $subject = __("Just one more step to get started on") . " " . $system['system_title'];
         $body = get_email_template("activation_email", $subject, ["name" => $this->_data['name'], "email_verification_code" => $email_verification_code]);
@@ -17786,10 +17786,10 @@ class User
         /* check if activation via email enabled */
         if ($system['activation_enabled'] && $system['activation_type'] == "email") {
             /* update user (not activated) */
-            $db->query(sprintf("UPDATE users SET user_email = %s, user_email_verified = '0', user_email_verification_code = %s, user_activated = '0' WHERE user_id = %s", secure($email), secure($email_verification_code), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE users SET user_email = %s, user_email_verified = '0', user_email_verification_code = %s, user_activated = '0' WHERE user_id = %s", secure($email), secure($email_verification_code), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         } else {
             /* update user */
-            $db->query(sprintf("UPDATE users SET user_email = %s, user_email_verified = '0', user_email_verification_code = %s WHERE user_id = %s", secure($email), secure($email_verification_code), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE users SET user_email = %s, user_email_verified = '0', user_email_verification_code = %s WHERE user_id = %s", secure($email), secure($email_verification_code), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         }
         /* prepare activation email */
         $subject = __("Just one more step to get started on") . " " . $system['system_title'];
@@ -17822,22 +17822,22 @@ class User
         /* check if user [1] activate his account & verify his email or [2] just verify his email */
         if ($system['activation_enabled'] && $system['activation_type'] == "email" && !$this->_data['user_activated']) {
             /* [1] activate his account & verify his email */
-            $db->query(sprintf("UPDATE users SET user_activated = '1', user_email_verified = '1' WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE users SET user_activated = '1', user_email_verified = '1' WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             /* affiliates system */
             $this->process_affiliates("registration", $this->_data['user_id'], $this->_data['user_referrer_id']);
 
             // get user paymail and send tokens
-            $query = $db->query(sprintf('select user_relysia_paymail as address from users where user_id = %1$s limit 1', secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $query = $db->query(sprintf('select user_relysia_paymail as address from users where user_id = %1$s limit 1', secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             $recipientAddress = $query->fetch_row()[0];
 
             shntrToken::payRelysia(1000, $recipientAddress, 0);
             shntrToken::noteTransaction(1000, 0, $this->_data['user_id'], null, null, 'INIT');
         } else {
             /* [2] just verify his email */
-            $db->query(sprintf("UPDATE users SET user_email_verified = '1' WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE users SET user_email_verified = '1' WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
 
             // get user paymail and send tokens
-            $query = $db->query(sprintf('select user_relysia_paymail as address from users where user_id = %1$s limit 1', secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $query = $db->query(sprintf('select user_relysia_paymail as address from users where user_id = %1$s limit 1', secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             $recipientAddress = $query->fetch_row()[0];
 
             shntrToken::payRelysia(1000, $recipientAddress, 0);
@@ -17864,7 +17864,7 @@ class User
         /* generate phone verification code */
         $phone_verification_code = get_hash_key(6, true);
         /* update user */
-        $db->query(sprintf("UPDATE users SET user_phone_verification_code = %s WHERE user_id = %s", secure($phone_verification_code), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+        $db->query(sprintf("UPDATE users SET user_phone_verification_code = %s WHERE user_id = %s", secure($phone_verification_code), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* prepare activation SMS */
         $message  = $system['system_title'] . " " . __("Activation Code") . ": " . $phone_verification_code;
         /* send SMS */
@@ -17894,10 +17894,10 @@ class User
         /* check if activation via sms enabled */
         if ($system['activation_enabled'] && $system['activation_type'] == "sms") {
             /* update user (not activated) */
-            $db->query(sprintf("UPDATE users SET user_phone = %s, user_phone_verified = '0', user_phone_verification_code = %s, user_activated = '0' WHERE user_id = %s", secure($phone), secure($phone_verification_code), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE users SET user_phone = %s, user_phone_verified = '0', user_phone_verification_code = %s, user_activated = '0' WHERE user_id = %s", secure($phone), secure($phone_verification_code), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         } else {
             /* update user */
-            $db->query(sprintf("UPDATE users SET user_phone = %s, user_phone_verified = '0', user_phone_verification_code = %s WHERE user_id = %s", secure($phone), secure($phone_verification_code), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE users SET user_phone = %s, user_phone_verified = '0', user_phone_verification_code = %s WHERE user_id = %s", secure($phone), secure($phone_verification_code), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         }
         /* prepare activation SMS */
         $message  = $system['system_title'] . " " . __("Activation Code") . ": " . $phone_verification_code;
@@ -17927,7 +17927,7 @@ class User
         /* check if user [1] activate his account & his phone or [2] just verify his phone */
         if ($system['activation_enabled'] && $system['activation_type'] == "sms" && !$this->_data['user_activated']) {
             /* [1] activate his account & his phone */
-            $db->query(sprintf("UPDATE users SET user_activated = '1', user_phone_verified = '1' WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE users SET user_activated = '1', user_phone_verified = '1' WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             /* affiliates system */
             $this->process_affiliates("registration", $this->_data['user_id'], $this->_data['user_referrer_id']);
         } else {
@@ -17936,7 +17936,7 @@ class User
             if ($this->_data['user_phone_verified']) {
                 blueModal("SUCCESS", __("Verified"), __("Your phone already verified"));
             }
-            $db->query(sprintf("UPDATE users SET user_phone_verified = '1' WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
+            $db->query(sprintf("UPDATE users SET user_phone_verified = '1' WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         }
     }
 
@@ -17978,11 +17978,11 @@ class User
         global $db;
         /* check if banned by the system */
         $email_domain = explode('@', $email)[1];
-        $check_banned = $db->query(sprintf("SELECT COUNT(*) as count FROM blacklist WHERE node_type = 'email' AND node_value = %s", secure(explode('@', $email)[1]))) or _error("SQL_ERROR_THROWEN");
+        $check_banned = $db->query(sprintf("SELECT COUNT(*) as count FROM blacklist WHERE node_type = 'email' AND node_value = %s", secure(explode('@', $email)[1]))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check_banned->fetch_assoc()['count'] > 0) {
             throw new Exception(__("Sorry but this provider") . " <strong>" . $email_domain . "</strong> " . __("is not allowed in our system"));
         }
-        $query = $db->query(sprintf("SELECT * FROM users WHERE user_email = %s", secure($email))) or _error("SQL_ERROR_THROWEN");
+        $query = $db->query(sprintf("SELECT * FROM users WHERE user_email = %s", secure($email))) or _error("SQL_ERROR_THROWEN", $db);
         if ($query->num_rows > 0) {
             if ($return_info) {
                 $info = $query->fetch_assoc();
@@ -18004,7 +18004,7 @@ class User
     public function check_phone($phone)
     {
         global $db;
-        $query = $db->query(sprintf("SELECT COUNT(*) as count FROM users WHERE user_phone = %s", secure($phone))) or _error("SQL_ERROR_THROWEN");
+        $query = $db->query(sprintf("SELECT COUNT(*) as count FROM users WHERE user_phone = %s", secure($phone))) or _error("SQL_ERROR_THROWEN", $db);
         if ($query->fetch_assoc()['count'] > 0) {
             return true;
         }
@@ -18024,22 +18024,22 @@ class User
     {
         global $db;
         /* check if banned by the system */
-        $check_banned = $db->query(sprintf("SELECT COUNT(*) as count FROM blacklist WHERE node_type = 'username' AND node_value = %s", secure($username))) or _error("SQL_ERROR_THROWEN");
+        $check_banned = $db->query(sprintf("SELECT COUNT(*) as count FROM blacklist WHERE node_type = 'username' AND node_value = %s", secure($username))) or _error("SQL_ERROR_THROWEN", $db);
         if ($check_banned->fetch_assoc()['count'] > 0) {
             throw new Exception(__("Sorry but this username") . " <strong>" . $username . "</strong> " . __("is not allowed in our system"));
         }
         /* check type (user|page|group) */
         switch ($type) {
             case 'page':
-                $query = $db->query(sprintf("SELECT * FROM pages WHERE page_name = %s", secure($username))) or _error("SQL_ERROR_THROWEN");
+                $query = $db->query(sprintf("SELECT * FROM pages WHERE page_name = %s", secure($username))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             case 'group':
-                $query = $db->query(sprintf("SELECT * FROM `groups` WHERE group_name = %s", secure($username))) or _error("SQL_ERROR_THROWEN");
+                $query = $db->query(sprintf("SELECT * FROM `groups` WHERE group_name = %s", secure($username))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
             default:
-                $query = $db->query(sprintf("SELECT * FROM users WHERE user_name = %s", secure($username))) or _error("SQL_ERROR_THROWEN");
+                $query = $db->query(sprintf("SELECT * FROM users WHERE user_name = %s", secure($username))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
         }
         if ($query->num_rows > 0) {
