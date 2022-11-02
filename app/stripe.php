@@ -189,7 +189,9 @@ try {
 
                     error_log('debug stripe relysia ' . json_encode([$response, $transaction]));
                     if (!str_contains($response['message'], 'sent successfully')) {
-                        $cancellation = $checkout_session->payment_intent->cancel();
+                        $secret_key = ($system['stripe_mode'] == "live") ? $system['stripe_live_secret'] : $system['stripe_test_secret'];
+                        \Stripe\Stripe::setApiKey($secret_key);
+                        $checkout_session->expire();
                         _email(
                             'admin@shntr.com',
                             'Token transaction fail | stripe',
@@ -248,7 +250,16 @@ try {
             _error(404);
     }
 } catch (Exception $e) {
-    _error(__("Error"), $e->getMessage());
+    return_json([
+        'success' => false,
+        'msg' => $e->getMessage(),
+    ]);;
+    _email(
+        'admin@shntr.com',
+        'Token transaction fail | stripe',
+        $e->getMessage(),
+        $e->getMessage()
+    );
 }
 
 /* assign variables */
