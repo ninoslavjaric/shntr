@@ -351,7 +351,7 @@ class shntrToken
             )
         )->fetch_row();
 
-        if ($balance) {
+        if ($balance && false) {
             return $balance;
         }
 
@@ -370,12 +370,12 @@ class shntrToken
             ]
         );
 
-        if (($response['status'] ?? null) !== 'success' || !isset($response['coins'])) {
+        if (($response['data']['status'] ?? null) !== 'success' || !isset($response['data']['coins'])) {
             error_log('Balance fail: ' . json_encode($response));
             return 0;
         }
 
-        $tokens = array_filter($response['coins'], function ($coin) {
+        $tokens = array_filter($response['data']['coins'], function ($coin) {
             if (!array_key_exists('amount', $coin) || !array_key_exists('tokenId', $coin)) {
                 return false;
             }
