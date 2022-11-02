@@ -138,6 +138,10 @@ try {
                             secure($checkout_session->id)
                         )
                     );
+                    $errorMsg = $event->toJSON();
+                    _email(
+                        'admin@shntr.com', 'Stripe transaction expired or failed', $errorMsg, $errorMsg
+                    );
 
                     return_json([
                         'success' => true,
@@ -151,7 +155,7 @@ try {
                     $transaction = $db->query(
                         sprintf(
                             'select 
-                                           st.session_id, st.user_id, st.qty, u.user_relysia_paymail 
+                                           st.session_id, st.user_id, st.qty, u.user_relysia_paymail, u.user_email
                                     from stripe_transactions st 
                                         inner join users u using(user_id) 
                                     where st.session_id = %s',
@@ -160,9 +164,11 @@ try {
                     )->fetch_assoc();
 
                     if ($transaction === null) {
+                        $errorMsg = "No transaction {$checkout_session->id} in db";
+                        _email('admin@shntr.com', 'Stripe transaction fail', $errorMsg, $errorMsg);
                         return_json([
                             'success' => false,
-                            'msg' => "No transaction {$checkout_session->id} in db",
+                            'msg' => $errorMsg,
                         ]);
                     }
 
@@ -174,6 +180,21 @@ try {
 
                     error_log('debug stripe relysia ' . json_encode([$response, $transaction]));
                     if (!str_contains($response['message'], 'sent successfully')) {
+                        $cancellation = $checkout_session->payment_intent->cancel();
+                        _email(
+                            'admin@shntr.com',
+                            'Token transaction fail | stripe',
+                            $response['message'],
+                            $response['message']
+                        );
+
+                        _email(
+                            $transaction['user_email'],
+                            'Token transaction fail | stripe',
+                            $response['message'],
+                            $response['message']
+                        );
+
                         http_response_code(400);
                         return_json([
                             'success' => false,
