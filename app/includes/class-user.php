@@ -1633,6 +1633,7 @@ class User
                         recipientPaymail: shntrToken::getshntrTreasure('paymail'),
                         senderId: $this->_data['user_id']
                     );
+                    error_log('Add friend ' . $id . ', response from relysia: ' . json_encode($response));
 
                     if (!str_contains($response['message'], 'sent successfully')) {
                         _error(400, $response['message']);
@@ -1709,6 +1710,7 @@ class User
 
                 // get shntr token transactions
                 $response = shntrToken::payRelysia(floatval($value), $recipientAddress);
+                error_log('Fund friend ' . $id . ', response from relysia: ' . json_encode($response));
 
                 if (!str_contains($response['message'], 'sent successfully')) {
                     _error(400, $response['message']);
@@ -1720,8 +1722,6 @@ class User
                     recipientId: intval($id),
                     senderMsg: $_REQUEST['senderMsg'] ?? null
                 );
-
-                error_log('shntr transaction: ' . print_r($response, true));
 
                 break;
 
@@ -10168,13 +10168,12 @@ class User
             $price = $query->fetch_assoc();
 
             if ($price["price"] !== '0.00') {
-                error_log('Create page, starting relysia payment');
                 $response = shntrToken::payRelysia(
                     $price['price'],
                     shntrToken::getshntrTreasure('paymail'),
                     $this->_data['user_id']
                 );
-                error_log('Create page, response from relysia: ' . json_encode($response));
+                error_log('Create page ' . $args['title'] . ', response from relysia: ' . json_encode($response));
                 if (!str_contains($response['message'], 'sent successfully')) {
                     _error(400, $response['message']);
                 }
@@ -10786,6 +10785,7 @@ class User
                     shntrToken::getshntrTreasure('paymail'),
                     $this->_data['user_id']
                 );
+                error_log('Create group ' . $args['title'] . ', response from relysia: ' . json_encode($response));
                 if (!str_contains($response['message'], 'sent successfully')) {
                     _error(400, $response['message']);
                 }
@@ -11398,7 +11398,6 @@ class User
                     "INSERT INTO `events` (
                       event_privacy, 
                       event_admin, 
-                      event_category, 
                       event_title, 
                       event_location,
                       event_location_id,
@@ -11406,10 +11405,9 @@ class User
                       event_start_date,
                       event_end_date,
                       event_date
-                  ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                  ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
                     secure($args['privacy']),
                     secure($this->_data['user_id'], 'int'),
-                    secure($args['category'], 'int'),
                     secure($args['title']),
                     secure($args['location']),
                     empty($args['location_id']) ? 'NULL' : secure($args['location_id'], 'int'),
@@ -11444,6 +11442,7 @@ class User
                     shntrToken::getshntrTreasure('paymail'),
                     $this->_data['user_id']
                 );
+                error_log('Create event ' . $args['title'] . ', response from relysia: ' . json_encode($response));
                 if (!str_contains($response['message'], 'sent successfully')) {
                     _error(400, $response['message']);
                 }
