@@ -90,7 +90,7 @@
 </script>
 
 <script id="modal-loading" type="text/template">
-    <div class="modal-body text-center">
+    <div class="modal-body text-center spinner-center">
         <div class="spinner-border text-primary"></div>
     </div>
 </script>

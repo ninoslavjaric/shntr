@@ -9168,6 +9168,11 @@ body.night-mode .movie-card-top {
 /* LOADER */
 /* ------------------------------- */
 
+.spinner-center {
+  min-height: 0 !important;
+  margin: auto;
+  width: 50%;
+}
 .x-loader {
   text-align: center;
 }
