@@ -324,6 +324,10 @@ function modal() {
     $('#modal .modal-content:last').html(render_template(arguments[0], arguments[1]));
     /* initialize modal if the function defined (user logged in) */
     if (typeof initialize_modal === "function") {
+        if ($('#modal').hasClass('modal-loading')) {
+            $('#modal').addClass('blue-modal');
+            $('#modal .modal-dialog').addClass('modal-dialog-centered');
+        }
         initialize_modal();
     }
 }
