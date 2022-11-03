@@ -573,11 +573,11 @@ function return_json_async($response = [])
  *
  * @return void
  */
-function _error($args, $db)
+function _error($args, $db = null)
 {
     $args = func_get_args();
 
-    if (ERROR_LOGGING) {
+    if (ERROR_LOGGING && is_object($db)) {
         error_log('MySql error: ' . mysqli_error($db));
     }
 
