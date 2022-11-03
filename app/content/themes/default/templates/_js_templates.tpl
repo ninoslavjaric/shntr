@@ -13,8 +13,8 @@
 
 
 <script id="modal-skeleton" type="text/template">
-    <div id="{literal}{{modal_id}}{/literal}" class="modal fade">
-        <div class="modal-dialog">
+    <div id="{literal}{{modal_id}}{/literal}" class="modal blue-modal fade">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-body">
                     <div class="loader pt10 pb10"></div>
