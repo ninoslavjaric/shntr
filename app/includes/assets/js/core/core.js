@@ -493,7 +493,7 @@ function publish_product_payment_confirm() {
 
 // confirm
 function confirm(title, message, callback, password_check = false, extra_content = '') {
-    modal("#modal-confirm", { title, message, password_check, extra_content });
+    blueModal({ id: "#modal-confirm", title, message, password_check, extra_content });
     $("#modal-confirm-ok").click(function () {
         button_status($(this), "loading");
         if (callback) callback();
@@ -602,7 +602,7 @@ function load_more(element) {
             _this.removeClass('loading');
             text.show();
             loading.addClass('x-hidden');
-            modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+            blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
         });
 }
 
@@ -748,10 +748,10 @@ $(function () {
 
         if (url.indexOf('#') == 0) {
             /* open already loaded modal with #id */
-            modal(url, options, size);
+            blueModal({ id: url, options, size});
         } else {
             /* init loading modal */
-            modal('#modal-loading');
+            blueModal({ id: '#modal-loading' });
             /* get & load modal from url */
             $.getJSON(ajax_path + url, function (response) {
                 /* check the response */
@@ -762,7 +762,7 @@ $(function () {
                 }
             })
                 .fail(function () {
-                    modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                    blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
                 })
                 .always(function() {
                     if (callback && window[callback]) {
@@ -1206,7 +1206,7 @@ $(function () {
                 /* button reset */
                 button_status(_this, "reset");
                 /* handle error */
-                modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
             });
     });
     /* Stripe */
@@ -1248,7 +1248,7 @@ $(function () {
                         /* button reset */
                         button_status(_this, "reset");
                         /* handle error */
-                        modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                        blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
                     });
             }
         });
@@ -1299,7 +1299,7 @@ $(function () {
                 /* button reset */
                 button_status(_this, "reset");
                 /* handle error */
-                modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
             });
     });
     /* CoinPayments */
@@ -1336,7 +1336,7 @@ $(function () {
                 /* button reset */
                 button_status(_this, "reset");
                 /* handle error */
-                modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
             });
     });
     /* 2Checkout */
@@ -1424,7 +1424,7 @@ $(function () {
                 /* button reset */
                 button_status(_this, "reset");
                 /* handle error */
-                modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
             });
     });
     /* Free Trial */
@@ -1439,7 +1439,7 @@ $(function () {
                 }
             }, 'json')
                 .fail(function () {
-                    modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                    blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
                 });
         });
         return false;
@@ -1455,7 +1455,7 @@ $(function () {
             }
         }, "json")
             .fail(function () {
-                modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
             });
     });
 
