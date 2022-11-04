@@ -131,7 +131,7 @@ function chat_box(user_id, conversation_id, name, name_list, multiple, link, pay
             .fail(function () {
                 /* remove the chat-box */
                 chat_box.remove();
-                modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
             });
     } else {
         /* open chat-box with that chat_key that already exists if not opened */
@@ -494,7 +494,7 @@ $(function () {
             }
         }, 'json')
             .fail(function () {
-                modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
             });
         return false;
     });
@@ -566,7 +566,7 @@ $(function () {
                 }
             })
                 .fail(function () {
-                    modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                    blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
                 });
         } else {
             /* check if chat disabled or opened from mobile */
@@ -591,7 +591,7 @@ $(function () {
                         }
                     })
                         .fail(function () {
-                            modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                            blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
                         });
                 }
             } else {
@@ -717,7 +717,7 @@ $(function () {
             }
         }, 'json')
             .fail(function () {
-                modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
             });
     }
     $('body').on('keydown', 'textarea.js_post-message', function (event) {
@@ -825,7 +825,7 @@ $(function () {
                 chatbox_closing_process = false;
             }, 'json')
                 .fail(function () {
-                    modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                    blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
                 });
         }
     });
@@ -846,7 +846,7 @@ $(function () {
                 }
             }, 'json')
                 .fail(function () {
-                    modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                    blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
                 });
         });
     });
@@ -884,7 +884,7 @@ $(function () {
             }
         }, 'json')
             .fail(function () {
-                modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
             });
     });
 
@@ -953,7 +953,7 @@ $(function () {
             }
         }, 'json')
             .fail(function () {
-                modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
             });
     }
     /* start call */
@@ -1061,7 +1061,7 @@ $(function () {
             if (reload) window.location.href = site_path;
         }, 'json')
             .fail(function () {
-                modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
             });
     });
     /* answer call */
@@ -1102,7 +1102,7 @@ $(function () {
             }
         }, 'json')
             .fail(function () {
-                modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
             });
     });
 
