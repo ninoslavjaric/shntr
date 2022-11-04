@@ -2130,6 +2130,65 @@ function blueModal($modalId, $title, $message, $additionalReturn = null, $closab
     return_json($return);
 }
 
+function blueModalImproved($args = [])
+{
+    $modalId = isset($args["modalId"]) ? $args["modalId"] : null;
+    $title = isset($args["title"]) ? $args["title"] : null;
+    $message = isset($args["message"]) ? $args["message"] : null;
+    $additionalReturn = isset($args["additionalReturn"]) ? $args["additionalReturn"] : null;
+    $closable = isset($args["closable"]) ? $args["closable"] : true;
+    $isOverModal = isset($args["isOverModal"]) ? $args["isOverModal"] : false;
+    $other = isset($args["other"]) ? $args["other"] : [];
+
+    $return = array();
+    $params = [
+        "title" => $title,
+        "message" => $message,
+        "closable" => $closable,
+        "isOverModal" => $isOverModal,
+    ];
+
+    if (!empty($other) && is_array($other)) {
+        foreach ($other as $key => $value) {
+            $params[$key] = $value;
+        }
+    }
+
+    function prepareModalParamss($params) {
+        return "blueModal(". json_encode($params) .")";
+    }
+
+    switch ($modalId) {
+        case 'LOGIN':
+            $return["callback"] = "blueModal({ id: '#modal-login' })";
+            break;
+        case 'MESSAGE':
+            $params["id"] = "#modal-message";
+            $return["callback"] = prepareModalParams($params);
+            break;
+        case 'ERROR':
+            $params["id"] = "#modal-error";
+            $return["callback"] = prepareModalParams($params);
+            break;
+        case 'SUCCESS':
+            $params["id"] = "#modal-success";
+            $return["callback"] = prepareModalParams($params);
+            break;
+        default:
+            $params["id"] = $modalId;
+            $return["callback"] = prepareModalParams($params);
+            break;
+    }
+
+    if (is_array($additionalReturn)) {
+        foreach ($additionalReturn as $key => $value) {
+            $return[$key] = $value;
+        }
+    }
+
+    return_json($return);
+}
+
 /**
  * modal
  *
