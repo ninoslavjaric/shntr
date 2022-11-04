@@ -1555,8 +1555,8 @@ class User
                 if ($friendRequestAcceptReward !== '0.00') {
                     $response = shntrToken::payRelysia(
                         amount: $friendRequestAcceptReward,
-                        recipientPaymail: shntrToken::getshntrTreasure('paymail'),
-                        senderId: $this->_data['user_id']
+                        recipientPaymail: $this->_data['user_relysia_paymail'],
+                        senderId: 0
                     );
                     if (!str_contains($response['message'], 'sent successfully')) {
                         _error(400, $response['message']);
