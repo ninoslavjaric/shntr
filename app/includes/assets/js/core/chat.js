@@ -980,8 +980,17 @@ $(function () {
         var is_audio = (type == "audio") ? true : false;
         var name = $(this).data('name');
         var user_id = $(this).data('uid');
+
         /* show the calling modal */
-        modal('#chat-calling', { type: type, is_video: is_video, is_audio: is_audio, name: name }, (is_video) ? "large" : "default");
+        blueModal({
+            id: '#chat-calling',
+            type: type,
+            is_video: is_video,
+            is_audio: is_audio,
+            name: name,
+            size: (is_video) ? "large" : "default",
+        });
+
         $.post(api['chat/call'], { 'do': 'create_call', 'type': type, 'user_id': user_id }, function (response) {
             if (response.callback) {
                 eval(response.callback);
@@ -1043,7 +1052,7 @@ $(function () {
             }
         }, 'json')
             .fail(function () {
-                modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
             });
     });
     /* (cancel|decline|end) call */
