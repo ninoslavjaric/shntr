@@ -279,7 +279,13 @@ function init_picture_crop(node) {
             grid: true
         });
     }, 200);
-    modal('#crop-profile-picture', { 'image': `${node.data('image')}?cropping=true`, 'handle': node.data('handle'), 'id': node.data('id') });
+
+    blueModal({
+        id: '#crop-profile-picture',
+        image: `${node.data('image')}?cropping=true`,
+        handle: node.data('handle'),
+        image_id: node.data('id')
+    });
 }
 
 
