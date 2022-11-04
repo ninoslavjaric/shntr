@@ -337,7 +337,15 @@ function chat_heartbeat() {
                     /* update chat audiocall ringing process */
                     chat_audiocall_ringing_process = true;
                     /* show the ringing modal */
-                    modal('#chat-ringing', { type: "audio", is_video: false, is_audio: true, id: response.audiocall['call_id'], name: response.audiocall['caller_name'], image: response.audiocall['caller_picture'] });
+                    blueModal({
+                        id: '#chat-ringing',
+                        type: "audio",
+                        is_video: false,
+                        is_audio: true,
+                        call_id: response.audiocall['call_id'],
+                        name: response.audiocall['caller_name'],
+                        image: response.audiocall['caller_picture']
+                    });
                     /* play ringing sound */
                     $("#chat-ringing-sound")[0].play();
                 }
@@ -359,7 +367,16 @@ function chat_heartbeat() {
                     /* update chat videocall ringing process */
                     chat_videocall_ringing_process = true;
                     /* show the ringing modal */
-                    modal('#chat-ringing', { type: "video", is_video: true, is_audio: false, id: response.videocall['call_id'], name: response.videocall['caller_name'], image: response.videocall['caller_picture'] }, "large");
+                    blueModal({
+                        id: '#chat-ringing',
+                        type: "video",
+                        is_video: true,
+                        is_audio: false,
+                        call_id: response.videocall['call_id'],
+                        name: response.videocall['caller_name'],
+                        image: response.videocall['caller_picture'],
+                        size: "large",
+                    });
                     /* play ringing sound */
                     $("#chat-ringing-sound")[0].play();
                 }

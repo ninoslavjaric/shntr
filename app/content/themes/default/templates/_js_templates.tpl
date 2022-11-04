@@ -990,9 +990,9 @@
             </div>
 
             <div class="mt30">
-                <button type="submit" class="btn btn-icon btn-rounded btn-success mr10 js_chat-call-answer" data-type="{literal}{{type}}{/literal}" data-id="{literal}{{id}}{/literal}"><i class="fas fa-phone-alt fa-lg fa-fw"></i></button>
-                <button type="button" class="btn btn-icon btn-rounded btn-danger js_chat-call-decline" data-type="{literal}{{type}}{/literal}" data-id="{literal}{{id}}{/literal}" data-dismiss="modal"><i class="fas fa-phone-slash fa-lg fa-fw"></i></button>
-                <button type="button" class="btn btn-icon btn-rounded btn-danger x-hidden js_chat-call-end" data-type="{literal}{{type}}{/literal}" data-id="{literal}{{id}}{/literal}" data-dismiss="modal"><i class="fas fa-phone-slash fa-lg fa-fw"></i></button>
+                <button type="submit" class="btn btn-icon btn-rounded btn-success mr10 js_chat-call-answer" data-type="{literal}{{type}}{/literal}" data-id="{literal}{{call_id}}{/literal}"><i class="fas fa-phone-alt fa-lg fa-fw"></i></button>
+                <button type="button" class="btn btn-icon btn-rounded btn-danger js_chat-call-decline" data-type="{literal}{{type}}{/literal}" data-id="{literal}{{call_id}}{/literal}" data-dismiss="modal"><i class="fas fa-phone-slash fa-lg fa-fw"></i></button>
+                <button type="button" class="btn btn-icon btn-rounded btn-danger x-hidden js_chat-call-end" data-type="{literal}{{type}}{/literal}" data-id="{literal}{{call_id}}{/literal}" data-dismiss="modal"><i class="fas fa-phone-slash fa-lg fa-fw"></i></button>
             </div>
         </div>
         <div class="modal-footer border-0"></div>
