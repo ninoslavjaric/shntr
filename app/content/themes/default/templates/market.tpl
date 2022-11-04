@@ -199,9 +199,9 @@
                         <!-- location filter -->
                         <div class="float-right">
                             <div class="dropdown">
-                                <button type="button" class="btn btn-sm btn-dark dropdown-toggle" data-toggle="dropdown" data-display="static">
-                                    <i class="fa fa-map-marker-alt mr5"></i>{__("Location")}
-                                </button>
+{*                                <button type="button" class="btn btn-sm btn-dark dropdown-toggle" data-toggle="dropdown" data-display="static">*}
+{*                                    <i class="fa fa-map-marker-alt mr5"></i>{__("Location")}*}
+{*                                </button>*}
                                 <div class="dropdown-menu dropdown-menu-right">
                                     <form class="ptb15 plr15" method="get" action="?">
                                         <div class="form-group">
