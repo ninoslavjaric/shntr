@@ -39,7 +39,7 @@ $(function () {
                 }
             }, 'json')
                 .fail(function () {
-                    modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                    blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
                 });
         });
 
@@ -63,11 +63,11 @@ $(function () {
         element.html('<span class="spinner-grow spinner-grow-sm mr10"></span>' + __['Loading']);
 
         $.post(api['admin/users'], { 'do': 'sync-transactions', 'id': id }, function (response) {
-            modal('#modal-message', { title: __['Success'], message: response.message });
+            blueModal({ id: '#modal-message', title: __['Success'], message: response.message });
             element.html(preLoader);
         }, 'json')
           .fail(function () {
-              modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+              blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
               element.html(preLoader);
           }
       );
@@ -80,11 +80,11 @@ $(function () {
         element.html('<span class="spinner-grow spinner-grow-sm mr10"></span>' + __['Loading']);
 
         $.post(api['admin/users'], { 'do': 'sync-wallet', 'id': id }, function (response) {
-            modal('#modal-message', { title: __['Success'], message: response.message });
+            blueModal({ id: '#modal-message', title: __['Success'], message: response.message });
             element.html(preLoader);
         }, 'json')
           .fail(function () {
-              modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+              blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
               element.html(preLoader);
           }
       );
@@ -111,7 +111,7 @@ $(function () {
                 }
             }, 'json')
                 .fail(function () {
-                    modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                    blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
                 });
         });
     });
@@ -167,7 +167,7 @@ $(function () {
                 }
             }, 'json')
                 .fail(function () {
-                    modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                    blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
                 });
         });
     });
@@ -183,7 +183,7 @@ $(function () {
                 }
             }, 'json')
                 .fail(function () {
-                    modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                    blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
                 });
         });
     });
@@ -202,7 +202,7 @@ $(function () {
                 }
             }, 'json')
                 .fail(function () {
-                    modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                    blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
                 });
         });
     });
@@ -218,7 +218,7 @@ $(function () {
                 }
             }, 'json')
                 .fail(function () {
-                    modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                    blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
                 });
         });
     });
@@ -237,7 +237,7 @@ $(function () {
                 }
             }, 'json')
                 .fail(function () {
-                    modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                    blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
                 });
         });
     });
@@ -253,7 +253,7 @@ $(function () {
                 }
             }, 'json')
                 .fail(function () {
-                    modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                    blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
                 });
         });
     });
@@ -281,7 +281,7 @@ $(function () {
                 }
             }, 'json')
                 .fail(function () {
-                    modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                    blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
                 });
         });
     });
@@ -365,7 +365,7 @@ $(function () {
                 }
             }, 'json')
                 .fail(function () {
-                    modal('#modal-message', { title: __['Error'], message: __['There is something that went wrong!'] });
+                    blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
                 });
         }, true);
     });
@@ -380,7 +380,7 @@ $(function () {
                 /* check the response */
             }, 'json')
                 .fail(function () {
-                    modal('#modal-message', { title: __['Success'], message: __['Successfully changed!'] });
+                    blueModal({ id: '#modal-message', title: __['Success'], message: __['Successfully changed!'] });
                 });
         });
     });
