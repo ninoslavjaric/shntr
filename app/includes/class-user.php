@@ -17295,7 +17295,15 @@ class User
                     $method = __("Google Authenticator app");
                     break;
             }
-            modal("#two-factor-authentication", "{user_id: '" . $user['user_id'] . "', remember: '" . $remember . "', method: '" . $method . "'}");
+
+            blueModalImproved([
+                "modalId" => "#two-factor-authentication",
+                "other" => [
+                    "user_id" => $user['user_id'],
+                    "remember" => $remember,
+                    "method" => $method,
+                ],
+            ]);
         }
         /* set authentication cookies */
         set_authentication_cookies:

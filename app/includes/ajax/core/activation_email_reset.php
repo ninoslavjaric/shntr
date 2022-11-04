@@ -15,7 +15,7 @@ is_ajax();
 
 // check user logged in
 if (!$user->_logged_in) {
-	modal('LOGIN');
+	blueModalImproved(["modalId" => "LOGIN"]);
 }
 
 // check user activated
