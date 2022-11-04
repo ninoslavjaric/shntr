@@ -152,7 +152,16 @@ $(function () {
 
     // admin verification
     $('body').on('click', '.js_admin-verification-documents', function () {
-        modal('#verification-documents', { 'photo': $(this).data('photo'), 'passport': $(this).data('passport'), 'message': $(this).data('message'), 'handle': $(this).data('handle'), 'node-id': $(this).data('node-id'), 'request-id': $(this).data('request-id') }, 'large');
+        blueModal({
+            'id': '#verification-documents',
+            'photo': $(this).data('photo'),
+            'passport': $(this).data('passport'),
+            'message': $(this).data('message'),
+            'handle': $(this).data('handle'),
+            'node-id': $(this).data('node-id'),
+            'request-id': $(this).data('request-id'),
+            'size': 'large',
+        });
     });
     $('body').on('click', '.js_admin-verify', function () {
         var handle = $(this).data('handle');
