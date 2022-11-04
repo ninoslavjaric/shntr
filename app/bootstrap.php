@@ -27,7 +27,7 @@ require_once(ABSPATH . 'includes/config.php');
 
 
 // log errors in error.log, access from domain.com/logger
-if (ERROR_LOGGING) {
+if (defined('ERROR_LOGGING') && ERROR_LOGGING) {
     ini_set('log_errors', true);
     ini_set('error_log', ABSPATH . '/error.log');
 }
@@ -55,7 +55,22 @@ ini_set('session.cookie_httponly', 1);
 if (get_system_protocol() == "https") {
     ini_set('session.cookie_secure', 1);
 }
+
+// connect to the database
+$db = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT);
+$db->set_charset('utf8mb4');
+if (mysqli_connect_error()) {
+    _error("DB_ERROR");
+}
+/* set db time to UTC */
+$db->query("SET time_zone = '+0:00'");
+
+require_once __DIR__ . '/includes/Session.php';
+
+session_set_save_handler(new Session(), true);
+
 session_start();
+
 /* set session secret */
 if (!isset($_SESSION['secret'])) {
     $_SESSION['secret'] = get_hash_token();
@@ -75,16 +90,6 @@ $minutes_to_add = 0;
 $DateTime = new DateTime();
 $DateTime->add(new DateInterval('PT' . $minutes_to_add . 'M'));
 $date = $DateTime->format('Y-m-d H:i:s');
-
-
-// connect to the database
-$db = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT);
-$db->set_charset('utf8mb4');
-if (mysqli_connect_error()) {
-    _error("DB_ERROR");
-}
-/* set db time to UTC */
-$db->query("SET time_zone = '+0:00'");
 
 
 // check if the viewer IP is banned
