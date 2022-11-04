@@ -127,7 +127,14 @@ try {
 			}
 
 			// return
-			modal("#payment", "{'handle': 'donate', 'id': '" . $_GET['post_id'] . "', 'price': '" . $_POST['amount'] . "'}");
+			blueModalImproved([
+				"modalId" => "#payment",
+				"other" => [
+					"handle" => "donate",
+					"payment_id" => $_GET['post_id'],
+					"price" => $_GET['amount'],
+				],
+			]);
 			break;
 
 		default:

@@ -34,7 +34,14 @@ try {
 			}
 
 			// return
-			modal("#payment", "{'handle': 'wallet', 'price': '" . $_POST['amount'] . "'}");
+			blueModalImproved([
+				"modalId" => "#payment",
+				"other" => [
+					"handle" => "wallet",
+					"price" => $_POST['amount'],
+				],
+			]);
+
 			break;
 
 		case 'wallet_withdraw_affiliates':

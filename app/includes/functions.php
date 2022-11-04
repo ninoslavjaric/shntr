@@ -1994,7 +1994,7 @@ function user_access($is_ajax = false, $bypass_subscription = false)
     if ($is_ajax) {
         /* check user logged in */
         if (!$user->_logged_in) {
-            modal('LOGIN');
+            blueModalImproved([ "modalId" => 'LOGIN' ]);
         }
         /* check user activated */
         if ($system['activation_enabled'] && !$user->_data['user_activated']) {
