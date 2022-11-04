@@ -165,7 +165,7 @@
                 </div>
             {/if}
 
-            {if $rows}
+
                 <div class="articles-widget-header clearfix">
 
                     {if $current_category['category_dominant']}
@@ -234,7 +234,7 @@
                         {/if}
                     </div>
                 </div>
-
+            {if $rows}
                 <div class="row">
                     {foreach $rows as $post}
                         <div class="col-md-6 col-lg-4">
