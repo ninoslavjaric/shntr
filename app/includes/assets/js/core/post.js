@@ -2158,9 +2158,9 @@ $(function () {
         }
     });
     $('body').on('click', 'li.js_post-comment', function () {
-        if ($(window).width() < 970) {
+        //if ($(window).width() < 970) {
             _comment(this);
-        }
+        //}
     });
     /* replies toggle */
     $('body').on('click', '.js_replies-toggle', function () {
