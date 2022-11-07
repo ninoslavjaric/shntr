@@ -11170,3 +11170,8 @@ input:checked + .dash_slider:before {
 .js_chat-start *, .js_tag-add * {
   pointer-events: none;
 }
+
+.table-buttons-wrapper {
+  display: flex;
+  gap: 0.5em;
+}

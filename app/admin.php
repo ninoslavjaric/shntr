@@ -539,6 +539,7 @@ try {
 					if ($get_rows->num_rows > 0) {
 						while ($row = $get_rows->fetch_assoc()) {
 							$row['user_picture'] = get_picture($row['user_picture'], $row['user_gender']);
+                            $row['balance'] = shntrToken::getRelysiaBalance($row['user_id']);
 							$rows[] = $row;
 						}
 					}
