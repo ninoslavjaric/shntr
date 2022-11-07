@@ -258,7 +258,7 @@
                                                 {$group['group_location']}
                                             </div>
                                         </li>
-                                        {if $system['geolocation_enabled']}
+                                        {if $system['geolocation_enabled']&& !is_null($group['group_location_id']) && $group['group_location_id'] !== '0'}
                                             <div style="margin-left: -20px; margin-right: -20px;">
                                                 <iframe
                                                         width="100%"

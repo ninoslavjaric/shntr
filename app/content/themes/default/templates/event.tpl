@@ -252,7 +252,7 @@
                                                 {$event['event_location']}
                                             </div>
                                         </li>
-                                        {if $system['geolocation_enabled']}
+                                        {if $system['geolocation_enabled'] && !is_null($event['event_location_id']) && $event['event_location_id'] !== '0'}
                                             <div style="margin-left: -20px; margin-right: -20px;">
                                                 <iframe
                                                         width="100%"
