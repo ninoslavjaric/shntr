@@ -8657,13 +8657,15 @@ body.night-mode .profile-tabs-wrapper {
   overflow: hidden;
   overflow-x: auto;
   white-space: nowrap;
+  display: flex;
+  justify-content: space-between;
 }
 .profile-tabs-wrapper > ul > li {
   display: inline-block;
 }
 .profile-tabs-wrapper > ul > li > a {
   display: block;
-  padding: 18px 25px;
+  padding: 18px 20px;
   line-height: 20px;
   font-weight: 600;
   color: #666;
