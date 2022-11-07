@@ -10872,7 +10872,7 @@ class User
             throw new Exception(__("You must select a valid privacy for your group"));
         }
 
-        if ($args['location'] && empty($args['location_id'])) {
+        if ($args['location']) {
             $args['location'] = htmlspecialchars_decode($args['location']);
             $args['location_id'] = self::guess_place_id(...explode(' > ', $args['location']));
         }
