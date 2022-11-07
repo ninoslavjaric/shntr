@@ -27,14 +27,14 @@ try {
 		$user->activation_email($_GET['code']);
 	}else {
 		global $db, $system;
-		$query = $db->query(sprintf('SELECT user_id from users WHERE user_email_verification_code = %s;', secure($_GET['code']))) or _error("SQL_ERROR_THROWEN");
+		$query = $db->query(sprintf('SELECT user_id, user_activated, user_referrer_id, user_email_verified, user_email_verification_code from users WHERE user_email_verification_code = %s', secure($_GET['code']))) or _error("SQL_ERROR_THROWEN");
 		$loginInfo = $query->fetch_assoc();
         /* check user */
         if ($loginInfo['user_email_verified']) {
             /* user email already verified => redirect */
             redirect();
         }
-        if ($loginInfo['user_email_verification_code'] != $code) {
+        if ($loginInfo['user_email_verification_code'] != $_GET['code']) {
             /* wrong verification code => 404 */
             _error(404);
         }
