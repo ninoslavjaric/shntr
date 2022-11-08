@@ -53,18 +53,31 @@ setTimeout(pingSqs, 10000)
 const relysiaHook = async () => {
   const relysiaEndpoint = 'api.relysia.com';
 
-  const loginObject = await axios.post(
-    `https://${relysiaEndpoint}/v1/auth`,
-    {email: process.env.shntr_TOKEN_USERNAME, password: process.env.shntr_TOKEN_PASSWORD_DECRYPT},
-    {
-      headers: {serviceID: '9ab1b69e-92ae-4612-9a4f-c5a102a6c068'}
-    }
-  );
-  console.log('Login completed', loginObject.data);
+  let token;
+
+  try {
+    const { data } = await axios.get('http://apache-shntr/api/relysia_treasury_token');
+    token = data.token
+  } catch (e) {
+    token = null
+  }
+
+  if (!token) {
+    const loginObject = await axios.post(
+      `https://${relysiaEndpoint}/v1/auth`,
+      {email: process.env.shntr_TOKEN_USERNAME, password: process.env.shntr_TOKEN_PASSWORD_DECRYPT},
+      {
+        headers: {serviceID: '9ab1b69e-92ae-4612-9a4f-c5a102a6c068'}
+      }
+    );
+    token = loginObject.data.data.token
+    console.log('Login completed', loginObject.data);
+  }
+
 
   const socket = io(`wss://${relysiaEndpoint}`, {
     extraHeaders: {
-      authToken: loginObject.data.data.token,
+      authToken: token,
       serviceID: '9ab1b69e-92ae-4612-9a4f-c5a102a6c068'
     },
     transports: ['websocket', 'polling']

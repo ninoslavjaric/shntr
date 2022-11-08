@@ -105,6 +105,12 @@ try {
             ]);
             break;
 
+        case 'relysia_treasury_token':
+            return_json([
+                'token' => shntrToken::getAccessToken(null)
+            ]);
+            break;
+
         case 'relysia_balance_refresh':
             $payload = @file_get_contents('php://input');
             $_POST = json_decode($payload, true);
