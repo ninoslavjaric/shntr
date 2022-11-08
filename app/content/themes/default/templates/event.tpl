@@ -90,9 +90,9 @@
                 <!-- profile-buttons -->
                 <div class="profile-buttons-wrapper">
                     {if $event['event_privacy'] == "public" || $event['i_joined'] || $event['i_admin']}
-                        <button type="button" class="btn btn-sm btn-success btn-primary js_event-fund" data-id="{$event['event_id']}">
-                            <i class="fa fa-check mr5"></i>{__("Fund")}
-                        </button>
+{*                        <button type="button" class="btn btn-sm btn-success btn-primary js_event-fund" data-id="{$event['event_id']}">*}
+{*                            <i class="fa fa-check mr5"></i>{__("Fund")}*}
+{*                        </button>*}
                         {if $event['i_joined']['is_going']}
                             <button type="button" class="btn btn-sm btn-success js_ungo-event" data-id="{$event['event_id']}">
                                 <i class="fa fa-check mr5"></i>{__("Going")}

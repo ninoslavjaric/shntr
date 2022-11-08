@@ -108,9 +108,9 @@
                         {if $user->_data['user_id'] != $profile['user_id']}
                             <!-- add friend -->
                             {if $profile['we_friends']}
-                                <button type="button" class="btn btn-sm btn-primary js_friend-fund" data-uid="{$profile['user_id']}">
-                                    <i class="fa fa-credit-card mr5"></i>{__("Fund friend")}
-                                </button>
+{*                                <button type="button" class="btn btn-sm btn-primary js_friend-fund" data-uid="{$profile['user_id']}">*}
+{*                                    <i class="fa fa-credit-card mr5"></i>{__("Fund friend")}*}
+{*                                </button>*}
                                 <button type="button" class="btn btn-sm btn-success btn-delete js_friend-remove" data-uid="{$profile['user_id']}">
                                     <i class="fa fa-check mr5"></i>{__("Friends")}
                                 </button>
