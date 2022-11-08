@@ -2,7 +2,7 @@
 
 /**
  * api
- * 
+ *
  * @package Sngine
  * @author Zamblek
  */
@@ -88,6 +88,39 @@ try {
 			// return & exit
 			return_json($return);
 			break;
+
+        case 'ws_check':
+            $payload = @file_get_contents('php://input');
+            $_POST = json_decode($payload, true);
+
+            [$id] = $db->query(
+                sprintf(
+                    'select user_id from users where user_password = %s limit 1',
+                    secure($_POST['password'])
+                )
+            )->fetch_row();
+
+            return_json([
+                'userId' => $id,
+            ]);
+            break;
+
+        case 'relysia_balance_refresh':
+            $payload = @file_get_contents('php://input');
+            $_POST = json_decode($payload, true);
+            $balance = shntrToken::getRelysiaBalance($_POST['id'], true);
+            $db->query(
+                sprintf(
+                    'upsate users_relysia set balance = %s where user_id = %s',
+                    secure($balance),
+                    secure($_POST['id'])
+                )
+            );
+
+            return_json([
+                'balance' => $balance, 'id' => $_POST['id']
+            ]);
+            break;
 
 		default:
 			return_json(array('error' => true, 'message' => "Bad Request, invalid parameters"));

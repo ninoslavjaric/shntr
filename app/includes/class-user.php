@@ -1547,10 +1547,6 @@ class User
                 $query = $db->query("SELECT price FROM prices WHERE price_name = 'accept_fr_price';");
                 $price = $query->fetch_assoc();
                 $friendRequestAcceptReward = isset($price["price"]) && !empty($price["price"]) ?  $price["price"] : 0;
-//                $query = $db->query(
-//                    'select user_token_private_key as super_private_key, user_id as id from users where user_id = 1 limit 1'
-//                ) or _error("SQL_ERROR_THROWEN", $db);
-//                $superUser = $query->fetch_assoc();
 
                 if ($friendRequestAcceptReward !== '0.00') {
                     $response = shntrToken::payRelysia(
@@ -1620,7 +1616,7 @@ class User
                 //var_dump((int) $friendRequestAcceptReward);
 
                 if ($friendRequestAcceptReward !== '0.00') {
-                    $balance = shntrToken::getRelysiaBalance($this->_data['user_id']);
+                    $balance = shntrToken::getRelysiaBalance($this->_data['user_id'], true);
                     if ($balance < $friendRequestAcceptReward) {
                         blueModal("ERROR", __("Funds"), __("You're out of tokens"));
                     }
@@ -2373,7 +2369,7 @@ class User
                 );
             }
 
-            $balance = shntrToken::getRelysiaBalance($this->_data['user_id']);
+            $balance = shntrToken::getRelysiaBalance($this->_data['user_id'], true);
             if ($balance < $price) {
                 blueModal("ERROR", __("Funds"), __("You're out of tokens"));
             }

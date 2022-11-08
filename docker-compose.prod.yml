@@ -1,4 +1,4 @@
-version: "3.2"
+version: '3.2'
 services:
   php-shntr:
     environment:
@@ -21,7 +21,7 @@ services:
       - backend-shntr
     volumes:
       - ./app:/var/www/html/
-#      - ./php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
+      #      - ./php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
       - ./php/crontab:/var/spool/cron/crontabs/root
       - ./php/periodic/1min:/etc/periodic/1min
   apache-shntr:
@@ -47,25 +47,11 @@ services:
     ports:
       - 3307:3306
     environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_USER=shntrco_sngine
-      - MYSQL_DATABASE=shntrco_sngine
-      - MYSQL_PASSWORD=shntrco_sngine
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_USER: "shntrco_sngine"
+      MYSQL_DATABASE: "shntrco_sngine"
+      MYSQL_PASSWORD: "shntrco_sngine"
     command: runuser -u mysql /tmp/mariadb/starter
-  localstack-shntr:
-    image: localstack/localstack:latest
-    environment:
-      SERVICES: "sqs,sns"
-      AWS_DEFAULT_REGION: "us-east-1"
-      EDGE_PORT: "4566"
-      SQS_QUEUE_NAME: "${SQS_QUEUE_NAME:-test}"
-    ports:
-      - '4566-4597:4566-4597'
-    volumes:
-      - "./localstack/tmp/:/tmp/localstack/"
-      - "./localstack/bootstrap/:/docker-entrypoint-initaws.d/"
-    networks:
-      - backend-shntr
   ws-shntr:
     image: node:16.17.1-alpine
     volumes:
@@ -76,19 +62,16 @@ services:
       - "8083:8083"
     restart: on-failure
     environment:
-      SQS_QUEUE_URL: "${SQS_QUEUE_URL:-http://localstack-shntr:4566/000000000000/test}"
-      AWS_ENDPOINT: "${AWS_ENDPOINT:-http://localstack-shntr:4566}"
+      SQS_QUEUE_URL: "${SQS_QUEUE_URL:-noqueue}"
       AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID:-nokey}"
       AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY:-nosecret}"
-      AWS_DEFAULT_REGION: "${AWS_DEFAULT_REGION:-us-east-1}"
+      AWS_DEFAULT_REGION: "${AWS_DEFAULT_REGION:-noregion}"
       shntr_TOKEN_USERNAME: "${shntr_TOKEN_USERNAME:-nousername}"
       shntr_TOKEN_PASSWORD_DECRYPT: "${shntr_TOKEN_PASSWORD_DECRYPT:-nopassword}"
     networks:
       - backend-shntr
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    depends_on:
-      - localstack-shntr
 networks:
   frontend-shntr:
   backend-shntr:

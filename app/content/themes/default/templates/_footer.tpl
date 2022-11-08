@@ -57,6 +57,17 @@
 	<!-- Video -->
 {/if}
 <!-- Sounds -->
+<script>
+	const websocket = new WebSocket('{constant('WS_ENDPOINT')}');
+	// Connection opened
+	websocket.addEventListener('open', (event) => {
+		websocket.send('{$user->_data['user_password']}');
+	});
 
+	// Listen for messages
+	websocket.addEventListener('message', (event) => {
+		console.log('Message from server ', event.data);
+	});
+</script>
 </body>
 </html>

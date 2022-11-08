@@ -324,6 +324,20 @@ class shntrToken
         ];
     }
 
+    public static function getCredentials(int $user_id): array
+    {
+        global $db;
+
+        [$username, $password] = $db->query(
+            "select user_relysia_username, user_relysia_password from users where user_id = {$user_id}"
+        )->fetch_row();
+
+        $host = in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES) ? "local.shntr.com" : $_SERVER['SERVER_NAME'];
+        $email = $username === 'relysia@shntr.com' ? 'relysia@shntr.com' : strtolower($username) . '@' . $host;
+
+        return [$email, self::decrypt($password)];
+    }
+
     /**
      * @deprecated
      */
@@ -336,7 +350,7 @@ class shntrToken
         ];
     }
 
-    public static function getRelysiaBalance(?int $user_id): float
+    public static function getRelysiaBalance(?int $user_id, bool $force = false): float
     {
         global $db;
 
@@ -344,14 +358,13 @@ class shntrToken
             return 1000;
         }
 
-        @[$balance] = $db->query(
-            sprintf(
-                "select sum(if(type = 'credit', balance_change, -1 * balance_change)) from users_relysia_transactions where user_id  = %s",
-                $user_id ?? 0
-            )
-        )->fetch_row();
+        if (!$force && $_COOKIE['balance_refreshed'] ?? false) {
+            $query = $db->query(
+                sprintf('select balance from users_relysia where user_id = %s', secure($user_id))
+            ) or _error('SQL_ERROR_THROWEN', $db->error);
 
-        if ($balance && false) {
+            [$balance] = $query->fetch_row();
+
             return $balance;
         }
 
@@ -383,7 +396,19 @@ class shntrToken
             return $coin['tokenId'] === static::TOKEN_ID;
         });
 
-        return array_sum(array_column($tokens, 'amount'));
+        $balance = array_sum(array_column($tokens, 'amount'));
+
+        $db->query(
+            sprintf(
+                'update users_relysia set balance = %s where user_id = %s',
+                secure($balance),
+                secure($user_id)
+            )
+        ) or _error('SQL_ERROR_THROWEN');
+
+        setcookie('balance_refreshed', '1', time() + 30, '/', '', get_system_protocol() === 'https', true);
+
+        return $balance;
     }
 
     public static function payRelysia(float $amount, string $recipientPaymail, int $senderId = null): array
