@@ -10973,6 +10973,8 @@ class User
         if (!$can_delete) {
             _error(403);
         }
+        /* delete the group interests */
+        $db->query(sprintf("DELETE FROM interests_groups WHERE group_id = %s", secure($group_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* delete the group */
         $db->query(sprintf("DELETE FROM `groups` WHERE group_id = %s", secure($group_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* delete the group members */

@@ -86,7 +86,7 @@ try {
 			}
 			// [BACKGROUND PROCESS]
 			/* return async */
-			return_json_async();
+			//return_json_async();
 			/* delete user */
 			$user->delete_user($_POST['id']);
 			if (isset($_POST['node']) && is_numeric($_POST['node'])) {
@@ -106,7 +106,7 @@ try {
 			}
 			// [BACKGROUND PROCESS]
 			/* return async */
-			return_json_async();
+			//return_json_async();
 			/* delete user posts */
 			$user->delete_posts($_POST['id']);
 			break;
@@ -134,7 +134,7 @@ try {
 			}
 			// [BACKGROUND PROCESS]
 			/* return async */
-			return_json_async();
+			//return_json_async();
 			/* delete page */
 			$user->delete_page($_POST['id']);
 			if (isset($_POST['node']) && is_numeric($_POST['node'])) {
@@ -150,7 +150,7 @@ try {
 			}
 			// [BACKGROUND PROCESS]
 			/* return async */
-			return_json_async();
+			//return_json_async();
 			/* delete page posts */
 			$user->delete_posts($_POST['id'], 'page');
 			break;
@@ -170,7 +170,7 @@ try {
 			}
 			// [BACKGROUND PROCESS]
 			/* return async */
-			return_json_async();
+			//return_json_async();
 			/* delete group */
 			$user->delete_group($_POST['id']);
 			if (isset($_POST['node']) && is_numeric($_POST['node'])) {
@@ -186,7 +186,7 @@ try {
 			}
 			// [BACKGROUND PROCESS]
 			/* return async */
-			return_json_async();
+			//return_json_async();
 			/* delete group posts */
 			$user->delete_posts($_POST['id'], 'group');
 			break;
@@ -206,7 +206,7 @@ try {
 			}
 			// [BACKGROUND PROCESS]
 			/* return async */
-			return_json_async();
+			//return_json_async();
 			/* delete event */
 			$user->delete_event($_POST['id']);
 			if (isset($_POST['node']) && is_numeric($_POST['node'])) {
@@ -222,7 +222,7 @@ try {
 			}
 			// [BACKGROUND PROCESS]
 			/* return async */
-			return_json_async();
+			//return_json_async();
 			/* delete event posts */
 			$user->delete_posts($_POST['id'], 'event');
 			break;
@@ -274,7 +274,7 @@ try {
 			}
 			// [BACKGROUND PROCESS]
 			/* return async */
-			return_json_async();
+			//return_json_async();
 			/* delete forum */
 			$user->delete_forum($_POST['id']);
 			if (isset($_POST['node']) && is_numeric($_POST['node'])) {
@@ -290,7 +290,7 @@ try {
 			}
 			// [BACKGROUND PROCESS]
 			/* return async */
-			return_json_async();
+			//return_json_async();
 			/* delete forum thread */
 			$user->delete_forum_thread($_POST['id']);
 			if (isset($_POST['node']) && is_numeric($_POST['node'])) {
@@ -306,7 +306,7 @@ try {
 			}
 			// [BACKGROUND PROCESS]
 			/* return async */
-			return_json_async();
+			//return_json_async();
 			/* delete forum reply */
 			$user->delete_forum_reply($_POST['id']);
 			if (isset($_POST['node']) && is_numeric($_POST['node'])) {
@@ -386,7 +386,7 @@ try {
 			}
 			// [BACKGROUND PROCESS]
 			/* return async */
-			return_json_async();
+			//return_json_async();
 			/* delete post */
 			$user->delete_post($_POST['id']);
 			if (isset($_POST['node']) && is_numeric($_POST['node'])) {
@@ -402,7 +402,7 @@ try {
 			}
 			// [BACKGROUND PROCESS]
 			/* return async */
-			return_json_async();
+			//return_json_async();
 			/* delete comment */
 			$user->delete_comment($_POST['id']);
 			if (isset($_POST['node']) && is_numeric($_POST['node'])) {
