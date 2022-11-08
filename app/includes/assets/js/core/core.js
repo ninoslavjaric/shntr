@@ -98,7 +98,7 @@ function handlePaywallRestrictions(e, el) {
     }
 
     var checkForExclude = exclude.some(function(val) {
-        var classes = e && $(e.target).attr('class')?.split(/\s+/) || [];
+        var classes = e && $(e.target).attr('class') !== null && $(e.target).attr('class').split(/\s+/) || [];
         return classes.indexOf(val) != -1;
     });
 
