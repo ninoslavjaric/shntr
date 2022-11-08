@@ -1,4 +1,5 @@
 const axios = require('axios');
+const { createServer } = require('http')
 const { io } = require('socket.io-client')
 const {WebSocketServer} = require('ws')
 const { SQS } = require('aws-sdk')
@@ -117,9 +118,15 @@ const relysiaHook = async () => {
 }
 relysiaHook()
 
-const wss = new WebSocketServer({
-  port: 8083
+const server = createServer((req, res) => {
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.write('ok');
+  res.end();
 })
+
+const wss = new WebSocketServer({ server })
+
+server.listen(8083)
 
 wss.on('connection', function connection(ws) {
   ws.send('welcome!')
