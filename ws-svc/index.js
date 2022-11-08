@@ -19,7 +19,7 @@ const pingSqs = async () => {
   try {
     data = await sqsClient.receiveMessage({
       QueueUrl: process.env.SQS_QUEUE_URL,
-      WaitTimeSeconds: 1000,
+      WaitTimeSeconds: 10,
     }).promise();
   } catch (e) {
     console.warn(e)
