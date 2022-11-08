@@ -157,7 +157,10 @@ function check_system_url()
     $protocol = get_system_protocol();
     $parsed_url = parse_url(SYS_URL);
 
-    if (($parsed_url['scheme'] != $protocol) || ($parsed_url['host'] != $_SERVER['HTTP_HOST'])) {
+    if (
+        $_SERVER['HTTP_HOST'] !== 'apache-shntr'
+        && (($parsed_url['scheme'] != $protocol) || ($parsed_url['host'] != $_SERVER['HTTP_HOST']))
+    ) {
         header('Location: ' . SYS_URL);
     }
 }
