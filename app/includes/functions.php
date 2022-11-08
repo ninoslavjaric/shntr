@@ -2899,15 +2899,20 @@ function aws_sqs_push(int $user_id, array $data): void
 {
     require_once(ABSPATH . 'includes/libs/AWS/aws-autoloader.php');
 
-    $awsClient = Aws\Sqs\SqsClient::factory([
+    $config = [
         'version'    => 'latest',
         'region'      => defined('AWS_REGION') ? AWS_REGION : 'us-east-1',
-        'endpoint' => defined('AWS_ENDPOINT') ? AWS_ENDPOINT : "http://localstack-shntr:4566",
         'credentials' => [
             'key'    => getenv('AWS_ACCESS_KEY_ID'),
             'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
         ],
-    ]);
+    ];
+
+    if ($_SERVER["HTTP_HOST"] == 'localhost') {
+        $config['endpoint'] = defined('AWS_ENDPOINT') ? AWS_ENDPOINT : 'http://localstack-shntr:4566';
+    }
+
+    $awsClient = Aws\Sqs\SqsClient::factory($config);
 
     $awsClient->sendMessage([
         'QueueUrl' => defined('AWS_SQS_QUEUE')
