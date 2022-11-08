@@ -71,6 +71,7 @@ services:
     volumes:
     - ./ws-svc:/ws-svc
     working_dir: /ws-svc
+    entrypoint: ['/ws-svc/entrypoint.sh']
     command: 'npm start'
     ports:
       - "8083:8083"
