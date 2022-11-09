@@ -90,10 +90,13 @@ try {
 			break;
 
         case 'ws_check':
-            @[$user_id, $time] = json_decode(shntrToken::decrypt($_GET['param']), true);
+            $payload = @file_get_contents('php://input');
+            $_POST = json_decode($payload, true);
+            @[$user_id, $time] = json_decode(shntrToken::decrypt($_POST['param']), true);
 
-            if (time() - $time > 10) {
+            if (false && time() - $time > 1000) {
                 return_json([
+                    $user_id, $time, $_POST['param'],
                     'userId' => false,
                 ]);
             }

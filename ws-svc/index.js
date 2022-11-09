@@ -104,7 +104,7 @@ const relysiaHook = async () => {
         }))
       } catch (e) {
         console.warn("balance refresh fail ")
-        console.log(e)
+        console.log(e.message)
       }
     }
   })
@@ -135,13 +135,14 @@ wss.on('connection', function connection(ws) {
 
   ws.on('message', async function(data) {
     if (!ws.userId) {
-      const resp = await axios.get(`http://apache-shntr/api/ws_check?param=${encodeURIComponent(data.toString())}`)
+      const resp = await axios.post(`http://apache-shntr/api/ws_check`, {param: data.toString()})
 
       if (resp.data.userId) {
         const {userId} = resp.data
         ws.userId = parseInt(userId)
         wsPool.push(ws)
       } else {
+        console.log('closing ' + data.toString())
         ws.close()
       }
 
