@@ -50,6 +50,8 @@
   --body-color-dark: #dfdfdf;
   --link-color: #000;
   --link-hover-color: #4c4c4c;
+  --link-color-night-mode: #fff;
+  --link-hover-color-night-mode: #ccc;
   --header-bg-color: #3367d6;
   --header-bg-color-dark: #212121;
 }
@@ -85,6 +87,14 @@ a {
 a:hover {
   text-decoration: none;
   color: var(--link-hover-color);
+}
+
+body.night-mode a {
+  color: var(--link-color-night-mode);
+}
+
+body.night-mode a:hover {
+  color: var(--link-hover-color-night-mode);
 }
 
 pre {
@@ -546,6 +556,7 @@ body.night-mode .modal-footer {
 }
 .night-mode .alert-post {
   background: #212121;
+  color: var(--link-color-night-mode);
 }
 
 .alert-chat {
@@ -2478,6 +2489,12 @@ body.night-mode .content-tabs > ul > li > a {
   font-weight: 600;
   border-bottom: 2px solid var(--link-color);
 }
+
+body.night-mode .content-tabs > ul > li.active > a {
+  color: var(--link-color-night-mode);
+  font-weight: 600;
+  border-bottom: 2px solid var(--link-color-night-mode);
+}
 /* -- */
 
 /* see-more */
@@ -4175,6 +4192,15 @@ body.night-mode .comments-filter {
   padding-right: 0 !important;
   color: var(--link-color) !important;
 }
+
+body.night-mode .comments-filter .btn-group .btn,
+body.night-mode .comments-filter .btn-group .open .btn.dropdown-toggle,
+body.night-mode .comments-filter .btn-group .btn-default.active,
+body.night-mode .comments-filter .btn-group .btn-default:active,
+body.night-mode .comments-filter .btn-group .open .btn-default.dropdown-toggle {
+  color: var(--link-color-night-mode) !important;
+}
+
 .comments-filter .dropdown-menu {
   min-width: 100%;
 }
@@ -8679,12 +8705,12 @@ body.night-mode .profile-tabs-wrapper > ul > li > a {
 }
 .profile-tabs-wrapper > ul > li > a:hover,
 body.night-mode .profile-tabs-wrapper > ul > li > a:hover {
-  color: var(--link-color);
+  color: var(--link-color-night-mode);
 }
 .profile-tabs-wrapper > ul > li > a.active,
 body.night-mode .profile-tabs-wrapper > ul > li > a.active {
-  color: var(--link-color);
-  border-bottom: 2px solid var(--link-color);
+  color: var(--link-color-night-mode);
+  border-bottom: 2px solid var(--link-color-night-mode);
 }
 /* -- */
 
@@ -10957,10 +10983,20 @@ fieldset[disabled] .btn-yahoo:hover {
 .text-link {
   color: var(--link-color);
 }
+
+body.night-mode .text-link {
+  color: var(--link-color-night-mode);
+}
+
 .text-link:hover {
   cursor: pointer;
   text-decoration: underline;
 }
+
+body.night-mode .text-link:hover {
+  color: var(--link-hover-color-night-mode);
+}
+
 .text-underline:hover {
   cursor: pointer;
   text-decoration: underline;
