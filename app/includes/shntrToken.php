@@ -38,12 +38,12 @@ class shntrToken
         return $treasure[$key] ?? null;
     }
 
-    private static function encrypt(string $data): string
+    public static function encrypt(string $data): string
     {
         return openssl_encrypt($data, self::ENCRYPTION_ALGO, getenv('shntr_TOKEN_PASSPHRASE'));
     }
 
-    private static function decrypt(string $data): string|bool
+    public static function decrypt(string $data): string|bool
     {
         return openssl_decrypt($data, self::ENCRYPTION_ALGO, getenv('shntr_TOKEN_PASSPHRASE'));
     }
@@ -360,12 +360,14 @@ class shntrToken
 
         if (!$force && $_COOKIE['balance_refreshed'] ?? false) {
             $query = $db->query(
-                sprintf('select balance from users_relysia where user_id = %s', secure($user_id))
+                sprintf('select balance from users_relysia where user_id = %s', secure($user_id ?? 0))
             ) or _error('SQL_ERROR_THROWEN', $db->error);
 
             [$balance] = $query->fetch_row();
 
-            return $balance;
+            if (!is_null($balance)) {
+                return $balance;
+            }
         }
 
         $token = static::getAccessToken($user_id);

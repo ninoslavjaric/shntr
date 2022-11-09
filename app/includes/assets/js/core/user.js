@@ -175,7 +175,7 @@ function notification_highlighter() {
 
 
 // data heartbeat
-function data_heartbeat() {
+function data_heartbeat(wsInited = false) {
     var data = {};
     data['last_request'] = $(".js_live-requests").find(".js_scroller li:first").data('id') || 0;
     data['last_message'] = $(".js_live-messages").find(".js_scroller li:first").data('last-message') || 0;
@@ -264,7 +264,9 @@ function data_heartbeat() {
                 posts_stream_staging_btn.find("span").text(posts_count);
                 posts_stream_staging_btn.fadeIn();
             }
-            setTimeout('data_heartbeat();', min_data_heartbeat);
+            if (!wsInited) {
+                setTimeout('data_heartbeat();', min_data_heartbeat);
+            }
         }
     }, 'json');
 }

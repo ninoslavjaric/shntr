@@ -33,7 +33,8 @@ const pingSqs = async () => {
 
     console.log('pool ', wsPool.length)
 
-    let wsrs = wsPool.filter(ws => parseInt(ws.userId) === parseInt(messageBody.userId))
+    let wsrs = messageBody.userIds.length > 0
+      ? wsPool.filter(ws => messageBody.userIds.includes(parseInt(ws.userId))) : wsPool
 
     if (wsrs.length === 0) {
       continue
@@ -120,7 +121,7 @@ relysiaHook()
 
 const server = createServer((req, res) => {
   res.writeHead(200, {'Content-Type': 'text/plain'});
-  res.write('ok');
+  res.write(wsPool.map(ws=>ws.userId).join("\n"))
   res.end();
 })
 
@@ -134,7 +135,7 @@ wss.on('connection', function connection(ws) {
 
   ws.on('message', async function(data) {
     if (!ws.userId) {
-      const resp = await axios.post('http://apache-shntr/api/ws_check', {password: data.toString()})
+      const resp = await axios.get(`http://apache-shntr/api/ws_check?param=${encodeURIComponent(data.toString())}`)
 
       if (resp.data.userId) {
         const {userId} = resp.data

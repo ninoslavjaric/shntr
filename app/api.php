@@ -90,13 +90,18 @@ try {
 			break;
 
         case 'ws_check':
-            $payload = @file_get_contents('php://input');
-            $_POST = json_decode($payload, true);
+            @[$user_id, $time] = json_decode(shntrToken::decrypt($_GET['param']), true);
+
+            if (time() - $time > 10) {
+                return_json([
+                    'userId' => false,
+                ]);
+            }
 
             [$id] = $db->query(
                 sprintf(
-                    'select user_id from users where user_password = %s limit 1',
-                    secure($_POST['password'])
+                    'select user_id from users where user_id = %s limit 1',
+                    secure($user_id)
                 )
             )->fetch_row();
 

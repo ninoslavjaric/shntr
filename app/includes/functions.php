@@ -2898,7 +2898,7 @@ function generate_random_string(int $length = 10): string
     return $randomString;
 }
 
-function aws_sqs_push(int $user_id, array $data): void
+function aws_sqs_push(array $data, int ...$user_ids): void
 {
     require_once(ABSPATH . 'includes/libs/AWS/aws-autoloader.php');
 
@@ -2921,7 +2921,7 @@ function aws_sqs_push(int $user_id, array $data): void
         'QueueUrl' => defined('AWS_SQS_QUEUE')
             ? AWS_SQS_QUEUE : 'http://localstack-shntr:4566/000000000000/test',
         'MessageBody' => json_encode([
-            'userId' => $user_id,
+            'userIds' => $user_ids,
             'data' => $data
         ]),
     ]);

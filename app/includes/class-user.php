@@ -3678,6 +3678,7 @@ class User
             $notification['full_message'] = html_entity_decode($this->_data['name'], ENT_QUOTES) . " " . html_entity_decode($notification['message'], ENT_QUOTES);
             onesignal_notification($receiver['onesignal_user_id'], $notification);
         }
+        aws_sqs_push(['event'=>'data'], $to_user_id);
     }
 
 

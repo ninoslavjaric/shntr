@@ -96,11 +96,7 @@ try {
 	// return & exit
 	return_json_async($conversation);
 
-	foreach ($conversation['recipients'] as $recipient) {
-        aws_sqs_push($recipient['user_id'], [
-            'event' => 'chat'
-        ]);
-    }
+    aws_sqs_push(['event' => 'chat'], ...array_column($conversation['recipients'], 'user_id'));
 } catch (Exception $e) {
     blueModal("ERROR", __("Error"), $e->getMessage());
 }

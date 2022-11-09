@@ -159,9 +159,9 @@ function color_chat_box(chat_widget, color) {
 
 
 // chat heartbeat
-function chat_heartbeat() {
+function chat_heartbeat(wsInited = false) {
     /* check if there is any closing process */
-    if (chatbox_closing_process) {
+    if (!wsInited || chatbox_closing_process) {
         setTimeout('chat_heartbeat()', min_chat_heartbeat);
         return;
     }
@@ -401,7 +401,9 @@ function chat_heartbeat() {
                 }, 'json');
             }
         }
-        setTimeout('chat_heartbeat()', min_chat_heartbeat);
+        if (!wsInited) {
+            setTimeout('chat_heartbeat()', min_chat_heartbeat);
+        }
     }, 'json');
 }
 

@@ -58,16 +58,38 @@
 {/if}
 <!-- Sounds -->
 <script>
-	const websocket = new WebSocket('{constant('WS_ENDPOINT')}');
-	// Connection opened
-	websocket.addEventListener('open', (event) => {
-		websocket.send('{$user->_data['user_password']}');
-	});
+	(() => {
+		const initWs = () => {
+			let websocket = new WebSocket('{constant('WS_ENDPOINT')}');
+			// Connection opened
+			websocket.addEventListener('open', (evt) => {
+				websocket.send('{shntrToken::encrypt(json_encode([$user->_data['user_id'], time()]))}');
+			});
 
-	// Listen for messages
-	websocket.addEventListener('message', (event) => {
-		console.log('Message from server ', event.data);
-	});
+			// Listen for messages
+			websocket.addEventListener('message', (evt) => {
+				let data
+				try {
+					data = JSON.parse(evt.data)
+					if (data.event === 'chat') {
+						chat_heartbeat(true)
+					}
+					if (data.event === 'data') {
+						data_heartbeat()
+						notification_highlighter()
+					}
+				} catch (e) {
+					data = evt.data
+				}
+				console.log('Message from server ', data);
+			});
+			// Connection opened
+			websocket.addEventListener('close', (evt) => {
+				setTimeout(initWs, 5000)
+			});
+		}
+		initWs()
+	})();
 </script>
 </body>
 </html>
