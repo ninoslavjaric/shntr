@@ -10397,6 +10397,8 @@ class User
         if (!$can_delete) {
             _error(403);
         }
+        /* delete the interests_pages */
+        $db->query(sprintf("DELETE FROM interests_pages WHERE page_id = %s", secure($page_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* delete the page */
         $db->query(sprintf("DELETE FROM pages WHERE page_id = %s", secure($page_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* delete the page members */
