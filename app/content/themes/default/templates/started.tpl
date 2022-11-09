@@ -133,14 +133,13 @@
                                             </select>
                                         </div>
                                     {/if}
-                                    <div class="form-group col-md-6">
-                                        <span class="form-text form-control-label">
-                                            {__("I'm jewish")}
-                                        </span>
-                                        <label class="switch" for="is_jewish">
-                                            <input type="checkbox" name="is_jewish" id="is_jewish" {if $user->_data['user_is_jewish']}checked{/if}>
-                                            <span class="slider round"></span>
-                                        </label>
+                                    <div class="form-group col-md-6 d-flex flex-row align-items-center">
+                                        <div class="form-check pt-3">
+                                            <input class="form-check-input" type="checkbox" name="is_jewish" id="is_jewish" {if $user->_data['user_is_jewish']}checked{/if}>
+                                            <label class="form-check-label" for="is_jewish" style="font-size: 16px; cursor: pointer">
+                                                {__("I'm jewish")}
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -361,6 +360,8 @@
 
 <script>
     $(function() {
+
+        console.log('Something I dont know what!!!');
 
         var wizard_steps = $('.js_wizard-steps li a');
         var wizard_content = $('.js_wizard-content');
