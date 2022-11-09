@@ -11629,6 +11629,9 @@ class User
         if (!$can_delete) {
             _error(403);
         }
+        /* delete the interests_events */
+        $db->query(sprintf("DELETE FROM interests_events WHERE event_id = %s", secure($event_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+
         $db->query(sprintf("DELETE FROM `events` WHERE event_id = %s", secure($event_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
