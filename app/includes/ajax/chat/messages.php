@@ -2,7 +2,7 @@
 
 /**
  * ajax -> chat -> get messages
- * 
+ *
  * @package Sngine
  * @author Zamblek
  */
@@ -77,7 +77,7 @@ try {
 	$return['messages'] = $smarty->fetch("ajax.chat.conversation.messages.tpl");
 
 	/* add conversation to opened chat boxes session if not */
-	if (!in_array($conversation['conversation_id'], $_SESSION['chat_boxes_opened'])) {
+	if (!in_array($conversation['conversation_id'], $_SESSION['chat_boxes_opened'] ?? [])) {
 		$_SESSION['chat_boxes_opened'][] = $conversation['conversation_id'];
 	}
 
