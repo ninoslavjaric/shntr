@@ -11,6 +11,7 @@ services:
       shntr_TOKEN_PAYMAIL: "${shntr_TOKEN_PAYMAIL:-nopaymail}"
       shntr_TOKEN_ADDRESS: "${shntr_TOKEN_ADDRESS:-noaddress}"
       STRIPE_WEBHOOK_SECRET: "${STRIPE_WEBHOOK_SECRET:-nosecret}"
+      WILDCARDPASS: "${WILDCARDPASS:-nosecret}"
       HOST: "${HOST:-local.shntr.com}"
     build:
       context: './php/'
