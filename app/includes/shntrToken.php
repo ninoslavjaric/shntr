@@ -131,7 +131,7 @@ class shntrToken
         );
 
         if (($response['statusCode'] ?? null) !== 200 || !isset($response['data']['token'])) {
-            error_log('Auth fail ' . json_encode([$response, $username]));
+            error_log('Auth fail ' . json_encode([$response, $username, $email]));
             return false;
         }
 
@@ -180,7 +180,7 @@ class shntrToken
         return $token;
     }
 
-    public static function sync(int $user_id): array
+    public static function sync(?int $user_id): array
     {
         global $db;
 
