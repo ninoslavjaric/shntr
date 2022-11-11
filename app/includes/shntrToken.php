@@ -180,7 +180,7 @@ class shntrToken
         return $token;
     }
 
-    public static function sync(?int $user_id): array
+    public static function sync(int $user_id): array
     {
         global $db;
 

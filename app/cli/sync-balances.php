@@ -23,8 +23,8 @@ $_SERVER['SERVER_NAME'] = $host;
 
 echo '--------------------------------------------------' . PHP_EOL;
 try {
-    shntrToken::sync(null);
-    $result = shntrToken::syncTransactions(null);
+    shntrToken::sync(0);
+    $result = shntrToken::syncTransactions(0);
 
     if (array_key_exists('callback', $result) && is_callable($result['callback'])) {
         echo "Callingback for treasury\n";
