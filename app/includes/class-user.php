@@ -2628,6 +2628,19 @@ class User
                 $db->query(sprintf("DELETE FROM groups_members WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 $db->query(sprintf("DELETE FROM `groups` WHERE group_admin = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
 
+                /* delete all about user events */
+                $db->query("DELETE FROM interests_events WHERE event_id IN (SELECT event_id FROM `events` WHERE event_admin = $user_id)") or _error("SQL_ERROR_THROWEN", $db);
+
+                $db->query(sprintf("DELETE FROM events_members WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+                $db->query(sprintf("DELETE FROM `events` WHERE event_admin = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+
+                /* delete all about user pages */
+                $db->query("DELETE FROM interests_pages WHERE page_id IN (SELECT page_id FROM pages WHERE page_admin = $user_id)") or _error("SQL_ERROR_THROWEN", $db);
+
+                $db->query(sprintf("DELETE FROM pages_admins WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+                $db->query(sprintf("DELETE FROM pages_likes WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+                $db->query(sprintf("DELETE FROM pages WHERE page_admin = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+
                 /* delete the user */
                 //$db->query("SET FOREIGN_KEY_CHECKS=0");
                 $db->query(sprintf("DELETE FROM users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
@@ -2635,13 +2648,7 @@ class User
 
                 /* delete user posts */
                 $this->delete_posts($user_id);
-                /* delete all user pages */
-                $db->query(sprintf("DELETE FROM pages WHERE page_admin = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
 
-                /* delete all user events */
-                $db->query(sprintf("DELETE FROM `events` WHERE event_admin = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
-                /* delete the user from all joined events */
-                $db->query(sprintf("DELETE FROM events_members WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* delete all user friends connections */
                 $db->query(sprintf('DELETE FROM friends WHERE user_one_id = %1$s OR user_two_id = %1$s', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* delete all user following connections */
