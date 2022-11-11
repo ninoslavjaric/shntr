@@ -18,9 +18,32 @@ if (!$host) {
 }
 
 $_SERVER['SERVER_NAME'] = $host;
+
+
+
+echo '--------------------------------------------------' . PHP_EOL;
+try {
+    shntrToken::sync(null);
+    $result = shntrToken::syncTransactions(null);
+
+    if (array_key_exists('callback', $result) && is_callable($result['callback'])) {
+        echo "Callingback for treasury\n";
+        $result['callback']();
+        echo "Calledback for treasury\n";
+    }
+
+    $result = shntrToken::getRelysiaBalance(null, true);
+    echo "Refreshed balance for treasury" . PHP_EOL;
+} catch (Exception $e) {
+    echo $e->getMessage() . PHP_EOL;
+}
+echo '--------------------------------------------------' . PHP_EOL;
+
+
 while ([$userId] = $userQuery->fetch_row()) {
     echo '--------------------------------------------------' . PHP_EOL;
     try {
+        shntrToken::sync($userId);
         $result = shntrToken::syncTransactions($userId);
 
         if (array_key_exists('callback', $result) && is_callable($result['callback'])) {
