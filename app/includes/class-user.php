@@ -1613,16 +1613,23 @@ class User
                 $query = $db->query("SELECT price FROM prices WHERE price_name = 'send_fr_price';");
                 $price = $query->fetch_assoc();
                 $friendRequestAcceptReward = isset($price["price"]) && !empty($price["price"]) ?  $price["price"] : 0;
-                //var_dump((int) $friendRequestAcceptReward);
 
                 if ($friendRequestAcceptReward !== '0.00') {
                     $balance = shntrToken::getRelysiaBalance($this->_data['user_id'], true);
                     if ($balance < $friendRequestAcceptReward) {
-                        blueModal("ERROR", __("Funds"), __("You're out of tokens"));
+                        blueModal(
+                            modalId: "ERROR",
+                            title: __("Funds"),
+                            message: __("You're out of tokens"),
+                        );
                     }
 
-//                    $query = $db->query('select user_relysia_paymail as address, user_id as id from users where user_id = 1 limit 1') or _error("SQL_ERROR_THROWEN", $db);
-//                    $superUser = $query->fetch_assoc();
+                    blueModal(
+                        modalId: "MESSAGE",
+                        title: 'Status',
+                        message: 'The request processing',
+                        async: true,
+                    );
 
                     $response = shntrToken::payRelysia(
                         amount: $friendRequestAcceptReward,
@@ -1632,6 +1639,7 @@ class User
                     error_log('Add friend ' . $id . ', response from relysia: ' . json_encode($response));
 
                     if (!str_contains($response['message'], 'sent successfully')) {
+                        $this->post_notification_async(strval($response['message']));
                         _error(400, $response['message']);
                     }
 
@@ -1642,6 +1650,13 @@ class User
                         basisName: 'users',
                         basisId: $id,
                         note: 'Friend request fee'
+                    );
+                } else {
+                    blueModal(
+                        modalId: "MESSAGE",
+                        title: 'Status',
+                        message: 'The request processing',
+                        async: true,
                     );
                 }
 
@@ -1672,6 +1687,7 @@ class User
                 $db->query(sprintf("UPDATE users SET user_live_requests_counter = user_live_requests_counter + 1 WHERE user_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* post new notification */
                 $this->post_notification(array('to_user_id' => $id, 'action' => 'friend_add', 'node_url' => $this->_data['user_name']));
+                $this->post_notification_async('Friend request sent');
                 /* follow */
                 $this->_follow($id);
                 break;

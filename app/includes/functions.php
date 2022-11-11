@@ -546,6 +546,7 @@ function return_json($response = [])
  */
 function return_json_async($response = [])
 {
+    global $db;
 //    if (!empty(ob_get_status())) {
     ob_end_clean();
     header("Content-Encoding: none");
@@ -561,6 +562,7 @@ function return_json_async($response = [])
     session_write_close();
     if (is_callable('fastcgi_finish_request')) {
         fastcgi_finish_request();
+        $db = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT);
     }
 //    }
 }
@@ -2081,7 +2083,9 @@ function modal()
  *
  * @return json
  */
-function blueModal($modalId, $title, $message, $additionalReturn = null, $closable = true, $isOverModal = false, $other = [])
+function blueModal(
+    $modalId, $title, $message, $additionalReturn = null, $closable = true, $isOverModal = false, $other = [], $async = false
+)
 {
     $args = func_get_args();
     $return = array();
@@ -2130,7 +2134,7 @@ function blueModal($modalId, $title, $message, $additionalReturn = null, $closab
         }
     }
 
-    return_json($return);
+    $async ? return_json_async($return) : return_json($return);
 }
 
 function blueModalImproved($args = [])
