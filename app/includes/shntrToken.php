@@ -302,6 +302,9 @@ class shntrToken
             'message' => 'Sync have just started',
             'callback' => function() use ($token, $user_id, $db, $increment) {
                 try {
+                    if (!$token) {
+                        throw new Exception('Token wrong ' . json_encode([$token]));
+                    }
                     if (!$increment) {
                         $db->query("delete from users_relysia_transactions where user_id = {$user_id}") or error_log('Transaction insert fail: ' . $db->error);
                     }
