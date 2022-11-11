@@ -115,6 +115,11 @@ class shntrToken
     private static function auth(string $username, string $password): false|string
     {
         $host = in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES) ? "local.shntr.com" : $_SERVER['SERVER_NAME'];
+
+        if ($host === 'apache-shntr') {
+            $host = getenv('HOST');
+        }
+
         $email = $username === 'relysia@shntr.com' ? 'relysia@shntr.com' : strtolower($username) . '@' . $host;
         $password = self::decrypt($password);
 
