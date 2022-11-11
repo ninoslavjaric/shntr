@@ -21,13 +21,16 @@ $_SERVER['SERVER_NAME'] = $host;
 while ([$userId] = $userQuery->fetch_row()) {
     echo '--------------------------------------------------' . PHP_EOL;
     try {
-        $result = shntrToken::syncTransactions($userId, true);
+        $result = shntrToken::syncTransactions($userId);
 
         if (array_key_exists('callback', $result) && is_callable($result['callback'])) {
             echo "Callingback for {$userId}\n";
             $result['callback']();
             echo "Calledback for {$userId}\n";
         }
+
+        $result = shntrToken::getRelysiaBalance($userId, true);
+        echo "Refreshed balance for {$userId}" . PHP_EOL;
     } catch (Exception $e) {
         echo $e->getMessage() . PHP_EOL;
     }

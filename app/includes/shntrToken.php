@@ -358,7 +358,7 @@ class shntrToken
             return 1000;
         }
 
-        if (!$force && $_COOKIE['balance_refreshed'] ?? false) {
+        if (!$force) {
             $query = $db->query(
                 sprintf('select balance from users_relysia where user_id = %s', secure($user_id ?? 0))
             ) or _error('SQL_ERROR_THROWEN', $db->error);
@@ -407,8 +407,6 @@ class shntrToken
                 secure($user_id)
             )
         ) or _error('SQL_ERROR_THROWEN');
-
-        setcookie('balance_refreshed', '1', time() + 30, '/', '', get_system_protocol() === 'https', true);
 
         return $balance;
     }

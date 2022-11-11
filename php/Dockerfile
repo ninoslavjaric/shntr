@@ -20,8 +20,8 @@ RUN apk add sudo autoconf gcc g++ file make && \
 
 RUN sed -i 's#pm.max_children = 5#pm.max_children = 25#' /usr/local/etc/php-fpm.d/www.conf && \
     sed -i 's#;pm.max_requests#pm.max_requests#' /usr/local/etc/php-fpm.d/www.conf && \
-    sed -i 's#pm.start_servers = 2#pm.start_servers = 10#' /usr/local/etc/php-fpm.d/www.conf && \
-    sed -i 's#pm.min_spare_servers = 1#pm.min_spare_servers = 5#' /usr/local/etc/php-fpm.d/www.conf && \
+    sed -i 's#pm.start_servers = 2#pm.start_servers = 5#' /usr/local/etc/php-fpm.d/www.conf && \
+    sed -i 's#pm.min_spare_servers = 1#pm.min_spare_servers = 3#' /usr/local/etc/php-fpm.d/www.conf && \
     sed -i 's#pm.max_spare_servers = 3#pm.max_spare_servers = 20#' /usr/local/etc/php-fpm.d/www.conf
 
 RUN sed -i 's#www-data#webmaster#' /usr/local/etc/php-fpm.d/www.conf
@@ -40,7 +40,3 @@ RUN rm -f composer-setup.php
 
 RUN mkdir ~/bin && mv composer.phar ~/bin/composer
 ENV PATH="/home/webmaster/bin:${PATH}"
-
-COPY ./cron.init.sh /tmp/cron.init.sh
-
-CMD ["sh", "/tmp/cron.init.sh"]
