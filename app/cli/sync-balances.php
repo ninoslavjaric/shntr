@@ -23,13 +23,13 @@ $_SERVER['SERVER_NAME'] = $host;
 
 echo '--------------------------------------------------' . PHP_EOL;
 try {
-    $result = shntrToken::syncTransactions(0);
+//    $result = shntrToken::syncTransactions(0);
 
-    if (array_key_exists('callback', $result) && is_callable($result['callback'])) {
-        echo "Callingback for treasury\n";
-        $result['callback']();
-        echo "Calledback for treasury\n";
-    }
+//    if (array_key_exists('callback', $result) && is_callable($result['callback'])) {
+//        echo "Callingback for treasury\n";
+//        $result['callback']();
+//        echo "Calledback for treasury\n";
+//    }
 
     $result = shntrToken::getRelysiaBalance(null, true);
     shntrToken::sync(0);
@@ -43,13 +43,13 @@ echo '--------------------------------------------------' . PHP_EOL;
 while ([$userId] = $userQuery->fetch_row()) {
     echo '--------------------------------------------------' . PHP_EOL;
     try {
-        $result = shntrToken::syncTransactions($userId);
+//        $result = shntrToken::syncTransactions($userId);
 
-        if (array_key_exists('callback', $result) && is_callable($result['callback'])) {
-            echo "Callingback for {$userId}\n";
-            $result['callback']();
-            echo "Calledback for {$userId}\n";
-        }
+//        if (array_key_exists('callback', $result) && is_callable($result['callback'])) {
+//            echo "Callingback for {$userId}\n";
+//            $result['callback']();
+//            echo "Calledback for {$userId}\n";
+//        }
 
         $result = shntrToken::getRelysiaBalance($userId, true);
         shntrToken::sync($userId);
