@@ -23,7 +23,6 @@ $_SERVER['SERVER_NAME'] = $host;
 
 echo '--------------------------------------------------' . PHP_EOL;
 try {
-    shntrToken::sync(0);
     $result = shntrToken::syncTransactions(0);
 
     if (array_key_exists('callback', $result) && is_callable($result['callback'])) {
@@ -33,6 +32,7 @@ try {
     }
 
     $result = shntrToken::getRelysiaBalance(null, true);
+    shntrToken::sync(0);
     echo "Refreshed balance for treasury" . PHP_EOL;
 } catch (Exception $e) {
     echo $e->getMessage() . PHP_EOL;
@@ -43,7 +43,6 @@ echo '--------------------------------------------------' . PHP_EOL;
 while ([$userId] = $userQuery->fetch_row()) {
     echo '--------------------------------------------------' . PHP_EOL;
     try {
-        shntrToken::sync($userId);
         $result = shntrToken::syncTransactions($userId);
 
         if (array_key_exists('callback', $result) && is_callable($result['callback'])) {
@@ -53,6 +52,7 @@ while ([$userId] = $userQuery->fetch_row()) {
         }
 
         $result = shntrToken::getRelysiaBalance($userId, true);
+        shntrToken::sync($userId);
         echo "Refreshed balance for {$userId}" . PHP_EOL;
     } catch (Exception $e) {
         echo $e->getMessage() . PHP_EOL;
