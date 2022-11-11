@@ -404,7 +404,7 @@ class shntrToken
             sprintf(
                 'update users_relysia set balance = %s where user_id = %s',
                 secure($balance),
-                secure($user_id)
+                secure($user_id ?? 0)
             )
         ) or _error('SQL_ERROR_THROWEN');
 
