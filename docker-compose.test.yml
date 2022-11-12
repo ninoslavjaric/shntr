@@ -56,6 +56,43 @@ services:
       - "80:80"
     volumes:
       - ./app:/var/www/html/
+  db-shntr:
+    platform: linux/x86_64
+    image: mariadb:10.6.4-focal
+    networks:
+      - backend-shntr
+    volumes:
+      - ./data:/var/lib/mysql/
+      - ./mariadb:/tmp/mariadb
+    ports:
+      - 3307:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_USER: "shntrco_sngine"
+      MYSQL_DATABASE: "shntrco_sngine"
+      MYSQL_PASSWORD: "shntrco_sngine"
+    command: runuser -u mysql /tmp/mariadb/starter
+  ws-shntr:
+    image: node:16.17.1-alpine
+    volumes:
+    - ./ws-svc:/ws-svc
+    working_dir: /ws-svc
+    entrypoint: ['/ws-svc/entrypoint.sh']
+    command: 'npm start'
+    ports:
+      - "8083:8083"
+    restart: on-failure
+    environment:
+      SQS_QUEUE_URL: "${SQS_QUEUE_URL:-noqueue}"
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID:-nokey}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY:-nosecret}"
+      AWS_DEFAULT_REGION: "${AWS_DEFAULT_REGION:-noregion}"
+      shntr_TOKEN_USERNAME: "${shntr_TOKEN_USERNAME:-nousername}"
+      shntr_TOKEN_PASSWORD_DECRYPT: "${shntr_TOKEN_PASSWORD_DECRYPT:-nopassword}"
+    networks:
+      - backend-shntr
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 networks:
   frontend-shntr:
   backend-shntr:
