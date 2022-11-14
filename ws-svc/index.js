@@ -90,6 +90,10 @@ const relysiaHook = async () => {
   });
 
   socket.on('notification', async (message) => {
+    if (message.tokenId !== '9a0e862be07d8aa56311e5b211a4fdf9ddf03b2f-SHNATST') {
+      return
+    }
+
     console.log('event received', message);
 
     for (const ws of wsPool) {
