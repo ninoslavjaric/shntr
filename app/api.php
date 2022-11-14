@@ -122,18 +122,41 @@ try {
         case 'relysia_balance_refresh':
             $payload = @file_get_contents('php://input');
             $_POST = json_decode($payload, true);
-            $balance = shntrToken::getRelysiaBalance($_POST['id'], true);
-            $db->query(
+
+            $result = $db->query(
                 sprintf(
-                    'upsate users_relysia set balance = %s where user_id = %s',
-                    secure($balance),
-                    secure($_POST['id'])
+                    'select user_id from users where user_relysia_paymail = %s
+                    union 
+                    select user_id from users where user_relysia_paymail = %s',
+                    secure($_POST['sender'] ?? null),
+                    secure($_POST['receiver'] ?? null)
                 )
             );
 
-            return_json([
-                'balance' => $balance, 'id' => $_POST['id']
-            ]);
+            $balances = [];
+
+            if ($result) {
+                while ([$userId] = $result->fetch_row()) {
+                    $balance = [
+                        'id' => $userId,
+                        'balance' => shntrToken::getRelysiaBalance($userId, true),
+                    ];
+
+                    $db->query(
+                        sprintf(
+                            'upsate users_relysia set balance = %s where user_id = %s',
+                            secure($balance['id']),
+                            secure($balance['balance'])
+                        )
+                    );
+
+                    $balances[] = $balance;
+                }
+            } else {
+                error_log('relysia_balance_refresh: ' . $db->error);
+            }
+
+            return_json($balances);
             break;
 
 		default:

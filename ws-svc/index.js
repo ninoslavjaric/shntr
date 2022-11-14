@@ -96,20 +96,24 @@ const relysiaHook = async () => {
 
     console.log('event received', message);
 
-    for (const ws of wsPool) {
-      try {
-        const resp = await axios.post('http://apache-shntr/api/relysia_balance_refresh', {id: ws.userId})
 
-        ws.send(JSON.stringify({
-          event: 'balance',
-          data: {
-            balance: resp.data.balance
-          }
-        }))
-      } catch (e) {
-        console.warn("balance refresh fail ")
-        console.log(e.message)
+    const resp = await axios.post('http://apache-shntr/api/relysia_balance_refresh', { ...message, id: ws.userId})
+
+    console.log('balance refresh ', resp)
+
+    for (const ws of wsPool) {
+      const balance = resp.data.find(blnc => blnc.id === ws.userId)
+
+      if (!balance) {
+        continue;
       }
+
+      ws.send(JSON.stringify({
+        event: 'balance',
+        data: {
+          balance: balance.balance
+        }
+      }))
     }
   })
 
