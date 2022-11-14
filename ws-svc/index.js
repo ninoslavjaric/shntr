@@ -97,7 +97,7 @@ const relysiaHook = async () => {
     console.log('event received', message);
 
 
-    const resp = await axios.post('http://apache-shntr/api/relysia_balance_refresh', { ...message, id: ws.userId})
+    const resp = await axios.post('http://apache-shntr/api/relysia_balance_refresh', message)
 
     console.log('balance refresh ', resp)
 
