@@ -135,8 +135,8 @@ try {
                     'select user_id from users where user_relysia_paymail = %s
                     union 
                     select user_id from users where user_relysia_paymail = %s',
-                    secure($_POST['sender'] ?? null),
-                    secure($_POST['receiver'] ?? null)
+                    secure($_POST['sender'] ?? ''),
+                    secure($_POST['receiver'] ?? '')
                 )
             );
 

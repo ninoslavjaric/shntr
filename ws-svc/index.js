@@ -96,10 +96,9 @@ const relysiaHook = async () => {
 
     console.log('event received', message);
 
-
     const resp = await axios.post('http://apache-shntr/api/relysia_balance_refresh', message)
 
-    console.log('balance refresh ', resp)
+    console.log('balance refresh ', resp.data)
 
     for (const ws of wsPool) {
       const balance = resp.data.find(blnc => blnc.id === ws.userId)
