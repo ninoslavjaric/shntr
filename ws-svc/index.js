@@ -93,7 +93,7 @@ const relysiaHook = async () => {
     const paymailRegex = /^\d+@[\w\.]+$/
     if (
       message.tokenId !== '9a0e862be07d8aa56311e5b211a4fdf9ddf03b2f-SHNATST'
-      && message.sender?.match(paymailRegex) && message.receiver?.match(paymailRegex)
+      && !message.sender?.match(paymailRegex) && !message.receiver?.match(paymailRegex)
     ) {
       return
     }
