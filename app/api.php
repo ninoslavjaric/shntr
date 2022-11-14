@@ -89,6 +89,13 @@ try {
 			return_json($return);
 			break;
 
+        case 'ws_auth':
+            user_access();
+            /** @var $user User */
+            return_json([
+                'key' => shntrToken::encrypt(json_encode([$user->_data['user_id'], microtime(true)]))
+            ]);
+            break;
         case 'ws_check':
             $payload = @file_get_contents('php://input');
             $_POST = json_decode($payload, true);

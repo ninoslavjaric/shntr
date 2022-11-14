@@ -62,8 +62,9 @@
 		const initWs = () => {
 			let websocket = new WebSocket('{constant('WS_ENDPOINT')}');
 			// Connection opened
-			websocket.addEventListener('open', (evt) => {
-				websocket.send('{shntrToken::encrypt(json_encode([$user->_data['user_id'], time()]))}');
+			websocket.addEventListener('open', async (evt) => {
+				const response = await (await fetch('/api/ws_auth')).json()
+				websocket.send(response.key);
 			});
 
 			// Listen for messages
