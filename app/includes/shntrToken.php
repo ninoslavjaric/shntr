@@ -424,6 +424,7 @@ class shntrToken
         global $user, $db;
 
         if (in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES) || str_contains(SYS_URL, 'ngrok')) {
+            sleep(rand(2, 5));
             return [
                 'amount' => $amount,
                 'message' => "{$amount} tokens sent successfully",

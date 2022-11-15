@@ -67,7 +67,7 @@
 				websocket.send(response.key);
 				chat_heartbeat(true)
 				data_heartbeat(true)
-				notification_highlighter()
+				// notification_highlighter()
 			});
 
 			// Listen for messages

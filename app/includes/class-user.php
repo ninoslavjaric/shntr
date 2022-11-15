@@ -2975,6 +2975,12 @@ class User
                         $notification['message'] = __("posted on your wall");
                         break;
 
+                    case 'product_created':
+                        $notification['icon'] = "fa fa-bell";
+                        $notification['url'] = $system['system_url'] . '/posts/' . $notification['node_url'];
+                        $notification['message'] = __("created product");
+                        break;
+
                     case 'page_invitation':
                         $notification['icon'] = "fa fa-flag";
                         $notification['url'] = $system['system_url'] . '/pages/' . $notification['node_url'];
@@ -3231,7 +3237,7 @@ class User
     /**
      * post_notification
      *
-     * @param integer $to_user_id
+     * @param integer|null $to_user_id
      * @param string $action
      * @param string $node_type
      * @param string $node_url
@@ -3239,15 +3245,15 @@ class User
      * @return void
      */
     public function post_notification(
-        $args = [],
-        $from_user_id = null,
-        $to_user_id = null,
-        $from_user_type = 'user',
-        $action = null,
-        $node_type = '',
-        $node_url = '',
-        $message = '',
-        $notify_id = ''
+        array $args = [],
+        int $from_user_id = null,
+        ?int $to_user_id = null,
+        string $from_user_type = 'user',
+        ?string $action = null,
+        string $node_type = '',
+        string $node_url = '',
+        string $message = '',
+        string $notify_id = ''
     )
     {
         global $t, $db, $date, $system, $control_panel;
@@ -3264,7 +3270,7 @@ class User
 
         $from_user_id = $from_user_id ?? $this->_data['user_id'];
         /* if the viewer is the target */
-        if ($this->_data['user_id'] == $to_user_id && !in_array($action, ['async_request', 'add_friend'])) {
+        if ($this->_data['user_id'] == $to_user_id && !in_array($action, ['async_request', 'add_friend', 'product_created'])) {
             return;
         }
         /* get receiver user */
@@ -3414,6 +3420,13 @@ class User
                     if ($system['email_wall_posts'] && $receiver['email_wall_posts']) {
                         $notification['url'] = $system['system_url'] . '/posts/' . $node_url;
                         $notification['message'] = __("posted on your wall");
+                    }
+                    break;
+
+                case 'product_created':
+                    if ($system['email_product_created'] && $receiver['email_product_created']) {
+                        $notification['url'] = $system['system_url'] . '/posts/' . $node_url;
+                        $notification['message'] = __("Product created");
                     }
                     break;
 
@@ -3568,6 +3581,11 @@ class User
                 case 'wall':
                     $notification['url'] = $system['system_url'] . '/posts/' . $node_url;
                     $notification['message'] = __("posted on your wall");
+                    break;
+
+                case 'product_created':
+                    $notification['url'] = $system['system_url'] . '/posts/' . $node_url;
+                    $notification['message'] = __("Product created");
                     break;
 
                 case 'page_invitation':
@@ -5457,6 +5475,12 @@ class User
 
         $db->begin_transaction();
 
+        blueModal(
+            modalId: "MESSAGE",
+            title: 'Status',
+            message: 'The request processing',
+            async: true,
+        );
         try {
             /* insert the post */
             $db->query(sprintf("INSERT INTO posts (user_id, user_type, in_wall, wall_id, in_group, group_id, group_approved, in_event, event_id, event_approved, post_type, colored_pattern, time, location, privacy, text, feeling_action, feeling_value, is_anonymous) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", secure($post['user_id'], 'int'), secure($post['user_type']), secure($post['in_wall'], 'int'), secure($post['wall_id'], 'int'), secure($post['in_group']), secure($post['group_id'], 'int'), secure($post['group_approved']), secure($post['in_event']), secure($post['event_id'], 'int'), secure($post['event_approved']), secure($post['post_type']), secure($post['colored_pattern'], 'int'), secure($post['time']), secure($post['location']), secure($post['privacy']), secure($post['text']), secure($post['feeling_action']), secure($post['feeling_value']), secure($post['is_anonymous']))) or _error("SQL_ERROR_THROWEN", $db);
@@ -5748,6 +5772,12 @@ class User
 
             $db->commit();
 
+            $this->post_notification(
+                from_user_id: $this->_data['user_id'],
+                to_user_id: $this->_data['user_id'],
+                action: 'product_created',
+                node_url: $post['post_id'],
+            );
             // return
             return $post;
         } catch (Exception $e) {
