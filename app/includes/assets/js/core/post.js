@@ -981,6 +981,9 @@ $(function () {
         });
         if (!$.isEmptyObject(product)) {
             product['category'] = publisher.find('select[name="category"], input[name="category"]').val();
+            if (product['category'] == 'Choose Category'){
+                $("select[name=\"category\"], input[name=\"category\"]").addClass('alert-danger')
+            }
             product['status'] = publisher.find('[name="status"]').val();
         } else {
             return;

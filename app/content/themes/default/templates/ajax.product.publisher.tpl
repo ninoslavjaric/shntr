@@ -37,6 +37,7 @@
                     <input class="form-control" type="text" value="{$market_category['category_name']}" disabled>
                 {else}
                     <select name="category" class="form-control">
+                        <option>Choose Category</option>
                         {foreach $market_categories as $category}
                             {include file='__categories.recursive_options.tpl'}
                         {/foreach}
