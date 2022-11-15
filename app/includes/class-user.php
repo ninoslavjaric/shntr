@@ -5781,8 +5781,10 @@ class User
             // return
             return $post;
         } catch (Exception $e) {
+            $message = __('Product failed to be created');
+            $this->post_notification_async($message);
             $db->rollback();
-            throw new Exception(__("Product failed to be created"));
+            throw new Exception($message);
         }
 
     }
