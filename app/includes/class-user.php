@@ -1639,8 +1639,7 @@ class User
                     error_log('Add friend ' . $id . ', response from relysia: ' . json_encode($response));
 
                     if (!str_contains($response['message'], 'sent successfully')) {
-                        $this->post_notification_async(strval($response['message']));
-                        _error(400, $response['message']);
+                        _error(400, 'Add friend | Relysia payment failed' . strval($response['message']));
                     }
 
                     shntrToken::noteTransaction(
@@ -5781,7 +5780,7 @@ class User
             // return
             return $post;
         } catch (Exception $e) {
-            $message = __('Product failed to be created');
+            $message = __('Product failed to be created') . ' | '. $e->getMessage();
             $this->post_notification_async($message);
             $db->rollback();
             throw new Exception($message);
