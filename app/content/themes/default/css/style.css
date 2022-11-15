@@ -52,6 +52,7 @@
   --link-hover-color: #4c4c4c;
   --link-color-night-mode: #fff;
   --link-hover-color-night-mode: #ccc;
+  --link-placeholder-color-night-mode: gray;
   --header-bg-color: #3367d6;
   --header-bg-color-dark: #212121;
 }
@@ -304,7 +305,8 @@ body.night-mode .nav-tabs .nav-link.active {
   background-color: #212121;
 }
 body.night-mode .nav-tabs .nav-link:not(.active):hover {
-  border-color: #363636;
+  border-color: var(--link-color-night-mode);
+  color: var(--link-color-night-mode);
 }
 /* == */
 
@@ -1202,7 +1204,7 @@ body.night-mode .alert-chat {
 }
 body.night-mode .form-control,
 body.night-mode .input-group-text {
-  background-color: #232323;
+  background-color: var(--header-bg-color-dark);
   border-color: #363636;
   color: #dfdfdf;
 }
@@ -1607,6 +1609,7 @@ div.mce-fullscreen {
 }
 body.night-mode .ui-widget-content {
   background: var(--header-bg-color-dark);
+  color: var(--link-color-night-mode);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
 }
 .ui-menu-item {
@@ -5239,7 +5242,12 @@ body.night-mode .typeahead input {
 
 /* LIGHTBOX */
 /* ------------------------------- */
-
+body.night-mode #modal .modal-body table {
+  color: var(--link-color-night-mode);
+}
+body.night-mode #modal > div > div > div > button > span{
+  color: var(--link-color-night-mode);
+}
 .lightbox-open {
   overflow: hidden; /* hide the page scroll */
 }
@@ -6153,6 +6161,13 @@ body.night-mode .emoji-menu .nav-tabs {
   color: var(--link-color);
   background: transparent;
   border-top: 2px solid var(--link-color);
+}
+
+body.night-mode .emoji-menu .nav-tabs > li > .nav-link.active,
+body.night-mode .emoji-menu .nav-tabs > li > .nav-link.active:hover,
+body.night-mode .emoji-menu .nav-tabs > li > .nav-link.active:focus {
+  color: var(--link-color-night-mode);
+  border-top: 2px solid var(--link-color-night-mode);
 }
 /* -- */
 
@@ -7317,6 +7332,10 @@ body.night-mode .reactions-container {
   overflow: unset;
 }
 
+body.night-mode .market .page-header, .search-page .page-header {
+  background: var(--header-bg-color-dark);
+}
+
 .page-header.mini {
   padding: 35px 15px;
 }
@@ -7418,6 +7437,9 @@ body.night-mode .reactions-container {
   line-height: 1;
   margin-bottom: 50px;
 }
+body.night-mode .market .page-header h2, .search-page .page-header h2 {
+  color: var(--link-color-night-mode);
+}
 
 .market .page-header h2 span, .search-page .page-header h2 span {
   display: block;
@@ -7439,6 +7461,10 @@ body.night-mode .reactions-container {
   border-bottom: 1px solid #000;
 }
 
+body.night-mode .market .page-header input, .search-page .page-header input {
+  border-bottom: 1px solid var(--link-color-night-mode);
+}
+
 .market .page-header input::placeholder, .page-header input::placeholder {
   color: #E1E1E1;
   font-size: 26px;
@@ -7447,6 +7473,9 @@ body.night-mode .reactions-container {
   line-height: 1.1;
 }
 
+body.night-mode .market .page-header input::placeholder, .page-header input::placeholder {
+  color: var(--link-placeholder-color-night-mode);
+}
 .market .page-header button, .search-page .page-header button.search-form-submit {
   background: transparent;
   border: none;
@@ -7458,6 +7487,10 @@ body.night-mode .reactions-container {
   text-align: left;
   line-height: 1;
   margin: 0px 0px 0 10px;
+}
+
+body.night-mode .market .page-header button, .search-page .page-header button.search-form-submit {
+  color: var(--link-color-night-mode);
 }
 
 .page-header .inner {
@@ -8703,11 +8736,22 @@ body.night-mode .profile-tabs-wrapper {
 body.night-mode .profile-tabs-wrapper > ul > li > a {
   color: #eee;
 }
-.profile-tabs-wrapper > ul > li > a:hover,
+.profile-tabs-wrapper > ul > li > a:hover {
+  color: var(--link-hover-color);
+}
+
+.profile-tabs-wrapper > ul > li > a.active {
+  color: var(--link-hover-color);
+  border-bottom: 2px solid var(--link-hover-color);
+}
+
+body.night-mode .svg-container svg path{
+  fill: var(--link-color-night-mode);
+}
+
 body.night-mode .profile-tabs-wrapper > ul > li > a:hover {
   color: var(--link-color-night-mode);
 }
-.profile-tabs-wrapper > ul > li > a.active,
 body.night-mode .profile-tabs-wrapper > ul > li > a.active {
   color: var(--link-color-night-mode);
   border-bottom: 2px solid var(--link-color-night-mode);
@@ -11210,4 +11254,16 @@ input:checked + .dash_slider:before {
 .table-buttons-wrapper {
   display: flex;
   gap: 0.5em;
+}
+
+body.night-mode li.paginate_button.page-item.active > a{
+  color: var(--link-color-night-mode);
+}
+
+body.night-mode ul > li > a:hover {
+  color: #5e72e4;
+}
+
+body.night-mode ul > li > a{
+  color: var(--link-placeholder-color-night-mode);
 }
