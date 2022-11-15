@@ -580,7 +580,13 @@ function return_json_async($response = [])
  */
 function _error($args, mysqli|string|null $db = null)
 {
+    global $user;
+
     $args = func_get_args();
+
+    if ($db) {
+        $user->post_notification_async(is_string($db) ? $db : $db->error);
+    }
 
     if (ERROR_LOGGING && $db instanceof mysqli) {
         error_log('MySql error: ' . $db->error);
