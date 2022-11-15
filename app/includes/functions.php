@@ -578,12 +578,12 @@ function return_json_async($response = [])
  *
  * @return void
  */
-function _error($args, $db = null)
+function _error($args, mysqli|string|null $db = null)
 {
     $args = func_get_args();
 
-    if (ERROR_LOGGING && is_object($db)) {
-        error_log('MySql error: ' . mysqli_error($db));
+    if (ERROR_LOGGING && $db instanceof mysqli) {
+        error_log('MySql error: ' . $db->error);
     }
 
     if (count($args) > 1 && $args[0] != "BANNED_USER") {
@@ -2088,7 +2088,9 @@ function blueModal(
 )
 {
     $args = func_get_args();
-    $return = array();
+    $return = [
+        'async' => $async,
+    ];
     $params = [
         "title" => $title,
         "message" => $message,

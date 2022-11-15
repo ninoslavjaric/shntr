@@ -246,6 +246,13 @@ function data_heartbeat(wsInited = false) {
                     if (noty_notifications_enabled) {
                         noty_notification(element.user_picture, element.full_message, element.url);
                     }
+
+                    if (element.action === 'add_friend') {
+                        const button = $(`.js_friend-add[data-uid=${element.from_user_id}]`)
+                        button_status(button, "reset");
+                        button.after(`<button type="button" class="btn btn-sm btn-warning js_friend-cancel" data-uid="${element.from_user_id}"><i class="fa fa-clock mr5"></i>${__['Sent']}</button>`);
+                        button.remove();
+                    }
                 });
                 if ($(".js_live-notifications").find(".js_scroller ul").length > 0) {
                     $(".js_live-notifications").find(".js_scroller ul").prepend(response.notifications);
@@ -1642,7 +1649,9 @@ $(function () {
             window.onbeforeunload = null;
             if (response.callback) {
                 /* button reset */
-                button_status(_this, "reset");
+                if (!response.async) {
+                    button_status(_this, "reset");
+                }
                 eval(response.callback);
             } else {
                 /* button reset */

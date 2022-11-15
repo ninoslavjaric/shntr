@@ -65,6 +65,9 @@
 			websocket.addEventListener('open', async (evt) => {
 				const response = await (await fetch('/api/ws_auth')).json()
 				websocket.send(response.key);
+				chat_heartbeat(true)
+				data_heartbeat(true)
+				notification_highlighter()
 			});
 
 			// Listen for messages
@@ -76,7 +79,7 @@
 						chat_heartbeat(true)
 					}
 					if (data.event === 'data') {
-						data_heartbeat()
+						data_heartbeat(true)
 						notification_highlighter()
 					}
 				} catch (e) {

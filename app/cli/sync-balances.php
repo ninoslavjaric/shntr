@@ -1,6 +1,7 @@
 #!/usr/local/bin/php
 
 <?php
+die;
 /**
  * @var $db mysqli
  */

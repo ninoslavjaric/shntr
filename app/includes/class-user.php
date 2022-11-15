@@ -1687,7 +1687,14 @@ class User
                 $db->query(sprintf("UPDATE users SET user_live_requests_counter = user_live_requests_counter + 1 WHERE user_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* post new notification */
                 $this->post_notification(array('to_user_id' => $id, 'action' => 'friend_add', 'node_url' => $this->_data['user_name']));
-                $this->post_notification_async('Friend request sent');
+                $user = $this->get_user($id);
+                $this->post_notification(
+                    from_user_id: $id,
+                    to_user_id: $this->_data['user_id'],
+                    action: 'add_friend',
+                    node_url: $user['user_name']
+                );
+
                 /* follow */
                 $this->_follow($id);
                 break;
@@ -2835,6 +2842,11 @@ class User
                         $notification['message'] = __("sent you a friend request");
                         break;
 
+                    case 'add_friend':
+                        $notification['url'] = $system['system_url'] . '/' . $notification['user_name'];
+                        $notification['message'] = 'received your friend request';
+                        break;
+
                     case 'friend_accept':
                         $notification['icon'] = "fa fa-user-plus";
                         $notification['url'] = $system['system_url'] . '/' . $notification['user_name'];
@@ -3226,23 +3238,33 @@ class User
      * @param string $notify_id
      * @return void
      */
-    public function post_notification($args = [])
+    public function post_notification(
+        $args = [],
+        $from_user_id = null,
+        $to_user_id = null,
+        $from_user_type = 'user',
+        $action = null,
+        $node_type = '',
+        $node_url = '',
+        $message = '',
+        $notify_id = ''
+    )
     {
         global $t, $db, $date, $system, $control_panel;
+
         if (!isset($control_panel)) {
             $control_panel['url'] = ($this->_is_admin) ? "admincp" : "modcp";
         }
         /* initialize arguments */
-        $to_user_id = !isset($args['to_user_id']) ? _error(400) : $args['to_user_id'];
-        $from_user_id = !isset($args['from_user_id']) ? $this->_data['user_id'] : $args['from_user_id'];
-        $from_user_type = !isset($args['from_user_type']) ? 'user' : $args['from_user_type'];
-        $action = !isset($args['action']) ? _error(400) : $args['action'];
-        $node_type = !isset($args['node_type']) ? '' : $args['node_type'];
-        $node_url = !isset($args['node_url']) ? '' : $args['node_url'];
-        $message = !isset($args['message']) ? '' : $args['message'];
-        $notify_id = !isset($args['notify_id']) ? '' : $args['notify_id'];
+        extract($args);
+
+        if (in_array(null, [$to_user_id, $action])) {
+            _error(400);
+        }
+
+        $from_user_id = $from_user_id ?? $this->_data['user_id'];
         /* if the viewer is the target */
-        if ($this->_data['user_id'] == $to_user_id && $action != "async_request") {
+        if ($this->_data['user_id'] == $to_user_id && !in_array($action, ['async_request', 'add_friend'])) {
             return;
         }
         /* get receiver user */
@@ -3274,6 +3296,12 @@ class User
                     if ($system['email_friend_requests'] && $receiver['email_friend_requests']) {
                         $notification['url'] = $system['system_url'] . '/' . $node_url;
                         $notification['message'] = __("sent you a friend request");
+                    }
+                    break;
+                case 'add_friend':
+                    if ($system['email_friend_requests'] && $receiver['email_friend_requests']) {
+                        $notification['url'] = $system['system_url'] . '/' . $node_url;
+                        $notification['message'] = 'received your friend request';
                     }
                     break;
 
@@ -3419,6 +3447,11 @@ class User
                 case 'friend_add':
                     $notification['url'] = $system['system_url'] . '/' . $node_url;
                     $notification['message'] = __("sent you a friend request");
+                    break;
+
+                case 'add_friend':
+                    $notification['url'] = $system['system_url'] . '/' . $node_url;
+                    $notification['message'] = 'received your friend request';
                     break;
 
                 case 'friend_accept':

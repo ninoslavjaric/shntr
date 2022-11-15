@@ -27,25 +27,38 @@ const pingSqs = async () => {
     return pingSqs()
   }
 
+  const deleteMessage = (sqsClient, handle) => () => {
+    return sqsClient.deleteMessage({
+      QueueUrl: process.env.SQS_QUEUE_URL,
+      ReceiptHandle: handle,
+    }).promise()
+  }
+
   for (const message of data.Messages || []) {
     const messageBody = JSON.parse(message.Body)
-    console.log('incoming ', messageBody)
 
     console.log('pool ', wsPool.length)
 
-    let wsrs = messageBody.userIds.length > 0
+    const wsrs = messageBody.userIds.length > 0
       ? wsPool.filter(ws => messageBody.userIds.includes(parseInt(ws.userId))) : wsPool
 
+    const deleter = deleteMessage(sqsClient, message.ReceiptHandle)
+
     if (wsrs.length === 0) {
+      console.log('krk ', messageBody.userIds, wsPool.map(w=>w.userId))
+      await deleter()
       continue
     }
 
+    console.log('incoming ', messageBody)
+
     wsrs.forEach(ws => ws.send(JSON.stringify(messageBody.data || {})))
 
-    await sqsClient.deleteMessage({
-      QueueUrl: process.env.SQS_QUEUE_URL,
-      ReceiptHandle: message.ReceiptHandle,
-    }).promise()
+    await deleter()
+    // await sqsClient.deleteMessage({
+    //   QueueUrl: process.env.SQS_QUEUE_URL,
+    //   ReceiptHandle: message.ReceiptHandle,
+    // }).promise()
   }
 
   setTimeout(pingSqs, 5000)

@@ -414,7 +414,7 @@ class shntrToken
                 secure($balance),
                 secure($user_id ?? 0)
             )
-        ) or _error('SQL_ERROR_THROWEN');
+        ) or _error('SQL_ERROR_THROWEN', $db->error);
 
         return $balance;
     }
