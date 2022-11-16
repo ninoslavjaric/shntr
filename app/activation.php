@@ -49,8 +49,7 @@ try {
             $query = $db->query(sprintf('select user_relysia_paymail as address from users where user_id = %1$s limit 1', secure($loginInfo['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
             $recipientAddress = $query->fetch_row()[0];
 
-            shntrToken::payRelysia(1000, $recipientAddress, 0);
-            shntrToken::noteTransaction(1000, 0, $loginInfo['user_id'], null, null, 'INIT');
+            shntrToken::noteTransaction(1000, 0, $loginInfo['user_id'], null, null, 'INIT', null, $recipientAddress);
         } else {
             /* [2] just verify his email */
             $db->query(sprintf("UPDATE users SET user_email_verified = '1' WHERE user_id = %s", secure($loginInfo['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
@@ -59,8 +58,7 @@ try {
             $query = $db->query(sprintf('select user_relysia_paymail as address from users where user_id = %1$s limit 1', secure($loginInfo['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
             $recipientAddress = $query->fetch_row()[0];
 
-            shntrToken::payRelysia(1000, $recipientAddress, 0);
-            shntrToken::noteTransaction(1000, 0, $loginInfo['user_id'], null, null, 'INIT');
+            shntrToken::noteTransaction(1000, 0, $loginInfo['user_id'], null, null, 'INIT', null, $recipientAddress);
         }
 	}
 	redirect();
