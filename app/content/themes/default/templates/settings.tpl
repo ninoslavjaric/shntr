@@ -2865,6 +2865,7 @@
                                                 <th>{__("Created")}</th>
                                                 <th>{__("Note")}</th>
                                                 <th>{__("Message")}</th>
+                                                <th>{__("Completed")}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -2900,6 +2901,13 @@
                                                             {$transaction['sender_msg']}
                                                         {else}
                                                             ---
+                                                        {/if}
+                                                    </td>
+                                                    <td>
+                                                        {if ($transaction['is_completed'] == 1)}
+                                                            <span class="badge badge-pill badge-lg badge-success">Yes</span>
+                                                        {else}
+                                                            <span class="badge badge-pill badge-lg badge-danger">No</span>
                                                         {/if}
                                                     </td>
                                                 </tr>

@@ -165,6 +165,9 @@ RewriteRule ^wallet/payments/?$ wallet.php?view=payments [L,QSA]
 RewriteRule ^buy-tokens/?$ stripe.php [L,QSA]
 RewriteRule ^buy-tokens/(checkout|webhook)/?$ stripe.php?view=$1 [L,QSA]
 
+# Cron - process transactions
+RewriteRule ^process-transactions/?$ process_token_transactions.php [L,QSA]
+
 # Boosted
 RewriteRule ^boosted/posts/?$ index.php?view=boosted_posts [L,QSA]
 RewriteRule ^boosted/pages/?$ index.php?view=boosted_pages [L,QSA]

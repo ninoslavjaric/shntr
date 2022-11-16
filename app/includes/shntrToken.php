@@ -366,6 +366,10 @@ class shntrToken
             return 1000;
         }
 
+        $reservedBalance = $db->query(
+            sprintf('select sum(amount) as reserved from token_transactions where sender_id = %s', secure($user_id ?? 0))
+        ) or _error('SQL_ERROR_THROWEN', $db->error);
+
         if (!$force) {
             $query = $db->query(
                 sprintf('select balance from users_relysia where user_id = %s', secure($user_id ?? 0))
@@ -374,7 +378,7 @@ class shntrToken
             [$balance] = $query->fetch_row();
 
             if (!is_null($balance)) {
-                return $balance;
+                return (int) $balance - (int) $reservedBalance->fetch_assoc()['reserved'];
             }
         }
 
@@ -416,7 +420,7 @@ class shntrToken
             )
         ) or _error('SQL_ERROR_THROWEN', $db->error);
 
-        return $balance;
+        return (int) $balance - (int) $reservedBalance->fetch_assoc()['reserved'];
     }
 
     public static function payRelysia(float $amount, string $recipientPaymail, int $senderId = null): array
@@ -510,12 +514,12 @@ class shntrToken
     }
 
     public static function noteTransaction(
-        float $amount, int $senderId, int $recipientId, ?string $basisName = null, ?int $basisId = null, ?string $note = null, ?string $senderMsg = null
+        float $amount, int $senderId, int $recipientId, ?string $basisName = null, ?int $basisId = null, ?string $note = null, ?string $senderMsg = null, string $recipientRelysiaPaymail
     )
     {
         global $db;
         $columns = array_slice(
-            ['amount', 'sender_id', 'recipient_id', 'basis_name', 'basis_entity_id', 'note', 'sender_msg'], 0, func_num_args()
+            ['amount', 'sender_id', 'recipient_id', 'basis_name', 'basis_entity_id', 'note', 'sender_msg', 'recipient_relysia_paymail'], 0, func_num_args()
         );
 
         $db->query(self::transformInsertQuery(array_combine($columns, func_get_args())));
@@ -534,6 +538,7 @@ class shntrToken
                 created_at, 
                 note, 
                 token_transactions.sender_msg,
+                token_transactions.is_completed,
                 if(sender_id = 0, 'TREASURE', snd.user_name) as sender_name,
                 if(recipient_id = 0, 'TREASURE', rcp.user_name) as recipient_name,
                 basis_name, 

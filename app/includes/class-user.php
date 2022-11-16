@@ -1624,23 +1624,11 @@ class User
                         );
                     }
 
-                    blueModal(
-                        modalId: "MESSAGE",
-                        title: 'Status',
-                        message: 'The request processing',
-                        async: true,
-                    );
-
                     $response = shntrToken::payRelysia(
                         amount: $friendRequestAcceptReward,
                         recipientPaymail: shntrToken::getshntrTreasure('paymail'),
                         senderId: $this->_data['user_id']
                     );
-                    error_log('Add friend ' . $id . ', response from relysia: ' . json_encode($response));
-
-                    if (!str_contains($response['message'], 'sent successfully')) {
-                        _error(400, 'Add friend | Relysia payment failed' . $response['message']);
-                    }
 
                     shntrToken::noteTransaction(
                         amount: $friendRequestAcceptReward,
@@ -1648,14 +1636,8 @@ class User
                         recipientId: 0,
                         basisName: 'users',
                         basisId: $id,
-                        note: 'Friend request fee'
-                    );
-                } else {
-                    blueModal(
-                        modalId: "MESSAGE",
-                        title: 'Status',
-                        message: 'The request processing',
-                        async: true,
+                        note: 'Friend request fee',
+                        recipientRelysiaPaymail: shntrToken::getshntrTreasure('paymail'),
                     );
                 }
 
@@ -1686,14 +1668,7 @@ class User
                 $db->query(sprintf("UPDATE users SET user_live_requests_counter = user_live_requests_counter + 1 WHERE user_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* post new notification */
                 $this->post_notification(array('to_user_id' => $id, 'action' => 'friend_add', 'node_url' => $this->_data['user_name']));
-                $user = $this->get_user($id);
-                $this->post_notification(
-                    from_user_id: $id,
-                    to_user_id: $this->_data['user_id'],
-                    action: 'add_friend',
-                    node_url: $user['user_name']
-                );
-
+                $this->post_notification_async('Friend request sent');
                 /* follow */
                 $this->_follow($id);
                 break;
@@ -2841,11 +2816,6 @@ class User
                         $notification['message'] = __("sent you a friend request");
                         break;
 
-                    case 'add_friend':
-                        $notification['url'] = $system['system_url'] . '/' . $notification['user_name'];
-                        $notification['message'] = 'received your friend request';
-                        break;
-
                     case 'friend_accept':
                         $notification['icon'] = "fa fa-user-plus";
                         $notification['url'] = $system['system_url'] . '/' . $notification['user_name'];
@@ -2972,12 +2942,6 @@ class User
                         $notification['icon'] = "fa fa-comment";
                         $notification['url'] = $system['system_url'] . '/posts/' . $notification['node_url'];
                         $notification['message'] = __("posted on your wall");
-                        break;
-
-                    case 'product_created':
-                        $notification['icon'] = "fa fa-bell";
-                        $notification['url'] = $system['system_url'] . '/posts/' . $notification['node_url'];
-                        $notification['message'] = __("created product");
                         break;
 
                     case 'page_invitation':
@@ -3236,40 +3200,30 @@ class User
     /**
      * post_notification
      *
-     * @param integer|null $to_user_id
+     * @param integer $to_user_id
      * @param string $action
      * @param string $node_type
      * @param string $node_url
      * @param string $notify_id
      * @return void
      */
-    public function post_notification(
-        array $args = [],
-        int $from_user_id = null,
-        ?int $to_user_id = null,
-        string $from_user_type = 'user',
-        ?string $action = null,
-        string $node_type = '',
-        string $node_url = '',
-        string $message = '',
-        string $notify_id = ''
-    )
+    public function post_notification($args = [])
     {
         global $t, $db, $date, $system, $control_panel;
-
         if (!isset($control_panel)) {
             $control_panel['url'] = ($this->_is_admin) ? "admincp" : "modcp";
         }
         /* initialize arguments */
-        extract($args);
-
-        if (in_array(null, [$to_user_id, $action])) {
-            _error(400);
-        }
-
-        $from_user_id = $from_user_id ?? $this->_data['user_id'];
+        $to_user_id = !isset($args['to_user_id']) ? _error(400) : $args['to_user_id'];
+        $from_user_id = !isset($args['from_user_id']) ? $this->_data['user_id'] : $args['from_user_id'];
+        $from_user_type = !isset($args['from_user_type']) ? 'user' : $args['from_user_type'];
+        $action = !isset($args['action']) ? _error(400) : $args['action'];
+        $node_type = !isset($args['node_type']) ? '' : $args['node_type'];
+        $node_url = !isset($args['node_url']) ? '' : $args['node_url'];
+        $message = !isset($args['message']) ? '' : $args['message'];
+        $notify_id = !isset($args['notify_id']) ? '' : $args['notify_id'];
         /* if the viewer is the target */
-        if ($this->_data['user_id'] == $to_user_id && !in_array($action, ['async_request', 'add_friend', 'product_created'])) {
+        if ($this->_data['user_id'] == $to_user_id && $action != "async_request") {
             return;
         }
         /* get receiver user */
@@ -3301,12 +3255,6 @@ class User
                     if ($system['email_friend_requests'] && $receiver['email_friend_requests']) {
                         $notification['url'] = $system['system_url'] . '/' . $node_url;
                         $notification['message'] = __("sent you a friend request");
-                    }
-                    break;
-                case 'add_friend':
-                    if ($system['email_friend_requests'] && $receiver['email_friend_requests']) {
-                        $notification['url'] = $system['system_url'] . '/' . $node_url;
-                        $notification['message'] = 'received your friend request';
                     }
                     break;
 
@@ -3422,13 +3370,6 @@ class User
                     }
                     break;
 
-                case 'product_created':
-                    if ($system['email_product_created'] && $receiver['email_product_created']) {
-                        $notification['url'] = $system['system_url'] . '/posts/' . $node_url;
-                        $notification['message'] = __("Product created");
-                    }
-                    break;
-
                 default:
                     return;
                     break;
@@ -3459,11 +3400,6 @@ class User
                 case 'friend_add':
                     $notification['url'] = $system['system_url'] . '/' . $node_url;
                     $notification['message'] = __("sent you a friend request");
-                    break;
-
-                case 'add_friend':
-                    $notification['url'] = $system['system_url'] . '/' . $node_url;
-                    $notification['message'] = 'received your friend request';
                     break;
 
                 case 'friend_accept':
@@ -3580,11 +3516,6 @@ class User
                 case 'wall':
                     $notification['url'] = $system['system_url'] . '/posts/' . $node_url;
                     $notification['message'] = __("posted on your wall");
-                    break;
-
-                case 'product_created':
-                    $notification['url'] = $system['system_url'] . '/posts/' . $node_url;
-                    $notification['message'] = __("Product created");
                     break;
 
                 case 'page_invitation':
@@ -5474,12 +5405,6 @@ class User
 
         $db->begin_transaction();
 
-        blueModal(
-            modalId: "MESSAGE",
-            title: 'Status',
-            message: 'The request processing',
-            async: true,
-        );
         try {
             /* insert the post */
             $db->query(sprintf("INSERT INTO posts (user_id, user_type, in_wall, wall_id, in_group, group_id, group_approved, in_event, event_id, event_approved, post_type, colored_pattern, time, location, privacy, text, feeling_action, feeling_value, is_anonymous) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", secure($post['user_id'], 'int'), secure($post['user_type']), secure($post['in_wall'], 'int'), secure($post['wall_id'], 'int'), secure($post['in_group']), secure($post['group_id'], 'int'), secure($post['group_approved']), secure($post['in_event']), secure($post['event_id'], 'int'), secure($post['event_approved']), secure($post['post_type']), secure($post['colored_pattern'], 'int'), secure($post['time']), secure($post['location']), secure($post['privacy']), secure($post['text']), secure($post['feeling_action']), secure($post['feeling_value']), secure($post['is_anonymous']))) or _error("SQL_ERROR_THROWEN", $db);
@@ -5771,19 +5696,11 @@ class User
 
             $db->commit();
 
-            $this->post_notification(
-                from_user_id: $this->_data['user_id'],
-                to_user_id: $this->_data['user_id'],
-                action: 'product_created',
-                node_url: $post['post_id'],
-            );
             // return
             return $post;
         } catch (Exception $e) {
-            $message = __('Product failed to be created') . ' | '. $e->getMessage();
-            $this->post_notification_async($message);
             $db->rollback();
-            throw new Exception($message);
+            throw new Exception(__("Product failed to be created"));
         }
 
     }
