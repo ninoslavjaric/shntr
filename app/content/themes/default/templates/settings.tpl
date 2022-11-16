@@ -2812,7 +2812,7 @@
                     <div class="card-header with-icon">
                         <i class="fa fa-dollar-sign mr10" style="color: green;"></i>{__("shntr token")}
                     </div>
-                    <div class="card-body">
+                    <div class="card-body pl0 pr0">
                         <div class="row justify-content-center">
                             <!-- money balance -->
                             <div class="col-sm-6">
@@ -2822,7 +2822,7 @@
                                 <div class="stat-panel bg-gradient-primary">
                                     <div class="stat-cell">
 {*                                        <i class="fa fas fa-dollar-sign bg-icon"></i>*}
-                                        <div class="h3 mtb10">
+                                        <div class="h3 mtb10 vertical-align-middle pg_1x">
                                             {$shntr_balance|number_format:2}
                                         </div>
                                     </div>
@@ -2837,7 +2837,7 @@
                                 <div class="stat-panel bg-gradient-primary">
                                     <div class="stat-cell">
 {*                                        <i class="fa fas fa-dollar-sign bg-icon"></i>*}
-                                        <div class="h3 mtb10 vertical-align-middle">
+                                        <div class="h3 mtb10 vertical-align-middle pg_1x">
                                             {$shntr_reserved_balance|number_format:2}
                                         </div>
                                     </div>
@@ -2873,21 +2873,21 @@
                             {if $shntr_transactions}
                                 <div class="table-responsive mt20">
                                     <table class="table table-striped table-bordered table-hover js_dataTable">
-                                        <thead>
+                                        <thead class="text-smx">
                                             <tr>
-                                                <th>{__("ID")}</th>
-                                                <th>{__("Sender")}</th>
-                                                <th>{__("Recipient")}</th>
-                                                <th>{__("Type")}</th>
-                                                <th>{__("Feature")}</th>
-                                                <th>{__("Amount")}</th>
-                                                <th>{__("Created")}</th>
-                                                <th>{__("Note")}</th>
-                                                <th>{__("Message")}</th>
-                                                <th>{__("Completed")}</th>
+                                                <th class="pr20">{__("ID")}</th>
+                                                <th class="pr20">{__("Sender")}</th>
+                                                <th class="pr20">{__("Recipient")}</th>
+                                                <th class="pr20">{__("Type")}</th>
+                                                <th class="pr20">{__("Feature")}</th>
+                                                <th class="pr20">{__("Amount")}</th>
+                                                <th class="pr20">{__("Created")}</th>
+                                                <th class="pr20">{__("Note")}</th>
+                                                <th class="pr20">{__("Message")}</th>
+                                                <th class="pr20">{__("Completed")}</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
+                                        <tbody class="text-sm">
                                             {foreach $shntr_transactions as $transaction}
                                                 <tr>
                                                     <td>{$transaction@iteration}</td>

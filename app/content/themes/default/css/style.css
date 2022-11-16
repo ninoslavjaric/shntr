@@ -11050,6 +11050,14 @@ body.night-mode .text-link:hover {
 }
 
 /* text sizes */
+.text-smx {
+  font-size: 0.85em;
+  line-height: 1.4;
+}
+.text-sm {
+  font-size: 0.92em;
+  line-height: 1.4;
+}
 .text-md {
   font-size: 1.1em;
   line-height: 1.6;
