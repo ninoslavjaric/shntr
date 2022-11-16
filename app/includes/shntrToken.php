@@ -358,6 +358,17 @@ class shntrToken
         ];
     }
 
+    public static function getRelysiaReservedBalance(int $user_id): float
+    {
+        global $db;
+
+        $reservedBalance = $db->query(
+            sprintf('select sum(amount) as reserved from token_transactions where is_completed = false and sender_id = %s', secure($user_id ?? 0))
+        ) or _error('SQL_ERROR_THROWEN', $db->error);
+
+        return (float) $reservedBalance->fetch_assoc()['reserved'];
+    }
+
     public static function getRelysiaBalance(?int $user_id, bool $force = false): float
     {
         global $db;
@@ -365,10 +376,6 @@ class shntrToken
         if (in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES) || str_contains(SYS_URL, 'ngrok')) {
             return 1000;
         }
-
-        $reservedBalance = $db->query(
-            sprintf('select sum(amount) as reserved from token_transactions where sender_id = %s', secure($user_id ?? 0))
-        ) or _error('SQL_ERROR_THROWEN', $db->error);
 
         if (!$force) {
             $query = $db->query(
@@ -378,7 +385,7 @@ class shntrToken
             [$balance] = $query->fetch_row();
 
             if (!is_null($balance)) {
-                return (int) $balance - (int) $reservedBalance->fetch_assoc()['reserved'];
+                return $balance;
             }
         }
 
@@ -420,7 +427,7 @@ class shntrToken
             )
         ) or _error('SQL_ERROR_THROWEN', $db->error);
 
-        return (int) $balance - (int) $reservedBalance->fetch_assoc()['reserved'];
+        return (int) $balance;
     }
 
     public static function payRelysia(float $amount, string $recipientPaymail, int $senderId = null): array

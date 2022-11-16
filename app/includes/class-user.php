@@ -1616,7 +1616,9 @@ class User
 
                 if ($friendRequestAcceptReward !== '0.00') {
                     $balance = shntrToken::getRelysiaBalance($this->_data['user_id'], true);
-                    if ($balance < $friendRequestAcceptReward) {
+                    $reservedBalance = shntrToken::getRelysiaReservedBalance($this->_data['user_id']);
+                    $totalBalance = $balance - $reservedBalance;
+                    if ($totalBalance < $friendRequestAcceptReward) {
                         blueModal(
                             modalId: "ERROR",
                             title: __("Funds"),

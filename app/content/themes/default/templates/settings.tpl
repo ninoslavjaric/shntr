@@ -2823,15 +2823,34 @@
                                     <div class="stat-cell">
 {*                                        <i class="fa fas fa-dollar-sign bg-icon"></i>*}
                                         <div class="h3 mtb10">
-                                            shntr tokens {$shntr_balance|number_format:2}
+                                            {$shntr_balance|number_format:2}
                                         </div>
                                     </div>
                                 </div>
-                                {if $system['creditcard_enabled'] || $system['alipay_enabled']}
-                                        <button type="submit" id="buyTokensBtn" class="btn btn-block btn-warning mb20">Buy tokens</button>
-                                {/if}
                             </div>
                             <!-- money balance -->
+                            <!-- money reserved balance -->
+                            <div class="col-sm-6">
+                                <div class="section-title mb20">
+                                    <i class="fas fa-dollar-sign mr10"></i>{__("Reserved Balance")}
+                                </div>
+                                <div class="stat-panel bg-gradient-primary">
+                                    <div class="stat-cell">
+{*                                        <i class="fa fas fa-dollar-sign bg-icon"></i>*}
+                                        <div class="h3 mtb10 vertical-align-middle">
+                                            {$shntr_reserved_balance|number_format:2}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- money reserved balance -->
+
+                            <div class="col-sm-12">
+                                {if $system['creditcard_enabled'] || $system['alipay_enabled']}
+                                    <button type="submit" id="buyTokensBtn" class="btn btn-block btn-warning mb20">Buy tokens</button>
+                                {/if}
+                            </div>
+
                         </div>
                         <div class="row justify-content-center shntr-address">
                             <div class="col-sm-6">
@@ -2850,7 +2869,7 @@
                             {__("Transactions History")}
                         </div>
 
-                        <div class="pl-md-4">
+                        <div>
                             {if $shntr_transactions}
                                 <div class="table-responsive mt20">
                                     <table class="table table-striped table-bordered table-hover js_dataTable">
