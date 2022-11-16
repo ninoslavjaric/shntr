@@ -1639,7 +1639,7 @@ class User
                     error_log('Add friend ' . $id . ', response from relysia: ' . json_encode($response));
 
                     if (!str_contains($response['message'], 'sent successfully')) {
-                        _error(400, 'Add friend | Relysia payment failed' . strval($response['message']));
+                        _error(400, 'Add friend | Relysia payment failed' . $response['message']);
                     }
 
                     shntrToken::noteTransaction(

@@ -585,7 +585,8 @@ function _error($args, mysqli|string|null $db = null)
     $args = func_get_args();
 
     if ($db) {
-        $user->post_notification_async(is_string($db) ? $db : $db->error);
+        $caller = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT)[0];
+        $user->post_notification_async((is_string($db) ? $db : $db->error) ?: "{$caller['file']}{$caller['line']}");
     }
 
     if (ERROR_LOGGING && $db instanceof mysqli) {

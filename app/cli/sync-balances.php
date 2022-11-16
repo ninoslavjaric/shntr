@@ -1,7 +1,6 @@
 #!/usr/local/bin/php
 
 <?php
-die;
 /**
  * @var $db mysqli
  */
@@ -39,7 +38,6 @@ try {
     echo $e->getMessage() . PHP_EOL;
 }
 echo '--------------------------------------------------' . PHP_EOL;
-
 
 while ([$userId] = $userQuery->fetch_row()) {
     echo '--------------------------------------------------' . PHP_EOL;
