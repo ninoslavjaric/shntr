@@ -48,7 +48,6 @@ services:
     build: './apache/'
     depends_on:
       - php-shntr
-      - db-shntr
     networks:
       - frontend-shntr
       - backend-shntr
