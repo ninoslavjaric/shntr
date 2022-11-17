@@ -50,7 +50,8 @@ while ([$userId] = $userQuery->fetch_row()) {
 //            echo "Calledback for {$userId}\n";
 //        }
 
-        $result = shntrToken::getRelysiaBalance($userId, true);
+//        $result = shntrToken::getRelysiaBalance($userId, true);
+        $result = shntrToken::getRelysiaApiBalance($userId);
         shntrToken::sync($userId);
         echo "Refreshed balance for {$userId}" . PHP_EOL;
     } catch (Exception $e) {

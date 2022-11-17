@@ -1604,18 +1604,18 @@ class User
                     $this->breach_paywall($id);
                 }
 
-                if (empty($this->_data['user_relysia_password'])) {
-                    $this->register_to_relysia(
-                        $this->_data['user_name'], $this->_data['user_id']
-                    );
-                }
+//                if (empty($this->_data['user_relysia_password'])) {
+//                    $this->register_to_relysia(
+//                        $this->_data['user_name'], $this->_data['user_id']
+//                    );
+//                }
 
                 $query = $db->query("SELECT price FROM prices WHERE price_name = 'send_fr_price';");
                 $price = $query->fetch_assoc();
                 $friendRequestAcceptReward = isset($price["price"]) && !empty($price["price"]) ?  $price["price"] : 0;
 
                 if ($friendRequestAcceptReward !== '0.00') {
-                    $balance = shntrToken::getRelysiaBalance($this->_data['user_id'], true);
+                    $balance = shntrToken::getRelysiaLocalBalance($this->_data['user_id']);
                     $reservedBalance = shntrToken::getRelysiaReservedBalance($this->_data['user_id']);
                     $totalBalance = $balance - $reservedBalance;
                     if ($totalBalance < $friendRequestAcceptReward) {
@@ -1625,12 +1625,6 @@ class User
                             message: __("You're out of tokens"),
                         );
                     }
-
-                    $response = shntrToken::payRelysia(
-                        amount: $friendRequestAcceptReward,
-                        recipientPaymail: shntrToken::getshntrTreasure('paymail'),
-                        senderId: $this->_data['user_id']
-                    );
 
                     shntrToken::noteTransaction(
                         amount: $friendRequestAcceptReward,

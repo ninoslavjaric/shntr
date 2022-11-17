@@ -369,6 +369,58 @@ class shntrToken
         return (float) $reservedBalance->fetch_assoc()['reserved'];
     }
 
+    public static function getRelysiaLocalBalance(?int $user_id): float
+    {
+        global $db;
+
+            $query = $db->query(
+                sprintf('select balance from users_relysia where user_id = %s', secure($user_id ?? 0))
+            ) or _error('SQL_ERROR_THROWEN', $db->error);
+
+            [$balance] = $query->fetch_row();
+
+            if (is_null($balance)) {
+                return 0.0;
+            }
+
+        return (float) $balance;
+    }
+
+    public static function getRelysiaApiBalance(?int $user_id): float
+    {
+        global $db;
+
+        $token = static::getAccessToken($user_id);
+
+        $response = http_call(self::API_BASE_URL_V2 . '/balance',
+            'GET',
+            [],
+            [
+                "authToken: {$token}",
+                "serviceID: 9ab1b69e-92ae-4612-9a4f-c5a102a6c068",
+            ]
+        );
+
+        if ($response['statusCode'] == 200) {
+
+            $balance = $response['data']['coins'][1]['amount'];
+
+            $db->query(
+                sprintf(
+                    'update users_relysia set balance = %s where user_id = %s',
+                    secure($balance),
+                    secure($user_id ?? 0))
+                ) or _error('SQL_ERROR_THROWEN', $db->error);
+
+            return (float) $balance;
+        }
+
+        return 0.0;
+    }
+
+    /**
+     * @deprecated
+     */
     public static function getRelysiaBalance(?int $user_id, bool $force = false): float
     {
         global $db;
