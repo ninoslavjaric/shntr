@@ -62,7 +62,7 @@ services:
       - MYSQL_DATABASE=${MYSQL_DATABASE:-shntrco_sngine}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD:-shntrco_sngine}
       - MYSQL_HOST=${MYSQL_HOST:-host.docker.internal}
-      - MYSQL_PORT=${MYSQL_PORT:-3307}
+      - MYSQL_PORT=${MYSQL_PORT:-3306}
     volumes:
       - ./mariadb:/tmp/mariadb
     command: '/tmp/mariadb/migrate'

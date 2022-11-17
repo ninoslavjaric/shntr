@@ -56,6 +56,19 @@ services:
       - "80:80"
     volumes:
       - ./app:/var/www/html/
+  db-cli-shntr:
+    build: ./mariadb
+    environment:
+      - MYSQL_USER=${MYSQL_USER:-shntrco_sngine}
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-shntrco_sngine}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-shntrco_sngine}
+      - MYSQL_HOST=${MYSQL_HOST:-host.docker.internal}
+      - MYSQL_PORT=${MYSQL_PORT:-3306}
+    volumes:
+      - ./mariadb:/tmp/mariadb
+    command: '/tmp/mariadb/migrate'
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 networks:
   frontend-shntr:
   backend-shntr:
