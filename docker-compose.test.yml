@@ -56,22 +56,19 @@ services:
       - "80:80"
     volumes:
       - ./app:/var/www/html/
-  db-shntr:
-    platform: linux/x86_64
-    image: mariadb:10.6.4-focal
-    networks:
-      - backend-shntr
-    volumes:
-      - ./data:/var/lib/mysql/
-      - ./mariadb:/tmp/mariadb
-    ports:
-      - 3307:3306
+  db-cli-shntr:
+    build: ./mariadb
     environment:
-      MYSQL_ROOT_PASSWORD: "root"
-      MYSQL_USER: "shntrco_sngine"
-      MYSQL_DATABASE: "shntrco_sngine"
-      MYSQL_PASSWORD: "shntrco_sngine"
-    command: runuser -u mysql /tmp/mariadb/starter
+      - MYSQL_USER=${MYSQL_USER:-shntrco_sngine}
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-shntrco_sngine}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-shntrco_sngine}
+      - MYSQL_HOST=${MYSQL_HOST:-host.docker.internal}
+      - MYSQL_PORT=${MYSQL_PORT:-3307}
+    volumes:
+      - ./mariadb:/tmp/mariadb
+    command: '/tmp/mariadb/migrate'
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   ws-shntr:
     image: node:16.17.1-alpine
     volumes:
