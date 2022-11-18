@@ -20,6 +20,10 @@ class User
     private $_cookie_user_referrer = "ref";
 
 
+    private const TREASURY_ID = 0;
+    private const VERIFICATION_REWARD = 1000;
+
+
     /* ------------------------------- */
     /* __construct */
     /* ------------------------------- */
@@ -1604,12 +1608,6 @@ class User
                     $this->breach_paywall($id);
                 }
 
-//                if (empty($this->_data['user_relysia_password'])) {
-//                    $this->register_to_relysia(
-//                        $this->_data['user_name'], $this->_data['user_id']
-//                    );
-//                }
-
                 $query = $db->query("SELECT price FROM prices WHERE price_name = 'send_fr_price';");
                 $price = $query->fetch_assoc();
                 $friendRequestAcceptReward = isset($price["price"]) && !empty($price["price"]) ?  $price["price"] : 0;
@@ -1629,7 +1627,7 @@ class User
                     shntrToken::noteTransaction(
                         amount: $friendRequestAcceptReward,
                         senderId: intval($this->_data['user_id']),
-                        recipientId: 0,
+                        recipientId: self::TREASURY_ID,
                         basisName: 'users',
                         basisId: $id,
                         note: 'Friend request fee',
@@ -17846,8 +17844,7 @@ class User
             $query = $db->query(sprintf('select user_relysia_paymail as address from users where user_id = %1$s limit 1', secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             $recipientAddress = $query->fetch_row()[0];
 
-            shntrToken::payRelysia(1000, $recipientAddress, 0);
-            shntrToken::noteTransaction(1000, 0, $this->_data['user_id'], null, null, 'INIT');
+            shntrToken::noteTransaction(self::VERIFICATION_REWARD, self::TREASURY_ID, $this->_data['user_id'], null, null, 'INIT', null, $recipientAddress);
         } else {
             /* [2] just verify his email */
             $db->query(sprintf("UPDATE users SET user_email_verified = '1' WHERE user_id = %s", secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
@@ -17856,8 +17853,7 @@ class User
             $query = $db->query(sprintf('select user_relysia_paymail as address from users where user_id = %1$s limit 1', secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
             $recipientAddress = $query->fetch_row()[0];
 
-            shntrToken::payRelysia(1000, $recipientAddress, 0);
-            shntrToken::noteTransaction(1000, 0, $this->_data['user_id'], null, null, 'INIT');
+            shntrToken::noteTransaction(self::VERIFICATION_REWARD, self::TREASURY_ID, $this->_data['user_id'], null, null, 'INIT', null, $recipientAddress);
         }
         /* redirect */
         redirect();

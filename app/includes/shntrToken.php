@@ -143,7 +143,7 @@ class shntrToken
         return $response['data']['token'];
     }
 
-    public static function getAccessToken(?int $user_id): string
+    public static function getAccessToken(int $user_id): string
     {
         global $db;
 
@@ -157,23 +157,17 @@ class shntrToken
             return $token;
         }
 
-        @[$relysiaUser, $password] = $user_id
-            ? $db->query(
+        if ($user_id === 0){
+            @[$relysiaUser, $password] = [static::getshntrTreasure('username'), static::getshntrTreasure('password')];
+        } else {
+            @[$relysiaUser, $password] = $db->query(
                 sprintf(
                     'select user_relysia_username, user_relysia_password from users where user_id = %s', secure($user_id)
                 )
-            )->fetch_row()
-        : [static::getshntrTreasure('username'), static::getshntrTreasure('password')];
-
-        if (!($token = static::auth(strval($relysiaUser), strval($password)))) {
-            error_log('GetAccessToken fail: ' . json_encode([$relysiaUser, $password]));
-
-            if (php_sapi_name() != 'cli') {
-                _error(403);
-            } else {
-                throw new Exception('GetAccessToken fail: ' . json_encode($relysiaUser));
-            }
+            )->fetch_row();
         }
+
+        $token = static::auth(strval($relysiaUser), strval($password));
 
         $db->query(
             sprintf(
@@ -482,6 +476,34 @@ class shntrToken
         return (int) $balance;
     }
 
+    public static function sendTransactionRelysia(float $amount, string $recipientPaymail, int $senderId): array
+    {
+        $senderToken = static::getAccessToken($senderId);
+
+        $response = http_call(self::API_BASE_URL_V1 . '/send',
+            'POST',
+            [
+                'dataArray' => [
+                    [
+                        'to' => $recipientPaymail,
+                        'amount' => $amount,
+                        'tokenId' => static::TOKEN_ID,
+                    ]
+                ],
+            ],
+            [
+                "content-type: application/json",
+                "authToken: {$senderToken}",
+                "serviceID: 9ab1b69e-92ae-4612-9a4f-c5a102a6c068",
+            ]
+        );
+
+        return $response;
+    }
+
+    /**
+     * @deprecated
+     */
     public static function payRelysia(float $amount, string $recipientPaymail, int $senderId = null): array
     {
         global $user, $db;
