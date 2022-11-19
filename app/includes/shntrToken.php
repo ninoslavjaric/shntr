@@ -380,7 +380,7 @@ class shntrToken
         return (float) $balance;
     }
 
-    public static function getRelysiaApiBalance(?int $user_id): float
+    public static function getRelysiaApiBalance(int $user_id): float
     {
         global $db;
 
