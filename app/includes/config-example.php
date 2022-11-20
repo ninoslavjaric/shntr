@@ -47,6 +47,8 @@ define('DEBUGGING', false);
  */
 define('ERROR_LOGGING', true);
 
+define('TEST_ENVIRONMENT', false);
+
 
 // ** LICENCE ** //
 /**

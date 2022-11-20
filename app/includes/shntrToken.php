@@ -114,11 +114,18 @@ class shntrToken
 
     private static function auth(string $username, string $password): false|string
     {
-        $host = in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES) ? "local.shntr.com" : $_SERVER['SERVER_NAME'];
+//        todo: quick fix - REFACTOR $host
+//        $host = in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES) ? "local.shntr.com" : $_SERVER['SERVER_NAME'];
 
-        if ($host === 'apache-shntr') {
-            $host = getenv('HOST');
+        if (TEST_ENVIRONMENT){
+            $host = 'test.shntr.com';
+        } else {
+            $host = 'shntr.com';
         }
+
+//        if ($host === 'apache-shntr') {
+//            $host = getenv('HOST');
+//        }
 
         $email = $username === 'relysia@shntr.com' ? 'relysia@shntr.com' : strtolower($username) . '@' . $host;
         $password = self::decrypt($password);
