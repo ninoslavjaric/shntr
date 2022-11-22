@@ -1018,6 +1018,20 @@ $(function () {
             });
     });
 
+    $('body').on('click', '.product-publish', function () {
+        var _this = $(this);
+        /* get publisher */
+        var publisher = _this.parents('.publisher-mini');
+        /* get product */
+        var product = {};
+
+        product['category'] = publisher.find('select[name="category"], input[name="category"]').val();
+
+        $("select[name=\"category\"], input[name=\"category\"]").focusout( function (){
+            $("select[name=\"category\"], input[name=\"category\"]").removeClass('alert-danger');
+        });
+    });
+
     /* publish new photos to album */
     $('body').on('click', '.js_publisher-album', function () {
         var _this = $(this);
