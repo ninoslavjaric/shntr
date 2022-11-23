@@ -86,7 +86,7 @@ class User
                     }
                 }
                 /* check token amount */
-                $this->_data['shntr_token_amount'] = shntrToken::getRelysiaBalance($this->_data['user_id']);
+                $this->_data['shntr_token_amount'] = shntrToken::getRelysiaLocalBalance($this->_data['user_id']);
                 /* check pages permission */
                 if ($system['pages_enabled']) {
                     $this->_data['can_create_pages'] = $this->check_module_permission($system['pages_permission']);
@@ -1553,21 +1553,15 @@ class User
                 $friendRequestAcceptReward = isset($price["price"]) && !empty($price["price"]) ?  $price["price"] : 0;
 
                 if ($friendRequestAcceptReward !== '0.00') {
-                    $response = shntrToken::payRelysia(
-                        amount: $friendRequestAcceptReward,
-                        recipientPaymail: $this->_data['user_relysia_paymail'],
-                        senderId: 0
-                    );
-                    if (!str_contains($response['message'], 'sent successfully')) {
-                        _error(400, $response['message']);
-                    }
                     shntrToken::noteTransaction(
                         amount: $friendRequestAcceptReward,
-                        senderId: 0,
+                        senderId: self::TREASURY_ID,
                         recipientId: intval($this->_data['user_id']),
                         basisName: 'users',
                         basisId: $id,
-                        note: 'Friend request accept reward'
+                        note: 'Friend request accept reward',
+                        senderMsg: null,
+                        recipientRelysiaPaymail: $this->_data['user_relysia_paymail']
                     );
                 }
 
@@ -5669,21 +5663,15 @@ class User
                 $query = $db->query("SELECT price FROM prices WHERE price_name = 'product_price';");
                 $price = $query->fetch_assoc();
                 if ($price["price"] !== '0.00') {
-                    $response = shntrToken::payRelysia(
-                        $price["price"],
-                        shntrToken::getshntrTreasure('paymail'),
-                        $this->_data['user_id']
-                    );
-                    if (!str_contains($response['message'], 'sent successfully')) {
-                        _error(400, $response['message']);
-                    }
                     shntrToken::noteTransaction(
-                        $price["price"],
-                        intval($this->_data['user_id']),
-                        0,
-                        'products',
-                        $post['post_id'],
-                        'Product creation charges'
+                        amount: $price["price"],
+                        senderId: intval($this->_data['user_id']),
+                        recipientId: self::TREASURY_ID,
+                        basisName: 'products',
+                        basisId: $post['post_id'],
+                        note: 'Product creation charges',
+                        senderMsg: null,
+                        recipientRelysiaPaymail: shntrToken::getshntrTreasure('paymail')
                     );
                 }
             }
@@ -10113,7 +10101,7 @@ class User
             blueModal($modal_id, $modal_title, $modal_message, null, true, true, $modal_callback);
         }
 
-        $balance = shntrToken::getRelysiaBalance($this->_data['user_id']);
+        $balance = shntrToken::getRelysiaLocalBalance($this->_data['user_id']);
         if ($balance < $price['price']) {
             blueModal("ERROR", __("Funds"), __("You're out of tokens"), null, true, true);
         }
@@ -10168,22 +10156,16 @@ class User
             $price = $query->fetch_assoc();
 
             if ($price["price"] !== '0.00') {
-                $response = shntrToken::payRelysia(
-                    $price['price'],
-                    shntrToken::getshntrTreasure('paymail'),
-                    $this->_data['user_id']
-                );
-                error_log('Create page ' . $args['title'] . ', response from relysia: ' . json_encode($response));
-                if (!str_contains($response['message'], 'sent successfully')) {
-                    _error(400, $response['message']);
-                }
+
                 shntrToken::noteTransaction(
-                    $price['price'],
-                    intval($this->_data['user_id']),
-                    0,
-                    'pages',
-                    $page_id,
-                    'Page creation charges'
+                    amount: $price["price"],
+                    senderId: intval($this->_data['user_id']),
+                    recipientId: self::TREASURY_ID,
+                    basisName: 'pages',
+                    basisId: $page_id,
+                    note: 'Page creation charges',
+                    senderMsg: null,
+                    recipientRelysiaPaymail: shntrToken::getshntrTreasure('paymail')
                 );
             }
 
@@ -10730,7 +10712,7 @@ class User
             blueModal($modal_id, $modal_title, $modal_message, null, true, true, $modal_callback);
         }
 
-        $balance = shntrToken::getRelysiaBalance($this->_data['user_id']);
+        $balance = shntrToken::getRelysiaLocalBalance($this->_data['user_id']);
         if ($balance < $price['price']) {
             blueModal("ERROR", __("Funds"), __("You're out of tokens"), null, true, true);
         }
@@ -10782,22 +10764,15 @@ class User
             $price = $query->fetch_assoc();
 
             if ($price["price"] !== '0.00') {
-                $response = shntrToken::payRelysia(
-                    $price["price"],
-                    shntrToken::getshntrTreasure('paymail'),
-                    $this->_data['user_id']
-                );
-                error_log('Create group ' . $args['title'] . ', response from relysia: ' . json_encode($response));
-                if (!str_contains($response['message'], 'sent successfully')) {
-                    _error(400, $response['message']);
-                }
                 shntrToken::noteTransaction(
-                    $price["price"],
-                    intval($this->_data['user_id']),
-                    0,
-                    'groups',
-                    $group_id,
-                    'Group creation charges'
+                    amount: $price["price"],
+                    senderId: intval($this->_data['user_id']),
+                    recipientId: self::TREASURY_ID,
+                    basisName: 'groups',
+                    basisId: $group_id,
+                    note: 'Group creation charges',
+                    senderMsg: null,
+                    recipientRelysiaPaymail: shntrToken::getshntrTreasure('paymail')
                 );
             }
 
@@ -11379,7 +11354,7 @@ class User
             blueModal($modal_id, $modal_title, $modal_message, null, true, true, $modal_callback);
         }
 
-        $balance = shntrToken::getRelysiaBalance($this->_data['user_id']);
+        $balance = shntrToken::getRelysiaLocalBalance($this->_data['user_id']);
         if ($balance < $price['price']) {
             blueModal("ERROR", __("Funds"), __("You're out of tokens"), null, true, true);
         }
@@ -11441,22 +11416,15 @@ class User
             $price = $query->fetch_assoc();
 
             if ($price["price"] !== '0.00') {
-                $response = shntrToken::payRelysia(
-                    $price["price"],
-                    shntrToken::getshntrTreasure('paymail'),
-                    $this->_data['user_id']
-                );
-                error_log('Create event ' . $args['title'] . ', response from relysia: ' . json_encode($response));
-                if (!str_contains($response['message'], 'sent successfully')) {
-                    _error(400, $response['message']);
-                }
                 shntrToken::noteTransaction(
-                    $price["price"],
-                    intval($this->_data['user_id']),
-                    0,
-                    'events',
-                    $event_id,
-                    'Event creation charges'
+                    amount: $price["price"],
+                    senderId: intval($this->_data['user_id']),
+                    recipientId: self::TREASURY_ID,
+                    basisName: 'events',
+                    basisId: $event_id,
+                    note: 'Event creation charges',
+                    senderMsg: null,
+                    recipientRelysiaPaymail: shntrToken::getshntrTreasure('paymail')
                 );
             }
 
@@ -15223,9 +15191,6 @@ class User
                 secure(strval($user_id), 'int')
             )
         );
-
-//        shntrToken::payRelysia(1000, $paymail, 0);
-//        shntrToken::noteTransaction(1000, 0, $user_id, null, null, 'INIT');
     }
 
 
@@ -17175,18 +17140,6 @@ class User
 
         $query = $db->query('select user_token_private_key from users where user_id = 1');
         $pkey = $query->fetch_row()[0];
-
-        // get shntr token transactions @todo
-//        $response = shntrToken::payRelysia(1000, $pkey, $wallet['address']);
-//        $response = shntrToken::pay($pkey, $wallet['address'], 1000);
-//
-//        if (!str_contains($response['message'], 'success')) {
-//            _error(400, $response['message']);
-//        }
-
-//        shntrToken::noteTransaction(1000, 1, $user_id, null, null, 'INIT');
-
-//        error_log('shntr transaction: ' . print_r($response, true));
     }
 
 
