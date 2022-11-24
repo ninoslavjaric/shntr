@@ -1314,25 +1314,25 @@
                                         </div>
                                     </div>
 
-                                    <div class="form-group col-md-6">
-                                        <label class="form-control-label">{__("Who can see your")} {__("basic info")}</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                            </div>
-                                            <select class="form-control" name="user_privacy_basic">
-                                                <option {if $user->_data['user_privacy_basic'] == "public"}selected{/if} value="public">
-                                                    {__("Everyone")}
-                                                </option>
-                                                <option {if $user->_data['user_privacy_basic'] == "friends"}selected{/if} value="friends">
-                                                    {__("Friends")}
-                                                </option>
-                                                <option {if $user->_data['user_privacy_basic'] == "me"}selected{/if} value="me">
-                                                    {__("Just Me")}
-                                                </option>
-                                            </select>
-                                        </div>
-                                    </div>
+{*                                    <div class="form-group col-md-6">*}
+{*                                        <label class="form-control-label">{__("Who can see your")} {__("basic info")}</label>*}
+{*                                        <div class="input-group">*}
+{*                                            <div class="input-group-prepend">*}
+{*                                                <span class="input-group-text"><i class="fas fa-user"></i></span>*}
+{*                                            </div>*}
+{*                                            <select class="form-control" name="user_privacy_basic">*}
+{*                                                <option {if $user->_data['user_privacy_basic'] == "public"}selected{/if} value="public">*}
+{*                                                    {__("Everyone")}*}
+{*                                                </option>*}
+{*                                                <option {if $user->_data['user_privacy_basic'] == "friends"}selected{/if} value="friends">*}
+{*                                                    {__("Friends")}*}
+{*                                                </option>*}
+{*                                                <option {if $user->_data['user_privacy_basic'] == "me"}selected{/if} value="me">*}
+{*                                                    {__("Just Me")}*}
+{*                                                </option>*}
+{*                                            </select>*}
+{*                                        </div>*}
+{*                                    </div>*}
 
                                     {if $system['work_info_enabled']}
                                         <div class="form-group col-md-6">
@@ -1400,25 +1400,25 @@
                                         </div>
                                     {/if}
 
-                                    <div class="form-group col-md-6">
-                                        <label class="form-control-label">{__("Who can see your")} {__("other info")}</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text"><i class="fas fa-folder-plus"></i></span>
-                                            </div>
-                                            <select class="form-control" name="user_privacy_other">
-                                                <option {if $user->_data['user_privacy_other'] == "public"}selected{/if} value="public">
-                                                    {__("Everyone")}
-                                                </option>
-                                                <option {if $user->_data['user_privacy_other'] == "friends"}selected{/if} value="friends">
-                                                    {__("Friends")}
-                                                </option>
-                                                <option {if $user->_data['user_privacy_other'] == "me"}selected{/if} value="me">
-                                                    {__("Just Me")}
-                                                </option>
-                                            </select>
-                                        </div>
-                                    </div>
+{*                                    <div class="form-group col-md-6">*}
+{*                                        <label class="form-control-label">{__("Who can see your")} {__("other info")}</label>*}
+{*                                        <div class="input-group">*}
+{*                                            <div class="input-group-prepend">*}
+{*                                                <span class="input-group-text"><i class="fas fa-folder-plus"></i></span>*}
+{*                                            </div>*}
+{*                                            <select class="form-control" name="user_privacy_other">*}
+{*                                                <option {if $user->_data['user_privacy_other'] == "public"}selected{/if} value="public">*}
+{*                                                    {__("Everyone")}*}
+{*                                                </option>*}
+{*                                                <option {if $user->_data['user_privacy_other'] == "friends"}selected{/if} value="friends">*}
+{*                                                    {__("Friends")}*}
+{*                                                </option>*}
+{*                                                <option {if $user->_data['user_privacy_other'] == "me"}selected{/if} value="me">*}
+{*                                                    {__("Just Me")}*}
+{*                                                </option>*}
+{*                                            </select>*}
+{*                                        </div>*}
+{*                                    </div>*}
 
                                     <div class="form-group col-md-6">
                                         <label class="form-control-label">{__("Who can see your")} {__("friends")}</label>
@@ -1440,25 +1440,25 @@
                                         </div>
                                     </div>
 
-                                    <div class="form-group col-md-6">
-                                        <label class="form-control-label">{__("Who can see your")} {__("photos")}</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text"><i class="fas fa-images"></i></span>
-                                            </div>
-                                            <select class="form-control" name="user_privacy_photos">
-                                                <option {if $user->_data['user_privacy_photos'] == "public"}selected{/if} value="public">
-                                                    {__("Everyone")}
-                                                </option>
-                                                <option {if $user->_data['user_privacy_photos'] == "friends"}selected{/if} value="friends">
-                                                    {__("Friends")}
-                                                </option>
-                                                <option {if $user->_data['user_privacy_photos'] == "me"}selected{/if} value="me">
-                                                    {__("Just Me")}
-                                                </option>
-                                            </select>
-                                        </div>
-                                    </div>
+{*                                    <div class="form-group col-md-6">*}
+{*                                        <label class="form-control-label">{__("Who can see your")} {__("photos")}</label>*}
+{*                                        <div class="input-group">*}
+{*                                            <div class="input-group-prepend">*}
+{*                                                <span class="input-group-text"><i class="fas fa-images"></i></span>*}
+{*                                            </div>*}
+{*                                            <select class="form-control" name="user_privacy_photos">*}
+{*                                                <option {if $user->_data['user_privacy_photos'] == "public"}selected{/if} value="public">*}
+{*                                                    {__("Everyone")}*}
+{*                                                </option>*}
+{*                                                <option {if $user->_data['user_privacy_photos'] == "friends"}selected{/if} value="friends">*}
+{*                                                    {__("Friends")}*}
+{*                                                </option>*}
+{*                                                <option {if $user->_data['user_privacy_photos'] == "me"}selected{/if} value="me">*}
+{*                                                    {__("Just Me")}*}
+{*                                                </option>*}
+{*                                            </select>*}
+{*                                        </div>*}
+{*                                    </div>*}
 
                                     <div class="form-group col-md-6">
                                         <label class="form-control-label">{__("Who can see your")} {__("liked pages")}</label>
