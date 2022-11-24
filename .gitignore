@@ -14,3 +14,5 @@ app/content/uploads
 dump.sql
 app/includes/.cache-buster
 app/error.log
+poc
+/cache

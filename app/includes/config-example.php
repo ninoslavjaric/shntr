@@ -57,4 +57,4 @@ define('TEST_ENVIRONMENT', false);
 define('LICENCE_KEY', '');
 
 
-define("shntr_TOKEN_SERVICE", '');
+define("REDIS_HOST", 'redis-shntr');

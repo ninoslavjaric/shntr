@@ -1,69 +1,45 @@
 <?php
 
+require_once __DIR__ . '/RedisCache.php';
+
 class Session implements SessionHandlerInterface
 {
-    /**
-     * @var mysqli
-     */
-    private $link;
-
     public function open($savePath, $sessionName)
     {
-        global $db;
-
-        if ($db) {
-            $this->link = $db;
+        try {
+            RedisCache::getMe();
             return true;
-        } else {
+        } catch (Exception) {
             return false;
         }
     }
 
     public function close()
     {
-        mysqli_close($this->link);
-        return true;
+        return RedisCache::close();
     }
 
     public function read($id)
     {
-        $result = $this->link->query("SELECT session_Data FROM php_sessions WHERE session_Id = '" . $id . "' AND session_Expires > '" . date('Y-m-d H:i:s') . "'");
-        if ($row = $result->fetch_assoc()) {
-            return $row['session_Data'];
+        if ($row = RedisCache::get($id, RedisCache::SESSION_DB)) {
+            return $row;
         } else {
-            return "";
+            return '';
         }
     }
 
     public function write($id, $data)
     {
-        $DateTime = date('Y-m-d H:i:s');
-        $NewDateTime = date('Y-m-d H:i:s', strtotime($DateTime . ' + 1 hour'));
-        $result = $this->link->query("REPLACE INTO php_sessions SET session_Id = '" . $id . "', session_Expires = '" . $NewDateTime . "', session_Data = '" . $data . "'");
-        if ($result) {
-            return true;
-        } else {
-            return false;
-        }
+        return RedisCache::set($id, $data, 3600, RedisCache::SESSION_DB);
     }
 
     public function destroy($id)
     {
-        $result = $this->link->query("DELETE FROM php_sessions WHERE session_Id ='" . $id . "'");
-        if ($result) {
-            return true;
-        } else {
-            return false;
-        }
+        return RedisCache::delete($id, RedisCache::SESSION_DB) > 0;
     }
 
     public function gc($maxlifetime)
     {
-        $result = $this->link->query("DELETE FROM php_sessions WHERE ((UNIX_TIMESTAMP(session_Expires) + " . $maxlifetime . ") < " . $maxlifetime . ")");
-        if ($result) {
-            return true;
-        } else {
-            return false;
-        }
+        return true;
     }
 }

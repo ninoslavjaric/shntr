@@ -7,6 +7,8 @@ RUN apk add jpeg libpng-dev openjpeg jpeg-dev libjpeg-turbo-dev
 RUN docker-php-ext-configure gd --with-jpeg
 RUN docker-php-ext-install -j$(nproc) gd
 
+RUN apk add --no-cache $PHPIZE_DEPS libzip-dev \
+     && pecl install -f igbinary redis
 #RUN apk add --no-cache $PHPIZE_DEPS \
 #    && pecl install xdebug-3.1.3 \
 #    && docker-php-ext-enable xdebug
@@ -29,6 +31,7 @@ RUN sed -i 's#www-data#webmaster#' /usr/local/etc/php-fpm.d/www.conf
 RUN echo 'upload_max_filesize = 128M' >> /usr/local/etc/php/php.ini
 RUN echo 'post_max_size = 128M' >> /usr/local/etc/php/php.ini
 RUN echo 'extension=mailparse.so' >> /usr/local/etc/php/php.ini
+RUN echo 'extension=redis.so' >> /usr/local/etc/php/php.ini
 
 RUN adduser -u 1000 -D webmaster
 

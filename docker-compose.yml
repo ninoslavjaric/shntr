@@ -109,6 +109,12 @@ services:
       - "host.docker.internal:host-gateway"
     depends_on:
       - localstack-shntr
+  redis-shntr:
+    image: redis:alpine
+    volumes:
+    - ./cache:/data
+    networks:
+      - backend-shntr
 networks:
   frontend-shntr:
   backend-shntr:
