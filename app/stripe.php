@@ -181,46 +181,57 @@ try {
                         ]);
                     }
 
-                    $response = shntrToken::payRelysia(
-                        $transaction['qty'],
-                        $transaction['user_relysia_paymail'],
-                        0
-                    );
+//                    $response = shntrToken::payRelysia(
+//                        $transaction['qty'],
+//                        $transaction['user_relysia_paymail'],
+//                        User::TREASURY_ID
+//                    );
+//
+//                    error_log('debug stripe relysia ' . json_encode([$response, $transaction]));
+//                    if (!str_contains($response['message'], 'sent successfully')) {
+//                        $secret_key = ($system['stripe_mode'] == "live") ? $system['stripe_live_secret'] : $system['stripe_test_secret'];
+//                        \Stripe\Stripe::setApiKey($secret_key);
+//                        $checkout_session->expire();
+//                        _email(
+//                            'admin@shntr.com',
+//                            'Token transaction fail | stripe',
+//                            $response['message'],
+//                            $response['message']
+//                        );
+//
+//                        _email(
+//                            $transaction['user_email'],
+//                            'Token transaction fail | stripe',
+//                            $response['message'],
+//                            $response['message']
+//                        );
+//
+//                        http_response_code(400);
+//                        return_json([
+//                            'success' => false,
+//                            'msg' => $response['message'],
+//                        ]);
+//                    }
+//
+//                    shntrToken::noteTransaction(
+//                        $transaction['qty'],
+//                        0,
+//                        $transaction['user_id'],
+//                        null,
+//                        null,
+//                        'Buying shntr token'
+//                    );
 
-                    error_log('debug stripe relysia ' . json_encode([$response, $transaction]));
-                    if (!str_contains($response['message'], 'sent successfully')) {
-                        $secret_key = ($system['stripe_mode'] == "live") ? $system['stripe_live_secret'] : $system['stripe_test_secret'];
-                        \Stripe\Stripe::setApiKey($secret_key);
-                        $checkout_session->expire();
-                        _email(
-                            'admin@shntr.com',
-                            'Token transaction fail | stripe',
-                            $response['message'],
-                            $response['message']
-                        );
-
-                        _email(
-                            $transaction['user_email'],
-                            'Token transaction fail | stripe',
-                            $response['message'],
-                            $response['message']
-                        );
-
-                        http_response_code(400);
-                        return_json([
-                            'success' => false,
-                            'msg' => $response['message'],
-                        ]);
-                    }
-
-                    shntrToken::noteTransaction(
-                        $transaction['qty'],
-                        0,
-                        $transaction['user_id'],
-                        null,
-                        null,
-                        'Buying shntr token'
-                    );
+                shntrToken::noteTransaction(
+                    amount: $transaction['qty'],
+                    senderId: User::TREASURY_ID,
+                    recipientId: $transaction['user_id'],
+                    basisName: null,
+                    basisId: null,
+                    note: 'Buying shntr token',
+                    senderMsg: null,
+                    recipientRelysiaPaymail: $transaction['user_relysia_paymail']
+                );
 
                     $db->query(
                         sprintf(
