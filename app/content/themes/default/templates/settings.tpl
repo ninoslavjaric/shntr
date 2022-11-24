@@ -609,9 +609,9 @@
                                     <div class="form-group col-md-6">
                                         <label class="form-control-label">{__("Work Website")}</label>
                                         <input type="text" class="form-control" name="work_url" value="{$user->_data['user_work_url']}">
-                                        <span class="form-text">
-                                            {__("Website link must start with http:// or https://")}
-                                        </span>
+{*                                        <span class="form-text">*}
+{*                                            {__("Website link must start with http:// or https://")}*}
+{*                                        </span>*}
                                     </div>
                                 </div>
 
