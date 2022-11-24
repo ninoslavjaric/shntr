@@ -375,7 +375,9 @@ function valid_email($email)
  */
 function valid_url($url)
 {
-    if (filter_var($url, FILTER_VALIDATE_URL) !== false) {
+    $pattern = '/(?:https?:\/\/)?(?:[a-zA-Z0-9.-]+?\.(?:[a-zA-Z])|\d+\.\d+\.\d+\.\d+)/';
+
+    if (preg_match($pattern, $url)) {
         return true;
     } else {
         return false;
@@ -442,7 +444,7 @@ function reserved_username($username)
  */
 function valid_name($name)
 {
-    if (preg_match('/[[:punct:]]/i', $name) || valid_url($name)) {
+    if (preg_match('/[[:punct:]]/i', $name)) {
         return false;
     }
     return true;

@@ -507,9 +507,9 @@
                                         <div class="form-group col-md-6">
                                             <label class="form-control-label">{__("Website")}</label>
                                             <input type="text" class="form-control" name="website" value="{$user->_data['user_website']}">
-                                            <span class="form-text">
-                                                {__("Website link must start with http:// or https://")}
-                                            </span>
+{*                                            <span class="form-text">*}
+{*                                                {__("Website link must start with http:// or https://")}*}
+{*                                            </span>*}
                                         </div>
                                     {/if}
                                 </div>

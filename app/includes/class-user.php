@@ -16472,9 +16472,9 @@ class User
 
             case 'basic':
                 /* validate firstname */
-                if (is_empty($args['religion'])) {
-                    throw new Exception(__("You must enter religion"));
-                }
+//                if (is_empty($args['religion'])) {
+//                    throw new Exception(__("You must enter religion"));
+//                }
                 if (is_empty($args['firstname'])) {
                     throw new Exception(__("You must enter first name"));
                 }
@@ -16499,13 +16499,13 @@ class User
                     throw new Exception(__("Please select a valid gender"));
                 }
                 /* validate country */
-                if ($args['country'] == "none") {
-                    throw new Exception(__("You must select valid country"));
-                } else {
-                    if (!$this->check_country($args['country'])) {
-                        throw new Exception(__("You must select valid country"));
-                    }
-                }
+//                if ($args['country'] == "none") {
+//                    throw new Exception(__("You must select valid country"));
+//                } else {
+//                    if (!$this->check_country($args['country'])) {
+//                        throw new Exception(__("You must select valid country"));
+//                    }
+//                }
                 /* validate birthdate */
                 if ($args['birth_month'] == "none" && $args['birth_day'] == "none" && $args['birth_year'] == "none") {
                     $args['birth_date'] = 'null';
