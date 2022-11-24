@@ -92,16 +92,16 @@ try {
 
             $db->begin_transaction();
             try {
-                $resp = shntrToken::payRelysia(
-                    floatval($post['product']['price']),
-                    $owner['user_relysia_paymail'],
-                );
-                if (!str_contains($resp['message'], 'sent successfully')) {
-                    throw new Exception($resp['message']);
-                }
 
                 shntrToken::noteTransaction(
-                    floatval($post['product']['price']), intval($user->_data['user_id']), $owner['user_id'], 'post_products', $post['product']['product_id'], 'Buying product'
+                    floatval($post['product']['price']),
+                    intval($user->_data['user_id']),
+                    $owner['user_id'],
+                    'post_products',
+                    $post['product']['product_id'],
+                    'Buying product',
+                    null,
+                    $owner['user_relysia_paymail']
                 );
 
                 $db->query("UPDATE posts_products SET sold = 1, buying_candidate_id = {$user->_data['user_id']} WHERE product_id = " . intval($post['product']['product_id']));
