@@ -15882,13 +15882,19 @@ class User
     public function get_emojis()
     {
         global $db;
-        $emojis = [];
-        $get_emojis = $db->query("SELECT * FROM emojis") or _error("SQL_ERROR_THROWEN", $db);
-        if ($get_emojis->num_rows > 0) {
-            while ($emoji = $get_emojis->fetch_assoc()) {
-                $emojis[] = $emoji;
-            }
+
+        $cacheKey = 'emojis';
+
+        $emojis = RedisCache::get($cacheKey);
+
+        if (!$emojis) {
+            $get_emojis = $db->query("SELECT * FROM emojis") or _error("SQL_ERROR_THROWEN", $db);
+
+            $emojis = $get_emojis->fetch_all(MYSQLI_ASSOC);
+
+            RedisCache::set($cacheKey, $emojis, 86400); // 24 hours
         }
+
         return $emojis;
     }
 
@@ -15901,15 +15907,12 @@ class User
      */
     public function decode_emoji($text)
     {
-        global $db;
-        $get_emojis = $db->query("SELECT * FROM emojis") or _error("SQL_ERROR_THROWEN", $db);
-        if ($get_emojis->num_rows > 0) {
-            while ($emoji = $get_emojis->fetch_assoc()) {
-                $replacement = '<i class="twa twa-' . $emoji['class'] . '"></i>';
-                $pattern = preg_quote($emoji['pattern'], '/');
-                $text = preg_replace('/(^|\s)' . $pattern . '/', $replacement, $text);
-            }
+        foreach ($this->get_emojis() as $emoji) {
+            $replacement = '<i class="twa twa-' . $emoji['class'] . '"></i>';
+            $pattern = preg_quote($emoji['pattern'], '/');
+            $text = preg_replace('/(^|\s)' . $pattern . '/', $replacement, $text);
         }
+
         return $text;
     }
 

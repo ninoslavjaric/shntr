@@ -34,7 +34,7 @@ class RedisCache
         return self::getMe()->get($key);
     }
 
-    public static function set(string $key, string $value, int $ttl = 3600, int $dbIndex = self::CACHE_DB): bool
+    public static function set(string $key, mixed $value, int $ttl = 3600, int $dbIndex = self::CACHE_DB): bool
     {
         self::getMe()->select($dbIndex);
         return self::getMe()->set($key, $value, $ttl);
