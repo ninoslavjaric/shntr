@@ -14,6 +14,7 @@ class RedisCache
             self::$instance = new Redis();
             self::$instance->connect(REDIS_HOST);
             self::$instance->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_PHP);
+            self::$instance->setOption(Redis::OPT_PREFIX, REDIS_PREFIX);
         }
 
         return self::$instance;
