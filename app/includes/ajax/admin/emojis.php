@@ -2,7 +2,7 @@
 
 /**
  * ajax -> admin -> emojis
- * 
+ *
  * @package Sngine
  * @author Zamblek
  */
@@ -56,6 +56,10 @@ try {
 			_error(400);
 			break;
 	}
+
+    $cacheKey = 'emojis';
+    $emojis = RedisCache::delete($cacheKey);
+
 } catch (Exception $e) {
 	return_json(array('error' => true, 'message' => $e->getMessage()));
 }
