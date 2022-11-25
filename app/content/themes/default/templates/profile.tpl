@@ -582,7 +582,11 @@
                                             <li>
                                                 <div class="about-list-item">
                                                     <i class="fa fa-globe fa-fw fa-lg"></i>
+                                                    {if (!preg_match("~^(?:f|ht)tps?://~i", $profile['user_website']))}
+                                                        <a target="_blank" href="http://{$profile['user_website']}">{$profile['user_website']}</a>
+                                                    {else}
                                                     <a target="_blank" href="{$profile['user_website']}">{$profile['user_website']}</a>
+                                                    {/if}
                                                 </div>
                                             </li>
                                         {/if}
