@@ -251,7 +251,24 @@ try {
 			/* check if education info enabled */
 			$_POST['user_privacy_education'] = (isset($_POST['user_privacy_education'])) ? $_POST['user_privacy_education'] : 'public';
 			/* check if valid privacy */
-			if (!in_array($_POST['user_privacy_poke'], $privacy) || !in_array($_POST['user_privacy_gifts'], $privacy) || !in_array($_POST['user_privacy_wall'], $privacy) || !in_array($_POST['user_privacy_gender'], $privacy) || !in_array($_POST['user_privacy_relationship'], $privacy) || !in_array($_POST['user_privacy_birthdate'], $privacy) || !in_array($_POST['user_privacy_basic'], $privacy) || !in_array($_POST['user_privacy_work'], $privacy) || !in_array($_POST['user_privacy_location'], $privacy) || !in_array($_POST['user_privacy_education'], $privacy) || !in_array($_POST['user_privacy_other'], $privacy) || !in_array($_POST['user_privacy_friends'], $privacy) || !in_array($_POST['user_privacy_photos'], $privacy) || !in_array($_POST['user_privacy_pages'], $privacy) || !in_array($_POST['user_privacy_groups'], $privacy) || !in_array($_POST['user_privacy_events'], $privacy)) {
+			if (!in_array(
+                $_POST['user_privacy_poke'], $privacy) ||
+                !in_array($_POST['user_privacy_gifts'], $privacy) ||
+                !in_array($_POST['user_privacy_wall'], $privacy) ||
+                !in_array($_POST['user_privacy_gender'], $privacy) ||
+                !in_array($_POST['user_privacy_relationship'], $privacy) ||
+                !in_array($_POST['user_privacy_birthdate'], $privacy) ||
+                //!in_array($_POST['user_privacy_basic'], $privacy) ||
+                !in_array($_POST['user_privacy_work'], $privacy) ||
+                !in_array($_POST['user_privacy_location'], $privacy) ||
+                !in_array($_POST['user_privacy_education'], $privacy) ||
+                //!in_array($_POST['user_privacy_other'], $privacy) ||
+                !in_array($_POST['user_privacy_friends'], $privacy) ||
+                //!in_array($_POST['user_privacy_photos'], $privacy) ||
+                !in_array($_POST['user_privacy_pages'], $privacy) ||
+                !in_array($_POST['user_privacy_groups'], $privacy) ||
+                !in_array($_POST['user_privacy_events'], $privacy))
+            {
 				_error(400);
 			}
 			/* update user */
@@ -265,13 +282,10 @@ try {
                 user_privacy_gender = %s, 
                 user_privacy_relationship = %s,
                 user_privacy_birthdate = %s, 
-                user_privacy_basic = %s, 
                 user_privacy_work = %s, 
                 user_privacy_location = %s, 
                 user_privacy_education = %s, 
-                user_privacy_other = %s, 
                 user_privacy_friends = %s, 
-                user_privacy_photos = %s, 
                 user_privacy_pages = %s, 
                 user_privacy_groups = %s, 
                 user_privacy_events = %s 

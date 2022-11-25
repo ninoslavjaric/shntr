@@ -16766,7 +16766,22 @@ class User
                 /* check if education info enabled */
                 $args['user_privacy_education'] = (isset($args['user_privacy_education'])) ? $args['user_privacy_education'] : 'public';
                 /* check if valid privacy */
-                if (!in_array($args['user_privacy_poke'], $privacy) || !in_array($args['user_privacy_gifts'], $privacy) || !in_array($args['user_privacy_wall'], $privacy) || !in_array($args['user_privacy_gender'], $privacy) || !in_array($args['user_privacy_relationship'], $privacy) || !in_array($args['user_privacy_birthdate'], $privacy) || !in_array($args['user_privacy_basic'], $privacy) || !in_array($args['user_privacy_work'], $privacy) || !in_array($args['user_privacy_location'], $privacy) || !in_array($args['user_privacy_education'], $privacy) || !in_array($args['user_privacy_other'], $privacy) || !in_array($args['user_privacy_friends'], $privacy) || !in_array($args['user_privacy_photos'], $privacy) || !in_array($args['user_privacy_pages'], $privacy) || !in_array($args['user_privacy_groups'], $privacy) || !in_array($args['user_privacy_events'], $privacy)) {
+                if (!in_array($args['user_privacy_poke'], $privacy) ||
+                    !in_array($args['user_privacy_gifts'], $privacy) ||
+                    !in_array($args['user_privacy_wall'], $privacy) ||
+                    !in_array($args['user_privacy_gender'], $privacy) ||
+                    !in_array($args['user_privacy_relationship'], $privacy) ||
+                    !in_array($args['user_privacy_birthdate'], $privacy) ||
+                    //!in_array($args['user_privacy_basic'], $privacy) ||
+                    !in_array($args['user_privacy_work'], $privacy) ||
+                    !in_array($args['user_privacy_location'], $privacy) ||
+                    !in_array($args['user_privacy_education'], $privacy) ||
+                    //!in_array($args['user_privacy_other'], $privacy) ||
+                    !in_array($args['user_privacy_friends'], $privacy) ||
+                    //!in_array($args['user_privacy_photos'], $privacy) ||
+                    !in_array($args['user_privacy_pages'], $privacy) ||
+                    !in_array($args['user_privacy_groups'], $privacy) ||
+                    !in_array($args['user_privacy_events'], $privacy)) {
                     _error(400);
                 }
                 /* update user */
@@ -16780,13 +16795,10 @@ class User
                     user_privacy_gender = %s, 
                     user_privacy_relationship = %s,
                     user_privacy_birthdate = %s, 
-                    user_privacy_basic = %s, 
                     user_privacy_work = %s, 
                     user_privacy_location = %s, 
                     user_privacy_education = %s, 
-                    user_privacy_other = %s, 
                     user_privacy_friends = %s, 
-                    user_privacy_photos = %s, 
                     user_privacy_pages = %s, 
                     user_privacy_groups = %s, 
                     user_privacy_events = %s 
@@ -16799,13 +16811,13 @@ class User
                     secure($args['user_privacy_gender']),
                     secure($args['user_privacy_relationship']),
                     secure($args['user_privacy_birthdate']),
-                    secure($args['user_privacy_basic']),
+//                    secure($args['user_privacy_basic']),
                     secure($args['user_privacy_work']),
                     secure($args['user_privacy_location']),
                     secure($args['user_privacy_education']),
-                    secure($args['user_privacy_other']),
+//                    secure($args['user_privacy_other']),
                     secure($args['user_privacy_friends']),
-                    secure($args['user_privacy_photos']),
+//                    secure($args['user_privacy_photos']),
                     secure($args['user_privacy_pages']),
                     secure($args['user_privacy_groups']),
                     secure($args['user_privacy_events']),
