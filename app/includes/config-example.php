@@ -58,4 +58,5 @@ define('LICENCE_KEY', '');
 
 
 define("REDIS_HOST", 'redis-shntr');
+define('REDIS_HOST_REPLICA', 'redis-shntr');
 define('REDIS_PREFIX', 'redis_prefix:');

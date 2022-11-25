@@ -7,8 +7,9 @@ class RedisCache
     public const CACHE_DB = 0;
 
     private static Redis $instance;
+    private static Redis $instanceReplica;
 
-    public static function getMe(): Redis
+    public static function getMe(bool $replica = false): Redis
     {
         if (!isset(self::$instance)) {
             self::$instance = new Redis();
@@ -17,12 +18,19 @@ class RedisCache
             self::$instance->setOption(Redis::OPT_PREFIX, REDIS_PREFIX);
         }
 
-        return self::$instance;
+        if (REDIS_HOST !== REDIS_HOST_REPLICA && !isset(self::$instanceReplica)) {
+            self::$instanceReplica = new Redis();
+            self::$instanceReplica->connect(REDIS_HOST_REPLICA);
+            self::$instanceReplica->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_PHP);
+            self::$instanceReplica->setOption(Redis::OPT_PREFIX, REDIS_PREFIX);
+        }
+
+        return ($replica && isset(self::$instanceReplica)) ? self::$instanceReplica : self::$instance;
     }
 
     public static function get(string $key, int $dbIndex = self::CACHE_DB): mixed
     {
-        self::getMe()->select($dbIndex);
+        self::getMe(true)->select($dbIndex);
         return self::getMe()->get($key);
     }
 
