@@ -348,29 +348,37 @@ class User
 
         $user_id = $this->_data['user_id'];
 
-        $db->query('drop temporary table if exists my_friends');
-        $db->query(sprintf(
-            'create temporary table my_friends
-            select user_one_id friends from friends where user_two_id = %1$s
-            union
-            select user_two_id friends from friends where user_one_id = %1$s',
-            secure($user_id, 'int')
-        )) or _error("SQL_ERROR_THROWEN", $db);
+        $cache_key = "friends:friends_of_friends|user_id={$user_id}";
+        /* get photos */
+        $friends = RedisCache::get($cache_key);
 
-        $query = $db->query(sprintf(
-            'select user_one_id user_id from friends where user_two_id in (select friends from my_friends) and user_one_id <> %1$s
-            union
-            select user_two_id user_id from friends where user_one_id in (select friends from my_friends) and user_two_id <> %1$s',
-            secure($user_id, 'int')
-        )) or _error("SQL_ERROR_THROWEN", $db);
+        if (!$friends) {
+            $db->query('drop temporary table if exists my_friends');
+            $db->query(sprintf(
+                'create temporary table my_friends
+                select user_one_id friends from friends where user_two_id = %1$s
+                union
+                select user_two_id friends from friends where user_one_id = %1$s',
+                secure($user_id, 'int')
+            )) or _error("SQL_ERROR_THROWEN", $db);
 
-        $friends = [];
+            $query = $db->query(sprintf(
+                'select user_one_id user_id from friends where user_two_id in (select friends from my_friends) and user_one_id <> %1$s
+                union
+                select user_two_id user_id from friends where user_one_id in (select friends from my_friends) and user_two_id <> %1$s',
+                secure($user_id, 'int')
+            )) or _error("SQL_ERROR_THROWEN", $db);
 
-        if ($query->num_rows > 0) {
-            while ($friend = $query->fetch_assoc()) {
-                $friends[] = $friend['user_id'];
+            $friends = [];
+
+            if ($query->num_rows > 0) {
+                while ($friend = $query->fetch_assoc()) {
+                    $friends[] = $friend['user_id'];
+                }
+                RedisCache::set($cache_key, $friends);
             }
         }
+
         return $friends;
     }
 
@@ -1586,6 +1594,8 @@ class User
                 if ($check->fetch_assoc()['count'] == 0) return;
                 /* add the target as a friend */
                 $db->query(sprintf("UPDATE friends SET status = 1 WHERE user_one_id = %s AND user_two_id = %s", secure($id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+                RedisCache::deleteByPattern(['friends', "user_id={$this->_data['user_id']}"]);
+                RedisCache::deleteByPattern(['friends', "user_id={$id}"]);
                 /* post new notification */
                 $this->post_notification(array('to_user_id' => $id, 'action' => 'friend_accept', 'node_url' => $this->_data['user_name']));
                 /* follow */
@@ -1603,6 +1613,8 @@ class User
                 } else {
                     $db->query(sprintf("DELETE FROM friends WHERE user_one_id = %s AND user_two_id = %s", secure($id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 }
+                RedisCache::deleteByPattern(['friends', "user_id={$this->_data['user_id']}"]);
+                RedisCache::deleteByPattern(['friends', "user_id={$id}"]);
                 /* unfollow */
                 $this->_unfollow($id);
                 break;
@@ -1667,6 +1679,8 @@ class User
                 }
                 /* add the friend request */
                 $db->query(sprintf("INSERT INTO friends (user_one_id, user_two_id, status) VALUES (%s, %s, '0')", secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+                RedisCache::deleteByPattern(['friends', "user_id={$this->_data['user_id']}"]);
+                RedisCache::deleteByPattern(['friends', "user_id={$id}"]);
                 /* update requests counter +1 */
                 $db->query(sprintf("UPDATE users SET user_live_requests_counter = user_live_requests_counter + 1 WHERE user_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* post new notification */
@@ -1683,6 +1697,8 @@ class User
                 if ($check->fetch_assoc()['count'] == 0) return;
                 /* delete the friend request */
                 $db->query(sprintf("DELETE FROM friends WHERE user_one_id = %s AND user_two_id = %s", secure($this->_data['user_id'], 'int'), secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+                RedisCache::deleteByPattern(['friends', "user_id={$this->_data['user_id']}"]);
+                RedisCache::deleteByPattern(['friends', "user_id={$id}"]);
                 /* update requests counter -1 */
                 $db->query(sprintf("UPDATE users SET user_live_requests_counter = IF(user_live_requests_counter=0,0,user_live_requests_counter-1), user_live_notifications_counter = IF(user_live_notifications_counter=0,0,user_live_notifications_counter-1) WHERE user_id = %s", secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* delete notification */
@@ -1698,6 +1714,8 @@ class User
                 if ($check->fetch_assoc()['count'] == 0) return;
                 /* delete this friend */
                 $db->query(sprintf('DELETE FROM friends WHERE (user_one_id = %1$s AND user_two_id = %2$s AND status = 1) OR (user_one_id = %2$s AND user_two_id = %1$s AND status = 1)', secure($this->_data['user_id'], 'int'),  secure($id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+                RedisCache::deleteByPattern(['friends', "user_id={$this->_data['user_id']}"]);
+                RedisCache::deleteByPattern(['friends', "user_id={$id}"]);
                 break;
 
             case 'friend-fund':
@@ -2639,6 +2657,7 @@ class User
 
                 /* delete all user friends connections */
                 $db->query(sprintf('DELETE FROM friends WHERE user_one_id = %1$s OR user_two_id = %1$s', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+                RedisCache::deleteByPattern('friends');
                 /* delete all user following connections */
                 $db->query(sprintf('DELETE FROM followings WHERE user_id = %1$s OR following_id = %1$s', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         }
@@ -15397,6 +15416,8 @@ class User
             while ($auto_friend = $get_auto_friends->fetch_assoc()) {
                 /* add friend */
                 $db->query(sprintf("INSERT INTO friends (user_one_id, user_two_id, status) VALUES (%s, %s, '1')", secure($user_id, 'int'),  secure($auto_friend['user_id'], 'int')));
+                RedisCache::deleteByPattern(['friends', "user_id={$user_id}"]);
+                RedisCache::deleteByPattern(['friends', "user_id={$auto_friend['user_id']}"]);
                 /* follow */
                 $db->query(sprintf("INSERT INTO followings (user_id, following_id) VALUES (%s, %s)", secure($user_id, 'int'),  secure($auto_friend['user_id'], 'int')));
             }
