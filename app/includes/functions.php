@@ -325,7 +325,7 @@ function get_hash_number()
  */
 function is_ajax()
 {
-    if ($_SERVER["HTTP_HOST"] == 'localhost') {
+    if (in_array($_SERVER["HTTP_HOST"], ['localhost', 'host.docker.internal'])) {
         return;
     }
 

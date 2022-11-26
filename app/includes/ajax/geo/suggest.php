@@ -18,9 +18,33 @@ $query = $_GET['query'];
 
 $queries = explode(' ', $query);
 
-$cacheKey = md5(__FILE__) . '::' . $_GET['type'] . '::' . urlencode($_GET['query']);
+$place = [
+    'latitude' => null,
+    'longitude' => null,
+];
+if ((
+    $user_current_place_id = $user->_data['user_current_place_id'] ?:  $user->_data['user_hometown_place_id'] ?: null
+)) {
+    $place = $db->query(
+        "select latitude, longitude from places where id = {$user_current_place_id}"
+    )->fetch_assoc();
+}
 
-if ($cacheResult = Cache::get($cacheKey)) {
+$user_longitude = $user->_data['user_longitude'] ?: $place['longitude'] ?: null?: 11.576124; //$user->_data['user_longitude'];
+$user_latitude = $user->_data['user_latitude'] ?: $place['latitude'] ?: null?: 48.137154; //$user->_data['user_latitude'];
+
+$cacheQuery = $_GET;
+
+if ($user_latitude && $user_longitude) {
+    $user_latitude = round($user_latitude);
+    $user_longitude = round($user_longitude);
+    $cacheQuery = array_merge($cacheQuery, ['longitude' => $user_longitude, 'latitude' => $user_latitude]);
+}
+
+$cacheQuery = http_build_query($cacheQuery);
+
+$cacheKey = "geo_suggest|{$cacheQuery}";
+if ($cacheResult = RedisCache::get($cacheKey)) {
     return_json($cacheResult);
 }
 
@@ -142,21 +166,6 @@ switch ($_GET['type']) {
             $db->query($sql);
         }
 
-        $place = [
-            'latitude' => null,
-            'longitude' => null,
-        ];
-        if (
-            ($user_current_place_id = $user->_data['user_current_place_id']
-                ?:  $user->_data['user_hometown_place_id'] ?: null)
-        ) {
-            $place = $db->query(
-                "select latitude, longitude from places where id = {$user_current_place_id}"
-            )->fetch_assoc();
-        }
-
-        $user_longitude = $user->_data['user_longitude'] ?: $place['longitude'] ?: null?: 11.576124; //$user->_data['user_longitude'];
-        $user_latitude = $user->_data['user_latitude'] ?: $place['latitude'] ?: null?: 48.137154; //$user->_data['user_latitude'];
 
         $distanceInHundreds = 0;
         if ($user_longitude && $user_latitude) {
@@ -177,6 +186,6 @@ $dbQuery = $db->query($sql);
 
 $result = $dbQuery->fetch_all(MYSQLI_ASSOC);
 
-Cache::set($cacheKey, $result);
+RedisCache::set($cacheKey, $result);
 
 return_json($result);
