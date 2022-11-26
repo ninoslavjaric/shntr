@@ -36,8 +36,8 @@ $user_latitude = $user->_data['user_latitude'] ?: $place['latitude'] ?: null?: 4
 $cacheQuery = $_GET;
 
 if ($user_latitude && $user_longitude) {
-    $user_latitude = round($user_latitude);
-    $user_longitude = round($user_longitude);
+    $user_latitude = round($user_latitude / 10) * 10;
+    $user_longitude = round($user_longitude / 10) * 10;
     $cacheQuery = array_merge($cacheQuery, ['longitude' => $user_longitude, 'latitude' => $user_latitude]);
 }
 
