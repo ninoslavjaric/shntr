@@ -5485,6 +5485,7 @@ class User
                     }
                     foreach ($args['photos'] as $photo) {
                         $db->query(sprintf("INSERT INTO posts_photos (post_id, album_id, source, blur) VALUES (%s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($album_id, 'int'), secure($photo['source']), secure($photo['blur']))) or _error("SQL_ERROR_THROWEN", $db);
+                        RedisCache::deleteByPattern('posts_photos');
                         $post_photo['photo_id'] = $db->insert_id;
                         $post_photo['post_id'] = $post['post_id'];
                         $post_photo['source'] = $photo['source'];
@@ -5509,6 +5510,7 @@ class User
                     $album_id = $db->insert_id;
                     foreach ($args['photos'] as $photo) {
                         $db->query(sprintf("INSERT INTO posts_photos (post_id, album_id, source, blur) VALUES (%s, %s, %s, %s)", secure($post['post_id'], 'int'), secure($album_id, 'int'), secure($photo['source']), secure($photo['blur']))) or _error("SQL_ERROR_THROWEN", $db);
+                        RedisCache::deleteByPattern('posts_photos');
                         $post_photo['photo_id'] = $db->insert_id;
                         $post_photo['post_id'] = $post['post_id'];
                         $post_photo['source'] = $photo['source'];
@@ -5574,6 +5576,7 @@ class User
                         foreach ($args['photos'] as $photo) {
                             $db->query(sprintf("INSERT INTO posts_photos (post_id, source, blur) VALUES (%s, %s, %s)", secure($post['post_id'], 'int'), secure($photo['source']), secure($photo['blur']))) or _error("SQL_ERROR_THROWEN", $db);
                         }
+                        RedisCache::deleteByPattern('posts_photos');
                     }
                     if (count($args['files']) > 0) {
                         foreach ($args['files'] as $file) {
@@ -6210,16 +6213,26 @@ class User
             case 'group_picture':
             case 'group_cover':
             case 'event_cover':
+
+                $cache_key = "posts_photos|post_id={$post['post_id']}|photo_id:asc";
                 /* get photos */
-                $get_photos = $db->query(sprintf("SELECT * FROM posts_photos WHERE post_id = %s ORDER BY photo_id ASC", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
-                $post['photos_num'] = $get_photos->num_rows;
-                /* check if photos has been deleted */
-                if ($post['photos_num'] == 0) {
-                    return false;
+                $posts_photos = RedisCache::get($cache_key);
+
+                if (!$posts_photos) {
+                    $get_photos = $db->query(sprintf("SELECT * FROM posts_photos WHERE post_id = %s ORDER BY photo_id ASC", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+
+                    /* check if photos has been deleted */
+                    if ($get_photos->num_rows == 0) {
+                        return false;
+                    }
+
+                    $posts_photos = $get_photos->fetch_all(MYSQLI_ASSOC);
+                    RedisCache::set($cache_key, $posts_photos);
                 }
-                while ($post_photo = $get_photos->fetch_assoc()) {
-                    $post['photos'][] = $post_photo;
-                }
+
+                $post['photos_num'] = count($posts_photos);
+                $post['photos'] = $posts_photos;
+
                 if ($post['post_type'] == 'album') {
                     $post['album'] = $this->get_album($post['photos'][0]['album_id'], false);
                     if (!$post['album']) {
@@ -6278,13 +6291,21 @@ class User
                 }
                 $post['product'] = $get_product->fetch_assoc();
                 /* get photos */
-                $get_photos = $db->query(sprintf("SELECT * FROM posts_photos WHERE post_id = %s ORDER BY photo_id DESC", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
-                $post['photos_num'] = $get_photos->num_rows;
+
+                $cache_key = "posts_photos|post_id={$post['post_id']}|photo_id:desc";
+                $posts_photos = RedisCache::get($cache_key);
+
+                if (!$posts_photos) {
+                    $get_photos = $db->query(sprintf("SELECT * FROM posts_photos WHERE post_id = %s ORDER BY photo_id DESC", secure($post['post_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+
+                    $posts_photos = $get_photos->fetch_all(MYSQLI_ASSOC);
+                    RedisCache::set($cache_key, $posts_photos);
+                }
+
+                $post['photos_num'] = count($posts_photos);
                 /* check if photos has been deleted */
                 if ($post['photos_num'] > 0) {
-                    while ($post_photo = $get_photos->fetch_assoc()) {
-                        $post['photos'][] = $post_photo;
-                    }
+                    $post['photos'] = $posts_photos;
                     /* og-meta tags */
                     $post['og_image'] = $system['system_uploads'] . '/' . $post['photos'][0]['source'];
                 }
@@ -7143,6 +7164,7 @@ class User
                     }
                     /* delete post photos from database */
                     $db->query(sprintf("DELETE FROM posts_photos WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+                    RedisCache::deleteByPattern('posts_photos');
                     switch ($post['post_type']) {
                         case 'profile_cover':
                             /* update user cover if it's current cover */
@@ -8649,6 +8671,7 @@ class User
 
             case 'photo':
                 $db->query(sprintf("UPDATE posts_photos SET comments = comments + 1 WHERE photo_id = %s", secure($node_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+                RedisCache::deleteByPattern('posts_photos');
                 break;
 
             case 'comment':
@@ -8657,6 +8680,7 @@ class User
                     $db->query(sprintf("UPDATE posts SET comments = comments + 1 WHERE post_id = %s", secure($parent_comment['node_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 } elseif ($parent_comment['node_type'] == "photo") {
                     $db->query(sprintf("UPDATE posts_photos SET comments = comments + 1 WHERE photo_id = %s", secure($parent_comment['node_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+                    RedisCache::deleteByPattern('posts_photos');
                 }
                 break;
         }
@@ -8852,6 +8876,7 @@ class User
 
                 case 'photo':
                     $db->query(sprintf("UPDATE posts_photos SET comments = IF(comments=0,0,comments-%s) WHERE photo_id = %s", secure($comment['replies'] + 1, 'int'), secure($comment['node_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+                    RedisCache::deleteByPattern('posts_photos');
                     break;
 
                 case 'comment':
@@ -8860,6 +8885,7 @@ class User
                         $db->query(sprintf("UPDATE posts SET comments = IF(comments=0,0,comments-1) WHERE post_id = %s", secure($comment['parent_comment']['node_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                     } elseif ($comment['parent_comment']['node_type'] == "photo") {
                         $db->query(sprintf("UPDATE posts_photos SET comments = IF(comments=0,0,comments-1) WHERE photo_id = %s", secure($comment['parent_comment']['node_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+                        RedisCache::deleteByPattern('posts_photos');
                     }
                     break;
             }
@@ -9226,12 +9252,20 @@ class User
     {
         global $db, $system;
 
-        /* get photo */
-        $get_photo = $db->query(sprintf("SELECT * FROM posts_photos WHERE photo_id = %s", secure($photo_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
-        if ($get_photo->num_rows == 0) {
-            return false;
+        $cache_key = "posts_photos|photo_id={$photo_id}";
+        $photo = RedisCache::get($cache_key);
+
+        if (!$photo) {
+            /* get photo */
+            $get_photo = $db->query(sprintf("SELECT * FROM posts_photos WHERE photo_id = %s", secure($photo_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+
+            if ($get_photo->num_rows == 0) {
+                return false;
+            }
+
+            $photo = $get_photo->fetch_assoc();
+            RedisCache::set($cache_key, $photo);
         }
-        $photo = $get_photo->fetch_assoc();
 
         /* get post */
         $post = $this->_check_post($photo['post_id'], false, $full_details);
@@ -9413,6 +9447,7 @@ class User
         }
         /* delete the photo */
         $db->query(sprintf("DELETE FROM posts_photos WHERE photo_id = %s", secure($photo_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+        RedisCache::deleteByPattern('posts_photos');
         /* delete photo from uploads folder */
         delete_uploads_file($photo['source']);
     }
@@ -9453,6 +9488,7 @@ class User
             /* update photo reaction counter */
             $reaction_field = "reaction_" . $photo['i_reaction'] . "_count";
             $db->query(sprintf("UPDATE posts_photos SET $reaction_field = IF($reaction_field=0,0,$reaction_field-1) WHERE photo_id = %s", secure($photo_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+            RedisCache::deleteByPattern('posts_photos');
             /* delete notification */
             $this->delete_notification($post['author_id'], 'react_' . $photo['i_reaction'], 'photo', $photo_id);
         }
@@ -9461,6 +9497,7 @@ class User
         /* update photo reaction counter */
         $reaction_field = "reaction_" . $reaction . "_count";
         $db->query(sprintf("UPDATE posts_photos SET $reaction_field = $reaction_field + 1 WHERE photo_id = %s", secure($photo_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+        RedisCache::deleteByPattern('posts_photos');
         /* post notification */
         $this->post_notification(array('to_user_id' => $post['author_id'], 'action' => 'react_' . $reaction, 'node_type' => 'photo', 'node_url' => $photo_id));
         /* points balance */
@@ -9489,6 +9526,7 @@ class User
         /* update photo reaction counter */
         $reaction_field = "reaction_" . $photo['i_reaction'] . "_count";
         $db->query(sprintf("UPDATE posts_photos SET $reaction_field = IF($reaction_field=0,0,$reaction_field-1) WHERE photo_id = %s", secure($photo_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+        RedisCache::deleteByPattern('posts_photos');
         /* delete notification */
         $this->delete_notification($post['author_id'], 'react_' . $reaction, 'photo', $photo_id);
         /* points balance */
@@ -9665,6 +9703,7 @@ class User
         $db->query(sprintf("DELETE FROM posts_photos_albums WHERE album_id = %s", secure($album_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* delete all album photos */
         $db->query(sprintf("DELETE FROM posts_photos WHERE album_id = %s", secure($album_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+        RedisCache::deleteByPattern('posts_photos');
         /* retrun path */
         $path = $system['system_url'] . "/" . $album['path'] . "/albums";
         return $path;
@@ -9752,6 +9791,7 @@ class User
         foreach ($args['photos'] as $photo) {
             $db->query(sprintf("INSERT INTO posts_photos (post_id, album_id, source, blur) VALUES (%s, %s, %s, %s)", secure($post_id, 'int'), secure($args['album_id'], 'int'), secure($photo['source']), secure($photo['blur']))) or _error("SQL_ERROR_THROWEN", $db);
         }
+        RedisCache::deleteByPattern('posts_photos');
         /* post mention notifications */
         $this->post_mentions($args['message'], $post_id);
         return $post_id;

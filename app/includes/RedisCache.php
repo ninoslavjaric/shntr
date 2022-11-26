@@ -50,4 +50,17 @@ class RedisCache
     {
         return self::getMe()->close();
     }
+
+    public static function deleteByPattern(string $pattern, int $dbIndex = self::CACHE_DB): void
+    {
+        self::getMe()->select($dbIndex);
+        foreach (self::getMe(true)->keys("*$pattern*") as $key) {
+            self::delete($key, $dbIndex);
+        }
+    }
+
+    public static function keys(string $key): array
+    {
+        return self::getMe(true)->keys("*$key*");
+    }
 }

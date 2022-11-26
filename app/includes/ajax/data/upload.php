@@ -291,6 +291,7 @@ try {
                         $post_id = $db->insert_id;
                         /* insert new cover photo to album */
                         $db->query(sprintf("INSERT INTO posts_photos (post_id, album_id, source, blur) VALUES (%s, %s, %s, %s)", secure($post_id, 'int'), secure($user->_data['user_album_covers'], 'int'), secure($file_name), secure($image_blured))) or _error("SQL_ERROR_THROWEN");
+                        RedisCache::deleteByPattern('posts_photos');
                         $photo_id = $db->insert_id;
                         /* update user cover */
                         $db->query(sprintf("UPDATE users SET user_cover = %s, user_cover_id = %s WHERE user_id = %s", secure($file_name), secure($photo_id, 'int'), secure($user->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
@@ -310,6 +311,7 @@ try {
                         $post_id = $db->insert_id;
                         /* insert new profile picture to album */
                         $db->query(sprintf("INSERT INTO posts_photos (post_id, album_id, source, blur) VALUES (%s, %s, %s, %s)", secure($post_id, 'int'), secure($user->_data['user_album_pictures'], 'int'), secure($file_name), secure($image_blured))) or _error("SQL_ERROR_THROWEN");
+                        RedisCache::deleteByPattern('posts_photos');
                         $photo_id = $db->insert_id;
                         /* delete old cropped picture from uploads folder */
                         delete_uploads_file($user->_data['user_picture_raw']);
@@ -351,6 +353,7 @@ try {
                         $post_id = $db->insert_id;
                         /* insert new cover photo to album */
                         $db->query(sprintf("INSERT INTO posts_photos (post_id, album_id, source, blur) VALUES (%s, %s, %s, %s)", secure($post_id, 'int'), secure($page['page_album_covers'], 'int'), secure($file_name), secure($image_blured))) or _error("SQL_ERROR_THROWEN");
+                        RedisCache::deleteByPattern('posts_photos');
                         $photo_id = $db->insert_id;
                         /* update page cover */
                         $db->query(sprintf("UPDATE pages SET page_cover = %s, page_cover_id = %s WHERE page_id = %s", secure($file_name), secure($photo_id, 'int'), secure($page['page_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
@@ -390,6 +393,7 @@ try {
                         $post_id = $db->insert_id;
                         /* insert new page picture to album */
                         $db->query(sprintf("INSERT INTO posts_photos (post_id, album_id, source, blur) VALUES (%s, %s, %s, %s)", secure($post_id, 'int'), secure($page['page_album_pictures'], 'int'), secure($file_name), secure($image_blured))) or _error("SQL_ERROR_THROWEN");
+                        RedisCache::deleteByPattern('posts_photos');
                         $photo_id = $db->insert_id;
                         /* delete old cropped picture from uploads folder */
                         delete_uploads_file($page['page_picture']);
@@ -431,6 +435,7 @@ try {
                         $post_id = $db->insert_id;
                         /* insert new group cover to album */
                         $db->query(sprintf("INSERT INTO posts_photos (post_id, album_id, source, blur) VALUES (%s, %s, %s, %s)", secure($post_id, 'int'), secure($group['group_album_covers'], 'int'), secure($file_name), secure($image_blured))) or _error("SQL_ERROR_THROWEN");
+                        RedisCache::deleteByPattern('posts_photos');
                         $photo_id = $db->insert_id;
                         /* update group cover */
                         $db->query(sprintf("UPDATE `groups` SET group_cover = %s, group_cover_id = %s WHERE group_id = %s", secure($file_name), secure($photo_id, 'int'), secure($group['group_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
@@ -470,6 +475,7 @@ try {
                         $post_id = $db->insert_id;
                         /* insert new group picture to album */
                         $db->query(sprintf("INSERT INTO posts_photos (post_id, album_id, source, blur) VALUES (%s, %s, %s, %s)", secure($post_id, 'int'), secure($group['group_album_pictures'], 'int'), secure($file_name), secure($image_blured))) or _error("SQL_ERROR_THROWEN");
+                        RedisCache::deleteByPattern('posts_photos');
                         $photo_id = $db->insert_id;
                         /* delete old cropped picture from uploads folder */
                         delete_uploads_file($group['group_picture']);
@@ -511,6 +517,7 @@ try {
                         $post_id = $db->insert_id;
                         /* insert new event cover to album */
                         $db->query(sprintf("INSERT INTO posts_photos (post_id, album_id, source, blur) VALUES (%s, %s, %s, %s)", secure($post_id, 'int'), secure($event['event_album_covers'], 'int'), secure($file_name), secure($image_blured))) or _error("SQL_ERROR_THROWEN");
+                        RedisCache::deleteByPattern('posts_photos');
                         $photo_id = $db->insert_id;
                         /* update event cover */
                         $db->query(sprintf("UPDATE `events` SET event_cover = %s, event_cover_id = %s WHERE event_id = %s", secure($file_name), secure($photo_id, 'int'), secure($event['event_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
