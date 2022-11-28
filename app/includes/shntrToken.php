@@ -404,7 +404,15 @@ class shntrToken
 
         if ($response['statusCode'] == 200) {
 
-            $balance = $response['data']['coins'][1]['amount'];
+            $tokens = array_filter($response['data']['coins'], function ($coin) {
+                if (!array_key_exists('amount', $coin) || !array_key_exists('tokenId', $coin)) {
+                    return false;
+                }
+
+                return $coin['tokenId'] === static::TOKEN_ID;
+            });
+
+            $balance = array_sum(array_column($tokens, 'amount'));
 
             $db->query(
                 sprintf(
