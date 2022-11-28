@@ -22,7 +22,7 @@ class shntrToken
     ];
     private const ENCRYPTION_ALGO = 'bf-cbc';
     private const TREASURY_USER = 'relysia@shntr.com';
-    private const TOKEN_ID = '9a0e862be07d8aa56311e5b211a4fdf9ddf03b2f-SHNATST';
+    private const TOKEN_ID = '9a0e862be07d8aa56311e5b211a4fdf9ddf03b2f-iPizza'; // todo: move to config
     private const API_BASE_URL_V1 = 'https://api.relysia.com/v1';
     private const API_BASE_URL_V2 = 'https://api.relysia.com/v2';
 
