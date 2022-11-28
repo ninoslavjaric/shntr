@@ -122,7 +122,13 @@
                                     <i class="fa fa-clock mr5"></i>{__("Sent")}
                                 </button>
                             {elseif !$profile['friendship_declined']}
-                                <button type="button" class="btn btn-sm btn-dark js_friend-add" data-uid="{$profile['user_id']}">
+                                <button type="button" class="btn btn-sm btn-dark js_friend-add"
+                                        {if $profile['paywalled']}
+                                            data-paywalled="{$profile['paywalled']['paywall_price']}"
+                                            data-paywall-author-name="{$profile['paywalled']['paywall_author_name']}"
+                                            data-paywall-author-id="{$profile['paywalled']['paywall_author_id']}"
+                                        {/if}
+                                        data-uid="{$profile['user_id']}">
                                     <i class="fa fa-user-plus mr5"></i>{__("Add Friend")}
                                 </button>
                             {/if}
@@ -308,7 +314,13 @@
                                                 <i class="fa fa-user-plus mr5"></i>{__("Sent")}
                                             </button>
                                         {else}
-                                            <button type="button" class="btn btn-success btn-sm js_friend-add" data-uid="{$profile['user_id']}">
+                                            <button type="button" class="btn btn-success btn-sm js_friend-add"
+                                                    {if $profile['paywalled']}
+                                                        data-paywalled="{$profile['paywalled']['paywall_price']}"
+                                                        data-paywall-author-name="{$profile['paywalled']['paywall_author_name']}"
+                                                        data-paywall-author-id="{$profile['paywalled']['paywall_author_id']}"
+                                                    {/if}
+                                                    data-uid="{$profile['user_id']}">
                                                 <i class="fa fa-user-plus mr5"></i>{__("Add Friend")}
                                             </button>
                                         {/if}
