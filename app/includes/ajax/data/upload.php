@@ -21,7 +21,7 @@ is_ajax();
 
 // check secret
 if ($_SESSION['secret'] != $_POST['secret']) {
-    error_log('check secret');
+    error_log('check secret, $_SESSION: ' . $_SESSION['secret'] . ', $_POST: ' . $_POST['secret']);
     _error(403);
 }
 
