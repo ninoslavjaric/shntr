@@ -21,6 +21,7 @@ is_ajax();
 
 // check secret
 if ($_SESSION['secret'] != $_POST['secret']) {
+    error_log('check secret');
     _error(403);
 }
 
@@ -29,21 +30,25 @@ user_access(true, true);
 
 // check demo account
 if ($user->_data['user_demo']) {
+    error_log('check demo account');
     blueModal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
 }
 
 // check type
 if (!isset($_POST["type"])) {
+    error_log('check type');
     _error(403);
 }
 
 // check handle
 if (!isset($_POST["handle"])) {
+    error_log('check handle');
     _error(403);
 }
 
 // check multiple
 if (!isset($_POST["multiple"])) {
+    error_log('check multiple');
     _error(403);
 }
 
