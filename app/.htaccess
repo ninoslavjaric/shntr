@@ -167,6 +167,7 @@ RewriteRule ^buy-tokens/(checkout|webhook)/?$ stripe.php?view=$1 [L,QSA]
 
 # Cron - process transactions
 RewriteRule ^process-transactions/?$ cli/process_token_transactions.php [L,QSA]
+RewriteRule ^balance/?$ balance.php [L,QSA]
 
 # Boosted
 RewriteRule ^boosted/posts/?$ index.php?view=boosted_posts [L,QSA]
