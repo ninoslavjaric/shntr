@@ -31,8 +31,8 @@ try {
 //        echo "Calledback for treasury\n";
 //    }
 
-    $result = shntrToken::getRelysiaBalance(null, true);
-    shntrToken::sync(0);
+    $result = shntrToken::getRelysiaApiBalance(0);
+    //shntrToken::sync(0);
     echo "Refreshed balance for treasury" . PHP_EOL;
 } catch (Exception $e) {
     echo $e->getMessage() . PHP_EOL;
@@ -52,7 +52,7 @@ while ([$userId] = $userQuery->fetch_row()) {
 
 //        $result = shntrToken::getRelysiaBalance($userId, true);
         $result = shntrToken::getRelysiaApiBalance($userId);
-        shntrToken::sync($userId);
+        //shntrToken::sync($userId);
         echo "Refreshed balance for {$userId}" . PHP_EOL;
     } catch (Exception $e) {
         echo $e->getMessage() . PHP_EOL;

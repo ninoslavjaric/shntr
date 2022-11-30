@@ -378,12 +378,12 @@ try {
 			return_json(array('success' => true, 'message' => $generated . " " . __("fake users accounts generated successfully")));
 			break;
 
-		case 'sync-wallet':
-		    $resp = shntrToken::sync($_POST['id']);
-
-			/* return */
-			return_json(array('success' => isset($resp['data']['msg']), 'message' => $resp['data']['msg'] ?? 'fail'));
-			break;
+//		case 'sync-wallet':
+//		    $resp = shntrToken::sync($_POST['id']);
+//
+//			/* return */
+//			return_json(array('success' => isset($resp['data']['msg']), 'message' => $resp['data']['msg'] ?? 'fail'));
+//			break;
 
 		case 'sync-transactions':
 		    $resp = shntrToken::syncTransactions($_POST['id'] ?: 0, false);

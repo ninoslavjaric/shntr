@@ -186,31 +186,31 @@ class shntrToken
         return $token;
     }
 
-    public static function sync(int $user_id): array
-    {
-        global $db;
-
-        if (in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES) || str_contains(SYS_URL, 'ngrok')) {
-            return [
-                "statusCode" => 200,
-                "data" => [
-                    "status" => "success",
-                    "msg" => "migration started successfully"
-                ]
-            ];
-        }
-
-        $token = static::getAccessToken($user_id);
-
-        return http_call(self::API_BASE_URL_V1 . '/tokenMetrics',
-            'GET',
-            [],
-            [
-                "authToken: {$token}",
-                "serviceID: 9ab1b69e-92ae-4612-9a4f-c5a102a6c068",
-            ]
-        );
-    }
+//    public static function sync(int $user_id): array
+//    {
+//        global $db;
+//
+//        if (in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES) || str_contains(SYS_URL, 'ngrok')) {
+//            return [
+//                "statusCode" => 200,
+//                "data" => [
+//                    "status" => "success",
+//                    "msg" => "migration started successfully"
+//                ]
+//            ];
+//        }
+//
+//        $token = static::getAccessToken($user_id);
+//
+//        return http_call(self::API_BASE_URL_V1 . '/tokenMetrics',
+//            'GET',
+//            [],
+//            [
+//                "authToken: {$token}",
+//                "serviceID: 9ab1b69e-92ae-4612-9a4f-c5a102a6c068",
+//            ]
+//        );
+//    }
 
     private static function syncTransactionGenerator(string $token, int $user_id): Generator
     {

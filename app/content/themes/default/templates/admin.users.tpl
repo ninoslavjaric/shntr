@@ -135,9 +135,9 @@
                                     </td>
                                     <td>
                                         <div class="table-buttons-wrapper">
-                                            <button data-toggle="tooltip" data-placement="top" title='{__("Sync")}' class="btn btn-sm btn-icon btn-rounded btn-primary js_admin-sync-wallet" data-id="{$row['user_id']}">
-                                                <i class="fa fa-sync"></i>
-                                            </button>
+{*                                            <button data-toggle="tooltip" data-placement="top" title='{__("Sync")}' class="btn btn-sm btn-icon btn-rounded btn-primary js_admin-sync-wallet" data-id="{$row['user_id']}">*}
+{*                                                <i class="fa fa-sync"></i>*}
+{*                                            </button>*}
                                             <button data-toggle="tooltip" data-placement="top" title='{__("Sync transactions")}' class="btn btn-sm btn-icon btn-rounded btn-primary js_admin-sync-transactions" data-id="{$row['user_id']}">
                                                 <i class="fa fa-sync"></i>
                                             </button>

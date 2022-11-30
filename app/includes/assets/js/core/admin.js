@@ -72,23 +72,23 @@ $(function () {
           }
       );
     });
-    $('body').on('click', '.js_admin-sync-wallet', function () {
-        const id = $(this).data('id');
-        const element = $(this);
-
-        const preLoader = element.html();
-        element.html('<span class="spinner-grow spinner-grow-sm mr10"></span>' + __['Loading']);
-
-        $.post(api['admin/users'], { 'do': 'sync-wallet', 'id': id }, function (response) {
-            blueModal({ id: '#modal-message', title: __['Success'], message: response.message });
-            element.html(preLoader);
-        }, 'json')
-          .fail(function () {
-              blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
-              element.html(preLoader);
-          }
-      );
-    });
+    // $('body').on('click', '.js_admin-sync-wallet', function () {
+    //     const id = $(this).data('id');
+    //     const element = $(this);
+    //
+    //     const preLoader = element.html();
+    //     element.html('<span class="spinner-grow spinner-grow-sm mr10"></span>' + __['Loading']);
+    //
+    //     $.post(api['admin/users'], { 'do': 'sync-wallet', 'id': id }, function (response) {
+    //         blueModal({ id: '#modal-message', title: __['Success'], message: response.message });
+    //         element.html(preLoader);
+    //     }, 'json')
+    //       .fail(function () {
+    //           blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
+    //           element.html(preLoader);
+    //       }
+    //   );
+    // });
 
     // admin deleter
     $('body').on('click', '.js_admin-deleter', function () {
