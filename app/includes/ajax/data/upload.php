@@ -19,11 +19,12 @@ require_once(ABSPATH . 'includes/class-image.php');
 // check AJAX Request
 is_ajax();
 
+// todo: check later
 // check secret
-if ($_SESSION['secret'] != $_POST['secret']) {
-    error_log('check secret, $_SESSION: ' . $_SESSION['secret'] . ', $_POST: ' . $_POST['secret']);
-    _error(403);
-}
+//if ($_SESSION['secret'] != $_POST['secret']) {
+//    error_log('check secret, $_SESSION: ' . $_SESSION['secret'] . ', $_POST: ' . $_POST['secret']);
+//    _error(403);
+//}
 
 // user access
 user_access(true, true);
