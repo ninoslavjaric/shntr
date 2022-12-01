@@ -73,6 +73,9 @@ RewriteCond %{REQUEST_FILENAME} !-d
 # Error Log
 RewriteRule ^logger/?$ error.php [L,QSA]
 
+# Testing
+RewriteRule ^verify/?$ verify.php [L,QSA]
+
 # Installer
 RewriteRule ^install/?$ install.php [L,QSA]
 
