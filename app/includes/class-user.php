@@ -2627,9 +2627,9 @@ class User
                     $transaction = shntrToken::sendTransactionRelysia($userBalance, shntrToken::getshntrTreasure('paymail'), $user_id);
                 }
 
-                if ($transaction['statusCode'] === 200) {
-                    shntrToken::deleteRelysiaUser($user_id);
-                } else {
+                $userToDelete = shntrToken::deleteRelysiaUser($user_id);
+
+                if (!$userToDelete) {
                     throw new Exception('Error while deleting user from external service');
                 }
 
