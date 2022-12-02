@@ -427,6 +427,26 @@ class shntrToken
         return 0.0;
     }
 
+    public static function deleteRelysiaUser(int $user_id): float
+    {
+        $token = static::getAccessToken($user_id);
+
+        $response = http_call(self::API_BASE_URL_V1 . '/user',
+            'DELETE',
+            [],
+            [
+                "authToken: {$token}",
+                "serviceID: 9ab1b69e-92ae-4612-9a4f-c5a102a6c068",
+            ]
+        );
+
+        if ($response['statusCode'] == 200) {
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * @deprecated
      */

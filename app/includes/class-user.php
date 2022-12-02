@@ -2620,6 +2620,19 @@ class User
         }
         /* delete the user */
         if ($can_delete) {
+
+            $userBalance = shntrToken::getRelysiaApiBalance($user_id);
+
+            if ($userBalance > 0){
+                $transaction = shntrToken::sendTransactionRelysia($userBalance, shntrToken::getshntrTreasure('paymail'), $user_id);
+
+                if ($transaction['statusCode'] === 200) {
+                    shntrToken::deleteRelysiaUser($user_id);
+                } else {
+                    throw new Exception('Error while deleting user from external service');
+                }
+            }
+
                 /* delete the user interests */
                 $db->query(sprintf("DELETE FROM interests_users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 /* delete the stripe transactions */
