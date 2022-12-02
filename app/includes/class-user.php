@@ -15264,25 +15264,20 @@ class User
     {
         global $db;
 
-            $userRelysia = $username . '.relysia';
-            $response = shntrToken::register($userRelysia);
+        do {
+            $userRelysia = $username . '.relysia' . ($i ?? '');
+            $password = shntrToken::register($userRelysia);
+            $i = isset($i) ? $i+1 : 1;
+        } while(!$password);
 
-        if ($response == 'EMAIL_EXISTS'){
-            $this->delete_user($user_id);
-            throw new Exception(__("Sorry, it looks like") . " <strong>" . $username . "</strong> " . __("belongs to an existing account"));
-        }
-
-        if ($response !== false) { // is password at this moment
-            $db->query(
-                sprintf(
-                    "UPDATE users SET user_relysia_password = %s, user_relysia_username = %s WHERE user_id = %s",
-                    secure($response), // is password at this moment
-                    secure($userRelysia),
-                    secure(strval($user_id), 'int')
-                )
-            );
-        }
-
+        $db->query(
+            sprintf(
+                "UPDATE users SET user_relysia_password = %s, user_relysia_username = %s WHERE user_id = %s",
+                secure($password), // is password at this moment
+                secure($userRelysia),
+                secure(strval($user_id), 'int')
+            )
+        );
 
         $token = shntrToken::getAccessToken($user_id);
         [$paymail, $address] = shntrToken::paymail($token);
@@ -15296,45 +15291,6 @@ class User
             )
         );
     }
-
-//    public function register_to_relysia(string $username, int $user_id): void
-//    {
-//        global $db;
-//
-//        do {
-//            $userRelysia = $username . '.relysia' . ($i ?? '');
-//            $password = shntrToken::register($userRelysia);
-//            $i = isset($i) ? $i+1 : 1;
-//        } while(!$password);
-//
-//        if ($password !== false) {
-//            $db->query(
-//                sprintf(
-//                    "UPDATE users SET user_relysia_password = %s, user_relysia_username = %s WHERE user_id = %s",
-//                    secure($password),
-//                    secure($userRelysia),
-//                    secure(strval($user_id), 'int')
-//                )
-//            );
-//        }
-//
-//
-//        $token = shntrToken::getAccessToken($user_id);
-//        [$paymail, $address] = shntrToken::paymail($token);
-//
-//        $db->query(
-//            sprintf(
-//                "UPDATE users SET user_relysia_paymail = %s, user_relysia_address = %s WHERE user_id = %s",
-//                secure($paymail),
-//                secure($address),
-//                secure(strval($user_id), 'int')
-//            )
-//        );
-//
-////        shntrToken::payRelysia(1000, $paymail, 0);
-////        shntrToken::noteTransaction(1000, 0, $user_id, null, null, 'INIT');
-//    }
-
 
     /**
      * fake_pages_generator
