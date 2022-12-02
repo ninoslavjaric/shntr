@@ -440,6 +440,8 @@ class shntrToken
             ]
         );
 
+        error_log('User delete on relysia response: ' . json_encode($response));
+
         if ($response['statusCode'] == 200) {
             return true;
         }

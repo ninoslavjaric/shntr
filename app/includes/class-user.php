@@ -2631,6 +2631,8 @@ class User
                 } else {
                     throw new Exception('Error while deleting user from external service');
                 }
+            } else {
+                shntrToken::deleteRelysiaUser($user_id);
             }
 
                 /* delete the user interests */
@@ -15296,6 +15298,44 @@ class User
             )
         );
     }
+
+//    public function register_to_relysia(string $username, int $user_id): void
+//    {
+//        global $db;
+//
+//        do {
+//            $userRelysia = $username . '.relysia' . ($i ?? '');
+//            $password = shntrToken::register($userRelysia);
+//            $i = isset($i) ? $i+1 : 1;
+//        } while(!$password);
+//
+//        if ($password !== false) {
+//            $db->query(
+//                sprintf(
+//                    "UPDATE users SET user_relysia_password = %s, user_relysia_username = %s WHERE user_id = %s",
+//                    secure($password),
+//                    secure($userRelysia),
+//                    secure(strval($user_id), 'int')
+//                )
+//            );
+//        }
+//
+//
+//        $token = shntrToken::getAccessToken($user_id);
+//        [$paymail, $address] = shntrToken::paymail($token);
+//
+//        $db->query(
+//            sprintf(
+//                "UPDATE users SET user_relysia_paymail = %s, user_relysia_address = %s WHERE user_id = %s",
+//                secure($paymail),
+//                secure($address),
+//                secure(strval($user_id), 'int')
+//            )
+//        );
+//
+////        shntrToken::payRelysia(1000, $paymail, 0);
+////        shntrToken::noteTransaction(1000, 0, $user_id, null, null, 'INIT');
+//    }
 
 
     /**
