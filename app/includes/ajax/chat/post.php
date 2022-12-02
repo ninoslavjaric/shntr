@@ -88,6 +88,10 @@ try {
 	/* remove typing status */
 	$user->update_conversation_typing_status($conversation['conversation_id'], false);
 
+	if (!isset($_SESSION['chat_boxes_opened'])) {
+        $_SESSION['chat_boxes_opened'] = [];
+    }
+
 	/* add conversation to opened chat boxes session if not */
 	if (!in_array($conversation['conversation_id'], $_SESSION['chat_boxes_opened'])) {
 		$_SESSION['chat_boxes_opened'][] = $conversation['conversation_id'];
