@@ -2886,7 +2886,7 @@ function print_money($amount)
 function http_call(string $url, string $method = 'GET', array $data = [], array $headers = [])
 {
     $ch = curl_init($url);
-    if ($method != 'GET') {
+    if (!in_array($method, ['GET', 'DELETE'])) {
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
     }
