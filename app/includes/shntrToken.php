@@ -427,7 +427,7 @@ class shntrToken
         return 0.0;
     }
 
-    public static function deleteRelysiaUser(int $user_id): float
+    public static function deleteRelysiaUser(int $user_id): bool
     {
         $token = static::getAccessToken($user_id);
 
