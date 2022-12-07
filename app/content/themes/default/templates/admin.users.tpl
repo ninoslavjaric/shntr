@@ -92,7 +92,7 @@
                             <th>{__("Activated")}</th>
                             <th>{__("Balance")}</th>
                             <th>{__("Actions")}</th>
-                            <th>{__("Sync wallet and transactions")}</th>
+                            <th>{__("Sync transactions")}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -113,14 +113,20 @@
                                     </td>
                                     <td>{$row['user_registered']|date_format:"%e %B %Y"}</td>
                                     <td>
-                                        {if $row['user_activated']}
+                                        {if $row['user_email_verified']}
                                             <span class="badge badge-pill badge-lg badge-success">{__("Yes")}</span>
                                         {else}
                                             <span class="badge badge-pill badge-lg badge-danger">{__("No")}</span>
                                         {/if}
                                     </td>
                                     <td>
-                                        <span class="badge badge-pill badge-lg badge-info">{{$row['balance']}}</span>
+                                        <span class="badge badge-pill badge-lg badge-info">
+                                            {if $row['balance']}
+                                                {{$row['balance']}}
+                                            {else}
+                                                0
+                                            {/if}
+                                        </span>
                                     </td>
                                     <td>
                                         <div class="table-buttons-wrapper">
