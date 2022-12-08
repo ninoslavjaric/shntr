@@ -689,41 +689,12 @@ $(function () {
     });
     /* publisher attachment image remover */
     $('body').on('click', '.js_publisher-attachment-image-remover, .js_publisher-mini-attachment-image-remover', function () {
-        var mini = ($(this).hasClass('js_publisher-mini-attachment-image-remover')) ? true : false;
         var item = $(this).parents('li.item');
-        var src = item.data('src');
-        /* remove the attachment from publisher data */
-        var publisher = (!mini) ? $(this).parents('.publisher') : $(this).parents('.publisher-mini');
-        var files = publisher.data('photos');
-        delete files[src];
-        if (Object.keys(files).length > 0) {
-            publisher.data('photos', files);
-        } else {
-            publisher.removeData('photos');
-            if (!mini) {
-                publisher.find('.attachments').hide();
-                /* handle publisher tab */
-                publisher_tab(publisher, "photos");
-                publisher.find('.js_publisher-tab[data-tab="photos"]').removeClass('activated');
-            }
-        }
-        /* remove the attachment item */
         item.remove();
     });
     /* publisher attachment image remover */
     $('body').on('click', '.js_publisher-mini-attachment-file-remover', function () {
         var item = $(this).parents('li.item');
-        var src = item.data('src');
-        /* remove the attachment from publisher data */
-        var publisher = $(this).parents('.publisher-mini');
-        var files = publisher.data('file');
-        delete files[src];
-        if (Object.keys(files).length > 0) {
-            publisher.data('file', files);
-        } else {
-            publisher.removeData('file');
-        }
-        /* remove the attachment item */
         item.remove();
     });
     /* publisher mini attachment video remover */

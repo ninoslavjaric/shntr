@@ -7428,6 +7428,45 @@ class User
         if (!$post['manage_post']) {
             _error(403);
         }
+
+        if (!empty($args['img-ids'])){
+            $query = $db->query(sprintf("SELECT photo_id FROM posts_photos WHERE post_id = %s AND photo_id NOT IN (%s)",
+                secure($post_id, 'int'),
+                $this->spread_ids($args['img-ids'])))
+            or _error("SQL_ERROR_THROWEN", $db);
+
+            $photoIdsInDb = [];
+            if ($query->num_rows > 0) {
+                while ($photoIdInDb = $query->fetch_assoc()) {
+                    $photoIdsInDb[] = $photoIdInDb['photo_id'];
+                }
+
+                $db->query(sprintf("DELETE FROM posts_photos WHERE post_id = %s AND photo_id IN (%s)",
+                    secure($post_id, 'int'),
+                    $this->spread_ids($photoIdsInDb)))
+                or _error("SQL_ERROR_THROWEN", $db);
+            }
+        }
+
+        if (!empty($args['file-ids'])){
+            $query = $db->query(sprintf("SELECT file_id FROM posts_files WHERE post_id = %s AND file_id NOT IN (%s)",
+                secure($post_id, 'int'),
+                $this->spread_ids($args['file-ids'])))
+            or _error("SQL_ERROR_THROWEN", $db);
+
+            $fileIdsInDb = [];
+            if ($query->num_rows > 0) {
+                while ($fileIdInDb = $query->fetch_assoc()) {
+                    $fileIdsInDb[] = $fileIdInDb['file_id'];
+                }
+
+                $db->query(sprintf("DELETE FROM posts_files WHERE post_id = %s AND file_id IN (%s)",
+                    secure($post_id, 'int'),
+                    $this->spread_ids($fileIdsInDb)))
+                or _error("SQL_ERROR_THROWEN", $db);
+            }
+        }
+
         /* update post */
         $db->query(sprintf("UPDATE posts SET text = %s WHERE post_id = %s", secure($message), secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
         /* update product */
