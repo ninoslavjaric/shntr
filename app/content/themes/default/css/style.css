@@ -1217,6 +1217,16 @@ body.night-mode .input-group-text {
   color: #525f7f;
   margin-bottom: 0;
 }
+
+.form-row-bday {
+  display: flex;
+  flex-direction: row;
+}
+.form-control-bday {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
 body.night-mode .form-control-label {
   color: #a3afce;
 }
@@ -1772,6 +1782,8 @@ body.night-mode .bootstrap-datetimepicker-widget table td.new {
 .header-token_show {
   text-align: right;
   font-weight: 600;
+  width: 300px;
+  margin-left: auto;
 }
 @media (max-width: 768px) {
   .header-token_show {
