@@ -5,7 +5,7 @@ if ($_GET['query'] ?? false) {
     $cmd .= " | grep '{$_GET['query']}'";
 }
 
-$cmd .= ' | tail -n 30';
+$cmd .= " | tail -n '{$_GET['rows']}'";
 
 exec($cmd, $error_logs);
 
