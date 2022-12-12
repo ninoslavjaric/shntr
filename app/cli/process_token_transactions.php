@@ -24,7 +24,7 @@ try {
         $time_end = microtime(true);
         $execution_time = $time_end - $time_start;
 
-        error_log('Processing transaction to (execution time: '. $execution_time .'): ' . $transaction['recipient_relysia_paymail'] . ', Response: ' . json_encode([$response, $transaction]));
+        error_log('Processing transaction to (execution time: '. $execution_time .') ('. $transaction['note'] .'): ' . $transaction['recipient_relysia_paymail'] . ', Response: ' . json_encode([$response, $transaction]));
 
         if ($response['statusCode'] === 200) {
 
