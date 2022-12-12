@@ -28,10 +28,17 @@ try {
                 _error(404);
             }
 
-            $secret_key = ($system['stripe_mode'] == "live") ? $system['stripe_live_secret'] : $system['stripe_test_secret'];
+            $secret_key = ($system['stripe_mode'] == "live")
+                ? $system['stripe_live_secret']
+                : $system['stripe_test_secret'];
+
             \Stripe\Stripe::setApiKey($secret_key);
             $token = sha1($_COOKIE['PHPSESSID']);
             $qty = $_POST['qty'] ?? 5;
+
+            $price = ($system['stripe_mode'] == "live")
+                ? 'price_1MEAg9JoiLHsoH4flwd8qmSJ'
+                : 'price_1LmnCgJoiLHsoH4fYQZKP71j';
 
             /** @var \Stripe\Checkout\Session $checkout_session */
             $checkout_session = \Stripe\Checkout\Session::create([
