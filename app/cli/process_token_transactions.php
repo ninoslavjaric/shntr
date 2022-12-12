@@ -8,7 +8,7 @@
 require(__DIR__ . '/../bootstrap.php');
 
 try {
-    $transactions = $db->query('select id, amount, sender_id, recipient_id, recipient_relysia_paymail, `count`  from token_transactions where is_completed = false')
+    $transactions = $db->query('select id, amount, note, sender_id, recipient_id, recipient_relysia_paymail, `count`  from token_transactions where is_completed = false')
         ->fetch_all(MYSQLI_ASSOC);
 
     foreach ($transactions as $transaction){
