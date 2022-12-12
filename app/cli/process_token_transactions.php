@@ -13,21 +13,35 @@ try {
 
     foreach ($transactions as $transaction){
 
+        $time_start = microtime(true);
+
         $response = shntrToken::sendTransactionRelysia(
             $transaction['amount'],
             $transaction['recipient_relysia_paymail'],
             $transaction['sender_id']
         );
 
-        error_log('Processing transaction to: ' . $transaction['recipient_relysia_paymail'] . ', Response: ' . json_encode([$response, $transaction]));
+        $time_end = microtime(true);
+        $execution_time = $time_end - $time_start;
+
+        error_log('Processing transaction to (execution time: '. $execution_time .'): ' . $transaction['recipient_relysia_paymail'] . ', Response: ' . json_encode([$response, $transaction]));
 
         if ($response['statusCode'] === 200) {
 
             $db->query(sprintf("UPDATE token_transactions SET is_completed = 1, count = 1 WHERE id = %s",
                 secure($transaction['id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
 
+            $time_start = microtime(true);
             $senderBalance = shntrToken::getRelysiaApiBalance($transaction['sender_id']);
+            $time_end = microtime(true);
+            $execution_time = $time_end - $time_start;
+            error_log('Execution time (get balance for sender): '. $execution_time);
+
+            $time_start = microtime(true);
             $recipientBalance = shntrToken::getRelysiaApiBalance($transaction['recipient_id']);
+            $time_end = microtime(true);
+            $execution_time = $time_end - $time_start;
+            error_log('Execution time (get balance for recipient): '. $execution_time);
 
             $db->query(sprintf('UPDATE users_relysia SET balance = %s WHERE user_id = %s',
                     secure($senderBalance),secure($transaction['sender_id']))
