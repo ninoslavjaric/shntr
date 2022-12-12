@@ -43,7 +43,7 @@ try {
             /** @var \Stripe\Checkout\Session $checkout_session */
             $checkout_session = \Stripe\Checkout\Session::create([
                 'line_items' => [[
-                    'price' => 'price_1LmnCgJoiLHsoH4fYQZKP71j',
+                    'price' => $price,
                     'quantity' => $qty,
                 ]],
                 'mode' => 'payment',
