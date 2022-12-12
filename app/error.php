@@ -4,8 +4,9 @@ $cmd = 'cat error.log';
 if ($_GET['query'] ?? false) {
     $cmd .= " | grep '{$_GET['query']}'";
 }
+$rows = $_GET['rows'] ?? 30;
 
-$cmd .= " | tail -n '{$_GET['rows']}'";
+$cmd .= " | tail -n '{$rows}'";
 
 exec($cmd, $error_logs);
 
