@@ -1634,16 +1634,16 @@ class User
                 $friendRequestAcceptReward = isset($price["price"]) && !empty($price["price"]) ?  $price["price"] : 0;
 
                 if ($friendRequestAcceptReward !== '0.00') {
-                    $balance = shntrToken::getRelysiaLocalBalance($this->_data['user_id']);
-                    $reservedBalance = shntrToken::getRelysiaReservedBalance($this->_data['user_id']);
-                    $totalBalance = $balance - $reservedBalance;
-                    if ($totalBalance < $friendRequestAcceptReward) {
-                        blueModal(
-                            modalId: "ERROR",
-                            title: __("Funds"),
-                            message: __("You're out of tokens"),
-                        );
-                    }
+//                    $balance = shntrToken::getRelysiaLocalBalance($this->_data['user_id']);
+//                    $reservedBalance = shntrToken::getRelysiaReservedBalance($this->_data['user_id']);
+//                    $totalBalance = $balance - $reservedBalance;
+//                    if ($totalBalance < $friendRequestAcceptReward) {
+//                        blueModal(
+//                            modalId: "ERROR",
+//                            title: __("Funds"),
+//                            message: __("You're out of tokens"),
+//                        );
+//                    }
 
                     shntrToken::noteTransaction(
                         amount: $friendRequestAcceptReward,
@@ -15301,6 +15301,7 @@ class User
 
         do {
             $userRelysia = $username . '.relysia' . ($i ?? '');
+            error_log('Trying to register user with: '. $userRelysia);
             $password = shntrToken::register($userRelysia);
             $i = isset($i) ? $i+1 : 1;
         } while(!$password);
