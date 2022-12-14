@@ -40,7 +40,7 @@
                                 <td>{$row['language_id']}</td>
                                 <td>
                                     <a href="{$system['system_url']}/{$control_panel['url']}/languages/edit/{$row['language_id']}">
-                                        <img class="tbl-image" src="{$row['flag']}">
+                                        <img  loading="lazy" class="tbl-image" src="{$row['flag']}">
                                         {$row['title']}
                                     </a>
                                 </td>
@@ -282,7 +282,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="form-group form-row">
                     <label class="col-md-3 form-control-label">
                         {__("Direction")}

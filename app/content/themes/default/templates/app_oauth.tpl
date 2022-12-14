@@ -12,12 +12,12 @@
                     <div style="width: 120px; height: 120px; margin: 0 auto;">
                     	<div class="circled-user-box">
 	                        <a class="user-box" href="#">
-	                            <img alt="{$app['app_name']}" src="{$system['system_uploads']}/{$app['app_icon']}" />
+	                            <img  loading="lazy" alt="{$app['app_name']}" src="{$system['system_uploads']}/{$app['app_icon']}" />
 	                        </a>
 	                    </div>
                     </div>
                     <!-- app icon -->
-                    
+
                     <!-- app name -->
                     <div>
                         <h3 class="mb5"><span class="text-primary">{$app['app_name']}</span></h3>

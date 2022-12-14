@@ -18,7 +18,7 @@
                     <span>{__("in one place")}</span>
                 {/if}
             </h2>
-                
+
             <form class="js_search-form" data-handle="market">
                 <div class="input-group">
                     <input type="text" class="form-control" name="query" placeholder='{if $current_category}I am looking for {$current_category['category_name']|strtolower}{else}{__("I am looking for")}{/if}'>
@@ -129,9 +129,9 @@
                                         {/if}
                                     </div>
                                     {if $post['photos_num'] > 0}
-                                        <img src="{$system['system_uploads']}/{$post['photos'][0]['source']}">
+                                        <img  loading="lazy" src="{$system['system_uploads']}/{$post['photos'][0]['source']}">
                                     {else}
-                                        <img src="{$system['system_url']}/content/themes/{$system['theme']}/images/blank_product.jpg">
+                                        <img  loading="lazy" src="{$system['system_url']}/content/themes/{$system['theme']}/images/blank_product.jpg">
                                     {/if}
                                     <div class="product-overlay">
                                         <a class="btn btn-sm btn-outline-secondary rounded-pill" href="{$system['system_url']}/posts/{$post['post_id']}">
@@ -248,9 +248,9 @@
                                         {/if}
                                     </div>
                                     {if $post['photos_num'] > 0}
-                                        <img src="{$system['system_uploads']}/{$post['photos'][0]['source']}">
+                                        <img  loading="lazy" src="{$system['system_uploads']}/{$post['photos'][0]['source']}">
                                     {else}
-                                        <img src="{$system['system_url']}/content/themes/{$system['theme']}/images/blank_product.jpg">
+                                        <img  loading="lazy" src="{$system['system_url']}/content/themes/{$system['theme']}/images/blank_product.jpg">
                                     {/if}
                                     <div class="product-overlay">
                                         <a class="btn btn-sm btn-outline-secondary rounded-pill" href="{$system['system_url']}/posts/{$post['post_id']}">

@@ -14,7 +14,7 @@
                 {/if}
             >
                 <div class="data-avatar">
-                    <img src="{$_user['user_picture']}" alt="">
+                    <img  loading="lazy" src="{$_user['user_picture']}" alt="">
                 </div>
                 <div class="data-content">
                     <div class="float-right">

@@ -4,9 +4,9 @@
 <!-- page header -->
 <div class="page-header">
     {if $view == "share"}
-        <img class="floating-img d-none d-md-block" src="{$system['system_url']}/content/themes/{$system['theme']}/images/headers/undraw_share_766i.svg">
+        <img  loading="lazy" class="floating-img d-none d-md-block" src="{$system['system_url']}/content/themes/{$system['theme']}/images/headers/undraw_share_766i.svg">
     {else}
-        <img class="floating-img d-none d-md-block" src="{$system['system_url']}/content/themes/{$system['theme']}/images/headers/undraw_code_typing_7jnv.svg">
+        <img  loading="lazy" class="floating-img d-none d-md-block" src="{$system['system_url']}/content/themes/{$system['theme']}/images/headers/undraw_code_typing_7jnv.svg">
     {/if}
     <div class="circle-2"></div>
     <div class="circle-3"></div>
@@ -73,7 +73,7 @@
                         </p>
                         <ol>
                             <li class="mb20">
-                                {__("You will need to create a new App")} 
+                                {__("You will need to create a new App")}
                                 <a class="btn btn-sm btn-primary ml10" href="{$system['system_url']}/developers/new">
                                     <i class="fa fa-plus-circle mr5"></i>{__("Create New App")}
                                 </a>
@@ -95,7 +95,7 @@
                                    {__("The user will be redirect to Log in With page like this")}
                                 </p>
                                 <div class="text-center">
-                                    <img class="img-fluid" width="400" src="{$system['system_url']}/content/themes/{$system['theme']}/images/screenshots/login_with.png">
+                                    <img  loading="lazy" class="img-fluid" width="400" src="{$system['system_url']}/content/themes/{$system['theme']}/images/screenshots/login_with.png">
                                 </div>
                             </li>
                             <li class="mb20">
@@ -185,7 +185,7 @@ if(!empty($json['access_token'])) {
                 <!-- docs -->
 
             {elseif $view == "apps"}
-                
+
                 <!-- apps -->
                 <div class="card mt20">
                     <div class="card-header with-icon">
@@ -214,7 +214,7 @@ if(!empty($json['access_token'])) {
                                                 <td>{$app@iteration}</td>
                                                 <td>
                                                     <a target="_blank" href="{$system['system_url']}/developers/edit/{$app['app_auth_id']}">
-                                                        <img class="tbl-image" src="{$system['system_uploads']}/{$app['app_icon']}">
+                                                        <img  loading="lazy" class="tbl-image" src="{$system['system_uploads']}/{$app['app_icon']}">
                                                         {$app['app_name']}
                                                     </a>
                                                 </td>

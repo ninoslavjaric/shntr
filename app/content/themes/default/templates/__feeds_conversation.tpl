@@ -17,7 +17,7 @@
             <div class="data-content">
                 {if $conversation['image'] != ''}
                     <div class="float-right">
-                        <img class="data-img" src="{$system['system_uploads']}/{$conversation['image']}" alt="">
+                        <img  loading="lazy" class="data-img" src="{$system['system_uploads']}/{$conversation['image']}" alt="">
                     </div>
                 {/if}
                 <div><span class="name">{$conversation['name']}</span></div>
@@ -36,12 +36,12 @@
     {else}
         <a class="data-container js_chat-start" data-cid="{$conversation['conversation_id']}" data-uid="{$conversation['user_id']}" data-name="{$conversation['name']}" data-name-list="{$conversation['name_list']}" data-link="{$conversation['link']}" href="{$system['system_url']}/messages/{$conversation['conversation_id']}">
             <div class="data-avatar">
-                <img src="{$conversation['picture']}" alt="{$conversation['name']}">
+                <img  loading="lazy" src="{$conversation['picture']}" alt="{$conversation['name']}">
             </div>
             <div class="data-content">
                 {if $conversation['image'] != ''}
                     <div class="float-right">
-                        <img class="data-img" src="{$system['system_uploads']}/{$conversation['image']}" alt="">
+                        <img  loading="lazy" class="data-img" src="{$system['system_uploads']}/{$conversation['image']}" alt="">
                     </div>
                 {/if}
                 <div><span class="name">{$conversation['name']}</span></div>

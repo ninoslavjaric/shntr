@@ -94,7 +94,7 @@
                                 <td>{$row['app_id']}</td>
                                 <td>
                                     <a target="_blank" href="{$system['system_url']}/developers/edit/{$row['app_auth_id']}">
-                                        <img class="tbl-image" src="{$system['system_uploads']}/{$row['app_icon']}">
+                                        <img  loading="lazy" class="tbl-image" src="{$system['system_uploads']}/{$row['app_icon']}">
                                         {$row['app_name']}
                                     </a>
                                 </td>

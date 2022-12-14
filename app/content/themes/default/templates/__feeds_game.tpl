@@ -3,7 +3,7 @@
         <div class="ui-box">
             <div class="img">
                 <a href="{$system['system_url']}/games/{$_game['game_id']}/{$_game['title_url']}">
-                    <img alt="{$_game['title']}" src="{$_game['thumbnail']}" />
+                    <img  loading="lazy" alt="{$_game['title']}" src="{$_game['thumbnail']}" />
                 </a>
             </div>
             <div class="mt10">
@@ -25,7 +25,7 @@
     <li class="feeds-item">
         <div class="data-container">
             <a class="data-avatar" href="{$system['system_url']}/games/{$_game['game_id']}/{$_game['title_url']}">
-                <img src="{$_game['thumbnail']}" alt="{$_game['title']}">
+                <img  loading="lazy" src="{$_game['thumbnail']}" alt="{$_game['title']}">
             </a>
             <div class="data-content">
                 <div class="float-right">

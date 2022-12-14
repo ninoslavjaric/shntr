@@ -5,7 +5,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
-        
+
         <!-- Title -->
         <title>{__("My Information")}</title>
 
@@ -13,7 +13,7 @@
         <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" />
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
         <!-- Fonts [Roboto|Font-Awesome] -->
-        
+
         <!-- CSS -->
         {if $system['language']['dir'] == "LTR"}
             <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -37,7 +37,7 @@
                 line-height: 70px;
                 padding: 70px 0 100px;
             }
-            header a, 
+            header a,
             header a:hover {
                 color: #fff;
             }
@@ -63,7 +63,7 @@
                 <div class="card-body page-content">
                     <!-- welcome -->
                     <div class="text-center">
-                        <img class="img-thumbnail rounded-circle user-profile-picture" src="{$user->_data['user_picture']}" width="99" height="99">
+                        <img  loading="lazy" class="img-thumbnail rounded-circle user-profile-picture" src="{$user->_data['user_picture']}" width="99" height="99">
                     </div>
                     <h3 class="mtb20 text-center"><span class="text-primary">{$user->_data['user_firstname']} {$user->_data['user_lastname']}</span></h3>
                     <!-- welcome -->

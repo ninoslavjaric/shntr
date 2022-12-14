@@ -15,7 +15,7 @@
                         {__("Make sure you have configured")} <a class="alert-link" href="{$system['system_url']}/{$control_panel['url']}/settings/payments">{__("Payments Settings")}</a>
                     </div>
                 </div>
-                
+
                 <div class="form-table-row">
                     <div class="avatar">
                         {include file='__svg_icons.tpl' icon="wallet" width="40px" height="40px"}
@@ -137,7 +137,7 @@
                 <button type="submit" class="btn btn-primary">{__("Save Changes")}</button>
             </div>
         </form>
-    
+
     {elseif $sub_view == "payments"}
 
         <div class="card-body">
@@ -169,7 +169,7 @@
                                 <td>{$row['payment_id']}</td>
                                 <td>
                                     <a target="_blank" href="{$system['system_url']}/{$row['user_name']}">
-                                        <img class="tbl-image" src="{$row['user_picture']}">
+                                        <img  loading="lazy" class="tbl-image" src="{$row['user_picture']}">
                                         {if $system['show_usernames_enabled']}{$row['user_name']}{else}{$row['user_firstname']} {$row['user_lastname']}{/if}
                                     </a>
                                 </td>

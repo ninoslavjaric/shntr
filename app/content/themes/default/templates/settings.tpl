@@ -1080,7 +1080,7 @@
                                         <div class="row text-center">
                                             <div class="form-group col-md-6">
                                                 <h6>{__("Scanning the QR code")}</h6>
-                                                <img src="{$two_factor_QR}">
+                                                <img  loading="lazy" src="{$two_factor_QR}">
                                             </div>
                                             <div class="form-group col-md-6">
                                                 <h6>{__("Manually by entering this token")}</h6>
@@ -1964,7 +1964,7 @@
                                                 <td>
                                                     {if $invitation_code['used']}
                                                         <a target="_blank" href="{$system['system_url']}/{$invitation_code['user_name']}">
-                                                            <img class="tbl-image" src="{$invitation_code['user_picture']}">
+                                                            <img  loading="lazy" class="tbl-image" src="{$invitation_code['user_picture']}">
                                                             {$invitation_code['user_firstname']} {$invitation_code['user_lastname']}
                                                         </a>
                                                     {/if}
@@ -3186,7 +3186,7 @@
                             {foreach $apps as $app}
                                 <div class="form-table-row {if $app@last}mb0{/if}">
                                     <div class="avatar">
-                                        <img class="tbl-image app-icon" src="{$system['system_uploads']}/{$app['app_icon']}">
+                                        <img  loading="lazy" class="tbl-image app-icon" src="{$system['system_uploads']}/{$app['app_icon']}">
                                     </div>
                                     <div>
                                         <div class="form-control-label h6 mb5">{$app['app_name']}</div>

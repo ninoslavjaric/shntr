@@ -27,12 +27,12 @@
                                 <td>
                                     {if $row['node_type'] == "user"}
                                         <a target="_blank" href="{$system['system_url']}/{$row['user_name']}">
-                                            <img class="tbl-image" src="{$row['user_picture']}">
+                                            <img  loading="lazy" class="tbl-image" src="{$row['user_picture']}">
                                             {if $system['show_usernames_enabled']}{$row['user_name']}{else}{$row['user_firstname']} {$row['user_lastname']}{/if}
                                         </a>
                                     {elseif $row['node_type'] == "page"}
                                         <a target="_blank" href="{$system['system_url']}/pages/{$row['page_name']}">
-                                            <img class="tbl-image" src="{$row['page_picture']}">
+                                            <img  loading="lazy" class="tbl-image" src="{$row['page_picture']}">
                                             {$row['page_title']}
                                         </a>
                                     {/if}
@@ -79,7 +79,7 @@
                                 <td><a href="{$system['system_url']}/{$row['user_name']}" target="_blank">{$row['user_id']}</a></td>
                                 <td>
                                     <a target="_blank" href="{$system['system_url']}/{$row['user_name']}">
-                                        <img class="tbl-image" src="{$row['user_picture']}">
+                                        <img  loading="lazy" class="tbl-image" src="{$row['user_picture']}">
                                         {$row['user_firstname']} {$row['user_lastname']}
                                     </a>
                                 </td>
@@ -127,7 +127,7 @@
                                 </td>
                                 <td>
                                     <a target="_blank" href="{$system['system_url']}/pages/{$row['page_name']}">
-                                        <img class="tbl-image" src="{$row['page_picture']}">
+                                        <img  loading="lazy" class="tbl-image" src="{$row['page_picture']}">
                                         {$row['page_title']}
                                     </a>
                                 </td>

@@ -3,7 +3,7 @@
         <div class="ui-box">
             <div class="img">
                 <a href="{$system['system_url']}/groups/{$_group['group_name']}{if $_search}?ref=qs{/if}">
-                    <img alt="{$_group['group_title']}" src="{$_group['group_picture']}" />
+                    <img  loading="lazy" alt="{$_group['group_title']}" src="{$_group['group_picture']}" />
                 </a>
             </div>
             <div class="mt10">
@@ -31,7 +31,7 @@
     <li class="feeds-item">
         <div class="data-container {if $_small}small{/if}">
             <a class="data-avatar" href="{$system['system_url']}/groups/{$_group['group_name']}{if $_search}?ref=qs{/if}">
-                <img src="{$_group['group_picture']}" alt="{$_group['group_title']}">
+                <img  loading="lazy" src="{$_group['group_picture']}" alt="{$_group['group_title']}">
             </a>
             <div class="data-content">
                 <div class="float-right">

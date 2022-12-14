@@ -3,7 +3,7 @@
 
 <!-- page header -->
 <div class="page-header">
-	<img class="floating-img d-none d-md-block" src="{$system['system_url']}/content/themes/{$system['theme']}/images/headers/undraw_interview_rmcf.svg">
+	<img  loading="lazy" class="floating-img d-none d-md-block" src="{$system['system_url']}/content/themes/{$system['theme']}/images/headers/undraw_interview_rmcf.svg">
     <div class="circle-2"></div>
     <div class="circle-3"></div>
     <div class="container">
@@ -99,7 +99,7 @@
 									<div class="product-price">
 										{print_money($post['job']['salary_minimum'])} - {print_money($post['job']['salary_maximum'])} / {$post['job']['pay_salary_per_meta']}
 									</div>
-									<img src="{$system['system_uploads']}/{$post['job']['cover_image']}">
+									<img  loading="lazy" src="{$system['system_uploads']}/{$post['job']['cover_image']}">
 									<div class="product-overlay">
 										<a class="btn btn-sm btn-outline-secondary rounded-pill" href="{$system['system_url']}/posts/{$post['post_id']}">
 											{__("More")}
@@ -127,7 +127,7 @@
 					{/foreach}
 				</div>
             {/if}
-			
+
 			{if $rows}
 				<div class="articles-widget-header clearfix">
 					<!-- sort -->
@@ -183,7 +183,7 @@
 					{/if}
                     <div class="articles-widget-title">{__("Jobs")}</div>
                 </div>
-				
+
 				<div class="row">
 					{foreach $rows as $post}
 						<div class="col-md-6 col-lg-4">
@@ -192,7 +192,7 @@
 									<div class="product-price">
 						            	{print_money($post['job']['salary_minimum'])} - {print_money($post['job']['salary_maximum'])} / {$post['job']['pay_salary_per_meta']}
 									</div>
-									<img src="{$system['system_uploads']}/{$post['job']['cover_image']}">
+									<img  loading="lazy" src="{$system['system_uploads']}/{$post['job']['cover_image']}">
 									<div class="product-overlay">
 										<a class="btn btn-sm btn-outline-secondary rounded-pill" href="{$system['system_url']}/posts/{$post['post_id']}">
 											{__("More")}

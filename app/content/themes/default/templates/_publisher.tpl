@@ -20,9 +20,9 @@
     <!-- publisher-message -->
     <div class="publisher-message">
         {if $_handle == "page"}
-            <img class="publisher-avatar" src="{$spage['page_picture']}">
+            <img  loading="lazy" class="publisher-avatar" src="{$spage['page_picture']}">
         {else}
-            <img class="publisher-avatar" src="{$user->_data['user_picture']}">
+            <img  loading="lazy" class="publisher-avatar" src="{$user->_data['user_picture']}">
         {/if}
         <div class="colored-text-wrapper">
             <textarea dir="auto" class="js_autosize js_mention js_publisher-scraper" data-init-placeholder='{__("What is on your mind? #Hashtag.. @Mention.. Link..")}' placeholder='{__("What is on your mind? #Hashtag.. @Mention.. Link..")}'>{if $page == "share" && $url}{$url}{/if}</textarea>
@@ -258,7 +258,7 @@
                 {if $system['photos_enabled']}
                     <li class="col-md-6">
                         <div class="publisher-tools-tab attach js_publisher-tab" data-tab="photos">
-                            <img src="{$system['system_url']}/content/themes/{$system['theme']}/images/svg/camera.svg" class="js_x-uploader" data-handle="publisher" data-multiple="true">
+                            <img  loading="lazy" src="{$system['system_url']}/content/themes/{$system['theme']}/images/svg/camera.svg" class="js_x-uploader" data-handle="publisher" data-multiple="true">
                             {__("Upload Photos")}
                         </div>
                     </li>
@@ -336,7 +336,7 @@
                 {if $system['videos_enabled']}
                     <li class="col-md-6">
                         <div class="publisher-tools-tab attach js_publisher-tab" data-tab="video">
-                            <img src="{$system['system_url']}/content/themes/{$system['theme']}/images/svg/video_camera.svg" class="js_x-uploader" data-handle="publisher" data-type="video">
+                            <img  loading="lazy" src="{$system['system_url']}/content/themes/{$system['theme']}/images/svg/video_camera.svg" class="js_x-uploader" data-handle="publisher" data-type="video">
                             {__("Upload Video")}
                         </div>
                     </li>
@@ -344,7 +344,7 @@
                 {if $system['audio_enabled']}
                     <li class="col-md-6">
                         <div class="publisher-tools-tab attach js_publisher-tab" data-tab="audio">
-                            <img src="{$system['system_url']}/content/themes/{$system['theme']}/images/svg/music_file.svg" class="js_x-uploader" data-handle="publisher" data-type="audio">
+                            <img  loading="lazy" src="{$system['system_url']}/content/themes/{$system['theme']}/images/svg/music_file.svg" class="js_x-uploader" data-handle="publisher" data-type="audio">
                             {__("Upload Audio")}
                         </div>
                     </li>
@@ -352,7 +352,7 @@
                 {if $system['file_enabled']}
                     <li class="col-md-6">
                         <div class="publisher-tools-tab attach js_publisher-tab" data-tab="file">
-                            <img src="{$system['system_url']}/content/themes/{$system['theme']}/images/svg/folder.svg" class="js_x-uploader" data-handle="publisher" data-type="file">
+                            <img  loading="lazy" src="{$system['system_url']}/content/themes/{$system['theme']}/images/svg/folder.svg" class="js_x-uploader" data-handle="publisher" data-type="file">
                             {__("Upload File")}
                         </div>
                     </li>

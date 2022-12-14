@@ -231,7 +231,7 @@
                                     <div class="pro-box-wrapper {if count($pro_members) > 3}js_slick{else}full-opacity{/if}">
                                         {foreach $pro_members as $_member}
                                             <a class="user-box text-white" href="{$system['system_url']}/{$_member['user_name']}">
-                                                <img alt="" src="{$_member['user_picture']}" />
+                                                <img  loading="lazy" alt="" src="{$_member['user_picture']}" />
                                                 <div class="name">
                                                     {if $system['show_usernames_enabled']}
                                                         {$_member['user_name']}
@@ -264,7 +264,7 @@
                                         {foreach $promoted_pages as $_page}
                                             <a class="user-box text-white"
                                                 href="{$system['system_url']}/pages/{$_page['page_name']}">
-                                                <img alt="{$_page['page_title']}" src="{$_page['page_picture']}" />
+                                                <img  loading="lazy" alt="{$_page['page_title']}" src="{$_page['page_picture']}" />
                                                 <div class="name" title="{$_page['page_title']}">
                                                     {$_page['page_title']}
                                                 </div>
@@ -423,14 +423,14 @@
                                 <span class="mr5">&copy; {'Y'|date} {$system['system_title']}</span>
                                 <!-- language -->
                                 <a href="#" class="language-dropdown" data-toggle="dropdown">
-                                    <img width="16" height="16" class="mr10" src="{$system['language']['flag']}">
+                                    <img  loading="lazy" width="16" height="16" class="mr10" src="{$system['language']['flag']}">
                                     <span>{$system['language']['title']}</span>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right">
                                     <div class="js_scroller">
                                         {foreach $system['languages'] as $language}
                                             <a class="dropdown-item" href="?lang={$language['code']}">
-                                                <img width="16" height="16" class="mr10"
+                                                <img  loading="lazy" width="16" height="16" class="mr10"
                                                     src="{$language['flag']}">{$language['title']}
                                             </a>
                                         {/foreach}

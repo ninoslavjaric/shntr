@@ -9,7 +9,7 @@
 
         <!-- publisher-message -->
         <div class="publisher-message">
-            <img class="publisher-avatar" src="{$user->_data['user_picture']}">
+            <img  loading="lazy" class="publisher-avatar" src="{$user->_data['user_picture']}">
             <textarea dir="auto" class="js_autosize js_mention" placeholder='{__("What is on your mind? #Hashtag.. @Mention.. Link..")}'></textarea>
             <div class="publisher-emojis" style="display: block;">
                 <div class="position-relative">
@@ -84,7 +84,7 @@
                 {if $system['photos_enabled']}
                     <li class="col-md-6">
                         <div class="publisher-tools-tab attach js_publisher-tab" data-tab="photos">
-                            <img src="{$system['system_url']}/content/themes/{$system['theme']}/images/svg/camera.svg" class="js_x-uploader" data-handle="publisher" data-multiple="true">
+                            <img  loading="lazy" src="{$system['system_url']}/content/themes/{$system['theme']}/images/svg/camera.svg" class="js_x-uploader" data-handle="publisher" data-multiple="true">
                             {__("Upload Photos")}
                         </div>
                     </li>

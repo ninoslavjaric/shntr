@@ -6,7 +6,7 @@
             {if $user->_logged_in}
                 <li>
                     <a href="{$system['system_url']}/{$user->_data['user_name']}">
-                        {* <img class="rounded-circle" src="{$user->_data.user_picture}" alt=""> *}
+                        {* <img  loading="lazy" class="rounded-circle" src="{$user->_data.user_picture}" alt=""> *}
                          {include file='__svg_icons.tpl' icon="shn-profile" class="mr10" width="24px" height="24px"}
                         <span>{$user->_data['name']}</span>
                     </a>

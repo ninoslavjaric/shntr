@@ -102,7 +102,7 @@
                                     <td><a href="{$system['system_url']}/{$row['user_name']}" target="_blank">{$row['user_id']}</a></td>
                                     <td>
                                         <a target="_blank" href="{$system['system_url']}/{$row['user_name']}">
-                                            <img class="tbl-image" src="{$row['user_picture']}">
+                                            <img  loading="lazy" class="tbl-image" src="{$row['user_picture']}">
                                             {$row['user_firstname']} {$row['user_lastname']}
                                         </a>
                                     </td>
@@ -169,7 +169,7 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-12 col-md-2 text-center mb20">
-                    <img class="img-fluid img-thumbnail rounded-circle" src="{$data['user_picture']}">
+                    <img  loading="lazy" class="img-fluid img-thumbnail rounded-circle" src="{$data['user_picture']}">
                 </div>
                 <div class="col-12 col-md-5 mb20">
                     <ul class="list-group">

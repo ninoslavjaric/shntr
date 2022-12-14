@@ -222,7 +222,7 @@
                                     <td>{$row['thread_id']}</td>
                                     <td>
                                         <a target="_blank" href="{$row['thread_author_url']}">
-                                            <img class="tbl-image" src="{$row['thread_author_picture']}">
+                                            <img  loading="lazy" class="tbl-image" src="{$row['thread_author_picture']}">
                                             {$row['thread_author_name']}
                                         </a>
                                     </td>
@@ -296,7 +296,7 @@
                                     <td>{$row['reply_id']}</td>
                                     <td>
                                         <a target="_blank" href="{$row['reply_author_url']}">
-                                            <img class="tbl-image" src="{$row['reply_author_picture']}">
+                                            <img  loading="lazy" class="tbl-image" src="{$row['reply_author_picture']}">
                                             {$row['reply_author_name']}
                                         </a>
                                     </td>

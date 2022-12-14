@@ -19,11 +19,11 @@
                 <div class="profile-cover-wrapper">
                     {if $event['event_cover_id']}
                         <!-- full-cover -->
-                        <img class="js_position-cover-full x-hidden" src="{$event['event_cover_full']}">
+                        <img  loading="lazy" class="js_position-cover-full x-hidden" src="{$event['event_cover_full']}">
                         <!-- full-cover -->
 
                         <!-- cropped-cover -->
-                        <img class="js_position-cover-cropped js_lightbox" data-init-position="{$event['event_cover_position']}" data-id="{$event['event_cover_id']}" data-image="{$event['event_cover_full']}" data-context="album" src="{$event['event_cover']}" alt="{$event['event_title']}">
+                        <img  loading="lazy" class="js_position-cover-cropped js_lightbox" data-init-position="{$event['event_cover_position']}" data-id="{$event['event_cover_id']}" data-image="{$event['event_cover_full']}" data-context="album" src="{$event['event_cover']}" alt="{$event['event_title']}">
                         <!-- cropped-cover -->
                     {/if}
 

@@ -90,7 +90,7 @@
 
                         {foreach $post['photos'] as $photo}
                         <li class="item deletable" data-photos="{$system['system_uploads']}/{$post['photo']}" data-src="{$photo['source']}" data-photo_id="{$photo['photo_id']}" data-post_id="{$post['post_id']}">
-                            <img alt="" src="{$post['og_image']}">
+                            <img  loading="lazy" alt="" src="{$post['og_image']}">
                             <input type="hidden" name="img-ids[]" value="{$photo['photo_id']}">
                             <button type="button" class="close js_publisher-mini-attachment-image-remover" data-photo_id="{$photo['photo_id']}" data-post_id="{$post['post_id']}" data-photos="{$system['system_uploads']}/{$post['photo']}" title="Remove"><span>×</span></button>
                         </li>

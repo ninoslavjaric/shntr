@@ -3,7 +3,7 @@
         {if $message['user_id'] != $user->_data['user_id']}
             <div class="conversation-user">
                 <a href="{$system['system_url']}/{$message['user_name']}">
-                    <img src="{$message['user_picture']}" alt="">
+                    <img  loading="lazy" src="{$message['user_picture']}" alt="">
                 </a>
             </div>
         {/if}
@@ -13,7 +13,7 @@
                 {$message['message']}
                 {if $message['image']}
                     <span class="text-link js_lightbox-nodata {if $message['message'] != ''}mt5{/if}" data-image="{$system['system_uploads']}/{$message['image']}">
-                        <img alt="" class="img-fluid" src="{$system['system_uploads']}/{$message['image']}">
+                        <img  loading="lazy" alt="" class="img-fluid" src="{$system['system_uploads']}/{$message['image']}">
                     </span>
                 {/if}
                 {if $message['voice_note']}

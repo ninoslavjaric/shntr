@@ -5,7 +5,7 @@
             <div class="user-card-cover" {if $profile['user_cover']}style="background-image:url('{$system['system_uploads']}/{$profile['user_cover']}');"{/if}>
             </div>
             <div class="user-card-avatar">
-                <img src="{$profile['user_picture']}" alt="">
+                <img  loading="lazy" src="{$profile['user_picture']}" alt="">
             </div>
             <div class="user-card-info">
                 <a class="name" href="{$system['system_url']}/{$profile['user_name']}">
@@ -111,7 +111,7 @@
         <div class="user-card">
             <div class="user-card-cover" {if $profile['page_cover']}style="background-image:url('{$system['system_uploads']}/{$profile['page_cover']}');"{/if}></div>
             <div class="user-card-avatar">
-                <img class="img-fluid" src="{$profile['page_picture']}" alt="{$profile['page_title']}">
+                <img  loading="lazy" class="img-fluid" src="{$profile['page_picture']}" alt="{$profile['page_title']}">
             </div>
             <div class="user-card-info">
                 <a class="name" href="{$system['system_url']}/pages/{$profile['page_name']}">{$profile['page_title']}</a>

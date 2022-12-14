@@ -67,7 +67,7 @@
                                     <td>{$row['post_id']}</td>
                                     <td>
                                         <a target="_blank" href="{$row['article_author_url']}">
-                                            <img class="tbl-image" src="{$row['article_author_picture']}">
+                                            <img  loading="lazy" class="tbl-image" src="{$row['article_author_picture']}">
                                             {$row['article_author_name']}
                                         </a>
                                     </td>

@@ -3,7 +3,7 @@
 
 <!-- page header -->
 <div class="page-header">
-    <img class="floating-img d-none d-md-block" src="{$system['system_url']}/content/themes/{$system['theme']}/images/headers/undraw_movie_night_fldd.svg">
+    <img  loading="lazy" class="floating-img d-none d-md-block" src="{$system['system_url']}/content/themes/{$system['theme']}/images/headers/undraw_movie_night_fldd.svg">
     <div class="circle-2"></div>
     <div class="circle-3"></div>
     <div class="container">
@@ -162,13 +162,13 @@
                             <strong>{__("IMDB")}:</strong> <a href="{$movie['imdb_url']}" target="_blank">{$movie['imdb_url']}</a>
                         </div>
                     {/if}
-                    
+
                     <div class="mt10">
                         <strong>{__("Views")}:</strong> {$movie['views']}
                     </div>
 
                     <div class="mt10">
-                        <strong>{__("Share")}:</strong> 
+                        <strong>{__("Share")}:</strong>
                         <a href="http://www.facebook.com/sharer.php?u={$system['system_url']}/movie/{$movie['movie_id']}/{$movie['movie_url']}" class="btn btn-sm btn-rounded btn-social-icon btn-facebook" target="_blank">
                             <i class="fab fa-facebook-f"></i>
                         </a>

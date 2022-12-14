@@ -3,7 +3,7 @@
 
 <!-- page header -->
 <div class="page-header">
-    <img class="floating-img d-none d-md-block" src="{$system['system_url']}/content/themes/{$system['theme']}/images/headers/undraw_discount_d4bd.svg">
+    <img  loading="lazy" class="floating-img d-none d-md-block" src="{$system['system_url']}/content/themes/{$system['theme']}/images/headers/undraw_discount_d4bd.svg">
     <div class="circle-2"></div>
     <div class="circle-3"></div>
     <div class="container">
@@ -99,7 +99,7 @@
                                     <div class="product-price with-offer">
                                         <i class="far fa-calendar-alt mr5"></i>{__("Expires")}: {$post['offer']['end_date']|date_format:"%d/%m/%Y"}
                                     </div>
-                                    <img src="{$system['system_uploads']}/{$post['offer']['thumbnail']}">
+                                    <img  loading="lazy" src="{$system['system_uploads']}/{$post['offer']['thumbnail']}">
                                     <div class="product-overlay">
                                         <a class="btn btn-sm btn-outline-secondary rounded-pill" href="{$system['system_url']}/posts/{$post['post_id']}">
                                             {__("More")}
@@ -116,7 +116,7 @@
                     {/foreach}
                 </div>
             {/if}
-            
+
             {if $rows}
                 <div class="articles-widget-header clearfix">
 					<!-- sort -->
@@ -181,7 +181,7 @@
                                     <div class="product-price with-offer">
                                         <i class="far fa-calendar-alt mr5"></i>{__("Expires")}: {$post['offer']['end_date']|date_format:"%d/%m/%Y"}
                                     </div>
-                                    <img src="{$system['system_uploads']}/{$post['offer']['thumbnail']}">
+                                    <img  loading="lazy" src="{$system['system_uploads']}/{$post['offer']['thumbnail']}">
                                     <div class="product-overlay">
                                         <a class="btn btn-sm btn-outline-secondary rounded-pill" href="{$system['system_url']}/posts/{$post['post_id']}">
                                             {__("More")}

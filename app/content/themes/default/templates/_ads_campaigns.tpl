@@ -7,7 +7,7 @@
 		    </div>
 		    <div class="card-body {if $campaign['campaign_bidding'] == 'click'}js_ads-click-campaign{/if}" data-id="{$campaign['campaign_id']}">
 		    	<a href="{$campaign['ads_url']}" target="_blank">
-		    		<img class="img-fluid" src="{$system['system_uploads']}/{$campaign['ads_image']}">
+		    		<img  loading="lazy" class="img-fluid" src="{$system['system_uploads']}/{$campaign['ads_image']}">
 		    	</a>
 		    	{if $campaign['ads_title'] || $campaign['ads_description']}
 			    	<div class="ptb5 plr10">

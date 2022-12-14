@@ -113,13 +113,13 @@
                                     </td>
                                     <td>
                                         <a target="_blank" href="{$system['system_url']}/pages/{$row['page_name']}">
-                                            <img class="tbl-image" src="{$row['page_picture']}">
+                                            <img  loading="lazy" class="tbl-image" src="{$row['page_picture']}">
                                             {$row['page_title']}
                                         </a>
                                     </td>
                                     <td>
                                         <a target="_blank" href="{$system['system_url']}/{$row['user_name']}">
-                                            <img class="tbl-image" src="{$row['user_picture']}">
+                                            <img  loading="lazy" class="tbl-image" src="{$row['user_picture']}">
                                             {if $system['show_usernames_enabled']}{$row['user_name']}{else}{$row['user_firstname']} {$row['user_lastname']}{/if}
                                         </a>
                                     </td>
@@ -155,11 +155,11 @@
         </div>
 
     {elseif $sub_view == "edit_page"}
-        
+
         <div class="card-body">
             <div class="row">
                 <div class="col-12 col-md-2 text-center mb20">
-                    <img class="img-fluid img-thumbnail rounded-circle" src="{$data['page_picture']}">
+                    <img  loading="lazy" class="img-fluid img-thumbnail rounded-circle" src="{$data['page_picture']}">
                 </div>
                 <div class="col-12 col-md-10 mb20">
                     <ul class="list-group">
@@ -174,7 +174,7 @@
                     </ul>
                 </div>
             </div>
-            
+
             <!-- tabs nav -->
             <ul class="nav nav-tabs mb20">
                 <li class="nav-item">
@@ -201,7 +201,7 @@
                             </label>
                             <div class="col-md-9">
                                 <a target="_blank" href="{$system['system_url']}/{$data['user_name']}">
-                                    <img class="tbl-image" src="{$data['user_picture']}">
+                                    <img  loading="lazy" class="tbl-image" src="{$data['user_picture']}">
                                     {if $system['show_usernames_enabled']}{$data['user_name']}{else}{$data['user_firstname']} {$data['user_lastname']}{/if}
                                 </a>
                                 <a target="_blank" data-toggle="tooltip" data-placement="top" title='{__("Edit")}' href="{$system['system_url']}/{$control_panel['url']}/users/edit/{$data['user_id']}" class="btn btn-sm btn-light btn-icon btn-rounded ml10">
@@ -364,7 +364,7 @@
         </div>
 
     {elseif $sub_view == "add_category"}
-        
+
         <form class="js_ajax-forms" data-url="admin/pages.php?do=add_category">
             <div class="card-body">
                 <div class="form-group form-row">

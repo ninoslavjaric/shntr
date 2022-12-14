@@ -19,11 +19,11 @@
                 <div class="profile-cover-wrapper">
                     {if $spage['page_cover_id']}
                         <!-- full-cover -->
-                        <img class="js_position-cover-full x-hidden" src="{$spage['page_cover_full']}">
+                        <img  loading="lazy" class="js_position-cover-full x-hidden" src="{$spage['page_cover_full']}">
                         <!-- full-cover -->
 
                         <!-- cropped-cover -->
-                        <img class="js_position-cover-cropped js_lightbox" data-init-position="{$spage['page_cover_position']}" data-id="{$spage['page_cover_id']}" data-image="{$spage['page_cover_full']}" data-context="album" src="{$spage['page_cover']}" alt="{$spage['page_title']}">
+                        <img  loading="lazy" class="js_position-cover-cropped js_lightbox" data-init-position="{$spage['page_cover_position']}" data-id="{$spage['page_cover_id']}" data-image="{$spage['page_cover_full']}" data-context="album" src="{$spage['page_cover']}" alt="{$spage['page_title']}">
                         <!-- cropped-cover -->
                     {/if}
 
@@ -65,7 +65,7 @@
 
                 <!-- profile-avatar -->
                 <div class="profile-avatar-wrapper">
-                    <img {if !$spage['page_picture_default']} class="js_lightbox" data-id="{$spage['page_picture_id']}" data-image="{$spage['page_picture_full']}" data-context="album" {/if} src="{$spage['page_picture']}" alt="{$spage['page_title']}">
+                    <img  loading="lazy" {if !$spage['page_picture_default']} class="js_lightbox" data-id="{$spage['page_picture_id']}" data-image="{$spage['page_picture_full']}" data-context="album" {/if} src="{$spage['page_picture']}" alt="{$spage['page_title']}">
 
                     {if $spage['i_admin']}
                         <!-- buttons -->

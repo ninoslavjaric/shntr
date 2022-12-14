@@ -99,7 +99,7 @@
                                 <td>{$row['package_id']}</td>
                                 <td>
                                     <a target="_blank" href="{$system['system_url']}/{$control_panel['url']}/pro/edit/{$row['package_id']}">
-                                        <img class="tbl-image" src="{$row['icon']}">
+                                        <img  loading="lazy" class="tbl-image" src="{$row['icon']}">
                                         {$row['name']}
                                     </a>
                                 </td>
@@ -545,13 +545,13 @@
                                 <td><a href="{$system['system_url']}/{$row['user_name']}" target="_blank">{$row['user_id']}</a></td>
                                 <td>
                                     <a target="_blank" href="{$system['system_url']}/{$row['user_name']}">
-                                        <img class="tbl-image" src="{$row['user_picture']}">
+                                        <img  loading="lazy" class="tbl-image" src="{$row['user_picture']}">
                                         {if $system['show_usernames_enabled']}{$row['user_name']}{else}{$row['user_firstname']} {$row['user_lastname']}{/if}
                                     </a>
                                 </td>
                                 <td>
                                     <a target="_blank" href="{$system['system_url']}/{$control_panel['url']}/pro/edit/{$row['package_id']}">
-                                        <img class="tbl-image" src="{$row['icon']}">
+                                        <img  loading="lazy" class="tbl-image" src="{$row['icon']}">
                                         {$row['name']}
                                     </a>
                                 </td>

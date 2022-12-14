@@ -55,7 +55,7 @@
                                 </td>
                                 <td>
                                     <a target="_blank" href="{$system['system_url']}/movie/{$row['movie_id']}/{$row['movie_url']}">
-                                        <img class="tbl-image" src="{$row['poster']}">
+                                        <img  loading="lazy" class="tbl-image" src="{$row['poster']}">
                                         {$row['title']}
                                     </a>
                                 </td>

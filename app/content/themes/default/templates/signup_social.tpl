@@ -3,7 +3,7 @@
 
 <!-- page header -->
 <div class="page-header">
-    <img class="floating-img d-none d-md-block" src="{$system['system_url']}/content/themes/{$system['theme']}/images/headers/undraw_product_teardown_elol.svg">
+    <img  loading="lazy" class="floating-img d-none d-md-block" src="{$system['system_url']}/content/themes/{$system['theme']}/images/headers/undraw_product_teardown_elol.svg">
     <div class="circle-2"></div>
     <div class="circle-3"></div>
     <div class="inner">
@@ -20,7 +20,7 @@
             <div class="card card-register px-4 py-4 shadow">
                 <h3 class="mb20 text-center">{__("Welcome")} <span class="text-primary">{$user_profile->displayName}</span></h3>
                 <div class="text-center">
-                    <img class="img-thumbnail rounded-circle" src="{$user_profile->photoURL}" width="99" height="99">
+                    <img  loading="lazy" class="img-thumbnail rounded-circle" src="{$user_profile->photoURL}" width="99" height="99">
                 </div>
                 <form class="js_ajax-forms" data-url="core/signup_social.php">
                     {if $system['invitation_enabled']}

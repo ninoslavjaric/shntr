@@ -79,13 +79,13 @@
                                     </td>
                                     <td>
                                         <a target="_blank" href="{$system['system_url']}/groups/{$row['group_name']}">
-                                            <img class="tbl-image" src="{$row['group_picture']}">
+                                            <img  loading="lazy" class="tbl-image" src="{$row['group_picture']}">
                                             {$row['group_title']}
                                         </a>
                                     </td>
                                     <td>
                                         <a target="_blank" href="{$system['system_url']}/{$row['user_name']}">
-                                            <img class="tbl-image" src="{$row['user_picture']}">
+                                            <img  loading="lazy" class="tbl-image" src="{$row['user_picture']}">
                                             {if $system['show_usernames_enabled']}{$row['user_name']}{else}{$row['user_firstname']} {$row['user_lastname']}{/if}
                                         </a>
                                     </td>
@@ -128,7 +128,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-12 col-md-2 text-center mb20">
-                        <img class="img-fluid img-thumbnail rounded-circle" src="{$data['group_picture']}">
+                        <img  loading="lazy" class="img-fluid img-thumbnail rounded-circle" src="{$data['group_picture']}">
                     </div>
                     <div class="col-12 col-md-10 mb20">
                         <ul class="list-group">
@@ -176,7 +176,7 @@
                             </label>
                             <div class="col-md-9">
                                 <a target="_blank" href="{$system['system_url']}/{$data['user_name']}">
-                                    <img class="tbl-image" src="{$data['user_picture']}">
+                                    <img  loading="lazy" class="tbl-image" src="{$data['user_picture']}">
                                     {if $system['show_usernames_enabled']}{$data['user_name']}{else}{$data['user_firstname']} {$data['user_lastname']}{/if}
                                 </a>
                                 <a target="_blank" data-toggle="tooltip" data-placement="top" title='{__("Edit")}' href="{$system['system_url']}/{$control_panel['url']}/users/edit/{$data['user_id']}" class="btn btn-sm btn-light btn-icon btn-rounded ml10">
@@ -396,7 +396,7 @@
                 <button type="submit" class="btn btn-primary">{__("Save Changes")}</button>
             </div>
         </form>
-        
+
     {elseif $sub_view == "edit_category"}
 
         <form class="js_ajax-forms" data-url="admin/groups.php?do=edit_category&id={$data['category_id']}">

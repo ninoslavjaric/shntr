@@ -143,7 +143,7 @@
                                         <td>{$row['campaign_title']}</td>
                                         <td>
                                             <a target="_blank" href="{$system['system_url']}/{$row['user_name']}">
-                                                <img class="tbl-image" src="{$row['user_picture']}">
+                                                <img  loading="lazy" class="tbl-image" src="{$row['user_picture']}">
                                                 {if $system['show_usernames_enabled']}{$row['user_name']}{else}{$row['user_firstname']} {$row['user_lastname']}{/if}
                                             </a>
                                         </td>
@@ -195,7 +195,7 @@
                                         <td>{$row['campaign_title']}</td>
                                         <td>
                                             <a target="_blank" href="{$system['system_url']}/{$row['user_name']}">
-                                                <img class="tbl-image" src="{$row['user_picture']}">
+                                                <img  loading="lazy" class="tbl-image" src="{$row['user_picture']}">
                                                 {if $system['show_usernames_enabled']}{$row['user_name']}{else}{$row['user_firstname']} {$row['user_lastname']}{/if}
                                             </a>
                                         </td>
@@ -397,7 +397,7 @@
                         <textarea class="form-control" name="message" rows="8">{$data['code']}</textarea>
                     </div>
                 </div>
-                
+
                 <!-- success -->
                 <div class="alert alert-success mb0 x-hidden"></div>
                 <!-- success -->
@@ -492,7 +492,7 @@
                         </select>
                     </div>
                 </div>
-                
+
                 <div class="form-group form-row">
                     <label class="col-md-3 form-control-label">
                         {__("HTML")}
@@ -501,7 +501,7 @@
                         <textarea class="form-control" name="message" rows="8"></textarea>
                     </div>
                 </div>
-                
+
                 <!-- success -->
                 <div class="alert alert-success mb0 x-hidden"></div>
                 <!-- success -->

@@ -201,7 +201,7 @@
                 <div class="col-6">
                     <div style="background: rgb(0 0 0 / 0.06); padding: 8px; border-radius: 8px; margin-bottom: 30px;">
                         <a style="display: block; position: relative; padding-bottom: 60%;" href="?theme={$theme['name']}">
-                            <img style="width: 100%; height: 100%; position: absolute; top: 0; right: 0; bottom: 0; left: 0; border-radius: 4px;" src="{$system['system_url']}/content/themes/{$theme['name']}/thumbnail.png">
+                            <img  loading="lazy" style="width: 100%; height: 100%; position: absolute; top: 0; right: 0; bottom: 0; left: 0; border-radius: 4px;" src="{$system['system_url']}/content/themes/{$theme['name']}/thumbnail.png">
                             <span style="position: absolute; background: linear-gradient(transparent, rgb(0 0 0 / 0.7)); bottom: 0; left: 0; right: 0; width: 100%; border-radius: 0 0 8px 8px; color: #fff; font-size: 14px; text-align: center; text-transform: capitalize; padding: 20px 8px 8px;">
                                 {$theme['name']}
                             </span>
@@ -240,7 +240,7 @@
                 <div class="lightbox-download">
                     <a href="{literal}{{image}}{/literal}" download>{__("Download")}</a> - <a target="_blank" href="{literal}{{image}}{/literal}">{__("View Original")}</a>
                 </div>
-                <img alt="" class="img-fluid" src="{literal}{{image}}{/literal}">
+                <img  loading="lazy" alt="" class="img-fluid" src="{literal}{{image}}{/literal}">
             </div>
             <div class="lightbox-data">
                 <div class="clearfix">
@@ -267,7 +267,7 @@
                 <div class="lightbox-exit js_lightbox-close">
                     <i class="fas fa-times fa-2x"></i>
                 </div>
-                <img alt="" class="img-fluid" src="{literal}{{image}}{/literal}">
+                <img  loading="lazy" alt="" class="img-fluid" src="{literal}{{image}}{/literal}">
             </div>
         </div>
     </div>
@@ -545,7 +545,7 @@
         <script id="noty-notification" type="text/template">
             <div class="data-container small">
                 <div class="data-avatar">
-                    <img src="{literal}{{image}}{/literal}">
+                    <img  loading="lazy" src="{literal}{{image}}{/literal}">
                 </div>
                 <div class="data-content">{literal}{{message}}{/literal}</div>
             </div>
@@ -604,7 +604,7 @@
                     <div class="js_scroller" data-slimScroll-height="180">
                         {foreach from=$user->get_stickers() item=sticker}
                             <div class="item">
-                                <img data-emoji=":STK-{$sticker['sticker_id']}:" src="{$system['system_uploads']}/{$sticker['image']}" class="js_emoji">
+                                <img  loading="lazy" data-emoji=":STK-{$sticker['sticker_id']}:" src="{$system['system_uploads']}/{$sticker['image']}" class="js_emoji">
                             </div>
                         {/foreach}
                     </div>
@@ -656,7 +656,7 @@
                     <ul>
                         {foreach $sidebar_friends as $_user}
                             <li class="feeds-item">
-                                <div 
+                                <div
                                     class="data-container clickable small js_chat-start"
                                     data-uid="{$_user['user_id']}"
                                     data-name="{if $system['show_usernames_enabled']}{$_user['user_name']}{else}{$_user['user_firstname']} {$_user['user_lastname']}{/if}"
@@ -669,7 +669,7 @@
                                     {/if}
                                 >
                                     <div class="data-avatar">
-                                        <img src="{$_user['user_picture']}" alt="">
+                                        <img  loading="lazy" src="{$_user['user_picture']}" alt="">
                                     </div>
                                     <div class="data-content">
                                         <div class="float-right">
@@ -795,7 +795,7 @@
     </script>
 
     <script id="chat-box" type="text/template">
-        <div 
+        <div
             class="chat-widget chat-box opened"
             id="{literal}{{chat_key_value}}{/literal}"
             {literal}{{#conversation_id}}{/literal}data-cid="{literal}{{conversation_id}}{/literal}"{literal}{{/conversation_id}}{/literal}
@@ -917,7 +917,7 @@
                         {literal}{{{message}}}{/literal}
                         {literal}{{#image}}{/literal}
                             <span class="text-link js_lightbox-nodata {literal}{{#message}}{/literal}mt5{literal}{{/message}}{/literal}" data-image="{$system['system_uploads']}/{literal}{{image}}{/literal}">
-                                <img alt="" class="img-fluid" src="{$system['system_uploads']}/{literal}{{image}}{/literal}">
+                                <img  loading="lazy" alt="" class="img-fluid" src="{$system['system_uploads']}/{literal}{{image}}{/literal}">
                             </span>
                         {literal}{{/image}}{/literal}
 
@@ -977,7 +977,7 @@
         <div class="modal-body text-center">
             <div class="position-relative mb10" style="height: 106px;">
                 <div class="profile-avatar-wrapper static">
-                    <img src="{literal}{{image}}{/literal}" alt="{literal}{{name}}{/literal}" style="width: 98px; height: 98px;">
+                    <img  loading="lazy" src="{literal}{{image}}{/literal}" alt="{literal}{{name}}{/literal}" style="width: 98px; height: 98px;">
                 </div>
             </div>
             <h3>{literal}{{name}}{/literal}</h3>
@@ -1082,7 +1082,7 @@
 
     <script id="chat-attachments-item" type="text/template">
         <li class="item deletable" data-src="{literal}{{src}}{/literal}">
-            <img alt="" src="{literal}{{image_path}}{/literal}">
+            <img  loading="lazy" alt="" src="{literal}{{image_path}}{/literal}">
             <button type="button" class="close js_chat-attachment-remover" title='{__("Remove")}'><span>&times;</span></button>
         </li>
     </script>
@@ -1144,7 +1144,7 @@
                                 <div class="col-12 col-sm-6 col-md-4 ptb5 plr5">
                                     <input class="x-hidden input-label" type="radio" name="gift" value="{$gift['gift_id']}" id="gift_{$gift['gift_id']}"/>
                                     <label class="button-label-image" for="gift_{$gift['gift_id']}">
-                                        <img src="{$system['system_uploads']}/{$gift['image']}">
+                                        <img  loading="lazy" src="{$system['system_uploads']}/{$gift['image']}">
                                     </label>
                                 </div>
                             {/foreach}
@@ -1171,7 +1171,7 @@
                 </button>
             </div>
             <div class="modal-body text-center">
-                <img class="img-fluid" src="{$system['system_uploads']}/{$gift['image']}">
+                <img  loading="lazy" class="img-fluid" src="{$system['system_uploads']}/{$gift['image']}">
             </div>
         </script>
     {/if}
@@ -1180,7 +1180,7 @@
     <!-- Uploader -->
     <script id="uploader-attachments-image-item" type="text/template">
         <li class="item deletable" data-src="{literal}{{src}}{/literal}">
-            <img alt="" src="{literal}{{image_path}}{/literal}">
+            <img  loading="lazy" alt="" src="{literal}{{image_path}}{/literal}">
             <button type="button" class="close {literal}{{#mini}}{/literal}js_publisher-mini-attachment-image-remover{literal}{{/mini}}{/literal}{literal}{{^mini}}{/literal}js_publisher-attachment-image-remover{literal}{{/mini}}{/literal}" title='{__("Remove")}'><span>&times;</span></button>
         </li>
     </script>
@@ -1278,7 +1278,7 @@
         <!-- Comments -->
         <script id="comment-attachments-item" type="text/template">
             <li class="item deletable" data-src="{literal}{{src}}{/literal}">
-                <img alt="" src="{literal}{{image_path}}{/literal}">
+                <img  loading="lazy" alt="" src="{literal}{{image_path}}{/literal}">
                 <button type="button" class="close js_comment-attachment-remover" title='{__("Remove")}'><span>&times;</span></button>
             </li>
         </script>
@@ -1523,7 +1523,7 @@
                 </button>
             </div>
             <div class="modal-body text-center">
-                <img id="cropped-profile-picture" src="{literal}{{image}}{/literal}" style="max-width: 100%;">
+                <img  loading="lazy" id="cropped-profile-picture" src="{literal}{{image}}{/literal}" style="max-width: 100%;">
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light" data-dismiss="modal">{__("Cancel")}</button>
@@ -1578,7 +1578,7 @@
                                     <i class="fas fa-passport mr10"></i>{__("Personal Photo")}
                                 </div>
                                 <a target="_blank" href="{literal}{{photo}}{/literal}">
-                                    <img class="img-fluid" src="{literal}{{photo}}{/literal}">
+                                    <img  loading="lazy" class="img-fluid" src="{literal}{{photo}}{/literal}">
                                 </a>
                             </div>
                             <div class="col-sm-6">
@@ -1586,7 +1586,7 @@
                                     <i class="fas fa-passport mr10"></i>{__("Passport or National ID")}
                                 </div>
                                 <a target="_blank" href="{literal}{{passport}}{/literal}">
-                                    <img class="img-fluid" src="{literal}{{passport}}{/literal}">
+                                    <img  loading="lazy" class="img-fluid" src="{literal}{{passport}}{/literal}">
                                 </a>
                             </div>
                         </div>

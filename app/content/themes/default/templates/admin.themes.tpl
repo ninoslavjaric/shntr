@@ -17,7 +17,7 @@
         {if $sub_view == "edit"} &rsaquo; {$data['name']}{/if}
         {if $sub_view == "add"} &rsaquo; {__("Add New Theme")}{/if}
     </div>
-    
+
     {if $sub_view == ""}
 
         <div class="card-body">
@@ -38,7 +38,7 @@
                             <tr>
                                 <td>{$row['theme_id']}</td>
                                 <td>
-                                    <img width="210" src="{$system['system_url']}/content/themes/{$row['name']}/thumbnail.png">
+                                    <img  loading="lazy" width="210" src="{$system['system_url']}/content/themes/{$row['name']}/thumbnail.png">
                                 </td>
                                 <td>{$row['name']}</td>
                                 <td>
@@ -71,7 +71,7 @@
         </div>
 
     {elseif $sub_view == "edit"}
-        
+
         <form class="js_ajax-forms" data-url="admin/themes.php?do=edit&id={$data['theme_id']}">
             <div class="card-body">
                 <div class="form-group form-row">
@@ -117,7 +117,7 @@
                         </span>
                     </div>
                 </div>
-                
+
                 <!-- success -->
                 <div class="alert alert-success mb0 x-hidden"></div>
                 <!-- success -->
@@ -130,7 +130,7 @@
                 <button type="submit" class="btn btn-primary">{__("Save Changes")}</button>
             </div>
         </form>
-        
+
 
     {elseif $sub_view == "add"}
 

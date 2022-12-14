@@ -4,7 +4,7 @@
     <div class="js_panel {if $do == 'up'}x-hidden{/if}">
         <div class="card-header">
             <h4 class="card-title">{__("Login")}</h4>
-            <img class="card-img" src="{$system['system_url']}/content/themes/{$system['theme']}/images/shntr-logo-login.svg">
+            <img  loading="lazy" class="card-img" src="{$system['system_url']}/content/themes/{$system['theme']}/images/shntr-logo-login.svg">
         </div>
         <div class="card-body">
             {if isset($highlight)}<div class="alert alert-warning">{$highlight}</div>{/if}
@@ -86,7 +86,7 @@
     <div class="js_panel {if $do != 'up'}x-hidden{/if}">
         <div class="card-header">
             <h4 class="card-title">{__("Register")}</h4>
-            <img class="card-img" src="{$system['system_url']}/content/themes/{$system['theme']}/images/shntr-logo-login.svg">
+            <img  loading="lazy" class="card-img" src="{$system['system_url']}/content/themes/{$system['theme']}/images/shntr-logo-login.svg">
         </div>
         <div class="card-body">
             <form class="js_ajax-forms" data-url="core/signup.php" method="POST">

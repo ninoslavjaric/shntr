@@ -19,11 +19,11 @@
                 <div class="profile-cover-wrapper">
                     {if $profile['user_cover_id']}
                         <!-- full-cover -->
-                        <img class="js_position-cover-full x-hidden" src="{$profile['user_cover_full']}">
+                        <img  loading="lazy" class="js_position-cover-full x-hidden" src="{$profile['user_cover_full']}">
                         <!-- full-cover -->
 
                         <!-- cropped-cover -->
-                        <img class="js_position-cover-cropped {if $user->_logged_in && $profile['user_cover_lightbox']}js_lightbox{/if}" data-init-position="{$profile['user_cover_position']}" data-id="{$profile['user_cover_id']}" data-image="{$profile['user_cover_full']}" data-context="album" src="{$profile['user_cover']}" alt="{$profile['name']}">
+                        <img  loading="lazy" class="js_position-cover-cropped {if $user->_logged_in && $profile['user_cover_lightbox']}js_lightbox{/if}" data-init-position="{$profile['user_cover_position']}" data-id="{$profile['user_cover_id']}" data-image="{$profile['user_cover_full']}" data-context="album" src="{$profile['user_cover']}" alt="{$profile['name']}">
                         <!-- cropped-cover -->
                     {/if}
 
@@ -65,7 +65,7 @@
 
                 <!-- profile-avatar -->
                 <div class="profile-avatar-wrapper">
-                    <img {if $profile['user_picture_id']} {if $user->_logged_in && $profile['user_picture_lightbox']}class="js_lightbox"{/if} data-id="{$profile['user_picture_id']}" data-context="album" data-image="{$profile['user_picture_full']}" {elseif !$profile['user_picture_default']} class="js_lightbox-nodata" data-image="{$profile['user_picture']}" {/if}  src="{$profile['user_picture']}" alt="{$profile['name']}">
+                    <img  loading="lazy" {if $profile['user_picture_id']} {if $user->_logged_in && $profile['user_picture_lightbox']}class="js_lightbox"{/if} data-id="{$profile['user_picture_id']}" data-context="album" data-image="{$profile['user_picture_full']}" {elseif !$profile['user_picture_default']} class="js_lightbox-nodata" data-image="{$profile['user_picture']}" {/if}  src="{$profile['user_picture']}" alt="{$profile['name']}">
 
                     {if $profile['user_id'] == $user->_data['user_id']}
                         <!-- buttons -->
@@ -864,7 +864,7 @@
                                             <div class="col-3 col-lg-4">
                                                 <div class="circled-user-box">
                                                     <a class="user-box" href="{$system['system_url']}/{$_friend['user_name']}">
-                                                        <img src="{$_friend['user_picture']}" />
+                                                        <img  loading="lazy" src="{$_friend['user_picture']}" />
                                                         <div class="name">
                                                             {if $system['show_usernames_enabled']}{$_friend['user_name']}{else}{$_friend['user_firstname']} {$_friend['user_lastname']}{/if}
                                                         </div>
@@ -891,7 +891,7 @@
                                             <div class="col-3 col-lg-4">
                                                 <div class="circled-user-box">
                                                     <a class="user-box" href="{$system['system_url']}/pages/{$_page['page_name']}">
-                                                        <img alt="{$_page['page_title']}" src="{$_page['page_picture']}" />
+                                                        <img  loading="lazy" alt="{$_page['page_title']}" src="{$_page['page_picture']}" />
                                                         <div class="name" title="{$_page['page_title']}">
                                                             {$_page['page_title']}
                                                         </div>
@@ -918,7 +918,7 @@
                                             <div class="col-3 col-lg-4">
                                                 <div class="circled-user-box">
                                                     <a class="user-box" href="{$system['system_url']}/groups/{$_group['group_name']}">
-                                                        <img alt="{$_group['group_title']}" src="{$_group['group_picture']}" />
+                                                        <img  loading="lazy" alt="{$_group['group_title']}" src="{$_group['group_picture']}" />
                                                         <div class="name" title="{$_group['group_title']}">
                                                             {$_group['group_title']}
                                                         </div>
@@ -945,7 +945,7 @@
                                             <div class="col-3 col-lg-4">
                                                 <div class="circled-user-box">
                                                     <a class="user-box" href="{$system['system_url']}/events/{$_event['event_id']}">
-                                                        <img alt="{$_event['event_title']}" src="{$_event['event_picture']}" />
+                                                        <img  loading="lazy" alt="{$_event['event_title']}" src="{$_event['event_picture']}" />
                                                         <div style="" class="name" title="{$_event['event_title']}">
                                                             {$_event['event_title']}
                                                         </div>
@@ -1463,7 +1463,7 @@
                 }
             }
         });
-        
+
         window.onbeforeunload = function(e) { localStorage.removeItem('paywallId')}
     </script>
 {/if}

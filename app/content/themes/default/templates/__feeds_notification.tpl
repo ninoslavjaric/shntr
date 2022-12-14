@@ -10,7 +10,7 @@
 >
     <a class="data-container" href="{$notification['url']}">
         <div class="data-avatar">
-            <img src="{$notification['user_picture']}" alt="">
+            <img  loading="lazy" src="{$notification['user_picture']}" alt="">
         </div>
         <div class="data-content">
             <div>
@@ -32,7 +32,7 @@
                         </div>
                     </div>
                 {else}
-                    <i class="{$notification['icon']} pr5"></i> 
+                    <i class="{$notification['icon']} pr5"></i>
                 {/if}
                 {$notification['message']}
             </div>

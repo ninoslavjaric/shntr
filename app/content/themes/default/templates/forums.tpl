@@ -3,7 +3,7 @@
 
 <!-- page header -->
 <div class="page-header">
-    <img class="floating-img d-none d-md-block" src="{$system['system_url']}/content/themes/{$system['theme']}/images/headers/undraw_elements_cipa.svg">
+    <img  loading="lazy" class="floating-img d-none d-md-block" src="{$system['system_url']}/content/themes/{$system['theme']}/images/headers/undraw_elements_cipa.svg">
     <div class="circle-2"></div>
     <div class="circle-3"></div>
     <div class="inner">
@@ -301,7 +301,7 @@
                 <div class="forum-thread {if $thread['replies'] > 0 && $selected_page != 1}x-hidden{/if}">
                     <div class="row">
                         <div class="col-12 col-sm-2 text-center">
-                            <a href="{$system['system_url']}/{$thread['user_name']}"><img class="avatar" src="{$thread['user_picture']}"></a>
+                            <a href="{$system['system_url']}/{$thread['user_name']}"><img  loading="lazy" class="avatar" src="{$thread['user_picture']}"></a>
                             <h6 class="mt10">
                                 <a href="{$system['system_url']}/{$thread['user_name']}">{$thread['user_fullname']}</a>
                             </h6>
@@ -354,7 +354,7 @@
                         <div class="forum-thread" id="reply-{$reply['reply_id']}">
                             <div class="row">
                                 <div class="col-12 col-sm-2 text-center">
-                                    <a href="{$system['system_url']}/{$reply['user_name']}"><img class="avatar" src="{$reply['user_picture']}"></a>
+                                    <a href="{$system['system_url']}/{$reply['user_name']}"><img  loading="lazy" class="avatar" src="{$reply['user_picture']}"></a>
                                     <h6 class="mt10">
                                         <a href="{$system['system_url']}/{$reply['user_name']}">{$reply['user_fullname']}</a>
                                     </h6>
@@ -744,7 +744,7 @@
                             <div class="form-group form-row">
                                 <div class="offset-md-2 col-md-10">
                                     <div class="checkbox checkbox-primary">
-                                        <input type="checkbox" name="recursive" id="recursive"> 
+                                        <input type="checkbox" name="recursive" id="recursive">
                                         <label for="recursive">{__("Also search in child forums")}</label>
                                     </div>
                                 </div>

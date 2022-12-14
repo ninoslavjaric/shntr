@@ -28,22 +28,22 @@
                             <td>
                                 {if $row['node_type'] == "user"}
                                     <a target="_blank" href="{$system['system_url']}/{$row['node']['user_name']}">
-                                        <img class="tbl-image" src="{$row['node']['user_picture']}">
+                                        <img  loading="lazy" class="tbl-image" src="{$row['node']['user_picture']}">
                                         {if $system['show_usernames_enabled']}{$row['node']['user_name']}{else}{$row['node']['user_firstname']} {$row['node']['user_lastname']}{/if}
                                     </a>
                                 {elseif $row['node_type'] == "page"}
                                     <a target="_blank" href="{$system['system_url']}/pages/{$row['node']['page_name']}">
-                                        <img class="tbl-image" src="{$row['node']['page_picture']}">
+                                        <img  loading="lazy" class="tbl-image" src="{$row['node']['page_picture']}">
                                         {$row['node']['page_title']}
                                     </a>
                                 {elseif $row['node_type'] == "group"}
                                     <a target="_blank" href="{$system['system_url']}/groups/{$row['node']['group_name']}">
-                                        <img class="tbl-image" src="{$row['node']['group_picture']}">
+                                        <img  loading="lazy" class="tbl-image" src="{$row['node']['group_picture']}">
                                         {$row['node']['group_title']}
                                     </a>
                                 {elseif $row['node_type'] == "event"}
                                     <a target="_blank" href="{$system['system_url']}/events/{$row['node_id']}">
-                                        <img class="tbl-image" src="{$row['node']['event_picture']}">
+                                        <img  loading="lazy" class="tbl-image" src="{$row['node']['event_picture']}">
                                         {$row['node']['event_title']}
                                     </a>
                                 {elseif $row['node_type'] == "post"}
@@ -69,7 +69,7 @@
                             </td>
                             <td>
                                 <a target="_blank" href="{$system['system_url']}/{$row['user_name']}">
-                                    <img class="tbl-image" src="{$row['user_picture']}">
+                                    <img  loading="lazy" class="tbl-image" src="{$row['user_picture']}">
                                     {if $system['show_usernames_enabled']}{$row['user_name']}{else}{$row['user_firstname']} {$row['user_lastname']}{/if}
                                 </a>
                             </td>

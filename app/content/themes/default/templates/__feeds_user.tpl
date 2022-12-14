@@ -3,7 +3,7 @@
         <div class="ui-box">
             <div class="img">
                 <a href="{$system['system_url']}/{$_user['user_name']}">
-                    <img alt="" src="{$_user['user_picture']}" />
+                    <img  loading="lazy" alt="" src="{$_user['user_picture']}" />
                 </a>
             </div>
             <div class="mt10">
@@ -124,7 +124,7 @@
 
         <div class="data-container {if $_small}small{/if}">
             <a class="data-avatar" href="{$system['system_url']}/{$_user['user_name']}{if $_search}?ref=qs{/if}">
-                <img src="{$_user['user_picture']}" alt="">
+                <img  loading="lazy" src="{$_user['user_picture']}" alt="">
                 {if $_reaction}
                     <div class="data-reaction">
                         <div class="inline-emoji no_animation">

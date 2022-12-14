@@ -254,7 +254,7 @@
                                 <!-- article cover -->
                                 {if $article['article']['cover']}
                                     <div class="mb20">
-                                        <img class="img-fluid" src="{$article['article']['parsed_cover']}">
+                                        <img  loading="lazy" class="img-fluid" src="{$article['article']['parsed_cover']}">
                                     </div>
                                 {/if}
                                 <!-- article cover -->

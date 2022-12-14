@@ -67,7 +67,7 @@
                                     <td>{$row['post_id']}</td>
                                     <td>
                                         <a target="_blank" href="{$system['system_url']}/pages/{$row['page_name']}">
-                                            <img class="tbl-image" src="{$row['page_picture']}">
+                                            <img  loading="lazy" class="tbl-image" src="{$row['page_picture']}">
                                             {$row['page_title']}
                                         </a>
                                     </td>
@@ -99,7 +99,7 @@
             </div>
 
             {$pager}
-            
+
         </div>
 
     {elseif $sub_view == "categories"}
@@ -247,6 +247,6 @@
                 <button type="submit" class="btn btn-primary">{__("Save Changes")}</button>
             </div>
         </form>
-        
+
     {/if}
 </div>

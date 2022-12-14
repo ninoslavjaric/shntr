@@ -2,7 +2,7 @@
     <div class="{if $_iteration == 1}col-sm-12 col-md-8 col-lg-6{else}col-sm-6 col-md-4 col-lg-3{/if}">
         <a href="{$system['system_url']}/news/{$article['post_id']}/{$article['article']['title_url']}" class="blog-container {if $_iteration == 1}primary{/if}">
             <div class="blog-image">
-                <img src="{$article['article']['parsed_cover']}">
+                <img  loading="lazy" src="{$article['article']['parsed_cover']}">
             </div>
             <div class="blog-content">
                 <h3>{$article['article']['title']}</h3>

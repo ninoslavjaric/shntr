@@ -3,7 +3,7 @@
 
 <!-- page header -->
 <div class="page-header">
-    <img class="floating-img d-none d-md-block" src="{$system['system_url']}/content/themes/{$system['theme']}/images/headers/undraw_product_teardown_elol.svg">
+    <img  loading="lazy" class="floating-img d-none d-md-block" src="{$system['system_url']}/content/themes/{$system['theme']}/images/headers/undraw_product_teardown_elol.svg">
     <div class="circle-2"></div>
     <div class="circle-3"></div>
     <div class="inner">
@@ -53,7 +53,7 @@
                         <!-- profile-avatar -->
                         <div class="position-relative" style="height: 170px;">
                             <div class="profile-avatar-wrapper static">
-                                <img src="{$user->_data['user_picture']}" alt="">
+                                <img  loading="lazy" src="{$user->_data['user_picture']}" alt="">
 
                                 <!-- buttons -->
                                 <div class="profile-avatar-change">

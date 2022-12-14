@@ -3,7 +3,7 @@
 
 <!-- page header -->
 <div class="page-header">
-    <img class="floating-img d-none d-md-block" src="{$system['system_url']}/content/themes/{$system['theme']}/images/headers/undraw_wallet_aym5.svg">
+    <img  loading="lazy" class="floating-img d-none d-md-block" src="{$system['system_url']}/content/themes/{$system['theme']}/images/headers/undraw_wallet_aym5.svg">
     <div class="circle-2"></div>
     <div class="circle-3"></div>
     <div class="inner">
@@ -174,7 +174,7 @@
                                                             {/if}
                                                             {if $transaction['node_type'] == "user"}
                                                                 <a  target="_blank" href="{$system['system_url']}/{$transaction['user_name']}">
-                                                                    <img class="tbl-image" src="{$transaction['user_picture']}" style="float: none;">
+                                                                    <img  loading="lazy" class="tbl-image" src="{$transaction['user_picture']}" style="float: none;">
                                                                     {if $system['show_usernames_enabled']}
                                                                         {$transaction['user_name']}
                                                                     {else}

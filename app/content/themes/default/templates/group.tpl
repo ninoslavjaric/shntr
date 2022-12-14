@@ -19,11 +19,11 @@
                 <div class="profile-cover-wrapper">
                     {if $group['group_cover_id']}
                         <!-- full-cover -->
-                        <img class="js_position-cover-full x-hidden" src="{$group['group_cover_full']}">
+                        <img  loading="lazy" class="js_position-cover-full x-hidden" src="{$group['group_cover_full']}">
                         <!-- full-cover -->
 
                         <!-- cropped-cover -->
-                        <img class="js_position-cover-cropped js_lightbox" data-init-position="{$group['group_cover_position']}" data-id="{$group['group_cover_id']}" data-image="{$group['group_cover_full']}" data-context="album" src="{$group['group_cover']}" alt="{$group['group_title']}">
+                        <img  loading="lazy" class="js_position-cover-cropped js_lightbox" data-init-position="{$group['group_cover_position']}" data-id="{$group['group_cover_id']}" data-image="{$group['group_cover_full']}" data-context="album" src="{$group['group_cover']}" alt="{$group['group_title']}">
                         <!-- cropped-cover -->
                     {/if}
 
@@ -64,7 +64,7 @@
 
                 <!-- profile-avatar -->
                 <div class="profile-avatar-wrapper">
-                    <img {if $group['group_picture_id']} class="js_lightbox" data-id="{$group['group_picture_id']}" data-context="album" data-image="{$group['group_picture_full']}" {elseif !$group['group_picture_default']} class="js_lightbox-nodata" data-image="{$group['group_picture']}" {/if}  src="{$group['group_picture']}" alt="{$group['group_title']}">
+                    <img  loading="lazy" {if $group['group_picture_id']} class="js_lightbox" data-id="{$group['group_picture_id']}" data-context="album" data-image="{$group['group_picture_full']}" {elseif !$group['group_picture_default']} class="js_lightbox-nodata" data-image="{$group['group_picture']}" {/if}  src="{$group['group_picture']}" alt="{$group['group_title']}">
 
                     {if $group['i_admin']}
                         <!-- buttons -->

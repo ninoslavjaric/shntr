@@ -34,7 +34,7 @@
                         {foreach $rows as $row}
                             <tr>
                                 <td>{$row['sticker_id']}</td>
-                                <td><img class="img-thumbnail table-img-thumbnail" src="{$system['system_uploads']}/{$row['image']}"></td>
+                                <td><img  loading="lazy" class="img-thumbnail table-img-thumbnail" src="{$system['system_uploads']}/{$row['image']}"></td>
                                 <td>
                                     <a data-toggle="tooltip" data-placement="top" title='{__("Edit")}' href="{$system['system_url']}/{$control_panel['url']}/stickers/edit/{$row['sticker_id']}" class="btn btn-sm btn-icon btn-rounded btn-primary">
                                         <i class="fa fa-pencil-alt"></i>

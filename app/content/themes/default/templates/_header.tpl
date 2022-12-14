@@ -66,9 +66,9 @@
                     <!-- logo -->
                     <a href="{$system['system_url']}" class="logo {if !$user->_logged_in && $system['newsfeed_public']}with-menu-icon{/if}">
                         {if $system['system_logo']}
-                            <img class="img-fluid" src="{$system['system_uploads']}/{$system['system_logo']}" alt="{$system['system_title']}" title="{$system['system_title']}">
+                            <img  loading="lazy" class="img-fluid" src="{$system['system_uploads']}/{$system['system_logo']}" alt="{$system['system_title']}" title="{$system['system_title']}">
                         {else}
-                            <img src="/content/themes/default/images/shntr-logo-login.svg" alt="{$system['system_title']}" class="img-fluid" title="{$system['system_title']}">
+                            <img  loading="lazy" src="/content/themes/default/images/shntr-logo-login.svg" alt="{$system['system_title']}" class="img-fluid" title="{$system['system_title']}">
                         {/if}
                     </a>
                     <!-- logo -->
@@ -79,9 +79,9 @@
             <!-- logo -->
             <a href="{$system['system_url']}" class="unaligned-logo {if !$user->_logged_in && $system['newsfeed_public']}with-menu-icon{/if}">
                 {if $system['system_logo']}
-                    <img class="img-fluid" src="{$system['system_uploads']}/{$system['system_logo']}" alt="{$system['system_title']}" title="{$system['system_title']}">
+                    <img  loading="lazy" class="img-fluid" src="{$system['system_uploads']}/{$system['system_logo']}" alt="{$system['system_title']}" title="{$system['system_title']}">
                 {else}
-                    {* <img src="/content/themes/default/images/shntr-logo-login.svg" alt="{$system['system_title']}" class="img-fluid" title="{$system['system_title']}"> *}
+                    {* <img  loading="lazy" src="/content/themes/default/images/shntr-logo-login.svg" alt="{$system['system_title']}" class="img-fluid" title="{$system['system_title']}"> *}
                     {include file='__svg_icons.tpl' alt="{$system['system_title']}" title="{$system['system_title']}" icon="short-logo"}
                 {/if}
             </a>
@@ -105,9 +105,9 @@
                                 <!-- logo -->
                                 <a href="{$system['system_url']}" class="logo {if !$user->_logged_in && $system['newsfeed_public']}with-menu-icon{/if}">
                                     {if $system['system_logo']}
-                                        <img class="img-fluid" src="{$system['system_uploads']}/{$system['system_logo']}" alt="{$system['system_title']}" title="{$system['system_title']}">
+                                        <img  loading="lazy" class="img-fluid" src="{$system['system_uploads']}/{$system['system_logo']}" alt="{$system['system_title']}" title="{$system['system_title']}">
                                     {else}
-                                        {* <img src="/content/themes/default/images/shntr-logo-login.svg" alt="{$system['system_title']}" class="img-fluid" title="{$system['system_title']}"> *}
+                                        {* <img  loading="lazy" src="/content/themes/default/images/shntr-logo-login.svg" alt="{$system['system_title']}" class="img-fluid" title="{$system['system_title']}"> *}
                                         {include file='__svg_icons.tpl' alt="{$system['system_title']}" title="{$system['system_title']}" icon="short-logo"}
                                     {/if}
                                 </a>
@@ -230,7 +230,7 @@
                                                 <!-- user-menu -->
                                                 <li class="dropdown">
                                                     <a href="#" class="dropdown-toggle user-menu" data-toggle="dropdown" data-display="static">
-                                                        <img src="{$user->_data['user_picture']}">
+                                                        <img  loading="lazy" src="{$user->_data['user_picture']}">
                                                     </a>
                                                     <div class="dropdown-menu dropdown-menu-right">
                                                         {if $system['packages_enabled'] && !$user->_data['user_subscribed']}

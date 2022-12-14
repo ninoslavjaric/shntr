@@ -3,7 +3,7 @@
         <div class="ui-box">
             <div class="img">
                 <a href="{$system['system_url']}/pages/{$_page['page_name']}{if $_search}?ref=qs{/if}">
-                    <img alt="{$_page['page_title']}" src="{$_page['page_picture']}" />
+                    <img  loading="lazy" alt="{$_page['page_title']}" src="{$_page['page_picture']}" />
                 </a>
             </div>
             <div class="mt10">
@@ -32,7 +32,7 @@
     <li class="feeds-item">
         <div class="data-container {if $_small}small{/if}">
             <a class="data-avatar" href="{$system['system_url']}/pages/{$_page['page_name']}{if $_search}?ref=qs{/if}">
-                <img src="{$_page['page_picture']}" alt="{$_page['page_title']}">
+                <img  loading="lazy" src="{$_page['page_picture']}" alt="{$_page['page_title']}">
             </a>
             <div class="data-content">
                 <div class="float-right">

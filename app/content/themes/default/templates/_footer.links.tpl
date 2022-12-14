@@ -5,14 +5,14 @@
 			<span class="mr10">&copy; {'Y'|date} {$system['system_title']}</span>
 			<!-- language -->
 			<a href="#" class="language-dropdown" data-toggle="dropdown">
-                <img width="16" height="16" class="mr10" src="{$system['language']['flag']}">
+                <img  loading="lazy" width="16" height="16" class="mr10" src="{$system['language']['flag']}">
                 <span>{$system['language']['title']}</span>
             </a>
             <div class="dropdown-menu">
 				<div class="js_scroller">
 					{foreach $system['languages'] as $language}
 						<a class="dropdown-item" href="?lang={$language['code']}">
-							<img width="16" height="16" class="mr10" src="{$language['flag']}">{$language['title']}
+							<img  loading="lazy" width="16" height="16" class="mr10" src="{$language['flag']}">{$language['title']}
 						</a>
 					{/foreach}
 				</div>

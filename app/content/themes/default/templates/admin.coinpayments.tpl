@@ -45,7 +45,7 @@
                             <td>{$transaction['transaction_txn_id']}</td>
                             <td>
                                 <a target="_blank" href="{$system['system_url']}/{$transaction['user_name']}">
-                                    <img class="tbl-image" src="{$transaction['user_picture']}">
+                                    <img  loading="lazy" class="tbl-image" src="{$transaction['user_picture']}">
                                     <br>
                                     <span class="badge badge-pill badge-lg badge-light">
                                         {if $system['show_usernames_enabled']}{$transaction['user_name']}{else}{$transaction['user_firstname']} {$transaction['user_lastname']}{/if}

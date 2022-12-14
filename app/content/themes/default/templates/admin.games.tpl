@@ -36,7 +36,7 @@
                                 <td>{$row['game_id']}</td>
                                 <td>
                                     <a target="_blank" href="{$system['system_url']}/games/{$row['game_id']}/{$row['title_url']}">
-                                        <img class="tbl-image" src="{$row['thumbnail']}">
+                                        <img  loading="lazy" class="tbl-image" src="{$row['thumbnail']}">
                                         {$row['title']}
                                     </a>
                                 </td>
@@ -123,7 +123,7 @@
                         {/if}
                     </div>
                 </div>
-                
+
                 <!-- success -->
                 <div class="alert alert-success mb0 x-hidden"></div>
                 <!-- success -->
@@ -190,7 +190,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- success -->
                 <div class="alert alert-success mb0 x-hidden"></div>
                 <!-- success -->
@@ -203,6 +203,6 @@
                 <button type="submit" class="btn btn-primary">{__("Save Changes")}</button>
             </div>
         </form>
-        
+
     {/if}
 </div>

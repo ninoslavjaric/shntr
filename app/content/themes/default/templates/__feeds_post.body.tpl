@@ -193,7 +193,7 @@
                         <!-- Disable Comments -->
                     {else}
                         {if $_post['user_type'] == "user" && !$_post['is_anonymous']}
-                            <div 
+                            <div
                                 class="dropdown-item pointer js_hide-author"
                                 data-author-id="{$_post['user_id']}"
 
@@ -525,7 +525,7 @@
                 {if $system['smart_yt_player']}
                     {$_post['media']['vidoe_id'] = get_youtube_id($_post['media']['source_html'])}
                     <div class="youtube-player js_youtube-player" data-id="{$_post['media']['vidoe_id']}">
-                        <img src="https://i.ytimg.com/vi/{$_post['media']['vidoe_id']}/hqdefault.jpg">
+                        <img  loading="lazy" src="https://i.ytimg.com/vi/{$_post['media']['vidoe_id']}/hqdefault.jpg">
                         <div class="play"></div>
                     </div>
                 {else}
@@ -559,7 +559,7 @@
         </div>
     {else}
         <div class="youtube-player with-live js_lightbox-live">
-            <img src="{$system['system_uploads']}/{$_post['live']['video_thumbnail']}">
+            <img  loading="lazy" src="{$system['system_uploads']}/{$_post['live']['video_thumbnail']}">
             <div class="play"></div>
         </div>
     {/if}
@@ -570,7 +570,7 @@
             {if $_post['photos_num'] == 1}
                 <div class="pg_1x {if $_post['photos'][0]['blur']}x-blured{/if}">
                     <a href="{$system['system_url']}/photos/{$_post['photos'][0]['photo_id']}" class="js_lightbox" data-id="{$_post['photos'][0]['photo_id']}" data-image="{$system['system_uploads']}/{$_post['photos'][0]['source']}" data-context="{if $_post['post_type'] == 'product'}post{else}album{/if}">
-                        <img src="{$system['system_uploads']}/{$_post['photos'][0]['source']}">
+                        <img  loading="lazy" src="{$system['system_uploads']}/{$_post['photos'][0]['source']}">
                     </a>
                 </div>
             {elseif $_post['photos_num'] == 2}
@@ -624,7 +624,7 @@
 
 {elseif $_post['post_type'] == "map"}
     <div class="post-map">
-        <img src="https://maps.googleapis.com/maps/api/staticmap?center={$_post['location']}&amp;zoom=20&amp;size=600x250&amp;maptype=roadmap&amp;markers=color:red%7C{$_post['location']}&amp;key={$system['geolocation_key']}" width="100%">
+        <img  loading="lazy" src="https://maps.googleapis.com/maps/api/staticmap?center={$_post['location']}&amp;zoom=20&amp;size=600x250&amp;maptype=roadmap&amp;markers=color:red%7C{$_post['location']}&amp;key={$system['geolocation_key']}" width="100%">
     </div>
 
 {elseif $_post['post_type'] == "article" && $_post['article']}

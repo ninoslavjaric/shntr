@@ -3,7 +3,7 @@
 
 <!-- page header -->
 <div class="page-header">
-    <img class="floating-img d-none d-md-block" src="{$system['system_url']}/content/themes/{$system['theme']}/images/headers/undraw_growth_analytics_8btt.svg">
+    <img  loading="lazy" class="floating-img d-none d-md-block" src="{$system['system_url']}/content/themes/{$system['theme']}/images/headers/undraw_growth_analytics_8btt.svg">
     <div class="circle-2"></div>
     <div class="circle-3"></div>
     <div class="inner">
@@ -43,7 +43,7 @@
             <!-- adblock-warning-message -->
 
             {if $view == ""}
-                
+
                 <!-- ads campaigns -->
                 <div class="card mt20">
                     <div class="card-header with-icon">

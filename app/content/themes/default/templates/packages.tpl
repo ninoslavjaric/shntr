@@ -6,7 +6,7 @@
 
     <!-- page header -->
     <div class="page-header">
-        <img class="floating-img d-none d-md-block" src="{$system['system_url']}/content/themes/{$system['theme']}/images/headers/undraw_upgrade_06a0.svg">
+        <img  loading="lazy" class="floating-img d-none d-md-block" src="{$system['system_url']}/content/themes/{$system['theme']}/images/headers/undraw_upgrade_06a0.svg">
         <div class="circle-2"></div>
         <div class="circle-3"></div>
         <div class="inner">
@@ -37,7 +37,7 @@
                                     <div class="card card-pricing shadow-sm">
                                         <div class="card-header bg-transparent">
                                             <h3>{__($package['name'])}</h3>
-                                            <img src="{$package['icon']}" style="max-width: 48px;">
+                                            <img  loading="lazy" src="{$package['icon']}" style="max-width: 48px;">
                                         </div>
                                         <div class="card-body text-center">
                                             <h2 class="price" style="color: {$package['color']}">
@@ -51,7 +51,7 @@
                                                 {if $package['period'] == "life"}
                                                     {__("Life Time")}
                                                 {else}
-                                                    {__("for")} 
+                                                    {__("for")}
                                                     {if $package['period_num'] != '1'}{$package['period_num']}{/if} {__($package['period']|ucfirst)}
                                                 {/if}
                                             </div>
@@ -112,7 +112,7 @@
                                 <!-- /package -->
                             {/foreach}
                         </div>
-                    </div>            
+                    </div>
                 </div>
             </div>
             <!-- content panel -->
@@ -136,7 +136,7 @@
             <!-- content panel -->
             <div class="col-12 offcanvas-mainbar">
                 <div class="card text-center">
-                    <div class="card-body"> 
+                    <div class="card-body">
                         <div class="mb20">
                             {include file='__svg_icons.tpl' icon="education" width="140px" height="140px"}
                         </div>
@@ -147,7 +147,7 @@
                 </div>
             </div>
             <!-- content panel -->
-            
+
         </div>
     </div>
     <!-- page content -->
