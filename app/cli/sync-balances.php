@@ -10,7 +10,7 @@ if (php_sapi_name() != 'cli') {
     redirect('/');
     exit(1);
 }
-$userQuery = $db->query('select user_id from users') or exit(1);
+$userQuery = $db->query('select user_id, user_name, user_relysia_paymail from users') or exit(1);
 [, $host] = $argv;
 
 if (!$host) {
@@ -39,7 +39,7 @@ try {
 }
 echo '--------------------------------------------------' . PHP_EOL;
 
-while ([$userId] = $userQuery->fetch_row()) {
+while ([$userId, $userName, $userRelysiaPaymail] = $userQuery->fetch_row()) {
     echo '--------------------------------------------------' . PHP_EOL;
     try {
 //        $result = shntrToken::syncTransactions($userId);
@@ -49,6 +49,12 @@ while ([$userId] = $userQuery->fetch_row()) {
 //            $result['callback']();
 //            echo "Calledback for {$userId}\n";
 //        }
+
+        if (empty($userRelysiaPaymail)) {
+            $user->register_to_relysia($userName, $userId);
+            echo "User registered with Relysia {$userId}" . PHP_EOL;
+        }
+
 
 //        $result = shntrToken::getRelysiaBalance($userId, true);
         $result = shntrToken::getRelysiaApiBalance($userId);
