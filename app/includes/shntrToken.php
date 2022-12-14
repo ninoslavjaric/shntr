@@ -69,7 +69,7 @@ class shntrToken
 
         if ($response['statusCode'] === 400 && $response['data']['msg'] === 'EMAIL_EXISTS') {
             error_log('Signup fail, email on relysia taken: ' . json_encode($response));
-            return $response['data']['msg'];
+            return false;
         }
 
         if (($response['statusCode'] ?? null) !== 200 || !isset($response['data']['token'])) {
@@ -87,6 +87,10 @@ class shntrToken
                 "serviceID: 9ab1b69e-92ae-4612-9a4f-c5a102a6c068",
             ]
         );
+
+        if (($response['statusCode'] ?? null) !== 200 || ($response['data']['status'] ?? null) !== 'success') {
+            error_log('Signup fail: ' . json_encode($response));
+        }
 
         return self::encrypt($password);
     }
