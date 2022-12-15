@@ -129,7 +129,13 @@
                                         {/if}
                                     </div>
                                     {if $post['photos_num'] > 0}
-                                        <img  loading="lazy" src="{$system['system_uploads']}/{$post['photos'][0]['source']}">
+                                        <img  loading="lazy" src="{$system['system_uploads']}/{$post['photos'][0]['source']}"
+                                              srcset="
+                                                {$system['cf']}768,format={$system['cf_format']}/{$system['system_uploads']}/{$post['photos'][0]['source']} 768w,
+                                                {$system['cf']}992,format={$system['cf_format']}/{$system['system_uploads']}/{$post['photos'][0]['source']} 992w,
+                                                {$system['cf']}1200,format={$system['cf_format']}/{$system['system_uploads']}/{$post['photos'][0]['source']} 1200w"
+                                              sizes="(max-width: 768px) 768px, (max-width: 992px) 992px"
+                                        >
                                     {else}
                                         <img  loading="lazy" src="{$system['system_url']}/content/themes/{$system['theme']}/images/blank_product.jpg">
                                     {/if}
@@ -248,7 +254,13 @@
                                         {/if}
                                     </div>
                                     {if $post['photos_num'] > 0}
-                                        <img  loading="lazy" src="{$system['system_uploads']}/{$post['photos'][0]['source']}">
+                                        <img  loading="lazy" src="{$system['system_uploads']}/{$post['photos'][0]['source']}"
+                                              srcset="
+                                                {$system['cf']}768,format={$system['cf_format']}/{$system['system_uploads']}/{$post['photos'][0]['source']} 768w,
+                                                {$system['cf']}992,format={$system['cf_format']}/{$system['system_uploads']}/{$post['photos'][0]['source']} 992w,
+                                                {$system['cf']}1200,format={$system['cf_format']}/{$system['system_uploads']}/{$post['photos'][0]['source']} 1200w"
+                                              sizes="(max-width: 768px) 768px, (max-width: 992px) 992px"
+                                        >
                                     {else}
                                         <img  loading="lazy" src="{$system['system_url']}/content/themes/{$system['theme']}/images/blank_product.jpg">
                                     {/if}
