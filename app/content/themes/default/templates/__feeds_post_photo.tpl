@@ -69,7 +69,13 @@
             <div class="pg_wrapper">
                 <div class="pg_1x {if $photo['blur']}x-blured{/if}">
                     <a href="{$system['system_url']}/photos/{$photo['photo_id']}" class="js_lightbox" data-id="{$photo['photo_id']}" data-image="{$system['system_uploads']}/{$photo['source']}" data-context="{if $photo['is_single']}album{else}post{/if}">
-                        <img  loading="lazy" src="{$system['system_uploads']}/{$photo['source']}">
+                        <img  loading="lazy" src="{$system['system_uploads']}/{$photo['source']}"
+                              srcset="
+                                                {$system['cf']}768,format={$system['cf_format']}/{$system['system_uploads']}/{$photo['source']} 768w,
+                                                {$system['cf']}992,format={$system['cf_format']}/{$system['system_uploads']}/{$photo['source']} 992w,
+                                                {$system['cf']}1200,format={$system['cf_format']}/{$system['system_uploads']}/{$photo['source']} 1200w"
+                              sizes="(max-width: 768px) 768px, (max-width: 992px) 992px"
+                        >
                     </a>
                 </div>
             </div>

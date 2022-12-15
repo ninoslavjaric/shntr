@@ -570,7 +570,13 @@
             {if $_post['photos_num'] == 1}
                 <div class="pg_1x {if $_post['photos'][0]['blur']}x-blured{/if}">
                     <a href="{$system['system_url']}/photos/{$_post['photos'][0]['photo_id']}" class="js_lightbox" data-id="{$_post['photos'][0]['photo_id']}" data-image="{$system['system_uploads']}/{$_post['photos'][0]['source']}" data-context="{if $_post['post_type'] == 'product'}post{else}album{/if}">
-                        <img  loading="lazy" src="{$system['system_uploads']}/{$_post['photos'][0]['source']}">
+                        <img  loading="lazy" src="{$system['system_uploads']}/{$post['photos'][0]['source']}"
+                              srcset="
+                                                {$system['cf']}768,format={$system['cf_format']}/{$system['system_uploads']}/{$post['photos'][0]['source']} 768w,
+                                                {$system['cf']}992,format={$system['cf_format']}/{$system['system_uploads']}/{$post['photos'][0]['source']} 992w,
+                                                {$system['cf']}1200,format={$system['cf_format']}/{$system['system_uploads']}/{$post['photos'][0]['source']} 1200w"
+                              sizes="(max-width: 768px) 768px, (max-width: 992px) 992px"
+                        >
                     </a>
                 </div>
             {elseif $_post['photos_num'] == 2}
