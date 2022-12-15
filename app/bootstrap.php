@@ -138,6 +138,9 @@ if ($system['uploads_cdn_url']) {
     }
 }
 
+$system['cf'] = 'https://file.shntr.com/cdn-cgi/image/width=';
+$system['cf_format'] = 'webp';
+
 /* set agora uploads */
 if ($system['live_enabled'] && $system['save_live_enabled']) {
     $system['system_agora_uploads'] = "https://s3." . $system['agora_s3_region'] . ".amazonaws.com/" . $system['agora_s3_bucket'];
