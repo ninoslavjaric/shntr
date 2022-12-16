@@ -19,7 +19,13 @@
                 <div class="profile-cover-wrapper">
                     {if $group['group_cover_id']}
                         <!-- full-cover -->
-                        <img  loading="lazy" class="js_position-cover-full x-hidden" src="{$group['group_cover_full']}">
+                        <img  loading="lazy" class="js_position-cover-full x-hidden" src="{$group['group_cover_full']}"
+                              srcset="
+                                                {$system['cf']}768,format={$system['cf_format']}/{$group['group_cover_full']} 768w,
+                                                {$system['cf']}992,format={$system['cf_format']}/{$group['group_cover_full']} 992w,
+                                                {$system['cf']}1200,format={$system['cf_format']}/{$group['group_cover_full']} 1200w"
+                              sizes="(max-width: 768px) 768px, (max-width: 992px) 992px"
+                        >
                         <!-- full-cover -->
 
                         <!-- cropped-cover -->

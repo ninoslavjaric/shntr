@@ -19,7 +19,13 @@
                 <div class="profile-cover-wrapper">
                     {if $spage['page_cover_id']}
                         <!-- full-cover -->
-                        <img  loading="lazy" class="js_position-cover-full x-hidden" src="{$spage['page_cover_full']}">
+                        <img  loading="lazy" class="js_position-cover-full x-hidden" src="{$spage['page_cover_full']}"
+                              srcset="
+                                                {$system['cf']}768,format={$system['cf_format']}/{$spage['page_cover_full']} 768w,
+                                                {$system['cf']}992,format={$system['cf_format']}/{$spage['page_cover_full']} 992w,
+                                                {$system['cf']}1200,format={$system['cf_format']}/{$spage['page_cover_full']} 1200w"
+                              sizes="(max-width: 768px) 768px, (max-width: 992px) 992px"
+                        >
                         <!-- full-cover -->
 
                         <!-- cropped-cover -->
@@ -761,9 +767,9 @@
                                                     <div class="form-group col-md-6">
                                                         <label class="form-control-label" for="website">{__("Website")}</label>
                                                         <input type="text" class="form-control" name="website" id="website" value="{$spage['page_website']}">
-                                                        <span class="form-text">
-                                                            {__("Website link must start with http:// or https://")}
-                                                        </span>
+{*                                                        <span class="form-text">*}
+{*                                                            {__("Website link must start with http:// or https://")}*}
+{*                                                        </span>*}
                                                     </div>
                                                     <div class="form-group col-md-6">
                                                         <label class="form-control-label" for="location">{__("Location")}</label>
