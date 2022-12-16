@@ -29,7 +29,13 @@
                         <!-- full-cover -->
 
                         <!-- cropped-cover -->
-                        <img  loading="lazy" class="js_position-cover-cropped {if $user->_logged_in && $profile['user_cover_lightbox']}js_lightbox{/if}" data-init-position="{$profile['user_cover_position']}" data-id="{$profile['user_cover_id']}" data-image="{$profile['user_cover_full']}" data-context="album" src="{$profile['user_cover']}" alt="{$profile['name']}">
+                        <img  loading="lazy" class="js_position-cover-cropped {if $user->_logged_in && $profile['user_cover_lightbox']}js_lightbox{/if}" data-init-position="{$profile['user_cover_position']}" data-id="{$profile['user_cover_id']}" data-image="{$profile['user_cover_full']}" data-context="album" src="{$profile['user_cover']}" alt="{$profile['name']}"
+                              srcset="
+                                                {$system['cf']}768,format={$system['cf_format']}/{$profile['user_cover']} 768w,
+                                                {$system['cf']}992,format={$system['cf_format']}/{$profile['user_cover']} 992w,
+                                                {$system['cf']}1200,format={$system['cf_format']}/{$profile['user_cover']} 1200w"
+                              sizes="(max-width: 768px) 768px, (max-width: 992px) 992px"
+                    >
                         <!-- cropped-cover -->
                     {/if}
 

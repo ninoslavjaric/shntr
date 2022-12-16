@@ -29,7 +29,13 @@
                         <!-- full-cover -->
 
                         <!-- cropped-cover -->
-                        <img  loading="lazy" class="js_position-cover-cropped js_lightbox" data-init-position="{$spage['page_cover_position']}" data-id="{$spage['page_cover_id']}" data-image="{$spage['page_cover_full']}" data-context="album" src="{$spage['page_cover']}" alt="{$spage['page_title']}">
+                        <img  loading="lazy" class="js_position-cover-cropped js_lightbox" data-init-position="{$spage['page_cover_position']}" data-id="{$spage['page_cover_id']}" data-image="{$spage['page_cover_full']}" data-context="album" src="{$spage['page_cover']}" alt="{$spage['page_title']}"
+                              srcset="
+                                                {$system['cf']}768,format={$system['cf_format']}/{$spage['page_cover']} 768w,
+                                                {$system['cf']}992,format={$system['cf_format']}/{$spage['page_cover']} 992w,
+                                                {$system['cf']}1200,format={$system['cf_format']}/{$spage['page_cover']} 1200w"
+                              sizes="(max-width: 768px) 768px, (max-width: 992px) 992px"
+                    >
                         <!-- cropped-cover -->
                     {/if}
 
