@@ -147,6 +147,7 @@ function resetPaywall() {
     $('[data-paywall-id]').each(function() {
         $(this).removeData('paywallId');
         $(this).removeAttr('data-paywall-id');
+        $(this).find('textarea').removeAttr('readonly');
         localStorage.removeItem('paywallId');
     });
 }
@@ -157,7 +158,10 @@ function initialize() {
     // ensure paywall restriction clicks
     $('[data-paywalled]').on('click', function(e) {
         if (!$(this).data('paywallId')) {
+            $(this).closest('.post').find('textarea').attr('readonly','readonly');
             handlePaywallRestrictions(e, $(this));
+        }else {
+            $(this).closest('.post').find('textarea').removeAttr('readonly');
         }
     });
 
