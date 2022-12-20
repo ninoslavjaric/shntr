@@ -156,9 +156,11 @@ function resetPaywall() {
 function initialize() {
 
     // ensure paywall restriction clicks
-    $('[data-paywalled]').on('click', function(e) {
+    $('[data-paywalled]').on('click keypress', function(e) {
         if (!$(this).data('paywallId')) {
-            $(this).closest('.post').find('textarea').attr('readonly','readonly');
+            if (e.which === 13 || e.type === 'click') {
+                $(this).closest('.post').find('textarea').attr('readonly', 'readonly');
+            }
             handlePaywallRestrictions(e, $(this));
         }else {
             $(this).closest('.post').find('textarea').removeAttr('readonly');
