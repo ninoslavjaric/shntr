@@ -1453,24 +1453,33 @@ $(function () {
         post.find('.post-replace').show();
     });
     $('body').on('click', '.js_buy-product', function(e) {
+        e.preventDefault();
         var _this = $(this);
         button_status(_this, "loading");
         var post = _this.parents('.post');
         var id = post.data('id');
-        $.post(api['posts/edit'], { 'handle': 'buy-product', 'id': id }, function (response) {
-            /* button reset */
-            button_status(_this, "reset");
-            /* check if there is a callback */
-            if (response.callback) {
-                eval(response.callback);
-            } else {
-                post.find('.post-edit').remove();
-                post.find('.post-replace').replaceWith(response.post).show();
-            }
-        }, 'json')
-          .fail(function (error) {
-              blueModal({ id: '#modal-message', title: __['Error'], message: __['There is something that went wrong!'] });
-          });
+        var price = post.data('price');
+
+        confirm(__['Costs for buying the product'], __['By paying _AMOUNT_ token(s), you will buy the product.'].replace('_AMOUNT_', price), function () {
+            $.post(api['posts/edit'], {'handle': 'buy-product', 'id': id}, function (response) {
+                /* button reset */
+                button_status(_this, "reset");
+                /* check if there is a callback */
+                if (response.callback) {
+                    eval(response.callback);
+                } else {
+                    post.find('.post-edit').remove();
+                    post.find('.post-replace').replaceWith(response.post).show();
+                }
+            }, 'json')
+                .fail(function (error) {
+                    blueModal({
+                        id: '#modal-message',
+                        title: __['Error'],
+                        message: __['There is something that went wrong!']
+                    });
+                });
+        });
     });
     $('body').on('click', '.js_sell-token', function(e) {
         var _this = $(this);

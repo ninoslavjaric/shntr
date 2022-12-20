@@ -7,6 +7,10 @@
             "
             data-id="{$post['post_id']}"
 
+            {if $post['product']['price']}
+                data-price="{$post['product']['price']}"
+            {/if}
+
             {if $post['paywalled']}
                 data-paywalled="{$post['paywalled']['paywall_price']}"
                 data-paywall-author-name="{$post['paywalled']['paywall_author_name']}"

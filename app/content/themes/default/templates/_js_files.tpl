@@ -157,6 +157,8 @@
     __['Are you sure you want to report this?'] = "{__('Are you sure you want to report this?')}";
     __['Are you sure you want to paywall this user?'] = "{__('Are you sure you want to paywall this user?')}";
     __['Are you sure you want to block this user?'] = "{__('Are you sure you want to block this user?')}";
+    __['Costs for buying the product'] = "{__('Costs for buying the product')}";
+    __['By paying _AMOUNT_ token(s), you will buy the product.'] = "{__('By paying _AMOUNT_ token(s), you will buy the product.')}";
     __['Are you sure you want to unblock this user?'] = "{__('Are you sure you want to unblock this user?')}";
     __['Are you sure you want to delete your account?'] = "{__('Are you sure you want to delete your account?')}";
     __['Are you sure you want to verify this request?'] = "{__('Are you sure you want to verify this request?')}";
