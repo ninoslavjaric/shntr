@@ -640,13 +640,60 @@ class shntrToken
     )
     {
         global $db;
-        $columns = array_slice(
-            ['amount', 'sender_id', 'recipient_id', 'basis_name', 'basis_entity_id', 'note', 'sender_msg', 'recipient_relysia_paymail'], 0, func_num_args()
+
+        $time_start = microtime(true);
+        $response = shntrToken::sendTransactionRelysia(
+            $amount,
+            $recipientRelysiaPaymail,
+            $senderId
         );
 
-        $db->query(self::transformInsertQuery(array_combine($columns, func_get_args())));
+        $time_end = microtime(true);
+        $execution_time = $time_end - $time_start;
+        error_log('Processing transaction to (execution time: '. $execution_time .') ('. $note .'): ' . $recipientRelysiaPaymail . ', Response: ' . json_encode($response));
 
-        return $db->insert_id;
+        if ($response['statusCode'] === 200) {
+
+            $isCompleted = 1;
+            $columns = array_slice(
+                ['amount', 'sender_id', 'recipient_id', 'basis_name', 'basis_entity_id', 'note', 'sender_msg', 'recipient_relysia_paymail', 'is_completed'], 0, func_num_args() + 1
+            );
+
+            $db->query(self::transformInsertQuery(array_combine($columns, [...func_get_args(), $isCompleted])));
+
+            $time_start = microtime(true);
+            $senderBalance = shntrToken::getRelysiaApiBalance($senderId);
+            $time_end = microtime(true);
+            $execution_time = $time_end - $time_start;
+            error_log('Execution time (get balance for sender): '. $execution_time);
+
+            $time_start = microtime(true);
+            $recipientBalance = shntrToken::getRelysiaApiBalance($recipientId);
+            $time_end = microtime(true);
+            $execution_time = $time_end - $time_start;
+            error_log('Execution time (get balance for recipient): '. $execution_time);
+
+            $db->query(sprintf('UPDATE users_relysia SET balance = %s WHERE user_id = %s',
+                    secure($senderBalance),secure($senderId))
+            ) or _error("SQL_ERROR_THROWEN", $db);
+
+            $db->query(sprintf('UPDATE users_relysia SET balance = %s WHERE user_id = %s',
+                    secure($recipientBalance),secure($recipientId))
+            ) or _error("SQL_ERROR_THROWEN", $db);
+
+            error_log('Successfully sent to: ' . $recipientRelysiaPaymail . ', Response: ' . json_encode($response));
+
+            return null;
+        } else {
+
+            $columns = array_slice(
+                ['amount', 'sender_id', 'recipient_id', 'basis_name', 'basis_entity_id', 'note', 'sender_msg', 'recipient_relysia_paymail'], 0, func_num_args()
+            );
+
+            $db->query(self::transformInsertQuery(array_combine($columns, func_get_args())));
+
+            return $db->insert_id;
+        }
     }
 
     public static function getHistory(int $userId = 0)
