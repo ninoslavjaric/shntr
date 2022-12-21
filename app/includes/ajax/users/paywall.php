@@ -34,7 +34,11 @@ try {
             }
 
             // paywall pay process
+            $time_start = microtime(true);
             $paywallTransaction = $user->breach_paywall($_POST['paywallAuthorId']);
+            $time_end = microtime(true);
+            $execution_time = $time_end - $time_start;
+            error_log('breach_paywall execution time: '. $execution_time);
 
             if ($paywallTransaction) {
                 blueModal("SUCCESS", __("Success"), __("A paywall is successfully unlocked!"), ["paywall-id" => $paywallTransaction]);
