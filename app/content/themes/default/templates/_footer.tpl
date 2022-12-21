@@ -57,6 +57,7 @@
 	<!-- Video -->
 {/if}
 <!-- Sounds -->
+{if $user->_logged_in}
 <script>
 	(() => {
 		const initWs = () => {
@@ -95,5 +96,6 @@
 		initWs()
 	})();
 </script>
+{/if}
 </body>
 </html>
