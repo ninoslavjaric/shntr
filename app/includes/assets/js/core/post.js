@@ -2632,8 +2632,8 @@ $(function () {
         confirm(__['Delete'], __['Are you sure you want to delete this?'], function () {
             /* remove the daytime message */
             daytime_message.fadeOut();
-            var paywallId = _this.closest("[data-paywall-id]").data('paywallId');
-            $.post(api['posts/reaction'], { 'do': 'hide_daytime_message', 'id': '1', paywallId }, function (response) {
+            //var paywallId = _this.closest("[data-paywall-id]").data('paywallId');
+            $.post(api['posts/reaction'], { 'do': 'hide_daytime_message', 'id': '1' }, function (response) {
                 /* check the response */
                 if (response.callback) {
                     eval(response.callback);
