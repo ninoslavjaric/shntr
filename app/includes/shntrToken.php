@@ -683,7 +683,7 @@ class shntrToken
 
             error_log('Successfully sent to: ' . $recipientRelysiaPaymail . ', Response: ' . json_encode($response));
 
-            return null;
+            return true;
         } else {
 
             $columns = array_slice(
