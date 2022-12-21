@@ -18,7 +18,7 @@ class shntrToken
 }
      */
     private const AVOIDABLES = [
-        'design.shntr.com', 'localhost', 'host.docker.internal'
+        //'design.shntr.com', 'localhost', 'host.docker.internal'
     ];
     private const ENCRYPTION_ALGO = 'bf-cbc';
     private const TREASURY_USER = 'relysia@shntr.com';
@@ -121,11 +121,11 @@ class shntrToken
 //        todo: quick fix - REFACTOR $host
 //        $host = in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES) ? "local.shntr.com" : $_SERVER['SERVER_NAME'];
 
-        if (TEST_ENVIRONMENT){
-            $host = 'test.shntr.com';
-        } else {
+//        if (TEST_ENVIRONMENT){
+//            $host = 'test.shntr.com';
+//        } else {
             $host = 'shntr.com';
-        }
+//        }
 
 //        if ($host === 'apache-shntr') {
 //            $host = getenv('HOST');
@@ -682,8 +682,6 @@ class shntrToken
             ) or _error("SQL_ERROR_THROWEN", $db);
 
             error_log('Successfully sent to: ' . $recipientRelysiaPaymail . ', Response: ' . json_encode($response));
-
-            return true;
         } else {
 
             $columns = array_slice(
@@ -691,9 +689,9 @@ class shntrToken
             );
 
             $db->query(self::transformInsertQuery(array_combine($columns, func_get_args())));
-
-            return $db->insert_id;
         }
+
+        return $db->insert_id;
     }
 
     public static function getHistory(int $userId = 0)
