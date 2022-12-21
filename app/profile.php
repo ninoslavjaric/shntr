@@ -40,7 +40,7 @@ try {
 	}
 
     /* return amount of tokens or NULL */
-    $profile['paywall_set'] = $user->paywalled($user->_data['user_id'], $profile['user_id']);
+    $profile['paywall_set'] = $user->paywalled($profile['user_id'], $user->_data['user_id']);
 
 	// ensure paywall data
 	if ($paywall_price = $user->paywalled($profile['user_id'])) {
