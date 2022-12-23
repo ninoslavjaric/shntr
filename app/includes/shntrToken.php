@@ -121,11 +121,11 @@ class shntrToken
 //        todo: quick fix - REFACTOR $host
 //        $host = in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES) ? "local.shntr.com" : $_SERVER['SERVER_NAME'];
 
-//        if (TEST_ENVIRONMENT){
-//            $host = 'test.shntr.com';
-//        } else {
+        if (TEST_ENVIRONMENT){
+            $host = 'test.shntr.com';
+        } else {
             $host = 'shntr.com';
-//        }
+        }
 
 //        if ($host === 'apache-shntr') {
 //            $host = getenv('HOST');
