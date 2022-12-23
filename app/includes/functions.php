@@ -2897,7 +2897,13 @@ function http_call(string $url, string $method = 'GET', array $data = [], array 
     $result = curl_exec($ch);
     curl_close($ch);
 
-    return json_decode($result, true);
+    $json = json_decode($result, true);
+
+    if (preg_match('(fail|error)', $result) || empty($json)) {
+        error_log('Suspicious response: ' . $result);
+    }
+
+    return $json;
 }
 
 function generate_random_string(int $length = 10): string
