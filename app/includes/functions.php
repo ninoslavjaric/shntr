@@ -2900,7 +2900,13 @@ function http_call(string $url, string $method = 'GET', array $data = [], array 
     $json = json_decode($result, true);
 
     if (preg_match('(fail|error)', $result) || empty($json)) {
-        error_log('Suspicious response: ' . $result);
+        error_log(
+            sprintf(
+                'Suspicious response: [%s], [%s], [%s], [%s]',
+                $result, json_encode($data), json_encode($headers), $url
+            )
+        );
+        return [];
     }
 
     return $json;

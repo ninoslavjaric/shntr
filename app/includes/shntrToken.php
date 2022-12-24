@@ -519,6 +519,9 @@ class shntrToken
 
     public static function sendTransactionRelysia(float $amount, string $recipientPaymail, int $senderId): array
     {
+        if ($amount <= 0) {
+            throw new Exception("Cannot send {$amount} tokens");
+        }
         $senderToken = static::getAccessToken($senderId);
 
         $response = http_call(self::API_BASE_URL_V1 . '/send',
