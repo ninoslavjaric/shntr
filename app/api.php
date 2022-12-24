@@ -122,7 +122,7 @@ try {
 
         case 'relysia_treasury_token':
             return_json([
-                'token' => shntrToken::getAccessToken(null)
+                'token' => shntrToken::getAccessToken()
             ]);
             break;
 

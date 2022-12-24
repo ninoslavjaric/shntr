@@ -154,7 +154,7 @@ class shntrToken
         return $response['data']['token'];
     }
 
-    public static function getAccessToken(int $user_id): string
+    public static function getAccessToken(int $user_id = 0): string
     {
         global $db;
 
