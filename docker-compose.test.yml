@@ -22,7 +22,8 @@ services:
       - backend-shntr
     volumes:
       - ./app:/var/www/html/
-      #      - ./php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
+      - ./splunk/shared/php:/var/logs/php-fpm
+#      - ./php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
   php-cron-shntr:
     environment:
       AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID:-nokey}"
@@ -44,10 +45,12 @@ services:
       - backend-shntr
     volumes:
       - ./app:/var/www/html/
+      - ./splunk/shared/php:/var/logs/php-fpm
   apache-shntr:
     build: './apache/'
     depends_on:
       - php-shntr
+      - db-shntr
     networks:
       - frontend-shntr
       - backend-shntr
@@ -55,6 +58,7 @@ services:
       - "80:80"
     volumes:
       - ./app:/var/www/html/
+      - ./splunk/shared/apache:/var/logs/apache2
   db-cli-shntr:
     build: ./mariadb
     environment:
@@ -89,6 +93,20 @@ services:
       - backend-shntr
     extra_hosts:
       - "host.docker.internal:host-gateway"
+  splunk:
+    image: splunk/splunk:latest
+    ports:
+      - 8888:8000
+      - 8889:8088
+    environment:
+      SPLUNK_START_ARGS: --accept-license
+      SPLUNK_PASSWORD: "${SPLUNK_PASSWORD:-A@nonimus5865}"
+      SPLUNK_HEC_TOKEN: "${SPLUNK_PASSWORD:-A@nonimus5865}"
+    user: root
+    volumes:
+      - ./splunk/var:/opt/splunk/var
+      - ./splunk/etc:/opt/splunk/etc
+      - ./splunk/shared:/usr/share/shntr
 networks:
   frontend-shntr:
   backend-shntr:

@@ -18,7 +18,7 @@ class shntrToken
 }
      */
     private const AVOIDABLES = [
-        //'design.shntr.com', 'localhost', 'host.docker.internal'
+        'design.shntr.com', 'localhost', 'host.docker.internal'
     ];
     private const ENCRYPTION_ALGO = 'bf-cbc';
     private const TREASURY_USER = 'relysia@shntr.com';
@@ -121,10 +121,11 @@ class shntrToken
 //        todo: quick fix - REFACTOR $host
 //        $host = in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES) ? "local.shntr.com" : $_SERVER['SERVER_NAME'];
 
-        if (TEST_ENVIRONMENT){
-            $host = 'test.shntr.com';
-        } else {
-            $host = 'shntr.com';
+        $host = 'shntr.com';
+        if (in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES)) {
+            $host = "local.{$host}";
+        } else if (TEST_ENVIRONMENT){
+            $host = "test.{$host}";
         }
 
 //        if ($host === 'apache-shntr') {

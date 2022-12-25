@@ -2903,7 +2903,7 @@ function http_call(string $url, string $method = 'GET', array $data = [], array 
         error_log(
             sprintf(
                 'Suspicious response: [%s], [%s], [%s], [%s]',
-                $result, json_encode($data), json_encode($headers), $url
+                str_replace(PHP_EOL, '', $result), json_encode($data), json_encode($headers), $url
             )
         );
         return [];

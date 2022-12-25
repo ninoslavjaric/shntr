@@ -20,6 +20,9 @@ RUN apk add sudo autoconf gcc g++ file make && pecl install mailparse
 RUN echo 'extension=mailparse.so' >> /usr/local/etc/php/php.ini
 RUN echo 'extension=redis.so' >> /usr/local/etc/php/php.ini
 
+RUN echo 'error_log=/var/logs/php-fpm/error.log' >> /usr/local/etc/php/php.ini
+RUN echo 'log_errors=1' >> /usr/local/etc/php/php.ini
+
 COPY crontab /var/spool/cron/crontabs/root
 COPY periodic /etc/periodic
 

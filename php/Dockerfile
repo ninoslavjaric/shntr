@@ -4,6 +4,7 @@ RUN apk update; \
     apk upgrade;
 
 RUN apk add jpeg libpng-dev openjpeg jpeg-dev libjpeg-turbo-dev
+RUN apk add gzip
 RUN docker-php-ext-configure gd --with-jpeg
 RUN docker-php-ext-install -j$(nproc) gd
 
@@ -27,6 +28,9 @@ RUN sed -i 's#pm.max_children = 5#pm.max_children = 25#' /usr/local/etc/php-fpm.
     sed -i 's#pm.max_spare_servers = 3#pm.max_spare_servers = 20#' /usr/local/etc/php-fpm.d/www.conf
 
 RUN sed -i 's#www-data#webmaster#' /usr/local/etc/php-fpm.d/www.conf
+RUN echo 'access.log = /dev/null' >> /usr/local/etc/php-fpm.d/www.conf && \
+    echo 'php_admin_value[error_log] = /var/logs/php-fpm/error.log' >> /usr/local/etc/php-fpm.d/www.conf && \
+    echo 'php_admin_value[log_errors] = 1' >> /usr/local/etc/php-fpm.d/www.conf
 
 RUN echo 'upload_max_filesize = 128M' >> /usr/local/etc/php/php.ini
 RUN echo 'post_max_size = 128M' >> /usr/local/etc/php/php.ini

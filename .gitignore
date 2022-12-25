@@ -16,3 +16,4 @@ app/includes/.cache-buster
 app/error.log
 poc
 /cache
+/splunk
