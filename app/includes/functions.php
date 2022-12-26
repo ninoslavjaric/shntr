@@ -2908,7 +2908,6 @@ function http_call(string $url, string $method = 'GET', array $data = [], array 
             'url' => $url,
         ];
         trigger_error(json_encode($errorBody));
-        return [];
     }
 
     return $json;
