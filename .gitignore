@@ -16,4 +16,6 @@ app/includes/.cache-buster
 app/error.log
 poc
 /cache
-/splunk
+/splunk/etc
+/splunk/shared
+/splunk/var

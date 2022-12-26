@@ -93,7 +93,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
   splunk:
-    image: splunk/splunk:latest
+    build: ./splunk
     ports:
       - 8888:8000
       - 8889:8088
@@ -105,7 +105,7 @@ services:
     volumes:
       - ./splunk/var:/opt/splunk/var
       - ./splunk/etc:/opt/splunk/etc
-      - ./splunk/shared:/usr/share/shntr
+      - /splunk:/usr/share/shntr
 networks:
   frontend-shntr:
   backend-shntr:
