@@ -22,7 +22,8 @@ services:
       - backend-shntr
     volumes:
       - ./app:/var/www/html/
-      #      - ./php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
+      - ./splunk/shared/php:/var/logs/php-fpm
+#      - ./php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
   php-cron-shntr:
     environment:
       AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID:-nokey}"
@@ -44,6 +45,7 @@ services:
       - backend-shntr
     volumes:
       - ./app:/var/www/html/
+      - ./splunk/shared/php:/var/logs/php-fpm
   apache-shntr:
     build: './apache/'
     depends_on:
@@ -56,6 +58,7 @@ services:
       - "80:80"
     volumes:
       - ./app:/var/www/html/
+      - ./splunk/shared/apache:/var/logs/apache2
   db-cli-shntr:
     build: ./mariadb
     environment:
