@@ -14,13 +14,29 @@ define('SYS_VER', '3.4');
 define('ABSPATH', dirname(__FILE__) . '/');
 define('BASEPATH', dirname($_SERVER['PHP_SELF']));
 
+set_error_handler(function(int $errno, string $errstr, string $errfile, int $errline): bool {
+    $backtrace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 4);
+    array_shift($backtrace);
+    array_shift($backtrace);
 
+    $bodyJson = json_decode($errstr, true);
+
+    $event = [
+        'time' => gmdate("d-M-Y H:i:s T"),
+        'errorNumber' => $errno,
+        'body' => $bodyJson ?: $errstr,
+        'file' => $errfile,
+        'line' => $errline,
+        'stackTrace' => $backtrace,
+    ];
+
+    return (bool) file_put_contents(ini_get('error_log'), json_encode($event) . PHP_EOL, FILE_APPEND);
+});
 // check the config file
 if (!file_exists(ABSPATH . 'includes/config.php')) {
     /* the config file doesn't exist -> start the installer */
     header('Location: ./install');
 }
-
 
 // get system configurations
 require_once(ABSPATH . 'includes/config.php');

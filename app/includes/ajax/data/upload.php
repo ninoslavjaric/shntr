@@ -31,25 +31,37 @@ user_access(true, true);
 
 // check demo account
 if ($user->_data['user_demo']) {
-    error_log('check demo account');
+    $errorBody = [
+        'message' => 'check demo account',
+    ];
+    trigger_error(json_encode($errorBody));
     blueModal("ERROR", __("Demo Restriction"), __("You can't do this with demo account"));
 }
 
 // check type
 if (!isset($_POST["type"])) {
-    error_log('check type');
+    $errorBody = [
+        'message' => 'check type',
+    ];
+    trigger_error(json_encode($errorBody));
     _error(403);
 }
 
 // check handle
 if (!isset($_POST["handle"])) {
-    error_log('check handle');
+    $errorBody = [
+        'message' => 'check handle',
+    ];
+    trigger_error(json_encode($errorBody));
     _error(403);
 }
 
 // check multiple
 if (!isset($_POST["multiple"])) {
-    error_log('check multiple');
+    $errorBody = [
+        'message' => 'check multiple',
+    ];
+    trigger_error(json_encode($errorBody));
     _error(403);
 }
 
@@ -861,6 +873,9 @@ try {
             break;
     }
 } catch (Exception $e) {
-    error_log($e->getMessage());
+    $errorBody = [
+        'message' => $e->getMessage(),
+    ];
+    trigger_error(json_encode($errorBody));
     blueModal("ERROR", __("Error"), $e->getMessage());
 }

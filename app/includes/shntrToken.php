@@ -68,12 +68,22 @@ class shntrToken
         );
 
         if ($response['statusCode'] === 400 && $response['data']['msg'] === 'EMAIL_EXISTS') {
-            error_log('Signup fail, email on relysia taken: ' . json_encode($response));
+            $errorBody = [
+                'message' => 'Signup fail, email on relysia taken',
+                'email' => $email,
+                'response' => $response
+            ];
+            trigger_error(json_encode($errorBody));
             return false;
         }
 
         if (($response['statusCode'] ?? null) !== 200 || !isset($response['data']['token'])) {
-            error_log('Signup fail: ' . json_encode($response));
+            $errorBody = [
+                'message' => 'Signup fail',
+                'email' => $email,
+                'response' => $response
+            ];
+            trigger_error(json_encode($errorBody));
             return false;
         }
 
@@ -89,7 +99,12 @@ class shntrToken
         );
 
         if (($response['statusCode'] ?? null) !== 200 || ($response['data']['status'] ?? null) !== 'success') {
-            error_log('Signup fail: ' . json_encode($response));
+            $errorBody = [
+                'message' => 'Signup fail on create wallet',
+                'email' => $email,
+                'response' => $response
+            ];
+            trigger_error(json_encode($errorBody));
         }
 
         return self::encrypt($password);
@@ -107,7 +122,11 @@ class shntrToken
         );
 
         if (($response['statusCode'] ?? null) !== 200 || !isset($response['data']['paymail'])) {
-            error_log('Paymail fail: ' . json_encode($response));
+            $errorBody = [
+                'message' => 'Paymail fail',
+                'response' => $response
+            ];
+            trigger_error(json_encode($errorBody));
             return false;
         }
 
@@ -148,7 +167,13 @@ class shntrToken
         );
 
         if (($response['statusCode'] ?? null) !== 200 || !isset($response['data']['token'])) {
-            error_log('Auth fail ' . json_encode([$response, $username, $email]));
+            $errorBody = [
+                'message' => 'Auth fail',
+                'username' => $username,
+                'email' => $email,
+                'response' => $response
+            ];
+            trigger_error(json_encode($errorBody));
             return false;
         }
 
@@ -268,7 +293,12 @@ class shntrToken
             );
 
             if (!isset($response['data']['histories'])) {
-                error_log('Transaction history fail: ' . json_encode($response));
+                $errorBody = [
+                    'message' => 'Transaction history fail',
+                    'headers' => $headers,
+                    'response' => $response
+                ];
+                trigger_error(json_encode($errorBody));
             }
 
             $nextPageTokenId = $response['data']['meta']['nextPageToken'];
@@ -312,7 +342,7 @@ class shntrToken
                         throw new Exception('Token wrong ' . json_encode([$token]));
                     }
                     if (!$increment) {
-                        $db->query("delete from users_relysia_transactions where user_id = {$user_id}") or error_log('Transaction insert fail: ' . $db->error);
+                        $db->query("delete from users_relysia_transactions where user_id = {$user_id}") or trigger_error('Transaction insert fail: ' . $db->error);
                     }
                     [$maxDate] = $db->query("select max(timestamp) from users_relysia_transactions where user_id = {$user_id}")->fetch_row();
                     $maxDate = $maxDate ? new DateTime($maxDate) : (new DateTime())->setTimestamp(0);
@@ -324,11 +354,11 @@ class shntrToken
 
                             $history['user_id'] = $user_id;
                             $sql = self::transformInsertQuery($history, 'users_relysia_transactions', true);
-                            $db->query($sql) or error_log('Transaction insert fail: ' . $db->error);
+                            $db->query($sql) or trigger_error('Transaction insert fail: ' . $db->error);
                         }
                     }
                 } catch (Exception $e) {
-                    error_log($e->getMessage());
+                    trigger_error($e->getMessage());
                 }
                 finish_iteration:
                 $db->query(
@@ -445,7 +475,12 @@ class shntrToken
             ]
         );
 
-        error_log('User delete on relysia response: ' . json_encode($response));
+        $errorBody = [
+            'message' => 'user delete on relysia response',
+            'token' => $token,
+            'response' => $response
+        ];
+        trigger_error(json_encode($errorBody));
 
         if ($response['statusCode'] == 200) {
             return true;
@@ -493,7 +528,12 @@ class shntrToken
         );
 
         if (($response['data']['status'] ?? null) !== 'success' || !isset($response['data']['coins'])) {
-            error_log('Balance fail: ' . json_encode($response));
+            $errorBody = [
+                'message' => 'Balance fail',
+                'token' => $token,
+                'response' => $response
+            ];
+            trigger_error(json_encode($errorBody));
             return 0;
         }
 
@@ -607,7 +647,12 @@ class shntrToken
         );
 
         if ($response['statusCode'] != 200) {
-            error_log('Payment fail: ' . json_encode($response, JSON_PRETTY_PRINT));
+            $errorBody = [
+                'message' => 'Paymail fail',
+                'token' => $senderToken,
+                'response' => $response
+            ];
+            trigger_error(json_encode($errorBody));
             return [
                 'amount' => $amount,
                 'message' => $response['msg'] ?? json_encode($response, JSON_PRETTY_PRINT),
@@ -654,7 +699,19 @@ class shntrToken
 
         $time_end = microtime(true);
         $execution_time = $time_end - $time_start;
-        error_log('Processing transaction to (execution time: '. $execution_time .') ('. $note .'): ' . $recipientRelysiaPaymail . ', Response: ' . json_encode($response));
+        $errorBody = [
+            'message' => 'processing transaction',
+            'transaction' => [
+                'amount' => $amount,
+                'note' => $note,
+                'sender_id' => $senderId,
+                'recipient_id' => $recipientId,
+                'recipient_relysia_paymail' => $recipientRelysiaPaymail,
+            ],
+            'execution time' => $execution_time,
+            'response' => $response
+        ];
+        trigger_error(json_encode($errorBody));
 
         if ($response['statusCode'] === 200) {
 
@@ -669,13 +726,23 @@ class shntrToken
             $senderBalance = shntrToken::getRelysiaApiBalance($senderId);
             $time_end = microtime(true);
             $execution_time = $time_end - $time_start;
-            error_log('Execution time (get balance for sender): '. $execution_time);
+            $errorBody = [
+                'message' => 'get balance for sender',
+                'execution time' => $execution_time,
+                'response' => $response
+            ];
+            trigger_error(json_encode($errorBody));
 
             $time_start = microtime(true);
             $recipientBalance = shntrToken::getRelysiaApiBalance($recipientId);
             $time_end = microtime(true);
             $execution_time = $time_end - $time_start;
-            error_log('Execution time (get balance for recipient): '. $execution_time);
+            $errorBody = [
+                'message' => 'get balance for recipient',
+                'execution time' => $execution_time,
+                'response' => $response
+            ];
+            trigger_error(json_encode($errorBody));
 
             $db->query(sprintf('UPDATE users_relysia SET balance = %s WHERE user_id = %s',
                     secure($senderBalance),secure($senderId))
@@ -685,7 +752,12 @@ class shntrToken
                     secure($recipientBalance),secure($recipientId))
             ) or _error("SQL_ERROR_THROWEN", $db);
 
-            error_log('Successfully sent to: ' . $recipientRelysiaPaymail . ', Response: ' . json_encode($response));
+            $errorBody = [
+                'message' => 'Successfully sent',
+                'recipientRelysiaPaymail' => $recipientRelysiaPaymail,
+                'response' => $response
+            ];
+            trigger_error(json_encode($errorBody));
         } else {
 
             $columns = array_slice(

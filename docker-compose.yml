@@ -123,10 +123,11 @@ services:
     ports:
     - 8888:8000
     - 8889:8088
+    - 8089
     environment:
       SPLUNK_START_ARGS: --accept-license
-      SPLUNK_PASSWORD: "${SPLUNK_PASSWORD:-A@nonimus5865}"
-      SPLUNK_HEC_TOKEN: "${SPLUNK_PASSWORD:-A@nonimus5865}"
+      SPLUNK_PASSWORD: A@nonimus5865
+      SPLUNK_HEC_TOKEN: A@nonimus5865
     user: root
     volumes:
     - ./splunk/var:/opt/splunk/var

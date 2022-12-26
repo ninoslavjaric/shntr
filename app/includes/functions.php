@@ -591,8 +591,8 @@ function _error($args, mysqli|string|null $db = null)
         $user->post_notification_async((is_string($db) ? $db : $db->error) ?: "{$caller['file']}{$caller['line']}");
     }
 
-    if (ERROR_LOGGING && $db instanceof mysqli) {
-        error_log('MySql error: ' . $db->error);
+    if ($db instanceof mysqli) {
+        trigger_error('MySql error: ' . $db->error);
     }
 
     if (count($args) > 1 && $args[0] != "BANNED_USER") {
@@ -2900,12 +2900,14 @@ function http_call(string $url, string $method = 'GET', array $data = [], array 
     $json = json_decode($result, true);
 
     if (preg_match('(fail|error)', $result) || empty($json)) {
-        error_log(
-            sprintf(
-                'Suspicious response: [%s], [%s], [%s], [%s]',
-                str_replace(PHP_EOL, '', $result), json_encode($data), json_encode($headers), $url
-            )
-        );
+        $errorBody = [
+            'message' => 'suspicious http response',
+            'response' => str_replace(PHP_EOL, '', $result),
+            'params' => $data,
+            'headers' => $headers,
+            'url' => $url,
+        ];
+        trigger_error(json_encode($errorBody));
         return [];
     }
 

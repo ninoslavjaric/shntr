@@ -1522,12 +1522,16 @@ class User
                     break;
                 }
 
-                error_log('debug paywall ' . sprintf(
+                $errorBody = [
+                    'message' => 'debug paywall',
+                    'query' => sprintf(
                         'INSERT INTO paywalls VALUES (%1$s, %2$s, %3$d) on duplicate key update paywall_price = %3$d',
                         secure($this->_data['user_id'], 'int'),
                         secure($id, 'int'),
                         secure($value, 'int', false)
-                    ));
+                    ),
+                ];
+                trigger_error(json_encode($errorBody));
                 $query = $db->query(
                     sprintf(
                         'INSERT INTO paywalls VALUES (%1$s, %2$s, %3$d) on duplicate key update paywall_price = %3$d',
@@ -15301,7 +15305,7 @@ class User
 
         do {
             $userRelysia = $username . '.relysia' . ($i ?? '');
-            error_log('Trying to register user with: '. $userRelysia);
+            trigger_error('Trying to register user with: '. $userRelysia);
             $password = shntrToken::register($userRelysia);
             $i = isset($i) ? $i+1 : 1;
         } while(!$password);

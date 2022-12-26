@@ -24,7 +24,13 @@ try {
         $time_end = microtime(true);
         $execution_time = $time_end - $time_start;
 
-        error_log('Processing transaction to (execution time: '. $execution_time .') ('. $transaction['note'] .'): ' . $transaction['recipient_relysia_paymail'] . ', Response: ' . json_encode([$response, $transaction]));
+        $errorBody = [
+            'message' => 'Processing transaction',
+            'execution time' => $execution_time,
+            'transaction' => $transaction,
+            'response' => $response
+        ];
+        trigger_error(json_encode($errorBody));
 
         if ($response['statusCode'] === 200) {
 
@@ -35,13 +41,21 @@ try {
             $senderBalance = shntrToken::getRelysiaApiBalance($transaction['sender_id']);
             $time_end = microtime(true);
             $execution_time = $time_end - $time_start;
-            error_log('Execution time (get balance for sender): '. $execution_time);
+            $errorBody = [
+                'message' => 'get balance for sender',
+                'execution time' => $execution_time
+            ];
+            trigger_error(json_encode($errorBody));
 
             $time_start = microtime(true);
             $recipientBalance = shntrToken::getRelysiaApiBalance($transaction['recipient_id']);
             $time_end = microtime(true);
             $execution_time = $time_end - $time_start;
-            error_log('Execution time (get balance for recipient): '. $execution_time);
+            $errorBody = [
+                'message' => 'get balance for recipient',
+                'execution time' => $execution_time
+            ];
+            trigger_error(json_encode($errorBody));
 
             $db->query(sprintf('UPDATE users_relysia SET balance = %s WHERE user_id = %s',
                     secure($senderBalance),secure($transaction['sender_id']))
@@ -51,7 +65,12 @@ try {
                     secure($recipientBalance),secure($transaction['recipient_id']))
             ) or _error("SQL_ERROR_THROWEN", $db);
 
-            error_log('Successfully sent to: ' . $transaction['recipient_relysia_paymail'] . ', Response: ' . json_encode([$response, $transaction]));
+            $errorBody = [
+                'message' => 'Successfully sent',
+                'transaction' => $transaction,
+                'response' => $response
+            ];
+            trigger_error(json_encode($errorBody));
         } else {
             $db->query(sprintf("UPDATE token_transactions SET count = count + 1 WHERE id = %s",
                 secure($transaction['id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
@@ -59,5 +78,5 @@ try {
     }
 
 } catch (Exception $e) {
-    error_log('Processing transactions failed ' . $e->getMessage());
+    trigger_error('Processing transactions failed ' . $e->getMessage());
 }

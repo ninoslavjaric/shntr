@@ -62,11 +62,16 @@ try {
                     secure($qty)
                 )
             );
-            error_log("debug stripe insert " . sprintf("INSERT INTO stripe_transactions (session_id, user_id, qty) VALUES (%s, %s, %s)",
+
+            $errorBody = [
+                'message' => 'debug stripe insert',
+                'query' => sprintf("INSERT INTO stripe_transactions (session_id, user_id, qty) VALUES (%s, %s, %s)",
                     secure($checkout_session->id),
                     secure($user->_data['user_id'], 'int'),
                     secure($qty)
-                ));
+                )
+            ];
+            trigger_error(json_encode($errorBody));
 
             $secured = get_system_protocol() == 'https';
             $expire = time() + 60;
@@ -86,7 +91,7 @@ try {
 
             $payload = @file_get_contents('php://input');
             if (!($sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'] ?? null)) {
-                error_log('No signature');
+                trigger_error('No signature');
                 http_response_code(404);
                 return_json([
                     'success' => false,
@@ -99,7 +104,7 @@ try {
                     $payload, $sig_header, $endpoint_secret
                 );
             } catch (\UnexpectedValueException $e) {
-                error_log('UnexpectedValueException ' . $e->getMessage());
+                trigger_error('UnexpectedValueException ' . $e->getMessage());
 
                 http_response_code(400);
                 return_json([
@@ -107,7 +112,7 @@ try {
                     'msg' => $e->getMessage(),
                 ]);
             } catch (\Stripe\Exception\SignatureVerificationException $e) {
-                error_log('SignatureVerificationException ' . $e->getMessage());
+                trigger_error('SignatureVerificationException ' . $e->getMessage());
                 http_response_code(400);
                 return_json([
                     'success' => false,
@@ -116,7 +121,7 @@ try {
             }
 
             if (!str_starts_with($event->type, 'checkout.session')) {
-                error_log("Wrong event type ->> {$event->type}");
+                trigger_error("Wrong event type ->> {$event->type}");
                 http_response_code(400);
                 return_json([
                     'success' => false,
@@ -128,7 +133,7 @@ try {
 
             $successUrlParsed = parse_url($checkout_session->success_url);
             if ("{$successUrlParsed['scheme']}://{$successUrlParsed['host']}" !== SYS_URL) {
-                error_log("Wrong url {$successUrlParsed['scheme']}://{$successUrlParsed['host']}");
+                trigger_error("Wrong url {$successUrlParsed['scheme']}://{$successUrlParsed['host']}");
                 http_response_code(400);
                 return_json([
                     'success' => false,

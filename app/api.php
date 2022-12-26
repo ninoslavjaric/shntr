@@ -160,7 +160,7 @@ try {
                     $balances[] = $balance;
                 }
             } else {
-                error_log('relysia_balance_refresh: ' . $db->error);
+                trigger_error('relysia_balance_refresh: ' . $db->error);
             }
 
             return_json($balances);

@@ -10,7 +10,7 @@ require(__DIR__ . '/bootstrap.php');
 if (!TEST_ENVIRONMENT) {
     _error(404);
 }
-error_log(print_r($_POST));
+trigger_error(json_encode($_POST));
 
 if (isset($_POST['username']) && isset($_POST['password'])) {
 
@@ -36,13 +36,13 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
 
         return_json( 200);
     } else {
+        trigger_error('Check credentials');
         return_json( 401);
-        error_log('Check credentials');
     }
 
 } else {
+    trigger_error('API verification failed');
     return_json( 400);
-    error_log('API verification failed');
 }
 
 

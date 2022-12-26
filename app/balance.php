@@ -7,7 +7,7 @@
 
 require(__DIR__ . '/bootstrap.php');
 
-//error_log(var_dump(shntrToken::auth('relysia@shntr.com', 'Jg3KDB9G13SbKGZML39tGg==')));
+//trigger_error(var_dump(shntrToken::auth('relysia@shntr.com', 'Jg3KDB9G13SbKGZML39tGg==')));
 
 
     if (isset($_GET['user_id'])) {
@@ -15,8 +15,6 @@ require(__DIR__ . '/bootstrap.php');
 
         var_dump($response);
         die();
-    } else {
-        error_log(var_dump('Add parameter like https://test.shntr.com/balance?user_id=1'));
     }
 
 
