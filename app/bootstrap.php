@@ -28,6 +28,7 @@ set_error_handler(function(int $errno, string $errstr, string $errfile, int $err
         'file' => $errfile,
         'line' => $errline,
         'stackTrace' => $backtrace,
+        'sessionId' => $_COOKIE['PHPSESSID'] ?? 'unknown',
     ];
 
     return (bool) file_put_contents(ini_get('error_log'), json_encode($event) . PHP_EOL, FILE_APPEND);

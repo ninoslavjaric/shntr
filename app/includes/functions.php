@@ -154,6 +154,10 @@ function get_system_url()
  */
 function check_system_url()
 {
+    if (php_sapi_name() == 'cli') {
+        return;
+    }
+
     $protocol = get_system_protocol();
     $parsed_url = parse_url(SYS_URL);
 
@@ -2899,16 +2903,15 @@ function http_call(string $url, string $method = 'GET', array $data = [], array 
 
     $json = json_decode($result, true);
 
-    if (preg_match('(fail|error)', $result) || empty($json)) {
-        $errorBody = [
-            'message' => 'suspicious http response',
-            'response' => str_replace(PHP_EOL, '', $result),
-            'params' => $data,
-            'headers' => $headers,
-            'url' => $url,
-        ];
-        trigger_error(json_encode($errorBody));
-    }
+    $errorBody = [
+        'message' => 'http-response',
+        'response' => str_replace(PHP_EOL, '', $result),
+        'params' => $data,
+        'headers' => $headers,
+        'url' => $url,
+    ];
+
+    trigger_error(json_encode($errorBody));
 
     return $json;
 }
