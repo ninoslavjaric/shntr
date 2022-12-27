@@ -1568,17 +1568,17 @@ class User
                 $price = $query->fetch_assoc();
                 $friendRequestAcceptReward = isset($price["price"]) && !empty($price["price"]) ?  $price["price"] : 0;
 
-                //if ($friendRequestAcceptReward !== '0.00') {
-                    //$balance = shntrToken::getRelysiaLocalBalance($this->_data['user_id']);
-                    //$reservedBalance = shntrToken::getRelysiaReservedBalance($this->_data['user_id']);
-                    //$totalBalance = $balance - $reservedBalance;
-//                    if ($totalBalance < $friendRequestAcceptReward) {
-//                        blueModal(
-//                            modalId: "ERROR",
-//                            title: __("Funds"),
-//                            message: __("You're out of tokens"),
-//                        );
-//                    }
+                if ($friendRequestAcceptReward !== '0.00') {
+                    $balance = shntrToken::getRelysiaLocalBalance($this->_data['user_id']);
+                    $reservedBalance = shntrToken::getRelysiaReservedBalance($this->_data['user_id']);
+                    $totalBalance = $balance - $reservedBalance;
+                    if ($totalBalance < $friendRequestAcceptReward) {
+                        blueModal(
+                            modalId: "ERROR",
+                            title: __("Funds"),
+                            message: __("You're out of tokens"),
+                        );
+                    }
 
                     shntrToken::noteTransaction(
                         amount: $friendRequestAcceptReward,
@@ -1590,7 +1590,7 @@ class User
                         senderMsg: null,
                         recipientRelysiaPaymail: $this->_data['user_relysia_paymail']
                     );
-                //}
+                }
 
                 /* check if there is a friend request from the target to the viewer */
                 $check = $db->query(sprintf("SELECT COUNT(*) as count FROM friends WHERE user_one_id = %s AND user_two_id = %s AND status = 0", secure($id, 'int'), secure($this->_data['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN", $db);
@@ -1638,16 +1638,16 @@ class User
                 $friendRequestAcceptReward = isset($price["price"]) && !empty($price["price"]) ?  $price["price"] : 0;
 
                 if ($friendRequestAcceptReward !== '0.00') {
-//                    $balance = shntrToken::getRelysiaLocalBalance($this->_data['user_id']);
-//                    $reservedBalance = shntrToken::getRelysiaReservedBalance($this->_data['user_id']);
-//                    $totalBalance = $balance - $reservedBalance;
-//                    if ($totalBalance < $friendRequestAcceptReward) {
-//                        blueModal(
-//                            modalId: "ERROR",
-//                            title: __("Funds"),
-//                            message: __("You're out of tokens"),
-//                        );
-//                    }
+                    $balance = shntrToken::getRelysiaLocalBalance($this->_data['user_id']);
+                    $reservedBalance = shntrToken::getRelysiaReservedBalance($this->_data['user_id']);
+                    $totalBalance = $balance - $reservedBalance;
+                    if ($totalBalance < $friendRequestAcceptReward) {
+                        blueModal(
+                            modalId: "ERROR",
+                            title: __("Funds"),
+                            message: __("You're out of tokens"),
+                        );
+                    }
 
                     shntrToken::noteTransaction(
                         amount: $friendRequestAcceptReward,
