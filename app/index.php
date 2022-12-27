@@ -223,7 +223,7 @@ try {
 				break;
 		}
 		/* assign variables */
-		$smarty->assign('view', $_GET['view']);
+		$smarty->assign('view', $_GET['view'] ?? '');
 
 		// get pro members & pages
 		if ($system['packages_enabled']) {

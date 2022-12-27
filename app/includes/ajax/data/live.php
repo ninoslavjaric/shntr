@@ -2,7 +2,7 @@
 
 /**
  * ajax -> data -> live
- * 
+ *
  * @package Sngine
  * @author Zamblek
  */
@@ -73,7 +73,7 @@ try {
 
 	// [4] check for new posts
 	if (isset($_POST['last_post'])) {
-		$posts = $user->get_posts(array('get' => $_POST['get'], 'filter' => $_POST['filter'], 'id' => $_POST['id'], 'last_post_id' => $_POST['last_post']));
+		$posts = $user->get_posts(array('get' => $_POST['get'], 'filter' => $_POST['filter'], 'id' => $_POST['id'] ?? null, 'last_post_id' => $_POST['last_post']));
 		if ($posts) {
 			/* assign variables */
 			$smarty->assign('posts', $posts);
