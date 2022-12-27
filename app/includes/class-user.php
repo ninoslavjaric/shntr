@@ -4010,6 +4010,10 @@ class User
                 $conversation['seen_name_list'] .= html_entity_decode(($system['show_usernames_enabled']) ? $recipient['user_name'] : $recipient['user_firstname'], ENT_QUOTES);
             }
             /* prepare conversation name_list */
+            if (empty($conversation['name_list'])) {
+                $conversation['name_list'] = '';
+            }
+
             $conversation['name_list'] .= html_entity_decode(($system['show_usernames_enabled']) ? $recipient['user_name'] : $recipient['user_firstname'], ENT_QUOTES);
             if ($i < $recipients_num) {
                 $conversation['name_list'] .= ", ";

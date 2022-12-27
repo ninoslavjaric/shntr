@@ -76,7 +76,7 @@ try {
 
 	// connect user
 	$_POST['uid'] = ($_POST['uid'] == '0') ? null : $_POST['uid'];
-	$response = $user->connect($_POST['do'], $_POST['id'], $_POST['uid'], $_POST['value']);
+	$response = $user->connect($_POST['do'], $_POST['id'], $_POST['uid'] ?? null, $_POST['value'] ?? null);
 
 	// return & exit
 	return_json($response);

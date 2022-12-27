@@ -197,18 +197,20 @@
     </div>
     <div class="modal-body pb0 pt30">
         <div class="row">
-            {foreach $system['themes'] as $theme}
-                <div class="col-6">
-                    <div style="background: rgb(0 0 0 / 0.06); padding: 8px; border-radius: 8px; margin-bottom: 30px;">
-                        <a style="display: block; position: relative; padding-bottom: 60%;" href="?theme={$theme['name']}">
-                            <img  loading="lazy" style="width: 100%; height: 100%; position: absolute; top: 0; right: 0; bottom: 0; left: 0; border-radius: 4px;" src="{$system['system_url']}/content/themes/{$theme['name']}/thumbnail.png">
-                            <span style="position: absolute; background: linear-gradient(transparent, rgb(0 0 0 / 0.7)); bottom: 0; left: 0; right: 0; width: 100%; border-radius: 0 0 8px 8px; color: #fff; font-size: 14px; text-align: center; text-transform: capitalize; padding: 20px 8px 8px;">
+            {if !empty($system['themes'])}
+                {foreach $system['themes'] as $theme}
+                    <div class="col-6">
+                        <div style="background: rgb(0 0 0 / 0.06); padding: 8px; border-radius: 8px; margin-bottom: 30px;">
+                            <a style="display: block; position: relative; padding-bottom: 60%;" href="?theme={$theme['name']}">
+                                <img  loading="lazy" style="width: 100%; height: 100%; position: absolute; top: 0; right: 0; bottom: 0; left: 0; border-radius: 4px;" src="{$system['system_url']}/content/themes/{$theme['name']}/thumbnail.png">
+                                <span style="position: absolute; background: linear-gradient(transparent, rgb(0 0 0 / 0.7)); bottom: 0; left: 0; right: 0; width: 100%; border-radius: 0 0 8px 8px; color: #fff; font-size: 14px; text-align: center; text-transform: capitalize; padding: 20px 8px 8px;">
                                 {$theme['name']}
                             </span>
-                        </a>
+                            </a>
+                        </div>
                     </div>
-                </div>
-            {/foreach}
+                {/foreach}
+            {/if}
         </div>
     </div>
 </script>

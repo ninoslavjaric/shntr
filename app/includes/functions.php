@@ -261,6 +261,10 @@ function secure($value, $type = "", $quoted = true)
 function session_hash($hash)
 {
 	//bugs
+    return [
+        'token' => 'no-data',
+        'position' => 'no-data',
+    ];
 }
 
 

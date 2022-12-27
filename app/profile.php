@@ -33,7 +33,7 @@ try {
 	// if ($user->_data['user_group'] > 1 && $profile['user_group'] == 1) {
 	// 	_error(404);
 	// }
-	
+
 	// not access super admin
 	if ($user->_data['user_name'] != 'shntr' && $profile['user_name'] == 'shntr') {
 		_error(404);
@@ -326,7 +326,7 @@ page_header($profile['name'], $profile['user_biography'], $profile['user_picture
 
 // assign variables
 $smarty->assign('profile', $profile);
-$smarty->assign('view', $_GET['view']);
+$smarty->assign('view', $_GET['view'] ?? null);
 
 // page footer
 page_footer("profile");
