@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd /var/www/html || exit 1
+cd /var/logs/php-fpm || exit 1
 el=error.log
 touch $el
 chown 1000:1000 $el
