@@ -5940,7 +5940,7 @@ class User
                     /* [Case: 2] user logged in or not whatever searching or not */
                     /* get viewer user's newsfeed */
                     $where_query .= "WHERE ("; /* [02] start of newsfeed without query clause */
-                    if ($query) {
+                    if ($query ?? false) {
                         $where_query .= "("; /* [03] start of newsfeed with query clause */
                     }
                     /* check the newsfeed source */
@@ -5982,7 +5982,7 @@ class User
                             break;
                     }
                     $where_query .= ")"; /* [02] end of newsfeed without query clause */
-                    if ($query) {
+                    if ($query ?? false) {
                         $where_query .= " AND (posts.text LIKE $query)";
                         $where_query .= ")"; /* [03] end of newsfeed with query clause */
                         $where_query .= " OR ("; /* [04] start of public search query clause */
