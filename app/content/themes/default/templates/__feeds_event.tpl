@@ -25,7 +25,7 @@
     </li>
 {elseif $_tpl == "list"}
     <li class="feeds-item">
-        <div class="data-container {if $_small}small{/if}">
+        <div class="data-container {if isset($_small)}small{/if}">
             <a class="data-avatar" href="{$system['system_url']}/events/{$_event['event_id']}{if $_search}?ref=qs{/if}">
                 <img  loading="lazy" src="{$_event['event_picture']}" alt="{$_event['event_title']}">
             </a>

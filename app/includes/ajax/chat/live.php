@@ -2,7 +2,7 @@
 
 /**
  * ajax -> chat -> live
- * 
+ *
  * @package Sngine
  * @author Zamblek
  */
@@ -67,7 +67,7 @@ try {
 		/* get sidebar friends */
 		$sidebar_friends = array_merge($online_friends, $offline_friends);
 		// assign variables
-		$smarty->assign('sidebar_friends', $sidebar_friends);
+		$smarty->assign('sidebar_friends', $sidebar_friends ?? []);
 		/* return */
 		$return['master']['sidebar'] = $smarty->fetch("ajax.chat.master.sidebar.tpl");
 

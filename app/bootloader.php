@@ -32,7 +32,7 @@ if ($user->_logged_in) {
         /* get sidebar friends */
         $sidebar_friends = array_merge($online_friends, $offline_friends);
         /* assign variables */
-        $smarty->assign('sidebar_friends', $sidebar_friends);
+        $smarty->assign('sidebar_friends', $sidebar_friends ?? []);
         $smarty->assign('online_friends_count', count($online_friends));
     }
     /* check if user subscribed */

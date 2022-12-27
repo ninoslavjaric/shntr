@@ -31,7 +31,7 @@
 
 {*                {elseif $_connection == "add"}*}
 {*                    <button type="button" class="btn btn-sm btn-dark js_friend-add" data-uid="{$_user['user_id']}">*}
-{*                        <i class="fa fa-user-plus mr5"></i>{if $_small}{__("Add")}{else}{__("Add Friend")}{/if}*}
+{*                        <i class="fa fa-user-plus mr5"></i>{if isset($_small)}{__("Add")}{else}{__("Add Friend")}{/if}*}
 {*                    </button>*}
 
 {*                {elseif $_connection == "cancel"}*}
@@ -122,10 +122,10 @@
         {/if}
     >
 
-        <div class="data-container {if $_small}small{/if}">
-            <a class="data-avatar" href="{$system['system_url']}/{$_user['user_name']}{if $_search}?ref=qs{/if}">
+        <div class="data-container {if isset($_small)}small{/if}">
+            <a class="data-avatar" href="{$system['system_url']}/{$_user['user_name']}{if isset($_search)}?ref=qs{/if}">
                 <img  loading="lazy" src="{$_user['user_picture']}" alt="">
-                {if $_reaction}
+                {if isset($_reaction)}
                     <div class="data-reaction">
                         <div class="inline-emoji no_animation">
                             {include file='__reaction_emojis.tpl' _reaction=$_reaction}
@@ -142,7 +142,7 @@
 
                     {elseif $_connection == "add"}
                         <button type="button" class="btn btn-sm btn-dark js_friend-add" data-uid="{$_user['user_id']}">
-                            <i class="fa fa-user-plus mr5"></i>{if $_small}{__("Add")}{else}{__("Add Friend")}{/if}
+                            <i class="fa fa-user-plus mr5"></i>{if isset($_small)}{__("Add")}{else}{__("Add Friend")}{/if}
                         </button>
 
                     {elseif $_connection == "cancel"}
@@ -222,7 +222,7 @@
                 </div>
                 <div class="mt5">
                     <span class="name js_user-popover" data-uid="{$_user['user_id']}">
-                        <a href="{$system['system_url']}/{$_user['user_name']}{if $_search}?ref=qs{/if}">
+                        <a href="{$system['system_url']}/{$_user['user_name']}{if isset($_search)}?ref=qs{/if}">
                             {if $system['show_usernames_enabled']}
                                 {$_user['user_name']}
                             {else}
@@ -242,7 +242,7 @@
                         <span class="text-underline" data-toggle="modal" data-url="users/mutual_friends.php?uid={$_user['user_id']}">{$_user['mutual_friends_count']} {__("mutual friends")}</span>
                     </div>
                 {/if}
-                {if $_donation}
+                {if isset($_donation)}
                     <div>
                         <span class="badge badge-success">{print_money($_donation|number_format:2)}</span>
                         <span class="js_moment" data-time="{$_donation_time}">{$_donation_time}</span>

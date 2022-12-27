@@ -34,7 +34,7 @@
                 <div style="padding-top: 50%; background-position: center center; background-size: cover; background-image:url('{$article['article']['parsed_cover']}');"></div>
             </a>
             <div class="post-media-image-meta">
-                <a class="article-category {if $_small}small{/if}" href="{$system['system_url']}/news/category/{$article['article']['category_id']}/{$article['article']['category_url']}">
+                <a class="article-category {if isset($_small)}small{/if}" href="{$system['system_url']}/news/category/{$article['article']['category_id']}/{$article['article']['category_url']}">
                     {__($article['article']['category_name'])}
                 </a>
             </div>
@@ -42,7 +42,7 @@
         <div class="post-media-meta">
             <a class="title mb5" href="{$system['system_url']}/news/{$article['post_id']}/{$article['article']['title_url']}">{$article['article']['title']}</a>
             <div class="text mb5">
-                {if $_small}
+                {if isset($_small)}
                     {$article['article']['text_snippet']|truncate:100}
                 {else}
                     {$article['article']['text_snippet']|truncate:500}

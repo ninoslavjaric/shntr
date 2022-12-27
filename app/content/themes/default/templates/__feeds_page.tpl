@@ -2,13 +2,13 @@
     <li class="col-md-6 col-lg-3">
         <div class="ui-box">
             <div class="img">
-                <a href="{$system['system_url']}/pages/{$_page['page_name']}{if $_search}?ref=qs{/if}">
+                <a href="{$system['system_url']}/pages/{$_page['page_name']}{if isset($_search)}?ref=qs{/if}">
                     <img  loading="lazy" alt="{$_page['page_title']}" src="{$_page['page_picture']}" />
                 </a>
             </div>
             <div class="mt10">
                 <span class="js_user-popover" data-uid="{$_page['page_id']}" data-type="page">
-                    <a class="h6" href="{$system['system_url']}/pages/{$_page['page_name']}{if $_search}?ref=qs{/if}">{$_page['page_title']}</a>
+                    <a class="h6" href="{$system['system_url']}/pages/{$_page['page_name']}{if isset($_search)}?ref=qs{/if}">{$_page['page_title']}</a>
                 </span>
                 {if $_page['page_verified']}
                     <i data-toggle="tooltip" data-placement="top" title='{__("Verified Page")}' class="fa fa-check-circle fa-fw verified-badge"></i>
@@ -30,8 +30,8 @@
     </li>
 {elseif $_tpl == "list"}
     <li class="feeds-item">
-        <div class="data-container {if $_small}small{/if}">
-            <a class="data-avatar" href="{$system['system_url']}/pages/{$_page['page_name']}{if $_search}?ref=qs{/if}">
+        <div class="data-container {if isset($_small)}small{/if}">
+            <a class="data-avatar" href="{$system['system_url']}/pages/{$_page['page_name']}{if isset($_search)}?ref=qs{/if}">
                 <img  loading="lazy" src="{$_page['page_picture']}" alt="{$_page['page_title']}">
             </a>
             <div class="data-content">
@@ -48,7 +48,7 @@
                 </div>
                 <div>
                     <span class="name js_user-popover" data-uid="{$_page['page_id']}" data-type="page">
-                        <a href="{$system['system_url']}/pages/{$_page['page_name']}{if $_search}?ref=qs{/if}">{$_page['page_title']}</a>
+                        <a href="{$system['system_url']}/pages/{$_page['page_name']}{if isset($_search)}?ref=qs{/if}">{$_page['page_title']}</a>
                     </span>
                     {if $_page['page_verified']}
                     <i data-toggle="tooltip" data-placement="top" title='{__("Verified Page")}' class="fa fa-check-circle fa-fw verified-badge"></i>

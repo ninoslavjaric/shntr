@@ -5,7 +5,7 @@
 {/if}
 
     <!-- main wrapper -->
-    <div class="main-wrapper {$wrapperClass}">
+    <div class="main-wrapper {if isset($wrapperClass)}{$wrapperClass}{/if}">
         {if $user->_logged_in && $system['activation_enabled'] && !$user->_data['user_activated']}
             <!-- top-bar -->
             <div class="top-bar">

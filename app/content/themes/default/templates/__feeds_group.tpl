@@ -29,7 +29,7 @@
     </li>
 {elseif $_tpl == "list"}
     <li class="feeds-item">
-        <div class="data-container {if $_small}small{/if}">
+        <div class="data-container {if isset($_small)}small{/if}">
             <a class="data-avatar" href="{$system['system_url']}/groups/{$_group['group_name']}{if $_search}?ref=qs{/if}">
                 <img  loading="lazy" src="{$_group['group_picture']}" alt="{$_group['group_title']}">
             </a>
