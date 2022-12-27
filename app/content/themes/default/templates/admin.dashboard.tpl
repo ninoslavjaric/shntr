@@ -127,7 +127,7 @@
                 </div>
             </div>
             <div class="form-row">
-                <div class="col-sm-12">
+                <div class="col-sm-6">
                     <div class="stat-panel bg-gradient-cyan">
                         <div class="stat-cell">
                             <i class="fa fa-bitcoin bg-icon"></i>
@@ -136,6 +136,15 @@
                             <button data-toggle="tooltip" data-placement="top" title='{__("Sync transactions")}' class="btn btn-sm btn-icon btn-rounded btn-primary js_admin-sync-transactions" data-id="0">
                                 <i class="fa fa-sync"></i>
                             </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="stat-panel bg-gradient-red">
+                        <div class="stat-cell">
+                            <i class="fa fa-bitcoin bg-icon"></i>
+                            <span class="text-xxlg">{$insights['tokensOwnedByUsers']}</span>
+                            <span class="text-lg">{__("Tokens owned by users")}</span>
                         </div>
                     </div>
                 </div>
