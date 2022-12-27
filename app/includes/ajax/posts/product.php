@@ -66,12 +66,6 @@ try {
 				_error(400);
 			}
 
-			if (empty($user->_data['user_relysia_password'])) {
-				$user->register_to_relysia(
-					$user->_data['user_name'], $user->_data['user_id']
-				);
-			}
-
 			/* check product name */
 			if (is_empty($_POST['product']->name)) {
 				return_json(array('error' => true, 'message' => __("Please add your product name")));

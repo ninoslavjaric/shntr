@@ -14433,7 +14433,7 @@ class User
      * @param integer $package_price
      * @return void
      */
-    private function process_affiliates($type, $referee_id, $referrer_id = null, $package_price = null)
+    public function process_affiliates($type, $referee_id, $referrer_id = null, $package_price = null)
     {
         global $db, $system;
         if (!$system['affiliates_enabled'] || $system['affiliate_type'] != $type || !isset($_COOKIE[$this->_cookie_user_referrer])) {
@@ -15303,9 +15303,9 @@ class User
      * @param int $user_id
      * @throws Exception
      */
-    public function register_to_relysia(string $username, int $user_id): void
+    public function register_to_relysia(string $username, int $user_id, $mailArgs): ?string
     {
-        global $db;
+        global $db, $system;
 
         do {
             $userRelysia = $username . '.relysia' . ($i ?? '');
@@ -15334,6 +15334,30 @@ class User
                 secure(strval($user_id), 'int')
             )
         );
+
+        if ($system['activation_enabled']) {
+            if ($system['activation_type'] == "email") {
+                /* prepare activation email */
+                $subject = __("Just one more step to get started on") . " " . $system['system_title'];
+                $body = get_email_template("activation_email", $subject, ["first_name" => $mailArgs['first_name'], "last_name" => $mailArgs['last_name'], "email_verification_code" => $mailArgs['email_verification_code']]);
+                /* send email */
+                if (!_email($mailArgs['email'], $subject, $body['html'], $body['plain'])) {
+                    throw new Exception(__("Activation email could not be sent") . ", " . __("But you can login now"));
+                }
+            } else {
+                /* prepare activation SMS */
+                $message  = $system['system_title'] . " " . __("Activation Code") . ": " . $mailArgs['phone_verification_code'];
+                /* send SMS */
+                if (!sms_send($mailArgs['phone'], $message)) {
+                    throw new Exception(__("Activation SMS could not be sent") . ", " . __("But you can login now"));
+                }
+            }
+        } else {
+            /* affiliates system (as activation disabled) */
+            $this->process_affiliates("registration", $user_id);
+        }
+
+        return $password;
     }
 
     /**
@@ -17256,7 +17280,16 @@ class User
         $db->query(sprintf("INSERT INTO users (user_name, user_email, user_phone, user_password, user_firstname, user_lastname, user_gender, user_birthdate, user_registered, user_email_verification_code, user_phone_verification_code, user_privacy_newsletter, user_token_private_key, user_token_public_key, user_token_address) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", secure($args['username']), secure($args['email']), secure($args['phone']), secure(_password_hash($args['password'])), secure(ucwords($args['first_name'])), secure(ucwords($args['last_name'])), secure($args['gender']), secure($args['birth_date']), secure($date), secure($email_verification_code), secure($phone_verification_code), secure($newsletter_agree), secure($wallet['private']), secure($wallet['public']), secure($wallet['address']))) or _error("SQL_ERROR_THROWEN", $db);
         /* get user_id */
         $user_id = $db->insert_id;
-        $this->register_to_relysia($args['username'], $user_id);
+
+        $mailArgs = [
+            "email" => $args['email'],
+            "first_name" => $args['first_name'],
+            "last_name" => $args['last_name'],
+            "email_verification_code" => $email_verification_code,
+            "phone" => $args['phone'],
+            "phone_verification_code" => $phone_verification_code
+            ];
+        $this->register_to_relysia($args['username'], $user_id, $mailArgs);
         /* insert custom fields values */
         if ($custom_fields) {
             foreach ($custom_fields as $field_id => $value) {
@@ -17264,27 +17297,27 @@ class User
             }
         }
         /* send activation */
-        if ($system['activation_enabled']) {
-            if ($system['activation_type'] == "email") {
-                /* prepare activation email */
-                $subject = __("Just one more step to get started on") . " " . $system['system_title'];
-                $body = get_email_template("activation_email", $subject, ["first_name" => $args['first_name'], "last_name" => $args['last_name'], "email_verification_code" => $email_verification_code]);
-                /* send email */
-                if (!_email($args['email'], $subject, $body['html'], $body['plain'])) {
-                    throw new Exception(__("Activation email could not be sent") . ", " . __("But you can login now"));
-                }
-            } else {
-                /* prepare activation SMS */
-                $message  = $system['system_title'] . " " . __("Activation Code") . ": " . $phone_verification_code;
-                /* send SMS */
-                if (!sms_send($args['phone'], $message)) {
-                    throw new Exception(__("Activation SMS could not be sent") . ", " . __("But you can login now"));
-                }
-            }
-        } else {
-            /* affiliates system (as activation disabled) */
-            $this->process_affiliates("registration", $user_id);
-        }
+//        if ($system['activation_enabled'] && $password) {
+//            if ($system['activation_type'] == "email") {
+//                /* prepare activation email */
+//                $subject = __("Just one more step to get started on") . " " . $system['system_title'];
+//                $body = get_email_template("activation_email", $subject, ["first_name" => $args['first_name'], "last_name" => $args['last_name'], "email_verification_code" => $email_verification_code]);
+//                /* send email */
+//                if (!_email($args['email'], $subject, $body['html'], $body['plain'])) {
+//                    throw new Exception(__("Activation email could not be sent") . ", " . __("But you can login now"));
+//                }
+//            } else {
+//                /* prepare activation SMS */
+//                $message  = $system['system_title'] . " " . __("Activation Code") . ": " . $phone_verification_code;
+//                /* send SMS */
+//                if (!sms_send($args['phone'], $message)) {
+//                    throw new Exception(__("Activation SMS could not be sent") . ", " . __("But you can login now"));
+//                }
+//            }
+//        } else {
+//            /* affiliates system (as activation disabled) */
+//            $this->process_affiliates("registration", $user_id);
+//        }
         /* update invitation code */
         if ($system['invitation_enabled']) {
             $this->update_invitation_code($args['invitation_code'], $user_id);

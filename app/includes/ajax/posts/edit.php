@@ -183,11 +183,7 @@ try {
                 if ($amount < 10000) {
                     break;
                 }
-                if (empty($user->_data['user_relysia_password'])) {
-                    $user->register_to_relysia(
-                        $user->_data['user_name'], $user->_data['user_id']
-                    );
-                }
+
             	$balance = shntrToken::getRelysiaBalance($user->_data['user_id'], true);
 				//not enough balance
 				// if ($amount) {

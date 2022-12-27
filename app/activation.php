@@ -43,7 +43,7 @@ try {
             /* [1] activate his account & verify his email */
             $db->query(sprintf("UPDATE users SET user_activated = '1', user_email_verified = '1' WHERE user_id = %s", secure($loginInfo['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");
             /* affiliates system */
-            $this->process_affiliates("registration", $loginInfo['user_id'], $loginInfo['user_referrer_id']);
+            $user->process_affiliates("registration", $loginInfo['user_id'], $loginInfo['user_referrer_id']);
 
             // get user paymail and send tokens
             $query = $db->query(sprintf('select user_relysia_paymail as address from users where user_id = %1$s limit 1', secure($loginInfo['user_id'], 'int'))) or _error("SQL_ERROR_THROWEN");

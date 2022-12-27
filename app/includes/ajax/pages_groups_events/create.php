@@ -32,11 +32,6 @@ try {
 	$return = array();
 	$return['callback'] = 'window.location.replace(response.path);';
 
-	// ensure user has relysia account
-	if (empty($user->_data['user_relysia_password'])) {
-		$user->register_to_relysia($user->_data['user_name'], $user->_data['user_id']);
-	}
-
 	switch ($_GET['type']) {
 		case 'page':
 			if ($_GET['do'] == "create") {

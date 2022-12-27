@@ -408,12 +408,6 @@ try {
 			// page header
 			page_header(__("Settings") . " &rsaquo; " . __("shntr token settings"));
 
-			if (empty($user->_data['user_relysia_password'])) {
-			    $user->register_to_relysia(
-			        $user->_data['user_name'], $user->_data['user_id']
-                );
-            }
-
             $balance = shntrToken::getRelysiaBalance($user->_data['user_id']);
             $reservedBalance = shntrToken::getRelysiaReservedBalance($user->_data['user_id']);
             $history = shntrToken::getHistory(intval($user->_data['user_id']));
