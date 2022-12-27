@@ -2609,7 +2609,7 @@ function watermark_image($image_path, $image_type)
 function get_user_ip()
 {
     /* handle CloudFlare IP addresses */
-    return (isset($_SERVER["HTTP_CF_CONNECTING_IP"]) ? $_SERVER["HTTP_CF_CONNECTING_IP"] : $_SERVER['REMOTE_ADDR']);
+    return $_SERVER["HTTP_CF_CONNECTING_IP"] ?? $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
 }
 
 

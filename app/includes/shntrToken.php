@@ -141,7 +141,10 @@ class shntrToken
 //        $host = in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES) ? "local.shntr.com" : $_SERVER['SERVER_NAME'];
 
         $host = 'shntr.com';
-        if (in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES)) {
+
+        if (php_sapi_name() != 'cli') {
+            $host = getenv('HOST');
+        } else if (in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES)) {
             $host = "local.{$host}";
         } else if (TEST_ENVIRONMENT){
             $host = "test.{$host}";
