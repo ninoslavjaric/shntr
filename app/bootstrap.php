@@ -71,10 +71,13 @@ require_once(ABSPATH . 'includes/functions.php');
 check_system_url();
 
 // start session
-ini_set('session.cookie_httponly', 1);
-if (get_system_protocol() == "https") {
-    ini_set('session.cookie_secure', 1);
+if (php_sapi_name() != 'cli') {
+    ini_set('session.cookie_httponly', 1);
+    if (get_system_protocol() == "https") {
+        ini_set('session.cookie_secure', 1);
+    }
 }
+
 
 // connect to the database
 $db = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT);
@@ -87,9 +90,11 @@ $db->query("SET time_zone = '+0:00'");
 
 require_once __DIR__ . '/includes/Session.php';
 
-session_set_save_handler(new Session(), true);
+if (php_sapi_name() != 'cli') {
+    session_set_save_handler(new Session(), true);
 
-session_start();
+    session_start();
+}
 
 /* set session secret */
 if (!isset($_SESSION['secret'])) {
