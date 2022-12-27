@@ -15,9 +15,6 @@ define('ABSPATH', dirname(__FILE__) . '/');
 define('BASEPATH', dirname($_SERVER['PHP_SELF']));
 
 set_error_handler(function(int $errno, string $errstr, string $errfile, int $errline): bool {
-    $backtrace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 4);
-    array_shift($backtrace);
-    array_shift($backtrace);
 
     $bodyJson = json_decode($errstr, true);
 
@@ -27,9 +24,15 @@ set_error_handler(function(int $errno, string $errstr, string $errfile, int $err
         'body' => $bodyJson ?: $errstr,
         'file' => $errfile,
         'line' => $errline,
-        'stackTrace' => $backtrace,
         'sessionId' => $_COOKIE['PHPSESSID'] ?? 'unknown',
     ];
+
+    if (!str_contains($errfile, 'content/themes/default/templates_compiled')) {
+        $backtrace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 4);
+        array_shift($backtrace);
+        array_shift($backtrace);
+        $event['stackTrace'] = $backtrace;
+    }
 
     return (bool) file_put_contents(ini_get('error_log'), json_encode($event) . PHP_EOL, FILE_APPEND);
 });
