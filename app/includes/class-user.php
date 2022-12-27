@@ -9678,7 +9678,7 @@ class User
         if ($album['in_event'] && ($album['event_privacy'] == 'public' || $this->check_event_membership($this->_data['user_id'], $album['event_id']))) {
             $pass_privacy_check = true;
         }
-        if (!$pass_privacy_check) {
+        if (!($pass_privacy_check ?? false)) {
             if (!$this->check_privacy($album['privacy'], $album['author_id'])) {
                 return false;
             }
