@@ -2664,6 +2664,8 @@ class User
                 $db->query(sprintf("DELETE FROM pages_likes WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 $db->query(sprintf("DELETE FROM pages WHERE page_admin = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
 
+                $db->query(sprintf("DELETE FROM users_relysia WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+
                 /* delete the user */
                 //$db->query("SET FOREIGN_KEY_CHECKS=0");
                 $db->query(sprintf("DELETE FROM users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
