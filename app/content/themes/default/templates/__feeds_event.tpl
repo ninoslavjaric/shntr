@@ -2,12 +2,12 @@
     <li class="col-md-6 col-lg-3">
         <div class="ui-box">
             <div class="img">
-                <a href="{$system['system_url']}/events/{$_event['event_id']}{if $_search}?ref=qs{/if}">
+                <a href="{$system['system_url']}/events/{$_event['event_id']}{if isset($_search)}?ref=qs{/if}">
                     <img  loading="lazy" alt="{$_event['event_title']}" src="{$_event['event_picture']}" />
                 </a>
             </div>
             <div class="mt10">
-                <a class="h6" href="{$system['system_url']}/events/{$_event['event_id']}{if $_search}?ref=qs{/if}">{$_event['event_title']}</a>
+                <a class="h6" href="{$system['system_url']}/events/{$_event['event_id']}{if isset($_search)}?ref=qs{/if}">{$_event['event_title']}</a>
                 <div>{$_event['event_interested']} {__("Interested")}</div>
             </div>
             <div class="mt10">
@@ -26,7 +26,7 @@
 {elseif $_tpl == "list"}
     <li class="feeds-item">
         <div class="data-container {if isset($_small)}small{/if}">
-            <a class="data-avatar" href="{$system['system_url']}/events/{$_event['event_id']}{if $_search}?ref=qs{/if}">
+            <a class="data-avatar" href="{$system['system_url']}/events/{$_event['event_id']}{if isset($_search)}?ref=qs{/if}">
                 <img  loading="lazy" src="{$_event['event_picture']}" alt="{$_event['event_title']}">
             </a>
             <div class="data-content">
@@ -43,7 +43,7 @@
                 </div>
                 <div>
                     <span class="name">
-                        <a href="{$system['system_url']}/events/{$_event['event_id']}{if $_search}?ref=qs{/if}">{$_event['event_title']}</a>
+                        <a href="{$system['system_url']}/events/{$_event['event_id']}{if isset($_search)}?ref=qs{/if}">{$_event['event_title']}</a>
                     </span>
                     <div>{$_event['event_interested']} {__("Interested")}</div>
                 </div>

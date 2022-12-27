@@ -3,12 +3,12 @@
         <div class="form-group">
             <label class="form-control-label">{__($custom_field['label'])} {if $custom_field['mandatory'] && !$_search}*{/if}</label>
             {if $custom_field['type'] == "textbox"}
-                <input name="fld_{$custom_field['field_id']}" type="text" class="form-control" {if !$_search}placeholder="{__($custom_field['label'])}"{/if} {if $custom_field['mandatory'] && !$_search}required{/if}>
+                <input name="fld_{$custom_field['field_id']}" type="text" class="form-control" {if !isset($_search)}placeholder="{__($custom_field['label'])}"{/if} {if $custom_field['mandatory'] && !$_search}required{/if}>
             {elseif $custom_field['type'] == "textarea"}
-                <textarea name="fld_{$custom_field['field_id']}" class="form-control" {if !$_search}placeholder="{__($custom_field['label'])}"{/if} {if $custom_field['mandatory'] && !$_search}required{/if}></textarea>
+                <textarea name="fld_{$custom_field['field_id']}" class="form-control" {if !isset($_search)}placeholder="{__($custom_field['label'])}"{/if} {if $custom_field['mandatory'] && !$_search}required{/if}></textarea>
             {elseif $custom_field['type'] == "selectbox"}
                 <select name="fld_{$custom_field['field_id']}" class="form-control" {if $custom_field['mandatory'] && !$_search}required{/if}>
-                    {if $_search}
+                    {if isset($_search)}
                         <option selected value="any">{__("Any")}</option>
                     {else}
                         <option selected value="none">{__("Select")} {__($custom_field['label'])}</option>

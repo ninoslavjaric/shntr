@@ -2,12 +2,12 @@
     <li class="col-md-6 col-lg-3">
         <div class="ui-box">
             <div class="img">
-                <a href="{$system['system_url']}/groups/{$_group['group_name']}{if $_search}?ref=qs{/if}">
+                <a href="{$system['system_url']}/groups/{$_group['group_name']}{if isset($_search)}?ref=qs{/if}">
                     <img  loading="lazy" alt="{$_group['group_title']}" src="{$_group['group_picture']}" />
                 </a>
             </div>
             <div class="mt10">
-                <a class="h6" href="{$system['system_url']}/groups/{$_group['group_name']}{if $_search}?ref=qs{/if}">{$_group['group_title']}</a>
+                <a class="h6" href="{$system['system_url']}/groups/{$_group['group_name']}{if isset($_search)}?ref=qs{/if}">{$_group['group_title']}</a>
                 <div>{$_group['group_members']} {__("Members")}</div>
             </div>
             <div class="mt10">
@@ -30,7 +30,7 @@
 {elseif $_tpl == "list"}
     <li class="feeds-item">
         <div class="data-container {if isset($_small)}small{/if}">
-            <a class="data-avatar" href="{$system['system_url']}/groups/{$_group['group_name']}{if $_search}?ref=qs{/if}">
+            <a class="data-avatar" href="{$system['system_url']}/groups/{$_group['group_name']}{if isset($_search)}?ref=qs{/if}">
                 <img  loading="lazy" src="{$_group['group_picture']}" alt="{$_group['group_title']}">
             </a>
             <div class="data-content">
@@ -51,7 +51,7 @@
                 </div>
                 <div>
                     <span class="name">
-                        <a href="{$system['system_url']}/groups/{$_group['group_name']}{if $_search}?ref=qs{/if}">{$_group['group_title']}</a>
+                        <a href="{$system['system_url']}/groups/{$_group['group_name']}{if isset($_search)}?ref=qs{/if}">{$_group['group_title']}</a>
                     </span>
                     <div>{$_group['group_members']} {__("Members")}</div>
                 </div>
