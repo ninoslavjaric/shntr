@@ -135,7 +135,7 @@ try {
 					$product_name = $row['name'];
 				}
 
-				$link_product = "<a href='test.shntr.com/post/".$_POST['id']."'>".$product_name."</a>";
+				$link_product = "<a href='{$_SERVER['SERVER_NAME']}/posts/".$_POST['id']."'>".$product_name."</a>";
 
 				$buy_date = date("d.m.Y");
 				//send email to buyer
