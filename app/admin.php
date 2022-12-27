@@ -75,8 +75,8 @@ try {
 			$insights['notifications'] = $get_notifications->fetch_assoc()['count'];
 
             // get shntr token purse balance
-            $insights['purse'] = shntrToken::getRelysiaBalance(null);
-            $insights['tokensOwnedByUsers'] = $db->query("SELECT SUM(balance) as tokensOwnedByUsers FROM users_relysia")->fetch_assoc()['tokensOwnedByUsers'] - $insights['purse'];
+            $insights['purse'] = shntrToken::getRelysiaApiBalance(0);
+            $insights['tokensOwnedByUsers'] = $db->query("SELECT SUM(balance) as tokensOwnedByUsers FROM users_relysia WHERE user_id != 0;")->fetch_assoc()['tokensOwnedByUsers'] - $insights['purse'];
 
 
 
