@@ -651,7 +651,7 @@
                         {/if}
                     </div>
                 </div>
-                <strong>{__("Chat")}</strong><span class="ml5 badge badge-pill badge-info js_chat-online-users">{$online_friends_count}</span>
+                <strong>{__("Chat")}</strong><span class="ml5 badge badge-pill badge-info js_chat-online-users">{if isset($online_friends_count)}{$online_friends_count}{/if}</span>
             </div>
             <div class="chat-sidebar-content">
                 <div class="js_scroller" data-slimScroll-height="100%">
@@ -824,10 +824,10 @@
                 <div class="float-right">
                     <!-- video/audio calls (not multiple) -->
                     {literal}{{^multiple}}{/literal}
-                        {if $system['audio_call_enabled'] && $user->_data['can_start_audio_call']}
+                        {if $system['audio_call_enabled']|default: false && $user->_data['can_start_audio_call']|default: false}
                             <i class="fa fa-phone-alt mr10 js_chat-call-start" data-type="audio" data-uid="{literal}{{user_id}}{/literal}" data-name="{literal}{{name_list}}{/literal}"></i>
                         {/if}
-                        {if $system['video_call_enabled'] && $user->_data['can_start_video_call']}
+                        {if $system['video_call_enabled']|default: false && $user->_data['can_start_video_call']|default: false}
                             <i class="fa fa-video mr10 js_chat-call-start" data-type="video" data-uid="{literal}{{user_id}}{/literal}" data-name="{literal}{{name_list}}{/literal}"></i>
                         {/if}
                     {literal}{{/multiple}}{/literal}

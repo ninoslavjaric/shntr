@@ -1,7 +1,7 @@
 <!-- posts-filter -->
 <div class="posts-filter">
-    <span>{if $_title}{$_title}{else}{__("Recent Updates")}{/if}</span>
-    {if $user->_logged_in && !$_filter}
+    <span>{if $_title|default:false}{$_title}{else}{__("Recent Updates")}{/if}</span>
+    {if $user->_logged_in && !($_filter|default: false)}
 	    <div class="float-right">
 	        <div class="btn-group btn-group-sm js_posts-filter" data-value="all" title='{__("All")}'>
 	            <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" data-display="static">
@@ -49,7 +49,7 @@
 	            </div>
 	        </div>
 	    </div>
-    {elseif $_filter == "article"}
+    {elseif $_filter|default: false == "article"}
     	{if $user->_data['can_write_articles']}
 	    	<div class="float-right">
 	    		<a href="{$system['system_url']}/news/new" class="btn btn-sm btn-primary">
@@ -57,7 +57,7 @@
 	            </a>
 	    	</div>
     	{/if}
-    {elseif $_filter == "product"}
+    {elseif $_filter|default: false == "product"}
     	{if $user->_data['can_sell_products']}
 	        <div class="float-right">
 	            <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-url="posts/product.php?do=create" data-callback="geocompletionSetup">
@@ -65,7 +65,7 @@
 	            </button>
 	    	</div>
     	{/if}
-    {elseif $_filter == "funding"}
+    {elseif $_filter|default: false == "funding"}
     	{if $user->_data['can_raise_funding']}
 	        <div class="float-right">
 	            <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-url="posts/funding.php?do=create">
@@ -107,7 +107,7 @@
 <!-- posts staging -->
 
 <!-- posts stream -->
-<div class="js_posts_stream" data-get="{$_get}" data-filter="{if $_filter}{$_filter}{else}all{/if}" {if $_id}data-id="{$_id}"{/if}>
+<div class="js_posts_stream" data-get="{$_get}" data-filter="{if $_filter|default: false}{$_filter}{else}all{/if}" {if $_id|default: false}data-id="{$_id}"{/if}>
 	{if $posts}
 		<ul>
 			<!-- posts -->
@@ -118,13 +118,13 @@
 		</ul>
 
 		<!-- see-more -->
-		<div class="alert alert-post see-more mb20 js_see-more js_see-more-infinite" data-get="{$_get}" data-filter="{if $_filter}{$_filter}{else}all{/if}" {if $_id}data-id="{$_id}"{/if}>
+		<div class="alert alert-post see-more mb20 js_see-more js_see-more-infinite" data-get="{$_get}" data-filter="{if $_filter|default: false}{$_filter}{else}all{/if}" {if $_id|default: false}data-id="{$_id}"{/if}>
 			<span>{__("More Stories")}</span>
 			<div class="loader loader_small x-hidden"></div>
 		</div>
 		<!-- see-more -->
 	{else}
-		<div class="js_posts_stream" data-get="{$_get}" data-filter="{if $_filter}{$_filter}{else}all{/if}" {if $_id}data-id="{$_id}"{/if}>
+		<div class="js_posts_stream" data-get="{$_get}" data-filter="{if $_filter|default: false}{$_filter}{else}all{/if}" {if $_id|default: false}data-id="{$_id}"{/if}>
 			<ul>
 				{include file='_no_data.tpl'}
 			</ul>
