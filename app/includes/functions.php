@@ -2909,7 +2909,7 @@ function http_call(string $url, string $method = 'GET', array $data = [], array 
 
     $errorBody = [
         'message' => 'http-response',
-        'response' => str_replace(PHP_EOL, '', $result),
+        'response' => $json ?: str_replace(PHP_EOL, '', $result),
         'params' => $data,
         'headers' => $headers,
         'url' => $url,
