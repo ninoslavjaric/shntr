@@ -169,7 +169,7 @@
                                                             {/if}
                                                             {if $user->_data['can_write_articles']}
                                                                 <a class="dropdown-item" href="{$system['system_url']}/news/new">
-                                                                    <i class="fas fa-blog fa-fw mr10" style="color: #f25e4e;"></i>{__("Create News")}
+                                                                    <i class="fas fa-blog fa-fw mr10" style="color: #f25e4e;"></i>{__("Create Article")}
                                                                 </a>
                                                             {/if}
                                                             {if $user->_data['can_sell_products']}
