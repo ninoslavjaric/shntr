@@ -5499,10 +5499,9 @@ body.night-mode .add-story .add {
   display: none;
   position: fixed;
   right: 0;
-  top: 0;
   bottom: 0;
   width: 210px;
-  top: 94px;
+  top: 144px;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
   z-index: 1000;
 }
