@@ -136,31 +136,45 @@ try {
 				}
 
 				$link_product = "<a href='{$_SERVER['SERVER_NAME']}/posts/".$_POST['id']."'>".$product_name."</a>";
+				$url_product = "{$_SERVER['SERVER_NAME']}/posts/{$_POST['id']}";
 
 				$buy_date = date("d.m.Y");
-				//send email to buyer
-				$buyer_subject = "Successfully bought a product on shntr";
 
-				$buyer_message = "<p>Dear ".$buyer_name."</p> 
+                /* prepare product bought email */
+                $subject = __("Successfully bought a product on") . " " . $system['system_title'];
+                $body = get_email_template(
+                    'product_bought_email',
+                    $subject,
+                    [
+                        'seller_name' => $seller_name,
+                        'buyer_name' => $buyer_name,
+                        'link_product' => $link_product,
+                        'url_product' => $url_product,
+                        'price' => $price,
+                        'buy_date' => $buy_date
+                    ]);
+                /* send email */
+                if (!_email($buyer_email, $subject, $body['html'], $body['plain'])) {
+                    throw new Exception(__("Email could not be sent"));
+                }
 
-				<p>You have bought ".$link_product." for ".$price." tokens on ".$buy_date.".</p>
-				
-				<p>Best regards,</p>
-				<p>shntr team</p>";
-
-				$buyer_retval = _email ($buyer_email, $buyer_subject, $buyer_message, 'Success');
-
-				//send email to seller
-				$seller_subject = "Successfully sold a product on shntr";
-
-				$seller_message = "<p>Dear ".$seller_name."</>
-
-				<p>User ".$buyer_name." has bought your product ".$link_product." for ".$price." tokens  on ".$buy_date.".</p>
-				
-				<p>Best regards,</p>
-				<p>shntr team</p>";
-
-				$seller_retval = _email ($seller_email, $seller_subject, $seller_message, 'Success');
+                /* prepare product sold email */
+                $subject = __("Successfully sold a product on") . " " . $system['system_title'];
+                $body = get_email_template(
+                    'product_sold_email',
+                    $subject,
+                    [
+                        'seller_name' => $seller_name,
+                        'buyer_name' => $buyer_name,
+                        'link_product' => $link_product,
+                        'url_product' => $url_product,
+                        'price' => $price,
+                        'buy_date' => $buy_date
+                    ]);
+                /* send email */
+                if (!_email($seller_email, $subject, $body['html'], $body['plain'])) {
+                    throw new Exception(__("Email could not be sent"));
+                }
 
 			} catch (Exception $e) {
 				_error("Error", $e->getMessage());

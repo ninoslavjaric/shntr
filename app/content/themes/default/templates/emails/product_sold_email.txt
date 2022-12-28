@@ -1,0 +1,16 @@
+Dear {$seller_name},
+
+Congratulations on the successful sale of {$link_product} to {$buyer_name} on {$buy_date} for {$price} token(s).
+We are pleased to inform you that the payment for this sale has been processed and is now available in your account.
+
+If you have any questions about this sale, please don't hesitate to contact us on info@shntr.com.
+We are here to support you and ensure that your experience with our platform is a positive one.
+
+Thank you for choosing our platform to sell your products, and we hope to see you again soon.
+
+
+If the link does not work, you can try copying and pasting the link into your browser. Link: {$url_product}
+
+
+Best regards,
+{$system['system_title']} {__("Team")}

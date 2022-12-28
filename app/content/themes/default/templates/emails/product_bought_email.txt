@@ -1,0 +1,14 @@
+Dear {$buyer_name},
+
+You have successfully purchased {$link_product} on {$buy_date} for {$price} token(s).
+
+If you have any questions or concerns about your purchase, please don't hesitate to contact us on info@shntr.com.
+We are here to support you and ensure that your experience with our platform is a positive one.
+
+Thank you again for choosing our platform to make your purchase, and we hope to see you again soon.
+
+
+If the link does not work, you can try copying and pasting the link into your browser. Link: {$url_product}
+
+Best regards,
+{$system['system_title']} {__("Team")}
