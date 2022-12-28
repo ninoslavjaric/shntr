@@ -2019,7 +2019,7 @@ function user_access($is_ajax = false, $bypass_subscription = false)
             blueModalImproved([ "modalId" => 'LOGIN' ]);
         }
         /* check user activated */
-        if ($system['activation_enabled'] && !$user->_data['user_activated']) {
+        if ($system['activation_enabled'] && !$user->_data['user_activated'] && $user->_data['user_started']) {
             blueModal("MESSAGE", __("Not Activated"), __("Before you can interact with other users, you need to confirm your email address"));
         }
         /* check registration type */
