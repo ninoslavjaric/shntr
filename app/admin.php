@@ -47,7 +47,7 @@ try {
 			$get_banned = $db->query("SELECT COUNT(*) as count FROM users WHERE user_banned = '1'") or _error("SQL_ERROR");
 			$insights['banned'] = $get_banned->fetch_assoc()['count'];
 			/* not activated */
-			$get_not_activated = $db->query("SELECT COUNT(*) as count FROM users WHERE user_activated = '0'") or _error("SQL_ERROR");
+			$get_not_activated = $db->query("SELECT COUNT(*) as count FROM users WHERE user_email_verified = '0'") or _error("SQL_ERROR");
 			$insights['not_activated'] = $get_not_activated->fetch_assoc()['count'];
 			/* online */
 			$get_online = $db->query(sprintf("SELECT COUNT(*) as count FROM users WHERE user_last_seen >= SUBTIME(NOW(), SEC_TO_TIME(%s))", secure($system['offline_time'], 'int', false))) or _error("SQL_ERROR");
