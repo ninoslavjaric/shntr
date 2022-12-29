@@ -1484,6 +1484,9 @@ $(function () {
         $("#modal-confirm-cancel").click(function () {
             button_status(_this, "reset");
         });
+        $("body").click(function () {
+            button_status(_this, "reset");
+        });
     });
     $('body').on('click', '.js_sell-token', function(e) {
         var _this = $(this);
