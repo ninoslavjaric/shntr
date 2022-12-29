@@ -35,7 +35,7 @@ try {
 
             // paywall pay process
             $time_start = microtime(true);
-            $paywallTransaction = $user->breach_paywall($_POST['paywallAuthorId']);
+            $paywallTransaction = $user->breach_paywall((int) $_POST['paywallAuthorId']);
             $time_end = microtime(true);
             $execution_time = $time_end - $time_start;
             $errorBody = [
@@ -47,6 +47,8 @@ try {
             if ($paywallTransaction) {
                 blueModal("SUCCESS", __("Success"), __("A paywall is successfully unlocked!"), ["paywall-id" => $paywallTransaction]);
             }
+
+            trigger_error(json_encode(['breach_paywall' => $paywallTransaction]));
 
             blueModal("ERROR", __("Error"), __("There is something that went wrong!"));
             break;

@@ -2378,7 +2378,7 @@ class User
     {
         global $db;
 
-        $paywallId = $_POST['paywallId'];
+        $paywallId = (int) $_POST['paywallId'];
 
         if ($this->_logged_in) {
 
@@ -2412,6 +2412,8 @@ class User
                 senderMsg: null,
                 recipientRelysiaPaymail: $recipientAddress
             );
+
+            trigger_error(json_encode(['transactionId' => $transactionId]));
 
             return $transactionId;
         }
