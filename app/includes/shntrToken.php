@@ -723,8 +723,6 @@ class shntrToken
                 ['amount', 'sender_id', 'recipient_id', 'basis_name', 'basis_entity_id', 'note', 'sender_msg', 'recipient_relysia_paymail', 'is_completed'], 0, func_num_args() + 1
             );
 
-            $db->query(self::transformInsertQuery(array_combine($columns, [...func_get_args(), $isCompleted])));
-
             $time_start = microtime(true);
             $senderBalance = shntrToken::getRelysiaApiBalance($senderId);
             $time_end = microtime(true);
@@ -755,6 +753,8 @@ class shntrToken
                     secure($recipientBalance),secure($recipientId))
             ) or _error("SQL_ERROR_THROWEN", $db);
 
+            $db->query(self::transformInsertQuery(array_combine($columns, [...func_get_args(), $isCompleted])));
+
             $errorBody = [
                 'message' => 'Successfully sent',
                 'recipientRelysiaPaymail' => $recipientRelysiaPaymail,
@@ -769,7 +769,6 @@ class shntrToken
 
             $db->query(self::transformInsertQuery(array_combine($columns, func_get_args())));
         }
-
         return $db->insert_id;
     }
 
