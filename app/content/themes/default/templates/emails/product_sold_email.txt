@@ -1,6 +1,6 @@
 Dear {$seller_name},
 
-Congratulations on the successful sale of {$system['system_url']}/posts/{$product_id} to {$buyer_name} on {$buy_date} for {$price} token(s).
+Congratulations on the successful sale of {$url_product} to {$buyer_name} on {$buy_date} for {$price} token(s).
 We are pleased to inform you that the payment for this sale has been processed and is now available in your account.
 
 If you have any questions about this sale, please don't hesitate to contact us on info@shntr.com.
