@@ -7185,11 +7185,7 @@ class User
             }
             _error(403);
         }
-        /* delete hashtags */
-        $this->delete_hashtags($post_id);
-        /* delete post */
-        $refresh = false;
-        $db->query(sprintf("DELETE FROM posts WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+
         switch ($post['post_type']) {
             case 'photos':
             case 'album':
@@ -7318,6 +7314,7 @@ class User
 
             case 'article':
                 /* delete nested table row */
+                $db->query(sprintf("DELETE FROM interests_posts WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 $db->query(sprintf("DELETE FROM posts_articles WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
 
@@ -7349,6 +7346,13 @@ class User
                 $db->query(sprintf("DELETE FROM posts_files WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
                 break;
         }
+
+        /* delete hashtags */
+        $this->delete_hashtags($post_id);
+        /* delete post */
+        $refresh = false;
+        $db->query(sprintf("DELETE FROM posts WHERE post_id = %s", secure($post_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+
         /* points balance */
         $this->points_balance("delete", $post['author_id'], "post");
         /* delete post in_group notification */
