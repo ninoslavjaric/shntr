@@ -1,11 +1,13 @@
 <?php
 
+define('DIRECTOR', dirname(ini_get('error_log')));
+
 $commands = array_map(
     fn($item) => $_GET['query'] ?? false ? "zgrep -i '{$_GET['query']}' {$item}" : "zcat {$item}",
-    glob(__DIR__ . '/error.*.log.gz')
+    glob(DIRECTOR . '/error.*.log.gz')
 );
 
-$current = __DIR__ . '/error.log';
+$current = DIRECTOR. '/error.log';
 $commands[] = ($_GET['query'] ?? false ? "grep -i '{$_GET['query']}' " : "cat ") . $current;
 
 
@@ -19,6 +21,10 @@ while ($rows > 0 && $cmd = array_pop($commands)) {
     $logs = array_merge($logs, $error_logs);
 }
 
-$output = implode(PHP_EOL, $logs);
+foreach($logs as &$log) {
+        $log = json_decode($log, 1) ?: $log;
+}
 
-echo "<pre>{$output}</pre>";
+
+header('content-type: application/json');
+echo json_encode($logs);
