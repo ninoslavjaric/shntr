@@ -146,6 +146,7 @@ try {
                     'product_bought_email',
                     $subject,
                     [
+                        'product_id' => $post['product']['product_id'],
                         'seller_name' => $seller_name,
                         'buyer_name' => $buyer_name,
                         'link_product' => $link_product,
@@ -164,6 +165,7 @@ try {
                     'product_sold_email',
                     $subject,
                     [
+                        'product_id' => $post['product']['product_id'],
                         'seller_name' => $seller_name,
                         'buyer_name' => $buyer_name,
                         'link_product' => $link_product,

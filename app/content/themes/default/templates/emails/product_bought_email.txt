@@ -1,6 +1,6 @@
 Dear {$buyer_name},
 
-You have successfully purchased {$link_product} on {$buy_date} for {$price} token(s).
+You have successfully purchased {$system['system_url']}/posts/{$product_id} on {$buy_date} for {$price} token(s).
 
 If you have any questions or concerns about your purchase, please don't hesitate to contact us on info@shntr.com.
 We are here to support you and ensure that your experience with our platform is a positive one.
