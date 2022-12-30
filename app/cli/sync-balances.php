@@ -4,6 +4,7 @@
 /**
  * @var $db mysqli
  */
+define('CLI_SESSION', 'crontab-' . date('YmdHis'));
 require(__DIR__ . '/../bootstrap.php');
 
 if (php_sapi_name() != 'cli') {

@@ -17,6 +17,10 @@ define('BASEPATH', dirname($_SERVER['PHP_SELF']));
 set_error_handler(function(int $errno, string $errstr, string $errfile, int $errline): bool {
 
     $bodyJson = json_decode($errstr, true);
+    $sessionId = $_COOKIE['PHPSESSID'] ?? 'unknown';
+    if (defined('CLI_SESSION')) {
+        $sessionId = CLI_SESSION;
+    }
 
     $event = [
         'time' => gmdate("d-M-Y H:i:s T"),
@@ -24,7 +28,7 @@ set_error_handler(function(int $errno, string $errstr, string $errfile, int $err
         'body' => $bodyJson ?: $errstr,
         'file' => $errfile,
         'line' => $errline,
-        'sessionId' => $_COOKIE['PHPSESSID'] ?? 'unknown',
+        'sessionId' => $sessionId,
     ];
 
     if (!str_contains($errfile, 'content/themes/default/templates_compiled')) {

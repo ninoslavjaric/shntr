@@ -4,7 +4,7 @@
  * @var $user User
  * @var $db mysqli
  */
-
+define('CLI_SESSION', 'crontab-' . date('YmdHis'));
 require(__DIR__ . '/../bootstrap.php');
 
 try {

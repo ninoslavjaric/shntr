@@ -8,3 +8,5 @@ nel=error.$(date +%s).log
 mv $el $nel
 gzip $nel;
 chown 1000:1000 $nel.gz
+touch $el
+chown 1000:1000 $el
