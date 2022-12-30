@@ -92,7 +92,6 @@
                             <th>{__("Activated")}</th>
                             <th>{__("Balance")}</th>
                             <th>{__("Actions")}</th>
-                            <th>{__("Sync transactions")}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -130,7 +129,9 @@
                                     </td>
                                     <td>
                                         <div class="table-buttons-wrapper">
-
+                                            <button data-toggle="tooltip" data-placement="top" title='{__("Sync transactions")}' class="btn btn-sm btn-icon btn-rounded btn-primary js_admin-sync-transactions" data-id="{$row['user_id']}">
+                                                <i class="fa fa-sync"></i>
+                                            </button>
                                             <a data-toggle="tooltip" data-placement="top" title='{__("Edit")}' href="{$system['system_url']}/{$control_panel['url']}/users/edit/{$row['user_id']}" class="btn btn-sm btn-icon btn-rounded btn-primary">
                                                 <i class="fa fa-pencil-alt"></i>
                                             </a>
@@ -139,16 +140,14 @@
                                             </button>
                                         </div>
                                     </td>
-                                    <td>
-                                        <div class="table-buttons-wrapper">
+{*                                    <td>*}
+{*                                        <div class="table-buttons-wrapper">*}
 {*                                            <button data-toggle="tooltip" data-placement="top" title='{__("Sync")}' class="btn btn-sm btn-icon btn-rounded btn-primary js_admin-sync-wallet" data-id="{$row['user_id']}">*}
 {*                                                <i class="fa fa-sync"></i>*}
 {*                                            </button>*}
-                                            <button data-toggle="tooltip" data-placement="top" title='{__("Sync transactions")}' class="btn btn-sm btn-icon btn-rounded btn-primary js_admin-sync-transactions" data-id="{$row['user_id']}">
-                                                <i class="fa fa-sync"></i>
-                                            </button>
-                                        </div>
-                                    </td>
+{*                                            *}
+{*                                        </div>*}
+{*                                    </td>*}
                                 </tr>
                             {/foreach}
                         {else}
