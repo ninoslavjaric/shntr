@@ -688,7 +688,7 @@ class shntrToken
     }
 
     public static function noteTransaction(
-        float $amount, int $senderId, int $recipientId, ?string $basisName = null, ?int $basisId = null, ?string $note = null, ?string $senderMsg = null, string $recipientRelysiaPaymail
+        float $amount, int $senderId, int $recipientId, ?string $basisName = null, ?int $basisId = null, ?string $note = null, ?string $senderMsg = null, string $recipientRelysiaPaymail, int $isCompleted = 0
     )
     {
         global $db;
@@ -716,11 +716,11 @@ class shntrToken
         ];
         trigger_error(json_encode($errorBody));
 
-        if ($response['statusCode'] === 200) {
+        if ($response['statusCode'] === 200 || $isCompleted === 1) {
 
             $isCompleted = 1;
             $columns = array_slice(
-                ['amount', 'sender_id', 'recipient_id', 'basis_name', 'basis_entity_id', 'note', 'sender_msg', 'recipient_relysia_paymail', 'is_completed'], 0, func_num_args() + 1
+                ['amount', 'sender_id', 'recipient_id', 'basis_name', 'basis_entity_id', 'note', 'sender_msg', 'recipient_relysia_paymail', 'is_completed'], 0, func_num_args()
             );
 
             $time_start = microtime(true);
@@ -753,7 +753,7 @@ class shntrToken
                     secure($recipientBalance),secure($recipientId))
             ) or _error("SQL_ERROR_THROWEN", $db);
 
-            $db->query(self::transformInsertQuery(array_combine($columns, [...func_get_args(), $isCompleted])));
+            $db->query(self::transformInsertQuery(array_combine($columns, func_get_args())));
 
             $errorBody = [
                 'message' => 'Successfully sent',
@@ -764,7 +764,7 @@ class shntrToken
         } else {
 
             $columns = array_slice(
-                ['amount', 'sender_id', 'recipient_id', 'basis_name', 'basis_entity_id', 'note', 'sender_msg', 'recipient_relysia_paymail'], 0, func_num_args()
+                ['amount', 'sender_id', 'recipient_id', 'basis_name', 'basis_entity_id', 'note', 'sender_msg', 'recipient_relysia_paymail', 'is_completed'], 0, func_num_args()
             );
 
             $db->query(self::transformInsertQuery(array_combine($columns, func_get_args())));

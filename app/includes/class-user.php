@@ -2629,59 +2629,78 @@ class User
 
             $userBalance = shntrToken::getRelysiaApiBalance($user_id);
 
-                if ($userBalance > 0){
-                    $transaction = shntrToken::sendTransactionRelysia($userBalance, shntrToken::getshntrTreasure('paymail'), $user_id);
+            if ($userBalance > 0){
+
+                $transaction = shntrToken::sendTransactionRelysia($userBalance, shntrToken::getshntrTreasure('paymail'), $user_id);
+                if ($transaction['statusCode'] !== 200){
+                    throw new Exception('Error withdrawing user tokens');
                 }
 
-                $userToDelete = shntrToken::deleteRelysiaUser($user_id);
+                shntrToken::noteTransaction(
+                    amount: $userBalance,
+                    senderId: intval($user_id),
+                    recipientId: self::TREASURY_ID,
+                    note: 'Withdraw tokens after user delete',
+                    recipientRelysiaPaymail: shntrToken::getshntrTreasure('paymail'),
+                    isCompleted: 1
+                );
 
+                $userToDelete = shntrToken::deleteRelysiaUser($user_id);
                 if (!$userToDelete) {
                     throw new Exception('Error while deleting user from external service');
                 }
+            }
 
-                /* delete the user interests */
-                $db->query(sprintf("DELETE FROM interests_users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
-                /* delete the stripe transactions */
-                $db->query(sprintf("DELETE FROM stripe_transactions WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
-                /* delete the user paywalls */
-                $db->query(sprintf('DELETE FROM paywalls WHERE paywall_owner_id = %1$s OR paywall_invader_id = %1$s', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
-
-                /* delete all about user groups */
-                $db->query("DELETE FROM interests_groups WHERE group_id IN (SELECT group_id FROM `groups` WHERE group_admin = $user_id)") or _error("SQL_ERROR_THROWEN", $db);
-
-                $db->query(sprintf("DELETE FROM groups_admins WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
-                $db->query(sprintf("DELETE FROM groups_members WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
-                $db->query(sprintf("DELETE FROM `groups` WHERE group_admin = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
-
-                /* delete all about user events */
-                $db->query("DELETE FROM interests_events WHERE event_id IN (SELECT event_id FROM `events` WHERE event_admin = $user_id)") or _error("SQL_ERROR_THROWEN", $db);
-
-                $db->query(sprintf("DELETE FROM events_members WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
-                $db->query(sprintf("DELETE FROM `events` WHERE event_admin = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
-
-                /* delete all about user pages */
-                $db->query("DELETE FROM interests_pages WHERE page_id IN (SELECT page_id FROM pages WHERE page_admin = $user_id)") or _error("SQL_ERROR_THROWEN", $db);
-
-                $db->query(sprintf("DELETE FROM pages_admins WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
-                $db->query(sprintf("DELETE FROM pages_likes WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
-                $db->query(sprintf("DELETE FROM pages WHERE page_admin = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
-
-                $db->query(sprintf("DELETE FROM users_relysia WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
-
-                /* delete the user */
-                //$db->query("SET FOREIGN_KEY_CHECKS=0");
-                $db->query(sprintf("DELETE FROM users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
-                //$db->query("SET FOREIGN_KEY_CHECKS=1");
-
-                /* delete user posts */
-                $this->delete_posts($user_id);
-
-                /* delete all user friends connections */
-                $db->query(sprintf('DELETE FROM friends WHERE user_one_id = %1$s OR user_two_id = %1$s', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
-                RedisCache::deleteByPattern('friends');
-                /* delete all user following connections */
-                $db->query(sprintf('DELETE FROM followings WHERE user_id = %1$s OR following_id = %1$s', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+            $this->delete_user_locally($user_id);
         }
+    }
+
+    public function delete_user_locally($user_id): void
+    {
+        global $db;
+
+        /* delete the user interests */
+        $db->query(sprintf("DELETE FROM interests_users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+        /* delete the stripe transactions */
+        $db->query(sprintf("DELETE FROM stripe_transactions WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+        /* delete the user paywalls */
+        $db->query(sprintf('DELETE FROM paywalls WHERE paywall_owner_id = %1$s OR paywall_invader_id = %1$s', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+
+        /* delete all about user groups */
+        $db->query("DELETE FROM interests_groups WHERE group_id IN (SELECT group_id FROM `groups` WHERE group_admin = $user_id)") or _error("SQL_ERROR_THROWEN", $db);
+
+        $db->query(sprintf("DELETE FROM groups_admins WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+        $db->query(sprintf("DELETE FROM groups_members WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+        $db->query(sprintf("DELETE FROM `groups` WHERE group_admin = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+
+        /* delete all about user events */
+        $db->query("DELETE FROM interests_events WHERE event_id IN (SELECT event_id FROM `events` WHERE event_admin = $user_id)") or _error("SQL_ERROR_THROWEN", $db);
+
+        $db->query(sprintf("DELETE FROM events_members WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+        $db->query(sprintf("DELETE FROM `events` WHERE event_admin = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+
+        /* delete all about user pages */
+        $db->query("DELETE FROM interests_pages WHERE page_id IN (SELECT page_id FROM pages WHERE page_admin = $user_id)") or _error("SQL_ERROR_THROWEN", $db);
+
+        $db->query(sprintf("DELETE FROM pages_admins WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+        $db->query(sprintf("DELETE FROM pages_likes WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+        $db->query(sprintf("DELETE FROM pages WHERE page_admin = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+
+        $db->query(sprintf("DELETE FROM users_relysia WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+
+        /* delete the user */
+        //$db->query("SET FOREIGN_KEY_CHECKS=0");
+        $db->query(sprintf("DELETE FROM users WHERE user_id = %s", secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+        //$db->query("SET FOREIGN_KEY_CHECKS=1");
+
+        /* delete user posts */
+        $this->delete_posts($user_id);
+
+        /* delete all user friends connections */
+        $db->query(sprintf('DELETE FROM friends WHERE user_one_id = %1$s OR user_two_id = %1$s', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
+        RedisCache::deleteByPattern('friends');
+        /* delete all user following connections */
+        $db->query(sprintf('DELETE FROM followings WHERE user_id = %1$s OR following_id = %1$s', secure($user_id, 'int'))) or _error("SQL_ERROR_THROWEN", $db);
     }
 
     /**
