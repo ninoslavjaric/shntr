@@ -753,7 +753,7 @@ class shntrToken
                     secure($recipientBalance),secure($recipientId))
             ) or _error("SQL_ERROR_THROWEN", $db);
 
-            $db->query(self::transformInsertQuery(array_combine($columns, func_get_args())));
+            $db->query(self::transformInsertQuery(array_combine($columns, [...func_get_args(), $isCompleted])));
 
             $errorBody = [
                 'message' => 'Successfully sent',
