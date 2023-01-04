@@ -8,7 +8,11 @@
         data-paywall-author-id="{$notification['paywall']['paywall_author_id']}"
     {/if}
 >
-    <a class="data-container" href="{$notification['url']}">
+    {if $notification['action'] == 'async_request'}
+    <a class="data-container" style="cursor: default">
+    {else}
+        <a class="data-container" href="{$notification['url']}">
+    {/if}
         <div class="data-avatar">
             <img  loading="lazy" src="{$notification['user_picture']}" alt="">
         </div>
