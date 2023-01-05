@@ -1,5 +1,8 @@
 <?php
 
+require_once(ABSPATH . 'includes/libs/AWS/aws-autoloader.php');
+
+use Aws\SecretsManager\SecretsManagerClient;
 
 /**
  * @var mysqli $db
@@ -31,9 +34,9 @@ class shntrToken
     private static function getSecretObject(): ?array
     {
         /**
-         * @var $awsClient \Aws\SecretsManager\SecretsManagerClient
+         * @var $awsClient SecretsManagerClient
          */
-        $awsClient = \Aws\SecretsManager\SecretsManagerClient::factory([
+        $awsClient = SecretsManagerClient::factory([
             'version'    => 'latest',
             'region'      => 'us-east-1',
         ]);
