@@ -20,11 +20,54 @@ class shntrToken
     private const AVOIDABLES = [
         'design.shntr.com', 'localhost', 'host.docker.internal'
     ];
-    private const ENCRYPTION_ALGO = 'bf-cbc';
+    private const DEFAULT_ENCRYPTION_ALGO = 'bf-cbc';
     private const TREASURY_USER = 'relysia@shntr.com';
     private const TOKEN_ID = '8a504dc054a4162a265caf1827316f6e971b774e-ST-2712'; // todo: move to config
     private const API_BASE_URL_V1 = 'https://api.relysia.com/v1';
     private const API_BASE_URL_V2 = 'https://api.relysia.com/v2';
+
+    private string $encryptionAlgo;
+
+    private static function getSecretObject(): ?array
+    {
+        /**
+         * @var $awsClient \Aws\SecretsManager\SecretsManagerClient
+         */
+        $awsClient = \Aws\SecretsManager\SecretsManagerClient::factory([
+            'version'    => 'latest',
+            'region'      => 'us-east-1',
+        ]);
+
+        $secretString = $awsClient->getSecretValue(['SecretId' => 'crypto-params'])->get('SecretString');
+
+        $secretObjectArr = json_decode($secretString, true);
+
+        $host = 'shntr.com';
+
+        if (php_sapi_name() == 'cli') {
+            $host = getenv('HOST');
+        } else if (in_array($_SERVER['SERVER_NAME'], self::AVOIDABLES)) {
+            $host = "local.{$host}";
+        } else if (TEST_ENVIRONMENT){
+            $host = "test.{$host}";
+        }
+
+        return $secretObjectArr[$host] ?? null;
+    }
+
+    private static function getEncryptionAlgo(): ?string
+    {
+        $secretObject = self::getSecretObject();
+
+        return $secretObject['algo'] ?? null;
+    }
+
+    private static function getEncryptionPassphrase(): ?string
+    {
+        $secretObject = self::getSecretObject();
+
+        return $secretObject['passphrase'] ?? null;
+    }
 
     public static function getshntrTreasure($key): ?string
     {
@@ -40,12 +83,20 @@ class shntrToken
 
     public static function encrypt(string $data): string
     {
-        return openssl_encrypt($data, self::ENCRYPTION_ALGO, getenv('shntr_TOKEN_PASSPHRASE'));
+        return openssl_encrypt(
+            $data,
+            self::getEncryptionAlgo() ?? self::DEFAULT_ENCRYPTION_ALGO,
+            self::getEncryptionPassphrase() ?? getenv('shntr_TOKEN_PASSPHRASE')
+        );
     }
 
     public static function decrypt(string $data): string|bool
     {
-        return openssl_decrypt($data, self::ENCRYPTION_ALGO, getenv('shntr_TOKEN_PASSPHRASE'));
+        return openssl_decrypt(
+            $data,
+            self::getEncryptionAlgo() ?? self::DEFAULT_ENCRYPTION_ALGO,
+            self::getEncryptionPassphrase() ?? getenv('shntr_TOKEN_PASSPHRASE')
+        );
     }
 
     public static function register(string $username): false|string
