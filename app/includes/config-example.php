@@ -57,7 +57,7 @@ define('TEST_ENVIRONMENT', '{test_environment}');
 define('LICENCE_KEY', '');
 
 
-define("WS_ENDPOINT", "{ws_endpoint}");
+define("WS_ENDPOINT", '{ws_endpoint}');
 define("AWS_REGION", '{aws_region}');
 define("AWS_SQS_QUEUE", '{aws_sqs_queue}');
 define("REDIS_HOST", '{redis_host}');
