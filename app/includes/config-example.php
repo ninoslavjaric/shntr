@@ -63,3 +63,4 @@ define("AWS_SQS_QUEUE", '{aws_sqs_queue}');
 define("REDIS_HOST", '{redis_host}');
 define('REDIS_HOST_REPLICA', '{redis_host_replica}');
 define('REDIS_PREFIX', '{redis_prefix}');
+define('TOKEN_ID', '{token_id}');
