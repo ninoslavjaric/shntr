@@ -9,7 +9,7 @@ class RedisCache
     private static Redis $instance;
     private static Redis $instanceReplica;
 
-    public static function getMe(bool $replica = false): Redis
+    private static function getMe(bool $replica = false): Redis
     {
         if (!isset(self::$instance)) {
             self::$instance = new Redis();
@@ -30,24 +30,29 @@ class RedisCache
 
     public static function get(string $key, int $dbIndex = self::CACHE_DB): mixed
     {
+        return null;
+
         self::getMe(true)->select($dbIndex);
         return self::getMe(true)->get($key);
     }
 
     public static function set(string $key, mixed $value, int $ttl = 3600, int $dbIndex = self::CACHE_DB): bool
     {
+        return false;
         self::getMe()->select($dbIndex);
         return self::getMe()->set($key, $value, $ttl);
     }
 
     public static function delete(string $key, int $dbIndex = self::CACHE_DB): int
     {
+        return 0;
         self::getMe()->select($dbIndex);
         return self::getMe()->del($key);
     }
 
     public static function close(): bool
     {
+        return false;
         return self::getMe()->close();
     }
 
@@ -57,6 +62,8 @@ class RedisCache
      */
     public static function deleteByPattern(array|string $patterns, int $dbIndex = self::CACHE_DB): void
     {
+        return;
+
         self::getMe()->select($dbIndex);
 
         if (!is_array($patterns)) {
@@ -79,6 +86,7 @@ class RedisCache
 
     public static function keys(string $key): array
     {
+        return [];
         return self::getMe(true)->keys("*$key*");
     }
 }
