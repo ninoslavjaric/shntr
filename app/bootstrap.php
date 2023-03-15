@@ -93,6 +93,7 @@ if (mysqli_connect_error()) {
 $db->query("SET time_zone = '+0:00'");
 
 require_once __DIR__ . '/includes/Session.php';
+require_once __DIR__ . '/includes/RedisCache.php';
 
 if (php_sapi_name() != 'cli') {
     session_set_save_handler(new Session(), true);
